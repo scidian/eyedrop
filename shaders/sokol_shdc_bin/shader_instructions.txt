@@ -1,0 +1,6 @@
+
+To cross compile into a header file, using sokol shader compiler:
+
+On MacOS: From directory containing 'sokol-shdc' program, targeting OpenGL 3.3, OpenGLES 100, and Metal:
+    ./sokol-shdc -i shader.glsl -o shader.glsl.h -l glsl330:glsl100:metal_macos
+
