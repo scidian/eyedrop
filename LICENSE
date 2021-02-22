@@ -1,4 +1,4 @@
-//####################################################################################
+//################################################################################
 //##
 //##                                        #
 //##                                       #│#
@@ -43,4 +43,21 @@
 //##    Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
 //##                         Proprietary and Confidential
 //##       Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
-//####################################################################################
+//################################################################################
+
+## System libraries:
+
+- Dear ImGui (MIT): https://github.com/ocornut/imgui
+- Handmade-Math (CC0): https://github.com/StrangeZak/Handmade-Math
+- Stb (MIT): https://github.com/nothings/stb
+- Fontstash (Zlib): https://github.com/memononen/fontstash
+- Sokol (Zlib): https://github.com/floooh/sokol
+- Whereami (MIT): https://github.com/gpakosz/whereami
+
+## Algorithim libraries:
+
+- Delaunator (MIT): https://github.com/soerendd/delaunator-cpp
+- Mesh Optimizer (MIT): https://github.com/zeux/meshoptimizer 
+- Poly Partition (MIT): https://github.com/ivanfratric/polypartition
+- Ramer-Douglas-Peucker (CC0): https://gist.github.com/TimSC/0813573d77734bcb6f2cd2cf6cc7aa51
+

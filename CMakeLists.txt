@@ -10,17 +10,17 @@
 #
 #   To compile, set target manually below:
 #
-#       "osx"   Apple MacOS
-#       "ios"   Apple iOS
-#       "web"   Emscripten
-#       "goo"   Google Android
-#       "win"   Microsoft Windows
-#       "lin"   Linux
+#       "osx"       Apple MacOS                     (defines DROP_TARGET_APPLE)
+#       "ios"       Apple iOS                       (defines DROP_TARGET_APPLE)
+#       "web"       Emscripten                      (defines DROP_TARGET_HTML5)
+#       "android"   Google Android                  (defines DROP_TARGET_GOOGLE)
+#       "windows"   Microsoft Windows               (defines DROP_TARGET_WINDOWS)
+#       "linux"     Linux                           (defines DROP_TARGET_LINUX)
 #
 ##################################################################
 
 
-set(EXPORT_TARGET   "web")
+set(EXPORT_TARGET   "osx")
 set(DEBUG_MODE      "false") 
 
 
@@ -36,20 +36,23 @@ if     (DEBUG_MODE MATCHES "true")
 endif()
 
 ##### TARGET
-if     (EXPORT_TARGET MATCHES "osx") 
-    add_compile_definitions(TARGET_MAC)
+if     (EXPORT_TARGET MATCHES "osx" OR EXPORT_TARGET MATCHES "ios")
+    add_compile_definitions(DROP_TARGET_APPLE)
     add_compile_definitions(SOKOL_GLCORE33)         # MacOS, Windows, Linux, Switch, Playstation
     #add_compile_definitions(SOKOL_METAL)           # MacOS, iOS, tvOS
 elseif (EXPORT_TARGET MATCHES "web") 
-    add_compile_definitions(TARGET_WEB)
+    add_compile_definitions(DROP_TARGET_HTML5)
     add_compile_definitions(SOKOL_GLES2)            # Android, WebAssembly
     #add_compile_definitions(SOKOL_GLES3)           # Android, WebAssembly
     #add_compile_definitions(SOKOL_WGPU)            # Next Gen WebAssembly
-elseif (EXPORT_TARGET MATCHES "win") 
-    add_compile_definitions(TARGET_WIN)
+elseif (EXPORT_TARGET MATCHES "android") 
+    add_compile_definitions(DROP_TARGET_GOOGLE)
+    add_compile_definitions(SOKOL_GLES3)            # Android, WebAssembly
+elseif (EXPORT_TARGET MATCHES "windows") 
+    add_compile_definitions(DROP_TARGET_WINDOWS)
     add_compile_definitions(SOKOL_D3D11)            # Windows, XBox    
-elseif (EXPORT_TARGET MATCHES "lin") 
-    add_compile_definitions(TARGET_LIN)
+elseif (EXPORT_TARGET MATCHES "linux") 
+    add_compile_definitions(DROP_TARGET_LINUX)
     add_compile_definitions(SOKOL_GLCORE33)         # MacOS, Windows, Linux, Switch, Playstation
 endif()
 
@@ -77,7 +80,7 @@ file(GLOB SOURCE_CODE_FILES
 add_executable(${PROJECT_NAME} ${SOURCE_CODE_FILES})
 
 
-# compile Shaders
+# Compile shaders
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     execute_process (
        COMMAND shaders/sokol_shdc_bin/osx/./sokol-shdc -i shaders/basic_shader.glsl -o shaders/basic_shader.glsl.h -l glsl330:glsl100:metal_macos
@@ -86,7 +89,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif()
 
 
-# copy 'assets' directory to 'build' directory
+# Copy 'assets' directory to 'build' directory
 add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets/ $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets/)
 
 
@@ -136,10 +139,13 @@ if (EXPORT_TARGET MATCHES "osx")
     target_link_libraries(${PROJECT_NAME} ${METALKIT_LIBRARY})
     target_link_libraries(${PROJECT_NAME} ${AUDIOKIT_LIBRARY})
 
+##################################################################
 elseif (EXPORT_TARGET MATCHES "ios")
 
     ### TODO ###
 
+
+##################################################################    
 elseif (EXPORT_TARGET MATCHES "web")
     # To optimze file size in order: -O1, -O2, -O3, -Os, -Oz 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz -std=c++17 --shell-file ../shell.html") 
@@ -156,20 +162,25 @@ elseif (EXPORT_TARGET MATCHES "web")
     # -s WASM=1                         use webassembly
     # --shell-file <path>               create a html file without emscripten logo and debug shell
 
-elseif (EXPORT_TARGET MATCHES "goo")
+
+##################################################################    
+elseif (EXPORT_TARGET MATCHES "android")
 
     ### TODO ###
 
-elseif (EXPORT_TARGET MATCHES "win")
+
+##################################################################    
+elseif (EXPORT_TARGET MATCHES "windows")
 
     ### TODO ###
 
-elseif (EXPORT_TARGET MATCHES "lin")
+
+##################################################################    
+elseif (EXPORT_TARGET MATCHES "linux")
 
     ### TODO ###
+
 
 endif()
-
-
 
 
