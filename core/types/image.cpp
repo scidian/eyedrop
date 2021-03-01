@@ -7,7 +7,7 @@
 //
 //
 #include "../../3rd_party/polyline_simplification.h"
-#include "../../engine/s3d/mesh.h"
+#include "../../engine/3d/mesh.h"
 #include "../compare.h"
 #include "../imaging.h"
 #include "color.h"

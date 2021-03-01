@@ -12,7 +12,6 @@
 #include "../../core/types/vec3.h"
 #include "mesh.h"
 
-
 //####################################################################################
 //##    Builds a Vertex
 //####################################################################################
@@ -80,7 +79,6 @@ void DrMesh::set(Vertex &from_vertex, Vertex &to_vertex) {
     to_vertex.by = from_vertex.by;
     to_vertex.bz = from_vertex.bz;
 }
-
 
 //####################################################################################
 //##    Builds a Textured Quad

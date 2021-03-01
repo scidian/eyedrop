@@ -6,7 +6,7 @@
 #  Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 #
 #
-################################################################
+####################################################################################
 #
 #   To compile, set target manually below:
 #
@@ -17,18 +17,18 @@
 #       "windows"   Microsoft Windows               (defines DROP_TARGET_WINDOWS)
 #       "linux"     Linux                           (defines DROP_TARGET_LINUX)
 #
-##################################################################
+####################################################################################
 
 
 set(EXPORT_TARGET   "osx")
 set(DEBUG_MODE      "false") 
 
 
-##################################################################
-##################################################################
-##################################################################
-##################################################################
-##################################################################
+####################################################################################
+####################################################################################
+####################################################################################
+####################################################################################
+####################################################################################
 ##### DEBUG
 if     (DEBUG_MODE MATCHES "true") 
     add_compile_definitions(DEBUG_ON)
@@ -36,8 +36,14 @@ if     (DEBUG_MODE MATCHES "true")
 endif()
 
 ##### TARGET
-if     (EXPORT_TARGET MATCHES "osx" OR EXPORT_TARGET MATCHES "ios")
+if     (EXPORT_TARGET MATCHES "osx")
     add_compile_definitions(DROP_TARGET_APPLE)
+    add_compile_definitions(DROP_TARGET_OSX)
+    add_compile_definitions(SOKOL_GLCORE33)         # MacOS, Windows, Linux, Switch, Playstation
+    #add_compile_definitions(SOKOL_METAL)           # MacOS, iOS, tvOS
+elseif (EXPORT_TARGET MATCHES "ios")
+    add_compile_definitions(DROP_TARGET_APPLE)    
+    add_compile_definitions(DROP_TARGET_IOS)
     add_compile_definitions(SOKOL_GLCORE33)         # MacOS, Windows, Linux, Switch, Playstation
     #add_compile_definitions(SOKOL_METAL)           # MacOS, iOS, tvOS
 elseif (EXPORT_TARGET MATCHES "web") 
@@ -73,9 +79,8 @@ file(GLOB SOURCE_CODE_FILES
     "core/types/*.c**"
     "editor/*.c**"
     "engine/*.c**"
-    "engine/s2d/*.c**"
-    "engine/s3d/*.c**"
-    "engine/sxd/*.c**"
+    "engine/2d/*.c**"
+    "engine/3d/*.c**"
 )
 add_executable(${PROJECT_NAME} ${SOURCE_CODE_FILES})
 
@@ -93,7 +98,7 @@ endif()
 add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets/ $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets/)
 
 
-##################################################################
+####################################################################################
 # Sokol Gfx Requires Libraries:
 # - on macOS with Metal:    Cocoa, IOKit, QuartzCore, Metal, MetalKit, Foundation
 # - on macOS with GL:       Cocoa, IOKit, QuartzCore, OpenGL, Foundation
@@ -109,7 +114,7 @@ add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E 
 # - macOS/iOS:              CoreAudio (link with AudioToolbox & AVFoundation)
 # - emscripten:             WebAudio with ScriptProcessorNode
 # - Android:                OpenSLES (link with OpenSLES)
-##################################################################
+####################################################################################
 if (EXPORT_TARGET MATCHES "osx")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -xobjective-c -fobjc-arc")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fobjc-arc")
@@ -139,13 +144,13 @@ if (EXPORT_TARGET MATCHES "osx")
     target_link_libraries(${PROJECT_NAME} ${METALKIT_LIBRARY})
     target_link_libraries(${PROJECT_NAME} ${AUDIOKIT_LIBRARY})
 
-##################################################################
+####################################################################################
 elseif (EXPORT_TARGET MATCHES "ios")
 
     ### TODO ###
 
 
-##################################################################    
+####################################################################################
 elseif (EXPORT_TARGET MATCHES "web")
     # To optimze file size in order: -O1, -O2, -O3, -Os, -Oz 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz -std=c++17 --shell-file ../shell.html") 
@@ -163,19 +168,19 @@ elseif (EXPORT_TARGET MATCHES "web")
     # --shell-file <path>               create a html file without emscripten logo and debug shell
 
 
-##################################################################    
+####################################################################################    
 elseif (EXPORT_TARGET MATCHES "android")
 
     ### TODO ###
 
 
-##################################################################    
+####################################################################################
 elseif (EXPORT_TARGET MATCHES "windows")
 
     ### TODO ###
 
 
-##################################################################    
+####################################################################################
 elseif (EXPORT_TARGET MATCHES "linux")
 
     ### TODO ###

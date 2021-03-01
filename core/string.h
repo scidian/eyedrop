@@ -33,7 +33,7 @@ namespace Dr {
     /// @brief: Removes trailing zeros from a number, returns as string
     std::string RemoveTrailingZeros(const std::string &source);
 
-
+    
     //####################################################################################
     //##    String Functions
     //############################

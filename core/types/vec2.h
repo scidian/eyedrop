@@ -12,7 +12,6 @@
 #include <cmath>
 
 
-
 //####################################################################################
 //##    DrVec2
 //##        2D Vector with the usual operations + - * / overloaded

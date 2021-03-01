@@ -34,7 +34,7 @@ enum class Winding_Orientation {
 
 namespace Dr {
 
-
+    
     //####################################################################################
     //##    FuzzyCompare
     //##        Returns true if 'number_a' is within +-'EPSILON' of 'number_b'

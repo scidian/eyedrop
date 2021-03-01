@@ -7,3 +7,21 @@
 //
 //
 #include "App.h"
+
+namespace sxd {
+
+//####################################################################################
+//##    Constructor / Destructor
+//####################################################################################
+App::App() {
+    std::shared_ptr<Window> window = std::make_shared<Window>();
+    m_windows.push_back(window);
+}
+
+App::~App() {
+        
+}
+
+
+
+}       // end namespace sxd;
