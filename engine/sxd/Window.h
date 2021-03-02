@@ -11,6 +11,9 @@
 
 // Includes
 #include <string>
+#include "3rd_party/sokol/sokol_app.h"
+#include "3rd_party/sokol/sokol_gfx.h"
+#include "3rd_party/sokol/sokol_glue.h"
 
 // Namespace
 namespace sxd {
@@ -40,9 +43,17 @@ private:
     int             m_width             { 800 };                                // Window width
     int             m_height            { 600 };                                // Window height
 
+    // Local Variables
+    sapp_desc       m_sokol_app;                                                // Sokol_app descriptor for this Window
+    state_t         m_state;                                                    // Sokol_app state for this Window
+
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################
 public:
+    void onCreate(void);
+    void onUpdate(void);
+    void onEvent(const sapp_event* event);
+    void onDestroy(void);
 
 
     // #################### INTERNAL FUNCTIONS ####################

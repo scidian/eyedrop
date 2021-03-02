@@ -47,7 +47,7 @@
 #endif
 
 // ***** Html5 / File Handling
-#ifndef __EMSCRIPTEN__
+#ifndef DROP_TARGET_HTML5
     #include "3rd_party/wai/whereami.c"
 #else
     #include <emscripten/emscripten.h>
@@ -315,7 +315,7 @@ void init(void) {
     int length, dirname_length;
     std::string image_file = "", font_file = "";
 
-    #ifndef __EMSCRIPTEN__
+    #ifndef DROP_TARGET_HTML5
         length = wai_getExecutablePath(NULL, 0, &dirname_length);
         if (length > 0) {
             path = (char*)malloc(length + 1);
@@ -512,7 +512,7 @@ static void image_loaded(const sfetch_response_t* response) {
 //####################################################################################
 //##    Callback: File Dropped
 //####################################################################################
-#if defined(__EMSCRIPTEN__)
+#if defined(DROP_TARGET_HTML5)
 // the async-loading callback for sapp_html5_fetch_dropped_file
 static void emsc_load_callback(const sapp_html5_fetch_response* response) {
     if (response->succeeded) {
@@ -609,7 +609,7 @@ static void input(const sapp_event* event) {
         }
 
     } else if (event->type == SAPP_EVENTTYPE_FILES_DROPPED) {
-        #if defined(__EMSCRIPTEN__)
+        #if defined(DROP_TARGET_HTML5)
             // on emscripten need to use the sokol-app helper function to load the file data
             sapp_html5_fetch_request (sokol_fetch_request) {
                 .dropped_file_index = 0,
@@ -756,7 +756,7 @@ void theme_generator() {
 // Was playing with getting canvas size from html file to resize framebuffer when
 // canvas is resized. Went around adding to sokol_app by invoking 'resize' event
 // directly from javascript in the webpage on canvas resize.
-#if defined(__EMSCRIPTEN__)
+#if defined(DROP_TARGET_HTML5)
     EM_JS(int, get_canvas_width,  (), { return canvas.width; });
     EM_JS(int, get_canvas_height, (), { return canvas.height; });
 #endif
