@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2021 Scididan Software - All Rights Reserved
+// Copyright (C) 2021 Scidian Software - All Rights Reserved
 //
 // Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
 // Proprietary and Confidential
@@ -9,46 +9,46 @@
 //####################################################################################
 //##    Includes
 //####################################################################################
-#include "../3rd_party/handmade_math.h"
-#include "../3rd_party/stb/stb_image.h"
-#include "../core/compare.h"
-#include "../core/imaging.h"
-#include "../core/random.h"
-#include "../core/types/bitmap.h"
-#include "../core/types/color.h"
-#include "../core/types/image.h"
-#include "../core/types/rect.h"
-#include "../core/types/vec2.h"
-#include "../engine/s3d/mesh.h"
+#include "3rd_party/handmade_math.h"
+#include "3rd_party/stb/stb_image.h"
+#include "core/compare.h"
+#include "core/imaging.h"
+#include "core/random.h"
+#include "core/types/bitmap.h"
+#include "core/types/color.h"
+#include "core/types/image.h"
+#include "core/types/rect.h"
+#include "core/types/vec2.h"
+#include "engine/s3d/mesh.h"
 
 // ***** Sokol
-#include "../3rd_party/sokol/sokol_app.h"
-#include "../3rd_party/sokol/sokol_gfx.h"
-#include "../3rd_party/sokol/sokol_gl.h"
-#include "../3rd_party/sokol/sokol_glue.h"
-#include "../3rd_party/sokol/sokol_time.h"
-#include "../3rd_party/sokol/sokol_audio.h"
-#include "../3rd_party/sokol/sokol_fetch.h"
+#include "3rd_party/sokol/sokol_app.h"
+#include "3rd_party/sokol/sokol_gfx.h"
+#include "3rd_party/sokol/sokol_gl.h"
+#include "3rd_party/sokol/sokol_glue.h"
+#include "3rd_party/sokol/sokol_time.h"
+#include "3rd_party/sokol/sokol_audio.h"
+#include "3rd_party/sokol/sokol_fetch.h"
 
 // ***** Fonts
-#include "../3rd_party/fontstash.h"
-#include "../3rd_party/sokol/sokol_fontstash.h"
+#include "3rd_party/fontstash.h"
+#include "3rd_party/sokol/sokol_fontstash.h"
 
 // ***** ImGui
-#include "../3rd_party/imgui/imgui.h"
-#include "../3rd_party/imgui_font.h"
+#include "3rd_party/imgui/imgui.h"
+#include "3rd_party/imgui_font.h"
 #define SOKOL_IMGUI_IMPL
-#include "../3rd_party/sokol/sokol_imgui.h"
+#include "3rd_party/sokol/sokol_imgui.h"
 
 // ***** Debug Menu
 #ifdef DEBUG_ON
     #define SOKOL_GFX_IMGUI_IMPL
-    #include "../3rd_party/sokol/sokol_gfx_imgui.h"
+    #include "3rd_party/sokol/sokol_gfx_imgui.h"
 #endif
 
 // ***** Html5 / File Handling
 #ifndef __EMSCRIPTEN__
-    #include "../3rd_party/wai/whereami.c"
+    #include "3rd_party/wai/whereami.c"
 #else
     #include <emscripten/emscripten.h>
     #include <emscripten/html5.h>
@@ -56,7 +56,7 @@
 
 // ***** Local Includes
 #include "input.h"
-#include "../shaders/basic_shader.glsl.h"
+#include "shaders/basic_shader.glsl.h"
 
 
 //####################################################################################

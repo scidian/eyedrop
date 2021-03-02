@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2021 Scididan Software - All Rights Reserved
+// Copyright (C) 2021 Scidian Software - All Rights Reserved
 //
 // Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
 // Proprietary and Confidential
@@ -11,7 +11,7 @@
 //##    Single Header Library Initialization
 //##
 //####################################################################################
-#if defined(_WIN32)
+#if defined(DROP_TARGET_WINDOWS)
     #include <Windows.h>
 #endif
 

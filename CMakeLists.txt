@@ -1,5 +1,5 @@
 #
-#  Copyright (C) 2021 Scididan Software - All Rights Reserved
+#  Copyright (C) 2021 Scidian Software - All Rights Reserved
 #
 #  Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
 #  Proprietary and Confidential
@@ -21,13 +21,10 @@
 
 
 set(EXPORT_TARGET   "osx")
-set(DEBUG_MODE      "false") 
+set(DEBUG_MODE      "false")        # Options:  "true"    or  "false"
+set(APP_TYPE        "editor")       # Options:  "editor"  or  "player"
 
 
-####################################################################################
-####################################################################################
-####################################################################################
-####################################################################################
 ####################################################################################
 ##### DEBUG
 if     (DEBUG_MODE MATCHES "true") 
@@ -62,13 +59,20 @@ elseif (EXPORT_TARGET MATCHES "linux")
     add_compile_definitions(SOKOL_GLCORE33)         # MacOS, Windows, Linux, Switch, Playstation
 endif()
 
+
 ##### Set CMake Version
 cmake_minimum_required(VERSION 3.10)
+
 
 ##### Project Name
 project(drop)
 
-# glob the files, add the executable
+
+##### Include Directories
+include_directories(${CMAKE_SOURCE_DIR})
+
+
+##### Glob the files, add the executable
 file(GLOB SOURCE_CODE_FILES 
     "*.c**"
     "3rd_party/*.c**"
@@ -77,15 +81,20 @@ file(GLOB SOURCE_CODE_FILES
     "3rd_party/sokol/*.c**"
     "core/*.c**"
     "core/types/*.c**"
-    "editor/*.c**"
     "engine/*.c**"
-    "engine/2d/*.c**"
-    "engine/3d/*.c**"
+    "engine/s2d/*.c**"
+    "engine/s3d/*.c**"
+    "engine/sxd/*.c**"
+    if      (APP_TYPE MATCHES "editor")
+        "editor/*.c**"
+    else if (APP_TYPE MATCHES "player")
+        "player/*.c**"
+    endif()
 )
 add_executable(${PROJECT_NAME} ${SOURCE_CODE_FILES})
 
 
-# Compile shaders
+##### Compile Shaders
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     execute_process (
        COMMAND shaders/sokol_shdc_bin/osx/./sokol-shdc -i shaders/basic_shader.glsl -o shaders/basic_shader.glsl.h -l glsl330:glsl100:metal_macos
@@ -94,7 +103,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif()
 
 
-# Copy 'assets' directory to 'build' directory
+##### Copy 'assets' directory to 'build' directory
 add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets/ $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets/)
 
 
