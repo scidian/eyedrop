@@ -5,12 +5,8 @@
         "comments": "#504a47",
 
         "textMateRules": [
-            {
-                "scope": "variable.other.enummember",
-                "settings": {
-                    "foreground": "#00836d"
-                }
-            }
+            {   "scope": "variable.other.enummember",   "settings": {   "foreground": "#00836d" }   },
+            {   "scope": "variable.other.constant",     "settings": {   "foreground": "#450194" },  },
         ]
     },
     
@@ -96,6 +92,7 @@
         "typeinfo": "cpp",
         "unordered_map": "cpp",
         "utility": "cpp",
-        "any": "cpp"
+        "any": "cpp",
+        "iostream": "cpp"
     },
 }

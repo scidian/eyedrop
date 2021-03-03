@@ -18,11 +18,11 @@
 #include "core/geometry/Point.h"
 #include "core/geometry/PointF.h"
 #include "core/geometry/PolygonF.h"
-#include "core/imaging.h"
+#include "core/imaging/Color.h"
+#include "core/imaging/Filter.h"
+#include "core/imaging/Image.h"
 #include "core/math.h"
-#include "core/types/color.h"
-#include "core/types/image.h"
-#include "mesh.h"
+#include "Mesh.h"
 
 
 //####################################################################################

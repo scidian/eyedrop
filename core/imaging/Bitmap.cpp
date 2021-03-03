@@ -12,8 +12,8 @@
 #include "core/geometry/PointF.h"
 #include "core/geometry/PolygonF.h"
 #include "core/geometry/Rect.h"
-#include "bitmap.h"
-#include "color.h"
+#include "core/imaging/Bitmap.h"
+#include "core/imaging/Color.h"
 
 
 //####################################################################################
@@ -23,8 +23,8 @@ DrBitmap::DrBitmap(Bitmap_Format desired_format) {
     data.clear(); 
     format = desired_format;
     switch (format) {
-        case Bitmap_Format::Grayscale:   channels = 1;   break;
-        case Bitmap_Format::ARGB:        channels = 4;   break;
+        case DROP_BITMAP_FORMAT_GRAYSCALE:   channels = 1;   break;
+        case DROP_BITMAP_FORMAT_ARGB:        channels = 4;   break;
     }
 }
 DrBitmap::~DrBitmap() { 
@@ -120,8 +120,8 @@ DrRect DrBitmap::rect() const {
 DrColor DrBitmap::getPixel(int x, int y) const {
     size_t index = (y * this->width * channels) + (x * channels);
     switch (format) {
-        case Bitmap_Format::Grayscale:  return DrColor(data[index+0], data[index+0], data[index+0], data[index+0]);
-        case Bitmap_Format::ARGB:       return DrColor(data[index+2], data[index+1], data[index+0], data[index+3]);
+        case DROP_BITMAP_FORMAT_GRAYSCALE:  return DrColor(data[index+0], data[index+0], data[index+0], data[index+0]);
+        case DROP_BITMAP_FORMAT_ARGB:       return DrColor(data[index+2], data[index+1], data[index+0], data[index+3]);
     }
 }
 
@@ -129,10 +129,10 @@ DrColor DrBitmap::getPixel(int x, int y) const {
 void DrBitmap::setPixel(int x, int y, DrColor color) {
     size_t index = (y * this->width * channels) + (x * channels);
     switch (format) {
-        case Bitmap_Format::Grayscale:   
+        case DROP_BITMAP_FORMAT_GRAYSCALE:   
             data[index]   = (color.redF() * 0.2126) + (color.greenF() * 0.7152) + (color.blueF() * 0.0722);
             break;
-        case Bitmap_Format::ARGB:        
+        case DROP_BITMAP_FORMAT_ARGB:        
             data[index]   = color.blue();
             data[index+1] = color.green();
             data[index+2] = color.red();
@@ -152,8 +152,8 @@ void DrBitmap::fuzzyAlpha() {
             if ((color.red() <  10 && color.green() <  10 && color.blue() <  10) ||
                 (color.red() > 245 && color.green() > 245 && color.blue() > 245)) {
                 switch (format) {
-                    case Bitmap_Format::Grayscale:  color.setRgbF(0, 0, 0, 0);
-                    case Bitmap_Format::ARGB:       color.setAlpha(0);
+                    case DROP_BITMAP_FORMAT_GRAYSCALE:  color.setRgbF(0, 0, 0, 0);
+                    case DROP_BITMAP_FORMAT_ARGB:       color.setAlpha(0);
                 }
                 setPixel(x, y, color);
             }

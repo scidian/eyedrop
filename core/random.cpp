@@ -8,8 +8,8 @@
 //
 #include <chrono>
 
-#include "random.h"
-#include "types/color.h"
+#include "core/imaging/Color.h"
+#include "core/random.h"
 
 namespace Dr {
 

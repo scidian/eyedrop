@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "core/geometry/PointF.h"
-#include "bitmap.h"
+#include "core/imaging/Bitmap.h"
 
 // Local Constants
 #define         vtr                     std::vector

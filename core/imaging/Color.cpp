@@ -8,9 +8,9 @@
 //
 #include <iomanip>
 
+#include "core/imaging/Color.h"
 #include "core/math.h"
 #include "core/string.h"
-#include "color.h"
 
 
 inline constexpr unsigned char operator "" _uc( unsigned long long arg ) noexcept {

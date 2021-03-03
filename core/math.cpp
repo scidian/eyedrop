@@ -8,8 +8,8 @@
 //
 #include "core/geometry/Point.h"
 #include "core/geometry/PointF.h"
+#include "core/imaging/Color.h"
 #include "core/math.h"
-#include "types/color.h"
 
 namespace Dr {
 

@@ -15,7 +15,7 @@
 #include "3rd_party/sokol/sokol_app.h"
 #include "3rd_party/sokol/sokol_gfx.h"
 #include "3rd_party/sokol/sokol_gfx_imgui.h"
-#include "core/types/color.h"
+#include "core/imaging/Color.h"
 
 // Forward Declarations
 class FONScontext;

@@ -8,9 +8,10 @@
 //
 #include "3rd_party/handmade_math.h"
 #include "core/math.h"
-#include "core/types/vec2.h"
-#include "core/types/vec3.h"
-#include "mesh.h"
+#include "engine/s3d/Mesh.h"
+#include "engine/s3d/Vec2.h"
+#include "engine/s3d/Vec3.h"
+
 
 //####################################################################################
 //##    Builds a Vertex

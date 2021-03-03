@@ -33,9 +33,9 @@ if     (DEBUG_MODE MATCHES "true")
     add_compile_definitions(SOKOL_TRACE_HOOKS)
 endif()
 
-##### STOP SOKOL HIJACK
+##### SELECT DESIRED EXECUTABLE (MAIN)
 if     (APP_TYPE MATCHES "player")
-    add_compile_definitions(SOKOL_NO_ENTRY)
+    add_compile_definitions(SOKOL_NO_ENTRY)         ##### STOP SOKOL HIJACK
     set(MAIN_DIRECTORY "player/*.c**")
     project(player)                                 ##### Project Name for Engine Only
 else()
@@ -85,7 +85,7 @@ file(GLOB SOURCE_CODE_FILES
     "3rd_party/sokol/*.c**"
     "core/*.c**"
     "core/geometry/*.c**"
-    "core/types/*.c**"
+    "core/imaging/*.c**"
     "engine/*.c**"
     "engine/s2d/*.c**"
     "engine/s3d/*.c**"

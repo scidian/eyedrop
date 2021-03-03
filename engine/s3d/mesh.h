@@ -11,7 +11,7 @@
 
 #include <map>
 #include <vector>
-#include "core/types/vec3.h"
+#include "Vec3.h"
 
 // Forward Declarations
 class DrBitmap;
@@ -29,9 +29,9 @@ typedef std::map<DrVec3, std::vector<Vertex>> NeighborMap;
 #define PAR_RGBA 4
 
 // Constants
-const int   c_vertex_length = 11;
-const float c_extrude_depth = 0.1f;
-const float c_cube_depth =    0.5f;
+const int   c_vertex_length =   11;
+const float c_extrude_depth =   0.1f;
+const float c_cube_depth =      0.5f;
 
 // Local Enums
 enum class Trianglulation {

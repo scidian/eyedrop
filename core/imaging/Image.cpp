@@ -7,16 +7,16 @@
 //
 //
 #include "3rd_party/polyline_simplification.h"
-#include "engine/s3d/mesh.h"
 #include "core/geometry/Point.h"
 #include "core/geometry/PointF.h"
 #include "core/geometry/PolygonF.h"
 #include "core/geometry/Rect.h"
 #include "core/geometry/RectF.h"
-#include "core/imaging.h"
+#include "core/imaging/Color.h"
+#include "core/imaging/Filter.h"
+#include "core/imaging/Image.h"
 #include "core/math.h"
-#include "color.h"
-#include "image.h"
+#include "engine/s3d/Mesh.h"
 
 // Local Constants
 const int c_neighbors =             5;                  // Number of neighbors to smooth points with
@@ -72,7 +72,7 @@ void DrImage::outlinePoints(float lod) {
     // ***** Break pixmap into seperate images for each object in image
     std::vector<DrBitmap>   bitmaps;
     std::vector<DrRect>     rects;
-    bool    cancel = Dr::FindObjectsInBitmap(m_bitmap, bitmaps, rects, c_alpha_tolerance, true);
+    bool    cancel = DrFilter::FindObjectsInBitmap(m_bitmap, bitmaps, rects, c_alpha_tolerance, true);
     int     number_of_objects = static_cast<int>(bitmaps.size());
 
     //std::cout << "Number of objects in image: " << number_of_objects << std::endl;
@@ -87,7 +87,7 @@ void DrImage::outlinePoints(float lod) {
         if (image.width < 1 || image.height < 1) continue;
 
         // Trace edge of image
-        std::vector<DrPointF> one_poly = Dr::TraceImageOutline(image);
+        std::vector<DrPointF> one_poly = DrFilter::TraceImageOutline(image);
 
         // Add rect offset, and add 1.00 pixels buffer around image
         double plus_one_pixel_percent_x = 1.0 + (1.00 / m_bitmap.width);
@@ -128,12 +128,12 @@ void DrImage::outlinePoints(float lod) {
 
         // ******************** Copy image and finds holes as seperate outlines
         DrBitmap holes = image.copy();
-        Dr::FillBorder(holes, DROP_COLOR_WHITE, holes.rect());                      // Ensures only holes are left as black spots
+        DrFilter::FillBorder(holes, DROP_COLOR_WHITE, holes.rect());                      // Ensures only holes are left as black spots
 
         // Breaks holes into seperate images for each Hole
         std::vector<DrBitmap> hole_images;
         std::vector<DrRect>   hole_rects;        
-        Dr::FindObjectsInBitmap(holes, hole_images, hole_rects, c_alpha_tolerance, false);
+        DrFilter::FindObjectsInBitmap(holes, hole_images, hole_rects, c_alpha_tolerance, false);
 
         // Go through each image (Hole) create list for it
         std::vector<std::vector<DrPointF>> hole_list;
@@ -142,7 +142,7 @@ void DrImage::outlinePoints(float lod) {
             if (hole.width < 1 || hole.height < 1) continue;
 
             // Trace edge of hole
-            std::vector<DrPointF> one_hole = Dr::TraceImageOutline(hole);
+            std::vector<DrPointF> one_hole = DrFilter::TraceImageOutline(hole);
 
             // Add in sub image offset to points and hole rects
             for (auto &point : one_hole) {
