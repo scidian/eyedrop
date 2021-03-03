@@ -6,9 +6,9 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "../../3rd_party/stb/stb_image.h"
-#include "../../3rd_party/stb/stb_image_resize.h"
-#include "../../3rd_party/stb/stb_image_write.h"
+#include "3rd_party/stb/stb_image.h"
+#include "3rd_party/stb/stb_image_resize.h"
+#include "3rd_party/stb/stb_image_write.h"
 #include "bitmap.h"
 #include "color.h"
 #include "pointf.h"

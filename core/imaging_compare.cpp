@@ -6,9 +6,9 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "../3rd_party/stb/stb_image_write.h"
-#include "compare.h"
+#include "3rd_party/stb/stb_image_write.h"
 #include "imaging.h"
+#include "math.h"
 #include "types/color.h"
 #include "types/point.h"
 #include "types/pointf.h"
@@ -41,8 +41,8 @@ bool CompareBitmaps(const DrBitmap &bitmap1, const DrBitmap &bitmap2) {
 //##        INVERSE (inverse == true) : transparent areas are white, objects are black
 //####################################################################################
 DrBitmap BlackAndWhiteFromAlpha(const DrBitmap &bitmap, double alpha_tolerance, bool inverse, Bitmap_Format desired_format) {
-    DrColor color1 = Dr::transparent;
-    DrColor color2 = Dr::white;
+    DrColor color1 = DROP_COLOR_TRANSPARENT;
+    DrColor color2 = DROP_COLOR_WHITE;
     if (inverse) Dr::Swap(color1, color2);
 
     DrBitmap black_white(bitmap, desired_format);
@@ -172,7 +172,7 @@ DrBitmap FloodFill(DrBitmap &bitmap, int at_x, int at_y, DrColor fill_color, dou
 
 //####################################################################################
 //##    Fill border
-//##        Traces Border of 'rect' and makes sure to fill in any Dr::transparent areas with fill_color
+//##        Traces Border of 'rect' and makes sure to fill in any DROP_COLOR_TRANSPARENT areas with fill_color
 //####################################################################################
 void FillBorder(DrBitmap &bitmap, DrColor fill_color, DrRect rect) {
     DrRect fill_rect;
@@ -181,10 +181,10 @@ void FillBorder(DrBitmap &bitmap, DrColor fill_color, DrRect rect) {
     int y1 = rect.top();
     int y2 = rect.bottom();
     for (int x = rect.left(); x < rect.left() + rect.width; x++) {
-        if (bitmap.getPixel(x, y1) == Dr::transparent) {
+        if (bitmap.getPixel(x, y1) == DROP_COLOR_TRANSPARENT) {
             Dr::FloodFill(bitmap, x, y1, fill_color, 0.001, Flood_Fill_Type::Compare_4, fill_qty, fill_rect);
         }
-        if (bitmap.getPixel(x, y2) == Dr::transparent) {
+        if (bitmap.getPixel(x, y2) == DROP_COLOR_TRANSPARENT) {
             Dr::FloodFill(bitmap, x, y2, fill_color, 0.001, Flood_Fill_Type::Compare_4, fill_qty, fill_rect);
         }
     }
@@ -192,10 +192,10 @@ void FillBorder(DrBitmap &bitmap, DrColor fill_color, DrRect rect) {
     int x1 = rect.left();
     int x2 = rect.right();
     for (int y = rect.top(); y < rect.top() + rect.height; y++) {
-        if (bitmap.getPixel(x1, y) == Dr::transparent) {
+        if (bitmap.getPixel(x1, y) == DROP_COLOR_TRANSPARENT) {
             Dr::FloodFill(bitmap, x1, y, fill_color, 0.001, Flood_Fill_Type::Compare_4, fill_qty, fill_rect);
         }
-        if (bitmap.getPixel(x2, y) == Dr::transparent) {
+        if (bitmap.getPixel(x2, y) == DROP_COLOR_TRANSPARENT) {
             Dr::FloodFill(bitmap, x2, y, fill_color, 0.001, Flood_Fill_Type::Compare_4, fill_qty, fill_rect);
         }
     }
@@ -219,7 +219,7 @@ bool FindObjectsInBitmap(const DrBitmap &bitmap, std::vector<DrBitmap> &bitmaps,
     if (convert) black_white = BlackAndWhiteFromAlpha(bitmap, alpha_tolerance, INVERTED_COLORS);
     else         black_white = bitmap;
 
-    DrColor compare(Dr::transparent);
+    DrColor compare(DROP_COLOR_TRANSPARENT);
 
     // If convert is true, all object pixels will be transparent pixels. If all pixels are transparent we don't need to fill, we can
     // just return a solid square later on and not have to run expensive flood fill routine
@@ -246,7 +246,7 @@ bool FindObjectsInBitmap(const DrBitmap &bitmap, std::vector<DrBitmap> &bitmaps,
                 if (black_white.getPixel(x, y) == compare) {
                     DrRect      rect;
                     int         flood_pixel_count;
-                    DrBitmap    flood_fill = FloodFill(black_white, x, y, Dr::red, 0.001, Flood_Fill_Type::Compare_4, flood_pixel_count, rect);
+                    DrBitmap    flood_fill = FloodFill(black_white, x, y, DROP_COLOR_RED, 0.001, Flood_Fill_Type::Compare_4, flood_pixel_count, rect);
 
                     // Add buffer around rect, create image of rect only
                     rect.adjust(-1, -1, 1, 1);
@@ -261,12 +261,12 @@ bool FindObjectsInBitmap(const DrBitmap &bitmap, std::vector<DrBitmap> &bitmaps,
             }
         }
 
-    // No non-object pixels, fill with Dr::red and return
+    // No non-object pixels, fill with DROP_COLOR_RED and return
     } else {
         if (black_white.width > 0 && black_white.height > 0) {
             for (int x = 0; x < black_white.width; ++x) {
                 for (int y = 0; y < black_white.height; ++y) {
-                    black_white.setPixel(x, y, Dr::red);
+                    black_white.setPixel(x, y, DROP_COLOR_RED);
                 }
             }
             rects.push_back( black_white.rect() );
@@ -309,19 +309,19 @@ std::vector<DrPointF> TraceImageOutline(const DrBitmap &bitmap) {
     for (int x = 0; x < bitmap.width; ++x) {
         for (int y = 0; y < bitmap.height; ++y) {
             // If pixel is part of the exterior, it cannot be part of the border
-            if (bitmap.getPixel(x, y) == Dr::transparent) {
+            if (bitmap.getPixel(x, y) == DROP_COLOR_TRANSPARENT) {
                 processed.setPixel(x, y, TRACE_NOT_BORDER);
                 continue;
             }
 
-            // Run through all pixels this pixel is touching to see if any are transparent (i.e. Dr::transparent (0))
+            // Run through all pixels this pixel is touching to see if any are transparent (i.e. DROP_COLOR_TRANSPARENT (0))
             bool can_be_border = false;
             if (x == 0 || y == 0 || (x == bitmap.width - 1) || (y == bitmap.height - 1)) {
                 can_be_border = true;
             } else {
                 for (int i = x - 1; i <= x + 1; ++i) {
                     for (int j = y - 1; j <= y + 1; ++j) {
-                        if (bitmap.getPixel(i, j) == Dr::transparent) can_be_border = true;
+                        if (bitmap.getPixel(i, j) == DROP_COLOR_TRANSPARENT) can_be_border = true;
                     }
                 }
             }
@@ -434,7 +434,7 @@ std::vector<DrPointF> OutlinePointList(const DrBitmap &bitmap) {
     // Loop through every pixel to see if is possibly on border
     for (int y = 0; y < bitmap.height; ++y) {
         for (int x = 0; x < bitmap.width; ++x) {
-            if (bitmap.getPixel(x, y) == Dr::transparent) continue;
+            if (bitmap.getPixel(x, y) == DROP_COLOR_TRANSPARENT) continue;
 
             // Run through all pixels this pixel is touching to see if they are transparent (i.e. black)
             int x_start, x_end, y_start, y_end;
@@ -445,7 +445,7 @@ std::vector<DrPointF> OutlinePointList(const DrBitmap &bitmap) {
             bool touching_transparent = false;
             for (int i = x_start; i <= x_end; ++i) {
                 for (int j = y_start; j <= y_end; ++j) {
-                    if (bitmap.getPixel(i, j) == Dr::transparent) touching_transparent = true;
+                    if (bitmap.getPixel(i, j) == DROP_COLOR_TRANSPARENT) touching_transparent = true;
                     if (touching_transparent) break;
                 }
                 if (touching_transparent) break;

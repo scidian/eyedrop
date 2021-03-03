@@ -6,10 +6,10 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "../../3rd_party/polyline_simplification.h"
-#include "../../engine/s3d/mesh.h"
-#include "../compare.h"
+#include "3rd_party/polyline_simplification.h"
+#include "engine/s3d/mesh.h"
 #include "../imaging.h"
+#include "../math.h"
 #include "color.h"
 #include "image.h"
 #include "point.h"
@@ -128,7 +128,7 @@ void DrImage::outlinePoints(float lod) {
 
         // ******************** Copy image and finds holes as seperate outlines
         DrBitmap holes = image.copy();
-        Dr::FillBorder(holes, Dr::white, holes.rect());                     // Ensures only holes are left as black spots
+        Dr::FillBorder(holes, DROP_COLOR_WHITE, holes.rect());                      // Ensures only holes are left as black spots
 
         // Breaks holes into seperate images for each Hole
         std::vector<DrBitmap> hole_images;

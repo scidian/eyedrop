@@ -15,27 +15,26 @@
 //####################################################################################
 //##    Easy Colors
 //############################
-namespace Dr {
-    enum Colors {
-        transparent =       0x00000000,
+enum Colors {
+    DROP_COLOR_TRANSPARENT =    0x00000000,
 
-        white =             0xFFFFFFFF,
-        black =             0xFF000000,
-        gray =              0xFF808080,
+    DROP_COLOR_WHITE =          0xFFFFFFFF,
+    DROP_COLOR_BLACK =          0xFF000000,
+    DROP_COLOR_GRAY =           0xFF808080,
+    DROP_COLOR_GREY =           0xFF808080,
 
-        red =               0xFFFF0000,
-        green =             0xFF00FF00,
-        blue =              0xFF0000FF,
+    DROP_COLOR_RED =            0xFFFF0000,
+    DROP_COLOR_GREEN =          0xFF00FF00,
+    DROP_COLOR_BLUE =           0xFF0000FF,
 
-        magenta =           0xFFFF00FF,
-        cyan =              0xFF00FFFF,
-        yellow =            0xFFFFFF00,
+    DROP_COLOR_MAGENTA =        0xFFFF00FF,
+    DROP_COLOR_CYAN =           0xFF00FFFF,
+    DROP_COLOR_YELLOW =         0xFFFFFF00,
 
-        orange =            0xFFFFA500,
-        purple =            0xFF800080,
-        brown =             0xFF5D4037,
-    };
-}
+    DROP_ORANGE =               0xFFFFA500,
+    DROP_COLOR_PURPLE =         0xFF800080,
+    DROP_COLOR_BROWN =          0xFF5D4037,
+};
 
 
 //####################################################################################
@@ -94,6 +93,10 @@ public:
     double                  greenF() const  { return static_cast<double>(g) / 255.0; }
     double                  blueF() const   { return static_cast<double>(b) / 255.0; }
     double                  alphaF() const  { return static_cast<double>(a) / 255.0; }
+    float                   redf() const    { return static_cast<float>(r) / 255.0; }
+    float                   greenf() const  { return static_cast<float>(g) / 255.0; }
+    float                   bluef() const   { return static_cast<float>(b) / 255.0; }
+    float                   alphaf() const  { return static_cast<float>(a) / 255.0; }
 
     void        setRed(int red);
     void        setRedF(double red);

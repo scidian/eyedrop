@@ -6,7 +6,7 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "../compare.h"
+#include "../math.h"
 #include "vec2.h"
 
 

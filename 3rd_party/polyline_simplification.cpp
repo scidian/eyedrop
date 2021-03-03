@@ -12,7 +12,7 @@
 #include <stdexcept>
 #include <utility>
 
-#include "../core/types/pointf.h"
+#include "core/types/pointf.h"
 #include "polyline_simplification.h"
 
 

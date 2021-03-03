@@ -12,8 +12,10 @@
 // Includes
 #include <string>
 
+
 // Namespace
 namespace sxd {
+
 
 // Forward Declarations
 class OtherClass;
@@ -33,7 +35,7 @@ public:
     // #################### VARIABLES ####################
 private:
     // Blank Variables
-    int                     m_variable          { 0 };                          // Description
+    int                 m_variable              { 0 };                          // Description
         
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################

@@ -8,7 +8,7 @@
 //
 #include <iomanip>
 
-#include "../compare.h"
+#include "../math.h"
 #include "../string.h"
 #include "color.h"
 

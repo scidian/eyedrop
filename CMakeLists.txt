@@ -22,7 +22,7 @@
 
 set(EXPORT_TARGET   "osx")
 set(DEBUG_MODE      "false")        # Options:  "true"    or  "false"
-set(APP_TYPE        "editor")       # Options:  "editor"  or  "player"
+set(APP_TYPE        "player")       # Options:  "editor"  or  "player"
 
 
 ####################################################################################
@@ -30,6 +30,14 @@ set(APP_TYPE        "editor")       # Options:  "editor"  or  "player"
 if     (DEBUG_MODE MATCHES "true") 
     add_compile_definitions(DEBUG_ON)
     add_compile_definitions(SOKOL_TRACE_HOOKS)
+endif()
+
+##### STOP SOKOL HIJACK
+if     (APP_TYPE MATCHES "player")
+    add_compile_definitions(SOKOL_NO_ENTRY)
+    set(MAIN_DIRECTORY "player/*.c**")
+else()
+    set(MAIN_DIRECTORY "editor/*.c**")
 endif()
 
 ##### TARGET
@@ -74,6 +82,7 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 ##### Glob the files, add the executable
 file(GLOB SOURCE_CODE_FILES 
+    ${MAIN_DIRECTORY}
     "*.c**"
     "3rd_party/*.c**"
     "3rd_party/imgui/*.c**"
@@ -85,11 +94,6 @@ file(GLOB SOURCE_CODE_FILES
     "engine/s2d/*.c**"
     "engine/s3d/*.c**"
     "engine/sxd/*.c**"
-    if      (APP_TYPE MATCHES "editor")
-        "editor/*.c**"
-    else if (APP_TYPE MATCHES "player")
-        "player/*.c**"
-    endif()
 )
 add_executable(${PROJECT_NAME} ${SOURCE_CODE_FILES})
 

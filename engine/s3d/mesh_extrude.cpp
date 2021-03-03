@@ -11,17 +11,17 @@
 #include <list>
 #include <vector>
 
-#include "../../3rd_party/delaunator.h"
-#include "../../3rd_party/mesh_optimizer/meshoptimizer.h"
-#include "../../3rd_party/poly_partition.h"
-#include "../../3rd_party/polyline_simplification.h"
-#include "../../core/compare.h"
-#include "../../core/imaging.h"
-#include "../../core/types/color.h"
-#include "../../core/types/image.h"
-#include "../../core/types/point.h"
-#include "../../core/types/pointf.h"
-#include "../../core/types/polygonf.h"
+#include "3rd_party/delaunator.h"
+#include "3rd_party/mesh_optimizer/meshoptimizer.h"
+#include "3rd_party/poly_partition.h"
+#include "3rd_party/polyline_simplification.h"
+#include "core/imaging.h"
+#include "core/math.h"
+#include "core/types/color.h"
+#include "core/types/image.h"
+#include "core/types/point.h"
+#include "core/types/pointf.h"
+#include "core/types/polygonf.h"
 #include "mesh.h"
 
 #include <iostream>

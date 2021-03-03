@@ -6,8 +6,8 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "compare.h"
 #include "imaging.h"
+#include "math.h"
 #include "types/color.h"
 #include "types/point.h"
 #include "types/pointf.h"

@@ -11,8 +11,8 @@
 //####################################################################################
 #include "3rd_party/handmade_math.h"
 #include "3rd_party/stb/stb_image.h"
-#include "core/compare.h"
 #include "core/imaging.h"
+#include "core/math.h"
 #include "core/random.h"
 #include "core/types/bitmap.h"
 #include "core/types/color.h"
@@ -629,7 +629,7 @@ static void input(const sapp_event* event) {
             sfetch_send(&sokol_fetch_request);
         #endif
     }
-
+    
     simgui_handle_event(event);
 }
 

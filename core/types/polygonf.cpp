@@ -12,7 +12,7 @@
 //
 #include <math.h>
 
-#include "../compare.h"
+#include "../math.h"
 #include "pointf.h"
 #include "polygonf.h"
 

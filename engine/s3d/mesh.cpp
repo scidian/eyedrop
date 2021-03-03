@@ -6,10 +6,10 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "../../3rd_party/handmade_math.h"
-#include "../../core/compare.h"
-#include "../../core/types/vec2.h"
-#include "../../core/types/vec3.h"
+#include "3rd_party/handmade_math.h"
+#include "core/math.h"
+#include "core/types/vec2.h"
+#include "core/types/vec3.h"
 #include "mesh.h"
 
 //####################################################################################

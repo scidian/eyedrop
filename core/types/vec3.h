@@ -11,7 +11,7 @@
 
 #include <cmath>
 
-#include "../../3rd_party/handmade_math.h"
+#include "3rd_party/handmade_math.h"
 
 
 //####################################################################################
