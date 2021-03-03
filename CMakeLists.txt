@@ -6,6 +6,7 @@
 #  Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 #
 #
+cmake_minimum_required(VERSION 3.10)
 ####################################################################################
 #
 #   To compile, set target manually below:
@@ -36,8 +37,10 @@ endif()
 if     (APP_TYPE MATCHES "player")
     add_compile_definitions(SOKOL_NO_ENTRY)
     set(MAIN_DIRECTORY "player/*.c**")
+    project(player)                                 ##### Project Name for Engine Only
 else()
     set(MAIN_DIRECTORY "editor/*.c**")
+    project(drop)                                   ##### Project Name for Editor
 endif()
 
 ##### TARGET
@@ -68,14 +71,6 @@ elseif (EXPORT_TARGET MATCHES "linux")
 endif()
 
 
-##### Set CMake Version
-cmake_minimum_required(VERSION 3.10)
-
-
-##### Project Name
-project(drop)
-
-
 ##### Include Directories
 include_directories(${CMAKE_SOURCE_DIR})
 
@@ -89,6 +84,7 @@ file(GLOB SOURCE_CODE_FILES
     "3rd_party/mesh_optimizer/*.c**"
     "3rd_party/sokol/*.c**"
     "core/*.c**"
+    "core/geometry/*.c**"
     "core/types/*.c**"
     "engine/*.c**"
     "engine/s2d/*.c**"
@@ -129,8 +125,9 @@ add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E 
 # - Android:                OpenSLES (link with OpenSLES)
 ####################################################################################
 if (EXPORT_TARGET MATCHES "osx")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -xobjective-c -fobjc-arc")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fobjc-arc")
+    # To optimze file size in order: -O0, -O1, -O2, -O3
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -std=c99 -xobjective-c -fobjc-arc")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -std=c++11 -fobjc-arc")
     set(CMAKE_C_COMPILER "gcc")
     set(CMAKE_CXX_COMPILER "g++")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa -framework OpenGL -framework IOKit -framework Foundation")

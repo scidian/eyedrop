@@ -11,7 +11,7 @@
 
 int main(int argc, char *argv[]) {
 
-    sxd::App player("Test Player", DROP_COLOR_PURPLE);
+    DrApp player("Test Player", DROP_COLOR_PURPLE);
     player.run();
 
 }

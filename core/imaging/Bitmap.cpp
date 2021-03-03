@@ -9,11 +9,11 @@
 #include "3rd_party/stb/stb_image.h"
 #include "3rd_party/stb/stb_image_resize.h"
 #include "3rd_party/stb/stb_image_write.h"
+#include "core/geometry/PointF.h"
+#include "core/geometry/PolygonF.h"
+#include "core/geometry/Rect.h"
 #include "bitmap.h"
 #include "color.h"
-#include "pointf.h"
-#include "polygonf.h"
-#include "rect.h"
 
 
 //####################################################################################

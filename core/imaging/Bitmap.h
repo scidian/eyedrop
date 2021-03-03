@@ -12,7 +12,6 @@
 #include <string>
 #include <vector>
 
-
 // Forward Declarations
 class DrColor;
 class DrPolygonF;
@@ -20,9 +19,10 @@ class DrRect;
 
 // Local constants
 enum Bitmap_Format {
-    Grayscale = 1,
-    ARGB =      4,
+    DROP_BITMAP_FORMAT_GRAYSCALE = 1,
+    DROP_BITMAP_FORMAT_ARGB =      4,
 };
+
 
 //####################################################################################
 //##    DrBitmap
@@ -31,22 +31,22 @@ enum Bitmap_Format {
 class DrBitmap
 {
 public:
-    Bitmap_Format format = Bitmap_Format::ARGB;     // Bitmap format
+    Bitmap_Format format = DROP_BITMAP_FORMAT_ARGB;     // Bitmap format
 
-    int     channels =  4;                          // Number of 8-bit components per pixel (default is 4: R, G, B, A
-    int     width =     0;                          // Image width
-    int     height =    0;                          // Image height
+    int     channels =  4;                              // Number of 8-bit components per pixel (default is 4: R, G, B, A
+    int     width =     0;                              // Image width
+    int     height =    0;                              // Image height
 
-    std::vector<unsigned char> data;                // Pixel data
+    std::vector<unsigned char> data;                    // Pixel data
 
 
 public:
     // Constructors
-    DrBitmap(Bitmap_Format desired_format = Bitmap_Format::ARGB);
+    DrBitmap(Bitmap_Format desired_format = DROP_BITMAP_FORMAT_ARGB);
     ~DrBitmap();
-    DrBitmap(const DrBitmap &bitmap, Bitmap_Format desired_format = Bitmap_Format::ARGB);
-    DrBitmap(int width_, int height_, Bitmap_Format desired_format = Bitmap_Format::ARGB);
-    DrBitmap(std::string filename, Bitmap_Format desired_format = Bitmap_Format::ARGB);
+    DrBitmap(const DrBitmap &bitmap, Bitmap_Format desired_format = DROP_BITMAP_FORMAT_ARGB);
+    DrBitmap(int width_, int height_, Bitmap_Format desired_format = DROP_BITMAP_FORMAT_ARGB);
+    DrBitmap(std::string filename, Bitmap_Format desired_format = DROP_BITMAP_FORMAT_ARGB);
     DrBitmap(const unsigned char *from_data, const int &number_of_bytes,
              bool compressed = true, int width_ = 0, int height_ = 0);
 
@@ -65,7 +65,7 @@ public:
     void    fuzzyAlpha();
 
     // Image Loaders
-    void    loadFromFile(std::string filename, Bitmap_Format desired_format = Bitmap_Format::ARGB);
+    void    loadFromFile(std::string filename, Bitmap_Format desired_format = DROP_BITMAP_FORMAT_ARGB);
     void    loadFromMemory(const unsigned char *compressed_data, const int &number_of_bytes,
                            bool compressed = true, int width_ = 0, int height_ = 0);
 

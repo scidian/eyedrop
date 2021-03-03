@@ -1,4 +1,28 @@
 {
+    "C_Cpp.enhancedColorization": "Enabled",
+
+    "editor.tokenColorCustomizations": {
+        "comments": "#504a47",
+
+        "textMateRules": [
+            {
+                "scope": "variable.other.enummember",
+                "settings": {
+                    "foreground": "#00836d"
+                }
+            }
+        ]
+    },
+    
+    "editor.semanticTokenColorCustomizations": {
+        
+    },
+
+    "workbench.colorCustomizations": {
+        //"editor.background": "#070F0E",
+        //"titleBar.activeBackground": "#ff0000"
+    },
+
     "files.associations": {
         "sokol_time.h": "c",
         "chrono": "cpp",
@@ -46,7 +70,6 @@
         "initializer_list": "cpp",
         "iomanip": "cpp",
         "ios": "cpp",
-        "iostream": "cpp",
         "istream": "cpp",
         "iterator": "cpp",
         "limits": "cpp",
@@ -74,5 +97,5 @@
         "unordered_map": "cpp",
         "utility": "cpp",
         "any": "cpp"
-    }
+    },
 }

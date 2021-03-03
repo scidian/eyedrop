@@ -8,9 +8,9 @@
 //
 #include <math.h>
 
-#include "../math.h"
-#include "point.h"
-#include "pointf.h"
+#include "core/math.h"
+#include "Point.h"
+#include "PointF.h"
 
 
 //####################################################################################

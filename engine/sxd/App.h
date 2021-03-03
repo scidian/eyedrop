@@ -6,8 +6,8 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#ifndef SXD_APP_H
-#define SXD_APP_H
+#ifndef DR_APP_H
+#define DR_APP_H
 
 // Includes
 #include <map>
@@ -19,10 +19,6 @@
 
 // Forward Declarations
 class FONScontext;
-
-
-// Namespace
-namespace sxd {
 
 
 //####################################################################################
@@ -71,21 +67,23 @@ struct state_t {
 
 
 //####################################################################################
-//##    App
+//##    DrApp
 //##        Base class of a Drop Application
 //############################
-class App 
+class DrApp 
 {
 public:
     // Constructor / Destructor
-    App(std::string title, DrColor bg_color = DROP_COLOR_BLACK, int width = 800, int height = 600);
-    ~App();
+    DrApp(std::string title, DrColor bg_color = DROP_COLOR_BLACK, int width = 800, int height = 600);
+    ~DrApp();
 
     // #################### VARIABLES ####################
 private:
     // App Variables
     std::string         m_app_name          { "" };                             // Name of Application
     
+    
+
     // Local Variables
     long                m_key_generator     { c_start_app_key };                // Variable to hand out unique id key's to all child objects
 
@@ -134,7 +132,5 @@ public:
 
 };
 
-}       // end namespace sxd;
 
-
-#endif  // SXD_APP_H
+#endif  // DR_APP_H

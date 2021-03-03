@@ -8,10 +8,10 @@
 //
 #include "imaging.h"
 #include "math.h"
-#include "types/color.h"
-#include "types/point.h"
-#include "types/pointf.h"
-#include "types/rect.h"
+#include "core/geometry/Point.h"
+#include "core/geometry/PointF.h"
+#include "core/geometry/Rect.h"
+#include "core/imaging/Color.h"
 
 namespace Dr
 {

@@ -45,10 +45,6 @@
 #include "App.h"
 
 
-// Namespace
-namespace sxd {
-
-
 // static void font_normal_loaded(const sfetch_response_t* response) {
 //     if (response->fetched) {
 //         state.font_normal = fonsAddFontMem(state.fons, "sans", (unsigned char*)response->buffer_ptr, (int)response->fetched_size,  false);
@@ -95,13 +91,13 @@ sg_blend_state (sokol_blend_alpha) {
 //####################################################################################
 //##    Constructor / Destructor
 //####################################################################################
-App::App(std::string title, DrColor bg_color, int width, int height) {
+DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
     m_bg_color = bg_color;
 
-    initCallback =      std::bind(&App::init, this);
-    frameCallback =     std::bind(&App::frame, this);
-    eventCallback =     std::bind(&App::event, this, std::placeholders::_1);
-    cleanupCallback =   std::bind(&App::cleanup, this);
+    initCallback =      std::bind(&DrApp::init, this);
+    frameCallback =     std::bind(&DrApp::frame, this);
+    eventCallback =     std::bind(&DrApp::event, this, std::placeholders::_1);
+    cleanupCallback =   std::bind(&DrApp::cleanup, this);
     
     m_sokol_app.window_title =          title.c_str();
     m_sokol_app.init_cb =               initWrapper;    
@@ -115,7 +111,7 @@ App::App(std::string title, DrColor bg_color, int width, int height) {
     m_sokol_app.max_dropped_files =     100;
 }
 
-App::~App() {
+DrApp::~DrApp() {
         
 }
 
@@ -124,7 +120,7 @@ App::~App() {
 //####################################################################################
 //##    Sokol App Events - Init
 //####################################################################################
-void App::init(void) {
+void DrApp::init(void) {
     // #################### Sokol Gfx ####################
     sg_desc sokol_gfx {};
         sokol_gfx.context = sapp_sgcontext();                   // Call sokol_glue function to auto obtain values from sokol_app      
@@ -230,7 +226,7 @@ void App::init(void) {
 //####################################################################################
 //##    Sokol App Events - frame (update)
 //####################################################################################
-void App::frame(void) {
+void DrApp::frame(void) {
     // #################### Sokol Fetch ####################
     // Pump the sokol-fetch message queues, and invoke response callbacks
     sfetch_dowork();
@@ -288,7 +284,7 @@ void App::frame(void) {
 //####################################################################################
 //##    Sokol App Events - event (input, windowing, etc)
 //####################################################################################
-void App::event(const sapp_event* e) {
+void DrApp::event(const sapp_event* e) {
     // Store event
     m_state.items[e->type].event = *e;
 
@@ -303,7 +299,7 @@ void App::event(const sapp_event* e) {
 //####################################################################################
 //##    Sokol App Events - cleanup (shutdown)
 //####################################################################################
-void App::cleanup(void) {
+void DrApp::cleanup(void) {
     // #################### Virtual onDestroy() ####################
     this->onDestroy();
 
@@ -318,7 +314,3 @@ void App::cleanup(void) {
     sg_shutdown();
 }
 
-
-
-
-}       // end namespace sxd;

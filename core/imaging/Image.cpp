@@ -8,15 +8,15 @@
 //
 #include "3rd_party/polyline_simplification.h"
 #include "engine/s3d/mesh.h"
-#include "../imaging.h"
-#include "../math.h"
+#include "core/geometry/Point.h"
+#include "core/geometry/PointF.h"
+#include "core/geometry/PolygonF.h"
+#include "core/geometry/Rect.h"
+#include "core/geometry/RectF.h"
+#include "core/imaging.h"
+#include "core/math.h"
 #include "color.h"
 #include "image.h"
-#include "point.h"
-#include "pointf.h"
-#include "polygonf.h"
-#include "rect.h"
-#include "rectf.h"
 
 // Local Constants
 const int c_neighbors =             5;                  // Number of neighbors to smooth points with

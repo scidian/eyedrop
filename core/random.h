@@ -14,7 +14,6 @@
 // Forward Declarations
 class DrColor;
 
-
 namespace Dr {
 
     

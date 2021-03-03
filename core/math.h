@@ -21,7 +21,7 @@ class DrPoint;
 class DrPointF;
 
 // Local Defines
-#define EPSILON     0.00001
+#define DR_EPSILON  0.00001
 #define DR_INFINITY 1e300
 #define DR_PI       3.141592653589793238463
 
@@ -37,12 +37,12 @@ namespace Dr {
     
     //####################################################################################
     //##    FuzzyCompare
-    //##        Returns true if 'number_a' is within +-'EPSILON' of 'number_b'
+    //##        Returns true if 'number_a' is within +-'DR_EPSILON' of 'number_b'
     //##    IsCloseTo
     //##        Returns true if 'number_desired' is within +-'tolerance' of 'number_to_check'
     //############################
     template<class T> bool  FuzzyCompare(const T& number_a, const T& number_b) {
-        return ( (number_a <= (number_b + EPSILON)) && (number_a >= (number_b - EPSILON)) ); }
+        return ( (number_a <= (number_b + DR_EPSILON)) && (number_a >= (number_b - DR_EPSILON)) ); }
 
     template<class T> bool  IsCloseTo(const T& number_desired, const T& number_to_check, const T& tolerance) {
         return ( (number_to_check <= (number_desired + tolerance)) && (number_to_check >= (number_desired - tolerance)) ); }

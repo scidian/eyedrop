@@ -15,16 +15,15 @@
 #include "3rd_party/mesh_optimizer/meshoptimizer.h"
 #include "3rd_party/poly_partition.h"
 #include "3rd_party/polyline_simplification.h"
+#include "core/geometry/Point.h"
+#include "core/geometry/PointF.h"
+#include "core/geometry/PolygonF.h"
 #include "core/imaging.h"
 #include "core/math.h"
 #include "core/types/color.h"
 #include "core/types/image.h"
-#include "core/types/point.h"
-#include "core/types/pointf.h"
-#include "core/types/polygonf.h"
 #include "mesh.h"
 
-#include <iostream>
 
 //####################################################################################
 //##    Builds an Extruded DrImage Model
@@ -166,7 +165,7 @@ void DrMesh::smoothMesh() {
         for(auto n : neighbors) {
             // Add neighbor diminished by distance
             float edge_length = DrVec3(o.px, o.py, o.pz).distance({vertices[n].px, vertices[n].py, vertices[n].pz});
-            if (edge_length ==0) edge_length = std::numeric_limits<float>::epsilon();
+            if (edge_length == 0) edge_length = std::numeric_limits<float>::epsilon();
             float d = 1.f / edge_length;
             v.px += (vertices[n].px * d);
             v.py += (vertices[n].py * d);

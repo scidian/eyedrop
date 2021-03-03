@@ -14,6 +14,7 @@
 // Forward Declarations
 class DrPointF;
 
+
 //####################################################################################
 //##    DrPoint
 //##        Useful 2D int Point Class, adapted from HullFinder
@@ -45,8 +46,5 @@ public:
     DrPointF toPointF();
 };
 
-
 #endif // DR_POINT_H
-
-
 

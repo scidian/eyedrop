@@ -6,11 +6,11 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "../math.h"
-#include "point.h"
-#include "pointf.h"
-#include "rect.h"
-#include "rectf.h"
+#include "core/math.h"
+#include "Point.h"
+#include "PointF.h"
+#include "Rect.h"
+#include "RectF.h"
 
 
 //####################################################################################

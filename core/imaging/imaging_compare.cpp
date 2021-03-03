@@ -7,13 +7,12 @@
 //
 //
 #include "3rd_party/stb/stb_image_write.h"
+#include "core/geometry/Point.h"
+#include "core/geometry/PointF.h"
+#include "core/geometry/Rect.h"
 #include "imaging.h"
 #include "math.h"
 #include "types/color.h"
-#include "types/point.h"
-#include "types/pointf.h"
-#include "types/rect.h"
-
 
 namespace Dr
 {

@@ -6,7 +6,7 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "../math.h"
+#include "core/math.h"
 #include "vec3.h"
 
 

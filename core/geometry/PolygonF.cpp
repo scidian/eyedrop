@@ -12,9 +12,9 @@
 //
 #include <math.h>
 
-#include "../math.h"
-#include "pointf.h"
-#include "polygonf.h"
+#include "core/math.h"
+#include "PointF.h"
+#include "PolygonF.h"
 
 
 //####################################################################################

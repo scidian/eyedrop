@@ -9,8 +9,8 @@
 #ifndef IMAGE_FILTER_H
 #define IMAGE_FILTER_H
 
-#include "types/bitmap.h"
-#include "types/pointf.h"
+#include "core/geometry/PointF.h"
+#include "core/imaging/Bitmap.h"
 
 
 // Filters types

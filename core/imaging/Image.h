@@ -11,9 +11,8 @@
 
 #include <vector>
 
+#include "core/geometry/PointF.h"
 #include "bitmap.h"
-#include "pointf.h"
-
 
 // Local Constants
 #define         vtr                     std::vector

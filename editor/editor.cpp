@@ -11,13 +11,13 @@
 //####################################################################################
 #include "3rd_party/handmade_math.h"
 #include "3rd_party/stb/stb_image.h"
+#include "core/geometry/Rect.h"
 #include "core/imaging.h"
 #include "core/math.h"
 #include "core/random.h"
 #include "core/types/bitmap.h"
 #include "core/types/color.h"
 #include "core/types/image.h"
-#include "core/types/rect.h"
 #include "core/types/vec2.h"
 #include "engine/s3d/mesh.h"
 

@@ -6,31 +6,26 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Mar 01 2021
 //
 //
-#ifndef SXD_BLANK_H
-#define SXD_BLANK_H
+#ifndef DR_BLANK_H
+#define DR_BLANK_H
 
 // Includes
 #include <string>
-
-
-// Namespace
-namespace sxd {
-
 
 // Forward Declarations
 class OtherClass;
 
 
 //####################################################################################
-//##    Blank
+//##    DrBlank
 //##        Blank template header
 //############################
-class Blank 
+class DrBlank 
 {
 public:
     // Constructor / Destructor
-    Blank();
-    ~Blank();
+    DrBlank();
+    ~DrBlank();
 
     // #################### VARIABLES ####################
 private:
@@ -50,7 +45,5 @@ public:
 
 };
 
-}       // end namespace sxd;
 
-
-#endif  // SXD_BLANK_H
+#endif  // DR_BLANK_H
