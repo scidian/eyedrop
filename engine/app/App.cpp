@@ -39,24 +39,6 @@
 #include "shaders/basic_shader.glsl.h"
 
 
-// static void font_normal_loaded(const sfetch_response_t* response) {
-//     if (response->fetched) {
-//         state.font_normal = fonsAddFontMem(state.fons, "sans", (unsigned char*)response->buffer_ptr, (int)response->fetched_size,  false);
-//     } 
-// }
-
-
-// ***** C callback wrappers for using member methods as callbacks functions
-std::function<void()> initCallback;     
-std::function<void()> frameCallback;     
-std::function<void(const sapp_event* e)> eventCallback;      
-std::function<void()> cleanupCallback;    
-extern "C" void initWrapper()                       { initCallback(); }
-extern "C" void frameWrapper()                      { frameCallback(); }
-extern "C" void eventWrapper(const sapp_event* e)   { eventCallback(e); }
-extern "C" void cleanupWrapper()                    { cleanupCallback(); }
-
-
 //####################################################################################
 //##    Blend Functions
 //####################################################################################
@@ -82,6 +64,24 @@ sg_blend_state (sokol_blend_alpha) {
 };
 
 
+// static void font_normal_loaded(const sfetch_response_t* response) {
+//     if (response->fetched) {
+//         state.font_normal = fonsAddFontMem(state.fons, "sans", (unsigned char*)response->buffer_ptr, (int)response->fetched_size,  false);
+//     } 
+// }
+
+
+// ***** C callback wrappers for using member methods as callbacks functions
+std::function<void()> initCallback;     
+std::function<void()> frameCallback;     
+std::function<void(const sapp_event* e)> eventCallback;      
+std::function<void()> cleanupCallback;    
+extern "C" void initWrapper()                       { initCallback(); }
+extern "C" void frameWrapper()                      { frameCallback(); }
+extern "C" void eventWrapper(const sapp_event* e)   { eventCallback(e); }
+extern "C" void cleanupWrapper()                    { cleanupCallback(); }
+
+
 //####################################################################################
 //##    Constructor / Destructor
 //####################################################################################
@@ -89,6 +89,11 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
     m_app_name = title;
     m_bg_color = bg_color;
     
+    initCallback =      std::bind(&DrApp::init, this);
+    frameCallback =     std::bind(&DrApp::frame, this);
+    eventCallback =     std::bind(&DrApp::event, this, std::placeholders::_1);
+    cleanupCallback =   std::bind(&DrApp::cleanup, this);
+
     m_sokol_app.window_title =          m_app_name.c_str();
     m_sokol_app.init_cb =               initWrapper;    
     m_sokol_app.frame_cb =              frameWrapper;
@@ -100,10 +105,6 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
     m_sokol_app.enable_dragndrop =      true;
     m_sokol_app.max_dropped_files =     100;
 
-    initCallback =      std::bind(&DrApp::init, this);
-    frameCallback =     std::bind(&DrApp::frame, this);
-    eventCallback =     std::bind(&DrApp::event, this, std::placeholders::_1);
-    cleanupCallback =   std::bind(&DrApp::cleanup, this);
 }
 
 DrApp::~DrApp() {
@@ -255,19 +256,21 @@ void DrApp::init(void) {
     #endif
 
     // Load font in background
-    sfetch_request_t (sokol_fetch_font) {
-        .path = font_file.c_str(),
-        .buffer_ptr = m_state.font_normal_data,
-        .buffer_size = sizeof(m_state.font_normal_data),
-        .user_void_ptr = this,
-        .callback = +[](const sfetch_response_t* response) {
-            DrApp *app = (DrApp*)(response->user_void_ptr);
-            if (response->fetched && app) {
-                app->m_state.font_normal = fonsAddFontMem(app->m_state.fons, "sans", (unsigned char*)response->buffer_ptr, (int)response->fetched_size, false);
-            } 
-        },       
-    };
-    sfetch_send(&sokol_fetch_font);
+    #ifndef DROP_TARGET_HTML5
+        sfetch_request_t (sokol_fetch_font) {
+            .path = font_file.c_str(),
+            .buffer_ptr = m_state.font_normal_data,
+            .buffer_size = sizeof(m_state.font_normal_data),
+            .user_void_ptr = this,
+            .callback = +[](const sfetch_response_t* response) {
+                DrApp *app = (DrApp*)(response->user_void_ptr);
+                if (response->fetched && app) {
+                    app->m_state.font_normal = fonsAddFontMem(app->m_state.fons, "sans", (unsigned char*)response->buffer_ptr, (int)response->fetched_size, false);
+                } 
+            },       
+        };
+        sfetch_send(&sokol_fetch_font);
+    #endif
 
 
 
@@ -314,7 +317,7 @@ void DrApp::frame(void) {
         fonsSetColor(fs, sfons_rgba(255, 255, 255, 255));;
         fonsSetBlur(fs, 0);
         fonsSetSpacing(fs, 0.0f);
-        fonsDrawText(fs, 10 * dpis, 20 * dpis, ("FPS: " + RemoveTrailingZeros(std::to_string(framesPerSecond()))).c_str(), NULL);
+        fonsDrawText(fs, 10 * dpis, 40 * dpis, ("FPS: " + RemoveTrailingZeros(std::to_string(framesPerSecond()))).c_str(), NULL);
     }
     sfons_flush(fs);            // Flush fontstash's font atlas to sokol-gfx texture
     sgl_draw();
@@ -333,18 +336,18 @@ void DrApp::frame(void) {
     #ifdef DEBUG_ON
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("sokol-gfx")) {
-                ImGui::MenuItem("Capabilities", 0, &sg_imgui.caps.open);
-                ImGui::MenuItem("Buffers", 0, &sg_imgui.buffers.open);
-                ImGui::MenuItem("Images", 0, &sg_imgui.images.open);
-                ImGui::MenuItem("Shaders", 0, &sg_imgui.shaders.open);
-                ImGui::MenuItem("Pipelines", 0, &sg_imgui.pipelines.open);
-                ImGui::MenuItem("Passes", 0, &sg_imgui.passes.open);
-                ImGui::MenuItem("Calls", 0, &sg_imgui.capture.open);
+                ImGui::MenuItem("Capabilities", 0, &m_sg_imgui.caps.open);
+                ImGui::MenuItem("Buffers", 0, &m_sg_imgui.buffers.open);
+                ImGui::MenuItem("Images", 0, &m_sg_imgui.images.open);
+                ImGui::MenuItem("Shaders", 0, &m_sg_imgui.shaders.open);
+                ImGui::MenuItem("Pipelines", 0, &m_sg_imgui.pipelines.open);
+                ImGui::MenuItem("Passes", 0, &m_sg_imgui.passes.open);
+                ImGui::MenuItem("Calls", 0, &m_sg_imgui.capture.open);
                 ImGui::EndMenu();
             }
             ImGui::EndMainMenuBar();
         }
-        sg_imgui_draw(&sg_imgui);
+        sg_imgui_draw(&m_sg_imgui);
     #endif
     
     // Render ImGui
@@ -371,7 +374,7 @@ void DrApp::frame(void) {
 //####################################################################################
 //##    Sokol App Events - event (input, windowing, etc)
 //####################################################################################
-void DrApp::event(const sapp_event* event) {
+void DrApp::event(const sapp_event *event) {
     // Store event
     m_state.items[event->type].event = *event;
 

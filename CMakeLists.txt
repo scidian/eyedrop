@@ -21,16 +21,16 @@ cmake_minimum_required(VERSION 3.10)
 ####################################################################################
 
 
-set(EXPORT_TARGET   "osx")
-set(DEBUG_MODE      "false")        # Options:  "true"    or  "false"
+set(EXPORT_TARGET   "web")
+set(DEBUG_MODE      "true")         # Options:  "true"    or  "false"
 set(APP_TYPE        "player")       # Options:  "editor"  or  "player"
 
 
 ####################################################################################
 ##### DEBUG
 if     (DEBUG_MODE MATCHES "true") 
-    add_compile_definitions(DEBUG_ON)
-    add_compile_definitions(SOKOL_TRACE_HOOKS)
+    add_compile_definitions(DEBUG_ON)               ##### Signal we want Sokol Debug Viewer capability
+    add_compile_definitions(SOKOL_TRACE_HOOKS)      ##### Needed for Sokol Debug Viewer
 endif()
 
 ##### SELECT DESIRED EXECUTABLE (MAIN)
@@ -168,20 +168,31 @@ elseif (EXPORT_TARGET MATCHES "ios")
 ####################################################################################
 elseif (EXPORT_TARGET MATCHES "web")
     # To optimze file size in order: -O1, -O2, -O3, -Os, -Oz 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz -std=c++11 --shell-file ../shell.html") 
+    if (DEBUG_MODE MATCHES "true")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -std=c++11 --shell-file ../shell.html -Werror -Wno-error=unused-command-line-argument") 
+    else()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz -std=c++11 --shell-file ../shell.html") 
+    endif()
     set(CMAKE_C_COMPILER "emcc")
     set(CMAKE_CXX_COMPILER "emcc")
     SET(CMAKE_EXECUTABLE_SUFFIX ".html")
 
-    #   --preload-file assets/shapes.png"       # To allow access to local filesystem
-    #   --embed-file assets/shapes.png"         # To embed in js file, not compatible yet with sokol_app
-    #   -s ALLOW_MEMORY_GROWTH=1                # To allow for dynamic memory access
-    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind ")
+    #   --preload-file assets/shapes.png"       allow access to local filesystem
+    #   --embed-file assets/shapes.png"         embed in js file, not compatible yet with sokol_app
+    #
+    #   --shell-file <path>                     create a html file without emscripten logo and debug shell
+    #   -s WASM=0                               force javascript or
+    #   -s WASM=1                               use webassembly
+    #   -s ASSERTIONS=1                         show errors in javascript console
+    #   -s ALLOW_MEMORY_GROWTH=1                allow for dynamic memory access
+    #   -s TOTAL_MEMORY=x                       embed larger memory up front (default is 16777216... 33554432, 67108864, 134217728, 268435456
+    if (DEBUG_MODE MATCHES "true")
+        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind -s ASSERTIONS=2")    
+    else()
+        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind ")
+    endif()
 
-    # -s WASM=0                         force javascript or
-    # -s WASM=1                         use webassembly
-    # --shell-file <path>               create a html file without emscripten logo and debug shell
-
+    
 
 ####################################################################################    
 elseif (EXPORT_TARGET MATCHES "android")

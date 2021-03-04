@@ -13,11 +13,13 @@
 #include <fstream>
 #include <map>
 #include <string>
-#include "3rd_party/cereal/types/map.hpp"
-#include "3rd_party/cereal/types/memory.hpp"
-#include "3rd_party/cereal/types/string.hpp"
-#include "3rd_party/cereal/types/set.hpp"
-#include "3rd_party/cereal/archives/binary.hpp"
+#ifndef DROP_TARGET_HTML5
+    #include "3rd_party/cereal/types/map.hpp"
+    #include "3rd_party/cereal/types/memory.hpp"
+    #include "3rd_party/cereal/types/string.hpp"
+    #include "3rd_party/cereal/types/set.hpp"
+    #include "3rd_party/cereal/archives/binary.hpp"
+#endif
 #include "3rd_party/sokol/sokol_app.h"
 #include "3rd_party/sokol/sokol_gfx.h"
 #include "3rd_party/sokol/sokol_gl.h"
@@ -92,7 +94,7 @@ public:
     ~DrApp();
 
     // #################### VARIABLES ####################
-protected:
+public:
     // App Variables
     std::string         m_app_name          { "" };                             // Name of Application   
     ProjectMap          m_projects          { };                                // Collection of open Projects
@@ -118,7 +120,7 @@ protected:
 public:
     virtual void    onCreate(void) { }
     virtual void    onUpdate(void) { }
-    virtual void    onEvent(const sapp_event* event) { }
+    virtual void    onEvent(const sapp_event *event) { }
     virtual void    onDestroy(void) { }
 
     
@@ -131,7 +133,7 @@ public:
     // Linked to internal sokol callbacks
     void init(void);
     void frame(void);
-    void event(const sapp_event* e);
+    void event(const sapp_event *event);
     void cleanup(void);
 
     // Local Variable Functions
@@ -150,12 +152,14 @@ public:
 
     // Serialization
     bool saveProjects() {
-        std::ofstream os("out.cereal", std::ios::binary);
-        cereal::BinaryOutputArchive archive( os );
+        #ifndef DROP_TARGET_HTML5
+            std::ofstream os("out.cereal", std::ios::binary);
+            cereal::BinaryOutputArchive archive( os );
 
-        for (auto proj_pair : m_projects) {
-            archive( proj_pair.second );
-        }
+            for (auto proj_pair : m_projects) {
+                archive( proj_pair.second );
+            }
+        #endif
 
         return true;
     };
