@@ -30,33 +30,24 @@ class DrComponent
 
 
     // #################### VARIABLES ####################
-private:
+public:
     // External Borrowed Pointers
-    DrScene            *m_scene         { nullptr };                        // Pointer to the parent Scene
-    DrEntity           *m_entity        { nullptr };                        // Pointer to the parent Entity
+    DrScene            *scene         { nullptr };                          // Pointer to the parent Scene
+    DrEntity           *entity        { nullptr };                          // Pointer to the parent Entity
 
     // Local Variables
-    std::string         m_name;                                             // Name of this component
-    Properties          m_properties;                                       // Holds variables for this component by name (as std::string)
+    std::string         name;                                               // Name of this Component
+    Properties          m_properties;                                       // Holds variables for this Component by Property name (as std::string)
 
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################
 public:
     // Component Events
-    virtual void        init();                                                                     // Called when component is first created in active Scene
-    virtual void        addedToScene();                                                             // Called when Entity is added to active Scene
-    virtual void        draw();                                                                     // Called when it is time to Render Entity
-    virtual bool        update(double time_passed, double time_warp);                               // Called during App->onUpdate() step
-    virtual void        destroy();                                                                  // Called when component is being removed from active Scene
-
-    // Getters
-    std::string         name()      { return m_name; }                                              // Returns name of this Component
-    DrScene*            scene()     { return m_world; }                                             // Returns parent Scene
-    DrEntity*           entity()    { return m_entity; }                                            // Returns parent Entity
-    
-    // Attributes
-    DrVariant           attribute(std::string attribute_name);                                      // Returns attribute by name
-    void                setAttribute(std::string attribute_name, DrVariant value);                  // Sets attribute by name
+    virtual void        init() = 0;                                                                 // Called when component is first created in active Scene
+    virtual void        addedToScene() = 0;                                                         // Called when Entity is added to active Scene
+    virtual void        draw() = 0;                                                                 // Called when it is time to Render Entity
+    virtual bool        update(double time_passed, double time_warp) = 0;                           // Called during App->onUpdate() step
+    virtual void        destroy() = 0;                                                              // Called when component is being removed from active Scene
 
 
     // #################### INTERNAL FUNCTIONS ####################

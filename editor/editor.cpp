@@ -11,16 +11,16 @@
 //####################################################################################
 #include "3rd_party/handmade_math.h"
 #include "3rd_party/stb/stb_image.h"
+#include "core/geometry/Matrix.h"
 #include "core/geometry/Rect.h"
+#include "core/geometry/Vec2.h"
 #include "core/imaging/Bitmap.h"
 #include "core/imaging/Color.h"
 #include "core/imaging/Filter.h"
 #include "core/imaging/Image.h"
 #include "core/Math.h"
 #include "core/Random.h"
-#include "engine/s3d/Matrix.h"
-#include "engine/s3d/Mesh.h"
-#include "engine/s3d/Vec2.h"
+#include "engine/scene3d/Mesh.h"
 
 // ***** Sokol
 #include "3rd_party/sokol/sokol_app.h"

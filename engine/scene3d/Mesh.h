@@ -35,14 +35,14 @@ const float c_extrude_depth =   0.1f;
 const float c_cube_depth =      0.5f;
 
 // Local Enums
-enum class Triangulation {
+enum Triangulation {
     TRIANGULATION_EAR_CLIPPING,
     TRIANGULATION_TRIANGULATE_OPT,
     TRIANGULATION_MONOTONE,
     TRIANGULATION_DELAUNAY,
 };
 
-enum class Triangle_Point {
+enum Triangle_Point {
     TRIANGLE_POINT1,
     TRIANGLE_POINT2,
     TRIANGLE_POINT3,

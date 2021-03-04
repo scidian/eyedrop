@@ -48,6 +48,7 @@
 ## System libraries:
 
 - Any-lite (Boost): https://github.com/martinmoene/any-lite
+- Cereal (BSD): https://github.com/USCiLab/cereal
 - Dear ImGui (MIT): https://github.com/ocornut/imgui
 - Handmade-Math (CC0): https://github.com/StrangeZak/Handmade-Math
 - Stb (MIT): https://github.com/nothings/stb

@@ -10,8 +10,12 @@
 #define DR_APP_H
 
 // Includes
+#include <fstream>
 #include <map>
 #include <string>
+#include "3rd_party/cereal/types/map.hpp"
+#include "3rd_party/cereal/types/memory.hpp"
+#include "3rd_party/cereal/archives/binary.hpp"
 #include "3rd_party/sokol/sokol_app.h"
 #include "3rd_party/sokol/sokol_gfx.h"
 #include "3rd_party/sokol/sokol_gl.h"
@@ -21,6 +25,7 @@
 #include "3rd_party/sokol/sokol_audio.h"
 #include "3rd_party/sokol/sokol_fetch.h"
 #include "core/imaging/Color.h"
+#include "engine/data/Project.h"
 
 // Forward Declarations
 class FONScontext;
@@ -30,8 +35,8 @@ class FONScontext;
 //##    Constants 
 //############################
 // Constants
-const long      c_max_file_size = (1024 * 1024);
-const int       c_start_app_key =  0;
+const long      c_max_file_size =   (1024 * 1024);
+const int       c_start_app_key =   1001;
 
 
 //####################################################################################
@@ -82,12 +87,20 @@ public:
     DrApp(std::string title = "Drop Creator", DrColor bg_color = DROP_COLOR_BLACK, int width = 800, int height = 600);
     ~DrApp();
 
+
+    // Serialization
+    bool saveProject() {
+        std::ofstream os("out.cereal", std::ios::binary);
+        cereal::BinaryOutputArchive archive( os );
+
+        SomeData myData;
+        archive( myData );
+    };
+
     // #################### VARIABLES ####################
 protected:
     // App Variables
-    std::string         m_app_name          { "" };                             // Name of Application
-    
-    
+    std::string         m_app_name          { "" };                             // Name of Application   
 
     // Local Variables
     long                m_key_generator     { c_start_app_key };                // Variable to hand out unique id key's to all child objects

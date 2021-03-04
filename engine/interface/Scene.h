@@ -28,10 +28,11 @@ public:
     ~DrScene();
 
     // #################### VARIABLES ####################
-private:
+public:
     // Local Variables
-    std::string                     m_name          { };                    // Name of this Scene
-    std::map<long, DrEntity*>       m_entities      { };                    // Entities within this Scene
+    std::string                     name            { };                    // Name of this Scene
+    std::map<long, DrEntity*>       children        { };                    // Entities within this Scene
+
         
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################

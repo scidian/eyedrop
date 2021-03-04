@@ -30,7 +30,6 @@ public:
     // #################### VARIABLES ####################
 private:
     // Scene2D Variables
-    std::map<long, DrEntity*>       children            {};
         
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################

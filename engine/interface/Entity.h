@@ -30,8 +30,8 @@ public:
     // #################### VARIABLES ####################
 private:
     // Local Variables
-    std::string         m_name;                                             // Name of this component
-    std::map<long, DrComponent*>       components            {};
+    std::string                         m_name                      { };                            // Name of this Entity
+    std::map<long, DrComponent*>        m_components                { };
         
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################
