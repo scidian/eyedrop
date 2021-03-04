@@ -70,16 +70,17 @@ sg_blend_state (sokol_blend_alpha) {
 //     } 
 // }
 
+//####################################################################################
+//##    Sokol File Scope Stuff
+//####################################################################################
+// Local reference to DrApp Singleton for Sokol App
+DrApp   l_app;          
 
 // ***** C callback wrappers for using member methods as callbacks functions
-std::function<void()> initCallback;     
-std::function<void()> frameCallback;     
-std::function<void(const sapp_event* e)> eventCallback;      
-std::function<void()> cleanupCallback;    
-extern "C" void initWrapper()                       { initCallback(); }
-extern "C" void frameWrapper()                      { frameCallback(); }
-extern "C" void eventWrapper(const sapp_event* e)   { eventCallback(e); }
-extern "C" void cleanupWrapper()                    { cleanupCallback(); }
+void initWrapper(void)                      { l_app.init(); }
+void frameWrapper(void)                     { l_app.frame(); }
+void eventWrapper(const sapp_event *event)  { l_app.event(event); }
+void cleanupWrapper(void)                   { l_app.cleanup(); }
 
 
 //####################################################################################
@@ -88,11 +89,8 @@ extern "C" void cleanupWrapper()                    { cleanupCallback(); }
 DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
     m_app_name = title;
     m_bg_color = bg_color;
-    
-    initCallback =      std::bind(&DrApp::init, this);
-    frameCallback =     std::bind(&DrApp::frame, this);
-    eventCallback =     std::bind(&DrApp::event, this, std::placeholders::_1);
-    cleanupCallback =   std::bind(&DrApp::cleanup, this);
+
+    l_app = *this;
 
     m_sokol_app.window_title =          m_app_name.c_str();
     m_sokol_app.init_cb =               initWrapper;    
@@ -104,7 +102,6 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
     m_sokol_app.enable_clipboard =      true;
     m_sokol_app.enable_dragndrop =      true;
     m_sokol_app.max_dropped_files =     100;
-
 }
 
 DrApp::~DrApp() {
@@ -217,7 +214,6 @@ void DrApp::init(void) {
 
 
 
-
     // ***** Font Setup, make sure the fontstash atlas size is pow-2 (all gpu textures should be, especially for webgl)
     m_state.dpi_scale = sapp_dpi_scale();
     const int atlas_size = RoundPowerOf2(512.0f * m_state.dpi_scale);
@@ -273,10 +269,10 @@ void DrApp::init(void) {
     #endif
 
 
-
     // #################### Virtual onCreate() ####################
     this->onCreate();
 }
+
 
 //####################################################################################
 //##    Sokol App Events - frame (update)

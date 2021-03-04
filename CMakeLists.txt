@@ -22,7 +22,7 @@ cmake_minimum_required(VERSION 3.10)
 
 
 set(EXPORT_TARGET   "web")
-set(DEBUG_MODE      "true")         # Options:  "true"    or  "false"
+set(DEBUG_MODE      "false")        # Options:  "true"    or  "false"
 set(APP_TYPE        "player")       # Options:  "editor"  or  "player"
 
 
@@ -71,7 +71,7 @@ elseif (EXPORT_TARGET MATCHES "linux")
 endif()
 
 
-##### Include Directories
+##### Include Directories, allows for easy #includes...
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/3rd_party)
 
@@ -187,9 +187,9 @@ elseif (EXPORT_TARGET MATCHES "web")
     #   -s ALLOW_MEMORY_GROWTH=1                allow for dynamic memory access
     #   -s TOTAL_MEMORY=x                       embed larger memory up front (default is 16777216... 33554432, 67108864, 134217728, 268435456
     if (DEBUG_MODE MATCHES "true")
-        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind -s ASSERTIONS=2")    
+        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s TOTAL_MEMORY=33554432 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind -s ASSERTIONS=2")    
     else()
-        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind ")
+        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s TOTAL_MEMORY=33554432 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind ")
     endif()
 
     
