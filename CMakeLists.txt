@@ -87,9 +87,12 @@ file(GLOB SOURCE_CODE_FILES
     "core/geometry/*.c**"
     "core/imaging/*.c**"
     "engine/*.c**"
-    "engine/s2d/*.c**"
-    "engine/s3d/*.c**"
-    "engine/sxd/*.c**"
+    "engine/app/*.c**"
+    "engine/app/filesystem.c**"
+    "engine/interface/*.c**"
+    "engine/scene2d/*.c**"
+    "engine/scene3d/*.c**"
+    "engine/sceneui/*.c**"
 )
 add_executable(${PROJECT_NAME} ${SOURCE_CODE_FILES})
 
@@ -163,7 +166,7 @@ elseif (EXPORT_TARGET MATCHES "ios")
 ####################################################################################
 elseif (EXPORT_TARGET MATCHES "web")
     # To optimze file size in order: -O1, -O2, -O3, -Os, -Oz 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz -std=c++17 --shell-file ../shell.html") 
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz -std=c++11 --shell-file ../shell.html") 
     set(CMAKE_C_COMPILER "emcc")
     set(CMAKE_CXX_COMPILER "emcc")
     SET(CMAKE_EXECUTABLE_SUFFIX ".html")

@@ -9,6 +9,8 @@
 #ifndef DR_RECT_H
 #define DR_RECT_H
 
+#include "3rd_party/handmade_math.h"
+
 // Forward Declarations
 class DrPoint;
 class DrPointF;
@@ -34,6 +36,7 @@ public:
     DrRect(const DrPoint &top_left, const DrPoint &bottom_right);
     DrRect(const DrRect  &r);
     DrRect(const DrRectF &r);
+    DrRect(const hmm_vec4 &v);
 
     // Conversion
     DrRectF         toRectF();

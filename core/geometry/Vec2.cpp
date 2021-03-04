@@ -17,6 +17,7 @@ DrVec2::DrVec2()                        { x = 0.f;                      y = 0.f;
 DrVec2::DrVec2(float f)                 { x = f;                        y = f; }
 DrVec2::DrVec2(float x_, float y_)      { x = x_;                       y = y_; }
 DrVec2::DrVec2(const DrVec2 &v)         { x = static_cast<float>(v.x);  y = static_cast<float>(v.y); }
+DrVec2::DrVec2(const hmm_vec2 &v)       { x = static_cast<float>(v.X);  y = static_cast<float>(v.Y); }
 
 
 //####################################################################################

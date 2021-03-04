@@ -32,6 +32,7 @@ public:
     DrVec3(double x_, double y_, double z_);
     DrVec3(int    x_, int    y_, int    z_);
     DrVec3(const DrVec3 &v);
+    DrVec3(const hmm_vec3 &v);
 
     // Vector 3 Functions
     /// @brief Calculates triangle normal from three points of triangle

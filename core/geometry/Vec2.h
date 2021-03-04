@@ -10,6 +10,7 @@
 #define DR_VEC2_H
 
 #include <cmath>
+#include "3rd_party/handmade_math.h"
 
 
 //####################################################################################
@@ -28,6 +29,7 @@ public:
     DrVec2(float f);
     DrVec2(float x_, float y_);
     DrVec2(const DrVec2 &v);
+    DrVec2(const hmm_vec2 &v);
 
     // Common Vector 2 Types
     static DrVec2   unitX()         { return DrVec2(1.f, 0.f); }

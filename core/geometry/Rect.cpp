@@ -46,6 +46,12 @@ DrRect::DrRect(const DrRectF &r) {
     width =     static_cast<int>(r.width);
     height =    static_cast<int>(r.height);
 }
+DrRect::DrRect(const hmm_vec4 &v) {
+    x =         static_cast<int>(v.X);
+    y =         static_cast<int>(v.Y);
+    width =     static_cast<int>(v.Z);
+    height =    static_cast<int>(v.W);
+}
 
 
 //####################################################################################

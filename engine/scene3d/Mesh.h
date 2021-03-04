@@ -11,7 +11,8 @@
 
 #include <map>
 #include <vector>
-#include "Vec3.h"
+#include "core/geometry/Vec3.h"
+
 
 // Forward Declarations
 class DrBitmap;
@@ -34,14 +35,14 @@ const float c_extrude_depth =   0.1f;
 const float c_cube_depth =      0.5f;
 
 // Local Enums
-enum Triangulation {
+enum class Triangulation {
     TRIANGULATION_EAR_CLIPPING,
     TRIANGULATION_TRIANGULATE_OPT,
     TRIANGULATION_MONOTONE,
     TRIANGULATION_DELAUNAY,
 };
 
-enum Triangle_Point {
+enum class Triangle_Point {
     TRIANGLE_POINT1,
     TRIANGLE_POINT2,
     TRIANGLE_POINT3,

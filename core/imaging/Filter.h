@@ -14,7 +14,7 @@
 
 
 // Filters types
-enum Image_Filter_Type {                    // ApplySinglePixelFilter 'value' argument
+enum class Image_Filter_Type {              // ApplySinglePixelFilter 'value' argument
     DROP_IMAGE_FILTER_BRIGHTNESS,           //      -255 to 255
     DROP_IMAGE_FILTER_CONTRAST,             //      -255 to 255
     DROP_IMAGE_FILTER_SATURATION,           //      -255 to 255 
@@ -25,7 +25,7 @@ enum Image_Filter_Type {                    // ApplySinglePixelFilter 'value' ar
 };
 
 // Imaging Enumerations
-enum Flood_Fill_Type {
+enum class Flood_Fill_Type {
     DROP_FLOOD_FILL_COMPARE_4,
     DROP_FLOOD_FILL_COMPARE_8,
 };

@@ -15,7 +15,7 @@
 //####################################################################################
 //##    Easy Colors
 //############################
-enum Colors {
+enum class Colors {
     DROP_COLOR_TRANSPARENT =    0x00000000,
 
     DROP_COLOR_WHITE =          0xFFFFFFFF,

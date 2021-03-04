@@ -18,7 +18,7 @@ class DrPolygonF;
 class DrRect;
 
 // Local constants
-enum Bitmap_Format {
+enum class Bitmap_Format {
     DROP_BITMAP_FORMAT_GRAYSCALE = 1,
     DROP_BITMAP_FORMAT_ARGB =      4,
 };
