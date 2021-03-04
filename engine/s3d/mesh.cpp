@@ -6,8 +6,8 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "3rd_party/handmade_math.h"
-#include "core/math.h"
+#include "core/Math.h"
+#include "engine/s3d/Matrix.h"
 #include "engine/s3d/Mesh.h"
 #include "engine/s3d/Vec2.h"
 #include "engine/s3d/Vec3.h"
@@ -57,9 +57,9 @@ void DrMesh::add(const DrVec3 &vertex, const DrVec3 &normal, const DrVec2 &text_
     v.tx = text_coord.x;
     v.ty = text_coord.y;
     switch (point_number) {
-        case Triangle_Point::Point1:    v.bx = 1.0;   v.by = 0.0;   v.bz = 0.0;   break;
-        case Triangle_Point::Point2:    v.bx = 0.0;   v.by = 1.0;   v.bz = 0.0;   break;
-        case Triangle_Point::Point3:    v.bx = 0.0;   v.by = 0.0;   v.bz = 1.0;   break;
+        case TRIANGLE_POINT1:    v.bx = 1.0;   v.by = 0.0;   v.bz = 0.0;   break;
+        case TRIANGLE_POINT2:    v.bx = 0.0;   v.by = 1.0;   v.bz = 0.0;   break;
+        case TRIANGLE_POINT3:    v.bx = 0.0;   v.by = 0.0;   v.bz = 1.0;   break;
     }
     vertices.push_back(v);
 }
@@ -103,12 +103,12 @@ void DrMesh::initializeTextureQuad() {
 
     DrVec3 n = DrVec3::triangleNormal(DrVec3(x1, y1, 0.f), DrVec3(x3, y3, 0.f), DrVec3(x2, y2, 0.f));
 
-    add(DrVec3(x1, y1, 0.f), n, DrVec2(tx1, ty1), Triangle_Point::Point1);
-    add(DrVec3(x2, y2, 0.f), n, DrVec2(tx2, ty2), Triangle_Point::Point2);
-    add(DrVec3(x3, y3, 0.f), n, DrVec2(tx3, ty3), Triangle_Point::Point3);
-    add(DrVec3(x2, y2, 0.f), n, DrVec2(tx2, ty2), Triangle_Point::Point1);
-    add(DrVec3(x4, y4, 0.f), n, DrVec2(tx4, ty4), Triangle_Point::Point2);
-    add(DrVec3(x3, y3, 0.f), n, DrVec2(tx3, ty3), Triangle_Point::Point3);
+    add(DrVec3(x1, y1, 0.f), n, DrVec2(tx1, ty1), TRIANGLE_POINT1);
+    add(DrVec3(x2, y2, 0.f), n, DrVec2(tx2, ty2), TRIANGLE_POINT2);
+    add(DrVec3(x3, y3, 0.f), n, DrVec2(tx3, ty3), TRIANGLE_POINT3);
+    add(DrVec3(x2, y2, 0.f), n, DrVec2(tx2, ty2), TRIANGLE_POINT1);
+    add(DrVec3(x4, y4, 0.f), n, DrVec2(tx4, ty4), TRIANGLE_POINT2);
+    add(DrVec3(x3, y3, 0.f), n, DrVec2(tx3, ty3), TRIANGLE_POINT3);
 }
 
 
@@ -167,7 +167,7 @@ void DrMesh::initializeTextureCone() {
     DrVec3 point_bl(x2, y2, depth);
     DrVec3 point_br(x3, y3, depth);
 
-    hmm_m4 rotate = Dr::IdentityMatrix();
+    hmm_m4 rotate = DrMatrix::identityMatrix();
 
     for (int i = 0; i < 4; ++i) {
         // ... If wanting to use just bottom half and rotate quarters around texture
@@ -175,9 +175,9 @@ void DrMesh::initializeTextureCone() {
         ///} else if (i == 2) {    tx2 = 0.0; ty2 = 1.0;       tx3 = 0.0; ty3 = 0.0;
         ///} else if (i == 3) {    tx2 = 1.0; ty2 = 1.0;       tx3 = 0.0; ty3 = 1.0; }
 
-        add(point_t , n, DrVec2(tx1, ty1), Triangle_Point::Point1);
-        add(point_bl, n, DrVec2(tx2, ty2), Triangle_Point::Point2);
-        add(point_br, n, DrVec2(tx3, ty3), Triangle_Point::Point3);
+        add(point_t , n, DrVec2(tx1, ty1), TRIANGLE_POINT1);
+        add(point_bl, n, DrVec2(tx2, ty2), TRIANGLE_POINT2);
+        add(point_br, n, DrVec2(tx3, ty3), TRIANGLE_POINT3);
 
         rotate = HMM_MultiplyMat4(rotate, HMM_Rotate(90.f, { 0.0, 1.0, 0.0 }));         // Angle is in degrees
 
@@ -197,7 +197,7 @@ void DrMesh::initializeTextureCone() {
     tx3 = 1.0; ty3 = 0.0;
     tx4 = 0.0; ty4 = 0.0;
 
-    rotate = Dr::IdentityMatrix();
+    rotate = DrMatrix::identityMatrix();
     DrVec3  nf;                                 // Normal Front
     DrVec3  p1f, p2f, p3f, p4f;                 // Point 1 Front, etc
 
@@ -215,12 +215,12 @@ void DrMesh::initializeTextureCone() {
     p3f =   rotate * p3f;
     p4f =   rotate * p4f;
 
-    add(p1f, nf, DrVec2(tx1, ty1), Triangle_Point::Point1);
-    add(p2f, nf, DrVec2(tx2, ty2), Triangle_Point::Point2);
-    add(p3f, nf, DrVec2(tx3, ty3), Triangle_Point::Point3);
-    add(p2f, nf, DrVec2(tx2, ty2), Triangle_Point::Point1);
-    add(p4f, nf, DrVec2(tx4, ty4), Triangle_Point::Point2);
-    add(p3f, nf, DrVec2(tx3, ty3), Triangle_Point::Point3);
+    add(p1f, nf, DrVec2(tx1, ty1), TRIANGLE_POINT1);
+    add(p2f, nf, DrVec2(tx2, ty2), TRIANGLE_POINT2);
+    add(p3f, nf, DrVec2(tx3, ty3), TRIANGLE_POINT3);
+    add(p2f, nf, DrVec2(tx2, ty2), TRIANGLE_POINT1);
+    add(p4f, nf, DrVec2(tx4, ty4), TRIANGLE_POINT2);
+    add(p3f, nf, DrVec2(tx3, ty3), TRIANGLE_POINT3);
 }
 
 
@@ -231,7 +231,7 @@ void DrMesh::cube(float x1, float y1, float tx1, float ty1,
                               float x2, float y2, float tx2, float ty2,
                               float x3, float y3, float tx3, float ty3,
                               float x4, float y4, float tx4, float ty4, float depth) {
-    hmm_m4 rotate = Dr::IdentityMatrix();
+    hmm_m4 rotate = DrMatrix::identityMatrix();
     DrVec3 nf, nb;                                   // Normal Front, Normal Back
     DrVec3 p1f, p2f, p3f, p4f;                       // Point 1 Front, etc
     DrVec3 p1b, p2b, p3b, p4b;                       // Point 1 Back, etc
@@ -266,19 +266,19 @@ void DrMesh::cube(float x1, float y1, float tx1, float ty1,
         p3b =   rotate * p3b;
         p4b =   rotate * p4b;
 
-        add(p1f, nf, DrVec2(tx1, ty1), Triangle_Point::Point1);
-        add(p2f, nf, DrVec2(tx2, ty2), Triangle_Point::Point2);
-        add(p3f, nf, DrVec2(tx3, ty3), Triangle_Point::Point3);
-        add(p2f, nf, DrVec2(tx2, ty2), Triangle_Point::Point1);
-        add(p4f, nf, DrVec2(tx4, ty4), Triangle_Point::Point2);
-        add(p3f, nf, DrVec2(tx3, ty3), Triangle_Point::Point3);
+        add(p1f, nf, DrVec2(tx1, ty1), TRIANGLE_POINT1);
+        add(p2f, nf, DrVec2(tx2, ty2), TRIANGLE_POINT2);
+        add(p3f, nf, DrVec2(tx3, ty3), TRIANGLE_POINT3);
+        add(p2f, nf, DrVec2(tx2, ty2), TRIANGLE_POINT1);
+        add(p4f, nf, DrVec2(tx4, ty4), TRIANGLE_POINT2);
+        add(p3f, nf, DrVec2(tx3, ty3), TRIANGLE_POINT3);
 
-        add(p1b, nb, DrVec2(tx1, ty1), Triangle_Point::Point1);
-        add(p3b, nb, DrVec2(tx3, ty3), Triangle_Point::Point2);
-        add(p2b, nb, DrVec2(tx2, ty2), Triangle_Point::Point3);
-        add(p2b, nb, DrVec2(tx2, ty2), Triangle_Point::Point1);
-        add(p3b, nb, DrVec2(tx3, ty3), Triangle_Point::Point2);
-        add(p4b, nb, DrVec2(tx4, ty4), Triangle_Point::Point3);
+        add(p1b, nb, DrVec2(tx1, ty1), TRIANGLE_POINT1);
+        add(p3b, nb, DrVec2(tx3, ty3), TRIANGLE_POINT2);
+        add(p2b, nb, DrVec2(tx2, ty2), TRIANGLE_POINT3);
+        add(p2b, nb, DrVec2(tx2, ty2), TRIANGLE_POINT1);
+        add(p3b, nb, DrVec2(tx3, ty3), TRIANGLE_POINT2);
+        add(p4b, nb, DrVec2(tx4, ty4), TRIANGLE_POINT3);
     }
 }
 
@@ -293,23 +293,23 @@ void DrMesh::quad(float x1, float y1, float tx1, float ty1,
     DrVec3 n;
     n = DrVec3::triangleNormal(DrVec3(x1, y1, 0.f), DrVec3(x3, y3, 0.f), DrVec3(x2, y2, 0.f));
 
-    add(DrVec3(x1, y1, +c_extrude_depth), n, DrVec2(tx1, ty1), Triangle_Point::Point1);
-    add(DrVec3(x2, y2, +c_extrude_depth), n, DrVec2(tx2, ty2), Triangle_Point::Point2);
-    add(DrVec3(x3, y3, +c_extrude_depth), n, DrVec2(tx3, ty3), Triangle_Point::Point3);
+    add(DrVec3(x1, y1, +c_extrude_depth), n, DrVec2(tx1, ty1), TRIANGLE_POINT1);
+    add(DrVec3(x2, y2, +c_extrude_depth), n, DrVec2(tx2, ty2), TRIANGLE_POINT2);
+    add(DrVec3(x3, y3, +c_extrude_depth), n, DrVec2(tx3, ty3), TRIANGLE_POINT3);
 
-    add(DrVec3(x2, y2, +c_extrude_depth), n, DrVec2(tx2, ty2), Triangle_Point::Point1);
-    add(DrVec3(x4, y4, +c_extrude_depth), n, DrVec2(tx4, ty4), Triangle_Point::Point2);
-    add(DrVec3(x3, y3, +c_extrude_depth), n, DrVec2(tx3, ty3), Triangle_Point::Point3);
+    add(DrVec3(x2, y2, +c_extrude_depth), n, DrVec2(tx2, ty2), TRIANGLE_POINT1);
+    add(DrVec3(x4, y4, +c_extrude_depth), n, DrVec2(tx4, ty4), TRIANGLE_POINT2);
+    add(DrVec3(x3, y3, +c_extrude_depth), n, DrVec2(tx3, ty3), TRIANGLE_POINT3);
 
     n = DrVec3::triangleNormal(DrVec3(x1, y1, 0.f), DrVec3(x2, y2, 0.f), DrVec3(x3, y3, 0.f));
 
-    add(DrVec3(x1, y1, -c_extrude_depth), n, DrVec2(tx1, ty1), Triangle_Point::Point1);
-    add(DrVec3(x3, y3, -c_extrude_depth), n, DrVec2(tx3, ty3), Triangle_Point::Point2);
-    add(DrVec3(x2, y2, -c_extrude_depth), n, DrVec2(tx2, ty2), Triangle_Point::Point3);
+    add(DrVec3(x1, y1, -c_extrude_depth), n, DrVec2(tx1, ty1), TRIANGLE_POINT1);
+    add(DrVec3(x3, y3, -c_extrude_depth), n, DrVec2(tx3, ty3), TRIANGLE_POINT2);
+    add(DrVec3(x2, y2, -c_extrude_depth), n, DrVec2(tx2, ty2), TRIANGLE_POINT3);
 
-    add(DrVec3(x2, y2, -c_extrude_depth), n, DrVec2(tx2, ty2), Triangle_Point::Point1);
-    add(DrVec3(x3, y3, -c_extrude_depth), n, DrVec2(tx3, ty3), Triangle_Point::Point2);
-    add(DrVec3(x4, y4, -c_extrude_depth), n, DrVec2(tx4, ty4), Triangle_Point::Point3);
+    add(DrVec3(x2, y2, -c_extrude_depth), n, DrVec2(tx2, ty2), TRIANGLE_POINT1);
+    add(DrVec3(x3, y3, -c_extrude_depth), n, DrVec2(tx3, ty3), TRIANGLE_POINT2);
+    add(DrVec3(x4, y4, -c_extrude_depth), n, DrVec2(tx4, ty4), TRIANGLE_POINT3);
 }
 
 
@@ -324,15 +324,15 @@ void DrMesh::triangle(float x1, float y1, float tx1, float ty1,
 
     float depth = c_extrude_depth * image_size;
 
-    add(DrVec3(x1, y1, +depth), n, DrVec2(tx1, ty1), Triangle_Point::Point1);
-    add(DrVec3(x2, y2, +depth), n, DrVec2(tx2, ty2), Triangle_Point::Point2);
-    add(DrVec3(x3, y3, +depth), n, DrVec2(tx3, ty3), Triangle_Point::Point3);
+    add(DrVec3(x1, y1, +depth), n, DrVec2(tx1, ty1), TRIANGLE_POINT1);
+    add(DrVec3(x2, y2, +depth), n, DrVec2(tx2, ty2), TRIANGLE_POINT2);
+    add(DrVec3(x3, y3, +depth), n, DrVec2(tx3, ty3), TRIANGLE_POINT3);
 
     n = DrVec3::triangleNormal(DrVec3(x1, y1, 0.f), DrVec3(x2, y2, 0.f), DrVec3(x3, y3, 0.f));
 
-    add(DrVec3(x1, y1, -depth), n, DrVec2(tx1, ty1), Triangle_Point::Point1);
-    add(DrVec3(x3, y3, -depth), n, DrVec2(tx3, ty3), Triangle_Point::Point2);
-    add(DrVec3(x2, y2, -depth), n, DrVec2(tx2, ty2), Triangle_Point::Point3);
+    add(DrVec3(x1, y1, -depth), n, DrVec2(tx1, ty1), TRIANGLE_POINT1);
+    add(DrVec3(x3, y3, -depth), n, DrVec2(tx3, ty3), TRIANGLE_POINT2);
+    add(DrVec3(x2, y2, -depth), n, DrVec2(tx2, ty2), TRIANGLE_POINT3);
 }
 
 
@@ -351,15 +351,15 @@ void DrMesh::extrude(float x1, float y1, float tx1, float ty1,
         DrVec3 n;
         n = DrVec3::triangleNormal(DrVec3(x1, y1, front), DrVec3(x2, y2, front), DrVec3(x1, y1, back));
 
-        add(DrVec3(x1, y1, front), n, DrVec2(tx1, ty1), Triangle_Point::Point1);
-        add(DrVec3(x1, y1, back),  n, DrVec2(tx1, ty1), Triangle_Point::Point2);
-        add(DrVec3(x2, y2, front), n, DrVec2(tx2, ty2), Triangle_Point::Point3);
+        add(DrVec3(x1, y1, front), n, DrVec2(tx1, ty1), TRIANGLE_POINT1);
+        add(DrVec3(x1, y1, back),  n, DrVec2(tx1, ty1), TRIANGLE_POINT2);
+        add(DrVec3(x2, y2, front), n, DrVec2(tx2, ty2), TRIANGLE_POINT3);
 
         n = DrVec3::triangleNormal(DrVec3(x2, y2, front), DrVec3(x2, y2, back), DrVec3(x1, y1, back));
 
-        add(DrVec3(x2, y2, front), n, DrVec2(tx2, ty2), Triangle_Point::Point1);
-        add(DrVec3(x1, y1, back),  n, DrVec2(tx1, ty1), Triangle_Point::Point2);
-        add(DrVec3(x2, y2, back),  n, DrVec2(tx2, ty2), Triangle_Point::Point3);
+        add(DrVec3(x2, y2, front), n, DrVec2(tx2, ty2), TRIANGLE_POINT1);
+        add(DrVec3(x1, y1, back),  n, DrVec2(tx1, ty1), TRIANGLE_POINT2);
+        add(DrVec3(x2, y2, back),  n, DrVec2(tx2, ty2), TRIANGLE_POINT3);
 
         front -= step;
         back  -= step;

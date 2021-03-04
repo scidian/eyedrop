@@ -6,9 +6,7 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "string.h"
-
-namespace Dr {
+#include "core/Strings.h"
 
 
 //####################################################################################
@@ -45,24 +43,11 @@ bool IsInteger(const std::string &source) {
 }
 
 // Returns interger as hex string
-std::string ToHex(const int integer) {
+std::string HexString(const int integer) {
     std::stringstream ss;
     ss << std::hex << static_cast<int>(integer);
     return ss.str();
 }
-
-
-
-
-}   // End namespace Dr
-
-
-
-
-
-
-
-
 
 
 

@@ -45,7 +45,7 @@ double PerpendicularDistance(const DrPointF &pt, const DrPointF &line_start, con
 }
 
 
-std::vector<DrPointF> PolylineSimplification::RamerDouglasPeucker(const std::vector<DrPointF> &point_list, double epsilon) {
+std::vector<DrPointF> PolylineSimplification::ramerDouglasPeucker(const std::vector<DrPointF> &point_list, double epsilon) {
     std::vector<DrPointF> simplified;
 
     if (point_list.size() < 2) {
@@ -70,8 +70,8 @@ std::vector<DrPointF> PolylineSimplification::RamerDouglasPeucker(const std::vec
         // Recursive call
         std::vector<DrPointF> first_line { point_list.begin(), point_list.begin() + static_cast<long>(index) + 1 };
         std::vector<DrPointF> last_line  { point_list.begin() + static_cast<long>(index), point_list.end() };
-        std::vector<DrPointF> recursive_results1 = RamerDouglasPeucker(first_line, epsilon);
-        std::vector<DrPointF> recursive_results2 = RamerDouglasPeucker(last_line,  epsilon);
+        std::vector<DrPointF> recursive_results1 = ramerDouglasPeucker(first_line, epsilon);
+        std::vector<DrPointF> recursive_results2 = ramerDouglasPeucker(last_line,  epsilon);
 
         // Build the result list
         simplified.assign(recursive_results1.begin(), recursive_results1.end() - 1);

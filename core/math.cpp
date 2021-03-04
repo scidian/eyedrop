@@ -9,9 +9,7 @@
 #include "core/geometry/Point.h"
 #include "core/geometry/PointF.h"
 #include "core/imaging/Color.h"
-#include "core/math.h"
-
-namespace Dr {
+#include "core/Math.h"
 
 
 //####################################################################################
@@ -157,48 +155,11 @@ DrPointF RotatePointAroundOrigin(DrPointF point, DrPointF origin, double angle, 
 //####################################################################################
 // Compares 2 colors, returns true if they are the same
 bool IsSameColor(const DrColor &color1, const DrColor &color2, double tolerance) {
-    return ( Dr::IsCloseTo(color1.redF(),   color2.redF(),   tolerance) &&
-             Dr::IsCloseTo(color1.greenF(), color2.greenF(), tolerance) &&
-             Dr::IsCloseTo(color1.blueF(),  color2.blueF(),  tolerance) &&
-             Dr::IsCloseTo(color1.alphaF(), color2.alphaF(), tolerance) );
+    return (IsCloseTo(color1.redF(),   color2.redF(),   tolerance) &&
+            IsCloseTo(color1.greenF(), color2.greenF(), tolerance) &&
+            IsCloseTo(color1.blueF(),  color2.blueF(),  tolerance) &&
+            IsCloseTo(color1.alphaF(), color2.alphaF(), tolerance) );
 }
-
-
-//####################################################################################
-//##
-//##    Matrix Functions
-//##
-//############################
-hmm_m4 IdentityMatrix() {
-    hmm_m4 m;
-    m.Elements[0][0] = 1.0;
-    m.Elements[0][1] = 0.0;
-    m.Elements[0][2] = 0.0;
-    m.Elements[0][3] = 0.0;
-
-    m.Elements[1][0] = 0.0;
-    m.Elements[1][1] = 1.0;
-    m.Elements[1][2] = 0.0;
-    m.Elements[1][3] = 0.0;
-
-    m.Elements[2][0] = 0.0;
-    m.Elements[2][1] = 0.0;
-    m.Elements[2][2] = 1.0;
-    m.Elements[2][3] = 0.0;
-
-    m.Elements[3][0] = 0.0;
-    m.Elements[3][1] = 0.0;
-    m.Elements[3][2] = 0.0;
-    m.Elements[3][3] = 1.0;
-    return m;
-}
-
-
-
-}   // End namespace Dr
-
-
-
 
 
 

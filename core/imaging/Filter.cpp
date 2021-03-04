@@ -12,21 +12,21 @@
 #include "core/geometry/Rect.h"
 #include "core/imaging/Color.h"
 #include "core/imaging/Filter.h"
-#include "core/math.h"
+#include "core/Math.h"
 
 
 //####################################################################################
 //##    Loops through image and changes one pixel at a time based on a
 //##    premultiplied table
 //####################################################################################
-DrBitmap DrFilter::ApplySinglePixelFilter(Image_Filter_Type filter, const DrBitmap &from_bitmap, int value) {
+DrBitmap DrFilter::applySinglePixelFilter(Image_Filter_Type filter, const DrBitmap &from_bitmap, int value) {
     DrBitmap image = from_bitmap;
     
     int table[256];
     for ( int i = 0; i < 256; ++i ) {
         switch (filter) {
-            case Image_Filter_Type::Brightness:   table[i] = Dr::Clamp( i + value, 0, 255 );                                    break;
-            case Image_Filter_Type::Contrast:     table[i] = Dr::Clamp( (( i - 127 ) * (value + 128) / 128 ) + 127, 0, 255 );   break;
+            case DROP_IMAGE_FILTER_BRIGHTNESS:    table[i] = Clamp( i + value, 0, 255 );                                    break;
+            case DROP_IMAGE_FILTER_CONTRAST:      table[i] = Clamp( (( i - 127 ) * (value + 128) / 128 ) + 127, 0, 255 );   break;
             default: ;
         }
     }
@@ -39,34 +39,34 @@ DrBitmap DrFilter::ApplySinglePixelFilter(Image_Filter_Type filter, const DrBitm
             DrHsv hsv;
 
             switch (filter) {
-                case Image_Filter_Type::Brightness:
-                case Image_Filter_Type::Contrast:
+                case DROP_IMAGE_FILTER_BRIGHTNESS:
+                case DROP_IMAGE_FILTER_CONTRAST:
                     color.setRed(   table[color.red()]   );
                     color.setGreen( table[color.green()] );
                     color.setBlue(  table[color.blue()]  );
                     break;
-                case Image_Filter_Type::Saturation: {
+                case DROP_IMAGE_FILTER_SATURATION: {
                     // !!!!! #NOTE: QColor returns -1 if image is grayscale
                     //              If thats the case give it a default hue of 0 (red) to match shader
                     //                    int hue = (color.hue() == -1) ? 0 : color.hue();
                     //                    color.setHsv(hue, Dr::Clamp(color.saturation() + value, 0, 255), color.value(), color.alpha());
                     break;
                 }
-                case Image_Filter_Type::Hue:
+                case DROP_IMAGE_FILTER_HUE:
                     hsv = color.getHsv();
-                    hsv.hue = Dr::Clamp(hsv.hue + value, -360.0, 360.0);
+                    hsv.hue = Clamp(hsv.hue + value, -360.0, 360.0);
                     color.setFromHsv(hsv);
                     break;
-                case Image_Filter_Type::Grayscale: {
+                case DROP_IMAGE_FILTER_GRAYSCALE: {
                     double temp = (color.redF() * 0.2126) + (color.greenF() * 0.7152) + (color.blueF() * 0.0722);
                     color.setRgbF(temp, temp, temp, color.alphaF());
                     break;
                 }
-                case Image_Filter_Type::Negative:
+                case DROP_IMAGE_FILTER_NEGATIVE:
                     color.setRgbF(1.0 - color.redF(), 1.0 - color.greenF(), 1.0 - color.blueF(), color.alphaF());
                     break;
-                case Image_Filter_Type::Opacity:
-                    color.setAlpha( Dr::Clamp(color.alpha() + value, 0, 255) );
+                case DROP_IMAGE_FILTER_OPACITY:
+                    color.setAlpha( Clamp(color.alpha() + value, 0, 255) );
                     break;
             }
 
@@ -83,7 +83,7 @@ DrBitmap DrFilter::ApplySinglePixelFilter(Image_Filter_Type filter, const DrBitm
 //####################################################################################
 //##    Returns True if bitmaps are identical, false if not
 //####################################################################################
-bool DrFilter::CompareBitmaps(const DrBitmap &bitmap1, const DrBitmap &bitmap2) {
+bool DrFilter::compareBitmaps(const DrBitmap &bitmap1, const DrBitmap &bitmap2) {
     if (bitmap1.width  != bitmap2.width ) return false;
     if (bitmap1.height != bitmap2.height) return false;
     for (int x = 0; x < bitmap1.width; ++x) {
@@ -101,10 +101,10 @@ bool DrFilter::CompareBitmaps(const DrBitmap &bitmap1, const DrBitmap &bitmap2) 
 //##        NORMAL  (inverse == false): transparent areas are black, objects are white
 //##        INVERSE (inverse == true) : transparent areas are white, objects are black
 //####################################################################################
-DrBitmap DrFilter::BlackAndWhiteFromAlpha(const DrBitmap &bitmap, double alpha_tolerance, bool inverse, Bitmap_Format desired_format) {
+DrBitmap DrFilter::blackAndWhiteFromAlpha(const DrBitmap &bitmap, double alpha_tolerance, bool inverse, Bitmap_Format desired_format) {
     DrColor color1 = DROP_COLOR_TRANSPARENT;
     DrColor color2 = DROP_COLOR_WHITE;
-    if (inverse) Dr::Swap(color1, color2);
+    if (inverse) Swap(color1, color2);
 
     DrBitmap black_white(bitmap, desired_format);
     int alpha_i = static_cast<int>(alpha_tolerance * 255.0);
@@ -132,7 +132,7 @@ DrBitmap DrFilter::BlackAndWhiteFromAlpha(const DrBitmap &bitmap, double alpha_t
 #define FLOOD_WAS_PROCESSED         1
 #define FLOOD_MARKED_FOR_PROCESS    2
 
-DrBitmap DrFilter::FloodFill(DrBitmap &bitmap, int at_x, int at_y, DrColor fill_color, double tolerance, Flood_Fill_Type type,
+DrBitmap DrFilter::floodFill(DrBitmap &bitmap, int at_x, int at_y, DrColor fill_color, double tolerance, Flood_Fill_Type type,
                              int &flood_pixel_count, DrRect &flood_rect) {
     flood_pixel_count = 0;
 
@@ -202,7 +202,7 @@ DrBitmap DrFilter::FloodFill(DrBitmap &bitmap, int at_x, int at_y, DrColor fill_
                     }
 
                     if (processed.getPixel(x, y) == FLOOD_NOT_PROCESSED) {
-                        if (Dr::IsSameColor(start_color, bitmap.getPixel(x, y), tolerance)) {
+                        if (IsSameColor(start_color, bitmap.getPixel(x, y), tolerance)) {
                             points.push_back(DrPoint(x, y));
                             processed.setPixel(x, y, FLOOD_MARKED_FOR_PROCESS);
                             processed_some = true;
@@ -235,7 +235,7 @@ DrBitmap DrFilter::FloodFill(DrBitmap &bitmap, int at_x, int at_y, DrColor fill_
 //##    Fill border
 //##        Traces Border of 'rect' and makes sure to fill in any DROP_COLOR_TRANSPARENT areas with fill_color
 //####################################################################################
-void DrFilter::FillBorder(DrBitmap &bitmap, DrColor fill_color, DrRect rect) {
+void DrFilter::fillBorder(DrBitmap &bitmap, DrColor fill_color, DrRect rect) {
     DrRect fill_rect;
     int    fill_qty;
 
@@ -243,10 +243,10 @@ void DrFilter::FillBorder(DrBitmap &bitmap, DrColor fill_color, DrRect rect) {
     int y2 = rect.bottom();
     for (int x = rect.left(); x < rect.left() + rect.width; x++) {
         if (bitmap.getPixel(x, y1) == DROP_COLOR_TRANSPARENT) {
-            DrFilter::FloodFill(bitmap, x, y1, fill_color, 0.001, DROP_FLOOD_FILL_COMPARE_4, fill_qty, fill_rect);
+            floodFill(bitmap, x, y1, fill_color, 0.001, DROP_FLOOD_FILL_COMPARE_4, fill_qty, fill_rect);
         }
         if (bitmap.getPixel(x, y2) == DROP_COLOR_TRANSPARENT) {
-            DrFilter::FloodFill(bitmap, x, y2, fill_color, 0.001, DROP_FLOOD_FILL_COMPARE_4, fill_qty, fill_rect);
+            floodFill(bitmap, x, y2, fill_color, 0.001, DROP_FLOOD_FILL_COMPARE_4, fill_qty, fill_rect);
         }
     }
 
@@ -254,10 +254,10 @@ void DrFilter::FillBorder(DrBitmap &bitmap, DrColor fill_color, DrRect rect) {
     int x2 = rect.right();
     for (int y = rect.top(); y < rect.top() + rect.height; y++) {
         if (bitmap.getPixel(x1, y) == DROP_COLOR_TRANSPARENT) {
-            DrFilter::FloodFill(bitmap, x1, y, fill_color, 0.001, DROP_FLOOD_FILL_COMPARE_4, fill_qty, fill_rect);
+            floodFill(bitmap, x1, y, fill_color, 0.001, DROP_FLOOD_FILL_COMPARE_4, fill_qty, fill_rect);
         }
         if (bitmap.getPixel(x2, y) == DROP_COLOR_TRANSPARENT) {
-            DrFilter::FloodFill(bitmap, x2, y, fill_color, 0.001, DROP_FLOOD_FILL_COMPARE_4, fill_qty, fill_rect);
+            floodFill(bitmap, x2, y, fill_color, 0.001, DROP_FLOOD_FILL_COMPARE_4, fill_qty, fill_rect);
         }
     }
 }
@@ -274,10 +274,10 @@ void DrFilter::FillBorder(DrBitmap &bitmap, DrColor fill_color, DrRect rect) {
 //####################################################################################
 #define INVERTED_COLORS     true
 
-bool DrFilter::FindObjectsInBitmap(const DrBitmap &bitmap, std::vector<DrBitmap> &bitmaps, std::vector<DrRect> &rects,
+bool DrFilter::findObjectsInBitmap(const DrBitmap &bitmap, std::vector<DrBitmap> &bitmaps, std::vector<DrRect> &rects,
                         double alpha_tolerance, bool convert) {
     DrBitmap     black_white;
-    if (convert) black_white = BlackAndWhiteFromAlpha(bitmap, alpha_tolerance, INVERTED_COLORS);
+    if (convert) black_white = blackAndWhiteFromAlpha(bitmap, alpha_tolerance, INVERTED_COLORS);
     else         black_white = bitmap;
 
     DrColor compare(DROP_COLOR_TRANSPARENT);
@@ -307,7 +307,7 @@ bool DrFilter::FindObjectsInBitmap(const DrBitmap &bitmap, std::vector<DrBitmap>
                 if (black_white.getPixel(x, y) == compare) {
                     DrRect      rect;
                     int         flood_pixel_count;
-                    DrBitmap    flood_fill = FloodFill(black_white, x, y, DROP_COLOR_RED, 0.001, DROP_FLOOD_FILL_COMPARE_4, flood_pixel_count, rect);
+                    DrBitmap    flood_fill = floodFill(black_white, x, y, DROP_COLOR_RED, 0.001, DROP_FLOOD_FILL_COMPARE_4, flood_pixel_count, rect);
 
                     // Add buffer around rect, create image of rect only
                     rect.adjust(-1, -1, 1, 1);
@@ -353,7 +353,7 @@ bool DrFilter::FindObjectsInBitmap(const DrBitmap &bitmap, std::vector<DrBitmap>
 #define TRACE_PROCESSED_ONCE        3           // Pixels that added to the border once
 #define TRACE_PROCESSED_TWICE       4           // Pixels that added to the border twice        (after a there and back again trace)
 
-std::vector<DrPointF> DrFilter::TraceImageOutline(const DrBitmap &bitmap) {
+std::vector<DrPointF> DrFilter::traceImageOutline(const DrBitmap &bitmap) {
     // Initialize images
     DrBitmap processed = bitmap;
     int border_pixel_count = 0;
@@ -434,13 +434,13 @@ std::vector<DrPointF> DrFilter::TraceImageOutline(const DrBitmap &bitmap) {
         }
 
         // Compare surrounding points to see which one has the greatest angle measured clockwise from the last set of points
-        double   last_point_angle = Dr::CalcRotationAngleInDegrees(current_point.toPointF(), last_point.toPointF());
+        double   last_point_angle = CalcRotationAngleInDegrees(current_point.toPointF(), last_point.toPointF());
         double   angle_diff = 0;
         bool     first = true;
         DrPoint  next_point;
         for (auto point : surround) {
             // Find angle of point
-            double check_angle = Dr::CalcRotationAngleInDegrees(current_point.toPointF(), point.toPointF());
+            double check_angle = CalcRotationAngleInDegrees(current_point.toPointF(), point.toPointF());
             while (check_angle > 0) {                 check_angle -= 360.0; }
             while (check_angle <= last_point_angle) { check_angle += 360.0; }
 

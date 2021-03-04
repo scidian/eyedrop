@@ -10,7 +10,6 @@
 #define DR_VEC3_H
 
 #include <cmath>
-
 #include "3rd_party/handmade_math.h"
 
 

@@ -8,7 +8,7 @@
 //
 #include <math.h>
 
-#include "core/math.h"
+#include "core/Math.h"
 #include "Point.h"
 #include "PointF.h"
 
@@ -63,7 +63,7 @@ DrPointF& DrPointF::operator*=(double k) {
 }
 
 bool DrPointF::operator==(const DrPointF &other) const {
-    return Dr::FuzzyCompare(x, other.x) && Dr::FuzzyCompare(y, other.y);
+    return FuzzyCompare(x, other.x) && FuzzyCompare(y, other.y);
 }
 
 //####################################################################################

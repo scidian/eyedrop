@@ -34,17 +34,17 @@ const float c_extrude_depth =   0.1f;
 const float c_cube_depth =      0.5f;
 
 // Local Enums
-enum class Trianglulation {
-    Ear_Clipping,
-    Triangulate_Opt,
-    Monotone,
-    Delaunay,
+enum Triangulation {
+    TRIANGULATION_EAR_CLIPPING,
+    TRIANGULATION_TRIANGULATE_OPT,
+    TRIANGULATION_MONOTONE,
+    TRIANGULATION_DELAUNAY,
 };
 
-enum class Triangle_Point {
-    Point1,
-    Point2,
-    Point3,
+enum Triangle_Point {
+    TRIANGLE_POINT1,
+    TRIANGLE_POINT2,
+    TRIANGLE_POINT3,
 };
 
 
@@ -105,7 +105,7 @@ public:
     // Extrusion Functions
     void    extrudeFacePolygon(const std::vector<DrPointF> &outline_points, int width, int height, int steps, bool reverse = false);
     void    triangulateFace(const std::vector<DrPointF> &outline_points, const std::vector<std::vector<DrPointF>> &hole_list,
-                            const DrBitmap &image, bool wireframe, Trianglulation type, double alpha_tolerance);
+                            const DrBitmap &image, bool wireframe, Triangulation type, double alpha_tolerance);
 
     // Assignment
     static  void set(Vertex &from_vertex, Vertex &to_vertex);    

@@ -21,7 +21,7 @@
 #include "core/imaging/Color.h"
 #include "core/imaging/Filter.h"
 #include "core/imaging/Image.h"
-#include "core/math.h"
+#include "core/Math.h"
 #include "Mesh.h"
 
 
@@ -42,12 +42,12 @@ void DrMesh::initializeExtrudedImage(DrImage *image, int quality) {
 
         // ***** Pick ONE of the following three
         double alpha_tolerance = (image->m_outline_processed) ? c_alpha_tolerance : 0.0;
-        triangulateFace(points, hole_list, image->getBitmap(), wireframe, Trianglulation::Triangulate_Opt, alpha_tolerance);
-        //triangulateFace(points, hole_list, image->getBitmap(), wireframe, Trianglulation::Ear_Clipping, alpha_tolerance)
-        //triangulateFace(points, hole_list, image->getBitmap(), wireframe, Trianglulation::Monotone, alpha_tolerance);
-        //triangulateFace(points, hole_list, image->getBitmap(), wireframe, Trianglulation::Delaunay, alpha_tolerance);
+        triangulateFace(points, hole_list, image->getBitmap(), wireframe, TRIANGULATION_TRIANGULATE_OPT, alpha_tolerance);
+        //triangulateFace(points, hole_list, image->getBitmap(), wireframe, TRIANGULATION_EAR_CLIPPING, alpha_tolerance)
+        //triangulateFace(points, hole_list, image->getBitmap(), wireframe, TRIANGULATION_MONOTONE, alpha_tolerance);
+        //triangulateFace(points, hole_list, image->getBitmap(), wireframe, TRIANGULATION_DELAUNAY, alpha_tolerance);
 
-        // !!!!! #TODO: For greatly improved Trianglulation::Delaunay, break polygon into convex polygons before running algorithm
+        // !!!!! #TODO: For greatly improved TRIANGULATION_DELAUNAY, break polygon into convex polygons before running algorithm
 
         // ***** Add extruded triangles from Hull and Holes
         //int slices = wireframe ? 3 : 1;
@@ -123,9 +123,9 @@ void DrMesh::smoothMesh() {
         processed[one_vertex] = true;
         for(size_t j = 0; j < vertexCount(); j++) {
             if (one_vertex == j) continue;
-            if (Dr::IsCloseTo(vertices[one_vertex].px, vertices[j].px, 0.5f) &&
-                Dr::IsCloseTo(vertices[one_vertex].py, vertices[j].py, 0.5f) &&
-                Dr::IsCloseTo(vertices[one_vertex].pz, vertices[j].pz, 0.5f)) {
+            if (IsCloseTo(vertices[one_vertex].px, vertices[j].px, 0.5f) &&
+                IsCloseTo(vertices[one_vertex].py, vertices[j].py, 0.5f) &&
+                IsCloseTo(vertices[one_vertex].pz, vertices[j].pz, 0.5f)) {
                     same_points.push_back(j);
                     processed[j] = true;
             }
@@ -183,8 +183,8 @@ void DrMesh::smoothMesh() {
         v.nx /= weight;
         v.ny /= weight;
         v.nz /= weight;
-        v.tx = Dr::Clamp(v.tx/weight, 0.f, 1.f);
-        v.ty = Dr::Clamp(v.ty/weight, 0.f, 1.f);
+        v.tx = Clamp(v.tx/weight, 0.f, 1.f);
+        v.ty = Clamp(v.ty/weight, 0.f, 1.f);
 
         DrVec3 normal = DrVec3(v.nx, v.ny, v.nz).normalized();
         v.nx = normal.x;
@@ -273,9 +273,9 @@ std::vector<DrPointF> DrMesh::smoothPoints(const std::vector<DrPointF> &outline_
 
         // Check if current point is a sharp angle, if so add to list and continue
         DrPointF start_check_point =   pointAt(outline_points, i);
-        double   start_check_angle_1 = Dr::CalcRotationAngleInDegrees(start_check_point, pointAt(outline_points, i - 1));
-        double   start_check_angle_2 = Dr::CalcRotationAngleInDegrees(start_check_point, pointAt(outline_points, i + 1));
-        double   start_diff =          Dr::DifferenceBetween2Angles(start_check_angle_1, start_check_angle_2);
+        double   start_check_angle_1 = CalcRotationAngleInDegrees(start_check_point, pointAt(outline_points, i - 1));
+        double   start_check_angle_2 = CalcRotationAngleInDegrees(start_check_point, pointAt(outline_points, i + 1));
+        double   start_diff =          DifferenceBetween2Angles(start_check_angle_1, start_check_angle_2);
         if (start_diff <= c_sharp_angle) {
             smooth_points.push_back( this_point );
             continue;
@@ -287,16 +287,16 @@ std::vector<DrPointF> DrMesh::smoothPoints(const std::vector<DrPointF> &outline_
         int average_to =   i + neighbors;
         for (int j = i - 1; j >= i - neighbors; j--) {
             DrPointF check_point = pointAt(outline_points, j);
-            double check_angle_1 = Dr::CalcRotationAngleInDegrees(check_point, pointAt(outline_points, j - 1));
-            double check_angle_2 = Dr::CalcRotationAngleInDegrees(check_point, pointAt(outline_points, j + 1));
-            double diff =          Dr::DifferenceBetween2Angles(check_angle_1, check_angle_2);
+            double check_angle_1 = CalcRotationAngleInDegrees(check_point, pointAt(outline_points, j - 1));
+            double check_angle_2 = CalcRotationAngleInDegrees(check_point, pointAt(outline_points, j + 1));
+            double diff =          DifferenceBetween2Angles(check_angle_1, check_angle_2);
             if (diff <= c_sharp_angle) { average_from = j + 0 /*1*/; break; }
         }
         for (int j = i + 1; j <= i + neighbors; j++) {
             DrPointF check_point = pointAt(outline_points, j);
-            double check_angle_1 = Dr::CalcRotationAngleInDegrees(check_point, pointAt(outline_points, j - 1));
-            double check_angle_2 = Dr::CalcRotationAngleInDegrees(check_point, pointAt(outline_points, j + 1));
-            double diff =          Dr::DifferenceBetween2Angles(check_angle_1, check_angle_2);
+            double check_angle_1 = CalcRotationAngleInDegrees(check_point, pointAt(outline_points, j - 1));
+            double check_angle_2 = CalcRotationAngleInDegrees(check_point, pointAt(outline_points, j + 1));
+            double diff =          DifferenceBetween2Angles(check_angle_1, check_angle_2);
             if (diff <= c_sharp_angle) { average_to =   j - 0 /*1*/; break; }
         }
 
@@ -353,15 +353,15 @@ std::vector<DrPointF> DrMesh::insertPoints(const std::vector<DrPointF> &outline_
 //####################################################################################
 // Finds average number of pixels in a small grid that are transparent
 DrColor getRoundedPixel(const DrBitmap &bitmap, const DrPointF &at_point) {
-    int px = Dr::Clamp(static_cast<int>(round(at_point.x)), 0, (bitmap.width -  1));
-    int py = Dr::Clamp(static_cast<int>(round(at_point.y)), 0, (bitmap.height - 1));
+    int px = Clamp(static_cast<int>(round(at_point.x)), 0, (bitmap.width -  1));
+    int py = Clamp(static_cast<int>(round(at_point.y)), 0, (bitmap.height - 1));
     return bitmap.getPixel(px, py);
 }
 
 // Finds average number of pixels in a small grid that are transparent
 double averageTransparentPixels(const DrBitmap &bitmap, const DrPointF &at_point, const double &alpha_tolerance) {
-    int px = Dr::Clamp(static_cast<int>(round(at_point.x)), 0, (bitmap.width -  1));
-    int py = Dr::Clamp(static_cast<int>(round(at_point.y)), 0, (bitmap.height - 1));
+    int px = Clamp(static_cast<int>(round(at_point.x)), 0, (bitmap.width -  1));
+    int py = Clamp(static_cast<int>(round(at_point.y)), 0, (bitmap.height - 1));
     int x_start = (px > 0) ?                 px - 1 : 0;
     int x_end =   (px < bitmap.width - 1)  ? px + 1 : bitmap.width  - 1;
     int y_start = (py > 0) ?                 py - 1 : 0;
@@ -378,7 +378,7 @@ double averageTransparentPixels(const DrBitmap &bitmap, const DrPointF &at_point
 }
 
 void DrMesh::triangulateFace(const std::vector<DrPointF> &outline_points, const std::vector<std::vector<DrPointF>> &hole_list,
-                                         const DrBitmap &image, bool wireframe, Trianglulation type, double alpha_tolerance) {
+                                         const DrBitmap &image, bool wireframe, Triangulation type, double alpha_tolerance) {
     int width =  image.width;
     int height = image.height;
     double w2d = width  / 2.0;
@@ -400,7 +400,7 @@ void DrMesh::triangulateFace(const std::vector<DrPointF> &outline_points, const 
     for (auto hole : hole_list) {
         int point_count = 0;
         Winding_Orientation winding = DrPolygonF::findWindingOrientation(hole);
-        if (winding == Winding_Orientation::CounterClockwise) {
+        if (winding == DROP_WINDING_COUNTERCLOCKWISE) {
             std::reverse(hole.begin(), hole.end());
         }
         TPPLPoly poly; 
@@ -429,10 +429,10 @@ void DrMesh::triangulateFace(const std::vector<DrPointF> &outline_points, const 
 
     // ***** Run triangulation
     switch (type) {
-        case Trianglulation::Ear_Clipping:      pp.Triangulate_EC(&outpolys, &result);                  break;
-        case Trianglulation::Triangulate_Opt:   pp.Triangulate_OPT(&(*outpolys.begin()), &result);      break;
-        case Trianglulation::Monotone:          pp.Triangulate_MONO(&outpolys, &result);                break; 
-        case Trianglulation::Delaunay:
+        case TRIANGULATION_EAR_CLIPPING:        pp.Triangulate_EC(&outpolys, &result);                  break;
+        case TRIANGULATION_TRIANGULATE_OPT:     pp.Triangulate_OPT(&(*outpolys.begin()), &result);      break;
+        case TRIANGULATION_MONOTONE:            pp.Triangulate_MONO(&outpolys, &result);                break; 
+        case TRIANGULATION_DELAUNAY:
             result.push_back( poly );                       
             //pp.ConvexPartition_OPT(&(*outpolys.begin()), &result);
             //pp.ConvexPartition_HM(&(*outpolys.begin()), &result);
@@ -440,7 +440,7 @@ void DrMesh::triangulateFace(const std::vector<DrPointF> &outline_points, const 
     }
 
     // ***** Add triangulated convex hull to vertex data
-    if (type != Trianglulation::Delaunay) {
+    if (type != TRIANGULATION_DELAUNAY) {
         for (auto poly : result) {
             float x1 = static_cast<float>(         poly[0].x - w2d);
             float y1 = static_cast<float>(height - poly[0].y - h2d);
@@ -529,7 +529,7 @@ void DrMesh::triangulateFace(const std::vector<DrPointF> &outline_points, const 
         for (std::size_t i = 0; i < coords.size(); i += 2) {
             bool has_it = false;
             for (std::size_t j = i + 2; j < coords.size(); j += 2) {
-                if (Dr::IsCloseTo(coords[i], coords[j], 0.05) && Dr::IsCloseTo(coords[i+1], coords[j+1], 0.05)) {
+                if (IsCloseTo(coords[i], coords[j], 0.05) && IsCloseTo(coords[i+1], coords[j+1], 0.05)) {
                     has_it = true;
                     break;
                 }
@@ -544,7 +544,7 @@ void DrMesh::triangulateFace(const std::vector<DrPointF> &outline_points, const 
         // Run triangulation, add triangles to vertex data
         Delaunator d(no_duplicates);
 
-        // Delaunay Trianglulation returns a collection of triangles filling a convex hull of a collection of points.
+        // Delaunay Triangulation returns a collection of triangles filling a convex hull of a collection of points.
         // So no we have to go through the triangles returned and remove any that are over transparent areas of our object.
         for (size_t i = 0; i < d.triangles.size(); i += 3) {
             double x1 = d.coords[2 * d.triangles[i + 0]];

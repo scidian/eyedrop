@@ -14,7 +14,12 @@
 #include <string>
 #include "3rd_party/sokol/sokol_app.h"
 #include "3rd_party/sokol/sokol_gfx.h"
+#include "3rd_party/sokol/sokol_gl.h"
 #include "3rd_party/sokol/sokol_gfx_imgui.h"
+#include "3rd_party/sokol/sokol_glue.h"
+#include "3rd_party/sokol/sokol_time.h"
+#include "3rd_party/sokol/sokol_audio.h"
+#include "3rd_party/sokol/sokol_fetch.h"
 #include "core/imaging/Color.h"
 
 // Forward Declarations
@@ -74,11 +79,11 @@ class DrApp
 {
 public:
     // Constructor / Destructor
-    DrApp(std::string title, DrColor bg_color = DROP_COLOR_BLACK, int width = 800, int height = 600);
+    DrApp(std::string title = "Drop Creator", DrColor bg_color = DROP_COLOR_BLACK, int width = 800, int height = 600);
     ~DrApp();
 
     // #################### VARIABLES ####################
-private:
+protected:
     // App Variables
     std::string         m_app_name          { "" };                             // Name of Application
     
@@ -95,9 +100,11 @@ private:
     // Local Variables
     sapp_desc           m_sokol_app;                                            // Sokol_app descriptor for this Window
     state_t             m_state;                                                // Sokol_app state for this Window
-    sg_imgui_t          m_sg_imgui;                                             // Sokol_gfx_debug keeps track of data structures used by sokol_gfx
-    uint64_t            m_time_start        { 0 };                              // Sokol_time start time since App started running
+    sg_imgui_t          m_sg_imgui;                                             // Sokol_gfx_debug keeps track of data structures used by sokol_gfx for Debug View
 
+    // Time Variables
+    uint64_t            m_time_start        { 0 };                              // Sokol_time start time since App started running
+    double              m_frames_per_second { 0.0 };                            // Stores current calculated frames per second
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################
 public:
@@ -113,7 +120,7 @@ public:
     // Start app
     void run() { sapp_run(m_sokol_app); }
 
-    // Internal sokol callbacks
+    // Linked to internal sokol callbacks
     void init(void);
     void frame(void);
     void event(const sapp_event* e);
@@ -121,9 +128,12 @@ public:
 
     // Local Variable Functions
     std::string         appName()                                       { return m_app_name; }
-    void                setAppName(std::string name) { m_app_name = name; }
+    void                setAppName(std::string name);
     int                 getWidth() { return m_width; }
     int                 getHeight() { return m_height; }
+
+    // Timer Functions
+    double              framesPerSecond()                               { return m_frames_per_second; }
 
     // Key Generator
     long                checkCurrentGeneratorKey()                      { return m_key_generator; }

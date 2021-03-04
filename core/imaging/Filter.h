@@ -15,13 +15,13 @@
 
 // Filters types
 enum Image_Filter_Type {                    // ApplySinglePixelFilter 'value' argument
-    Brightness,                             //      -255 to 255
-    Contrast,                               //      -255 to 255
-    Saturation,                             //      -255 to 255 
-    Hue,                                    //      -360 to 360
-    Grayscale,                              //          N/A
-    Negative,                               //          N/A
-    Opacity,                                //      -255 to 255
+    DROP_IMAGE_FILTER_BRIGHTNESS,           //      -255 to 255
+    DROP_IMAGE_FILTER_CONTRAST,             //      -255 to 255
+    DROP_IMAGE_FILTER_SATURATION,           //      -255 to 255 
+    DROP_IMAGE_FILTER_HUE,                  //      -360 to 360
+    DROP_IMAGE_FILTER_GRAYSCALE,            //          N/A
+    DROP_IMAGE_FILTER_NEGATIVE,             //          N/A
+    DROP_IMAGE_FILTER_OPACITY,              //      -255 to 255
 };
 
 // Imaging Enumerations
@@ -40,22 +40,22 @@ class DrFilter
 public:
 
     // ***** Filters
-    static DrBitmap    ApplySinglePixelFilter(Image_Filter_Type filter, const DrBitmap &from_bitmap, int value);
+    static DrBitmap    applySinglePixelFilter(Image_Filter_Type filter, const DrBitmap &from_bitmap, int value);
 
     // ***** Comparison
-    static bool        CompareBitmaps(const DrBitmap &bitmap1, const DrBitmap &bitmap2);
+    static bool        compareBitmaps(const DrBitmap &bitmap1, const DrBitmap &bitmap2);
 
     // ***** Object Counting / Fill (a la Ravens Project)
-    static DrBitmap    BlackAndWhiteFromAlpha(const DrBitmap &bitmap, double alpha_tolerance, bool inverse, 
+    static DrBitmap    blackAndWhiteFromAlpha(const DrBitmap &bitmap, double alpha_tolerance, bool inverse, 
                                               Bitmap_Format desired_format = DROP_BITMAP_FORMAT_ARGB);
-    static void        FillBorder(DrBitmap &bitmap, DrColor fill_color, DrRect rect);
-    static bool        FindObjectsInBitmap(const DrBitmap &bitmap, std::vector<DrBitmap> &bitmaps, std::vector<DrRect> &rects, 
+    static void        fillBorder(DrBitmap &bitmap, DrColor fill_color, DrRect rect);
+    static bool        findObjectsInBitmap(const DrBitmap &bitmap, std::vector<DrBitmap> &bitmaps, std::vector<DrRect> &rects, 
                                            double alpha_tolerance, bool convert = true);
-    static DrBitmap    FloodFill(DrBitmap &bitmap, int at_x, int at_y, DrColor fill_color, double tolerance, Flood_Fill_Type type,
+    static DrBitmap    floodFill(DrBitmap &bitmap, int at_x, int at_y, DrColor fill_color, double tolerance, Flood_Fill_Type type,
                                  int &flood_pixel_count, DrRect &flood_rect);
 
     // ***** Outlining
-    static std::vector<DrPointF>    TraceImageOutline(const DrBitmap &bitmap);
+    static std::vector<DrPointF>    traceImageOutline(const DrBitmap &bitmap);
 
 };
 

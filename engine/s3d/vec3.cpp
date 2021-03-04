@@ -6,7 +6,7 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "core/math.h"
+#include "core/Math.h"
 #include "Vec3.h"
 
 
@@ -108,17 +108,17 @@ DrVec3 operator-(const float d_, const DrVec3 &vec) {
 //##    Overload Operators - Comparisons
 //####################################################################################
 bool DrVec3::operator!=(const DrVec3 &v_) const {
-    return (Dr::IsCloseTo(x, v_.x, 0.001f) == false) || (Dr::IsCloseTo(y, v_.y, 0.001f) == false) || (Dr::IsCloseTo(z, v_.z, 0.001f) == false);
+    return (IsCloseTo(x, v_.x, 0.001f) == false) || (IsCloseTo(y, v_.y, 0.001f) == false) || (IsCloseTo(z, v_.z, 0.001f) == false);
 }
 
 bool DrVec3::operator==(const DrVec3 &d_) const {
-    return Dr::IsCloseTo(x, d_.x, 0.001f) && Dr::IsCloseTo(y, d_.y, 0.001f) && Dr::IsCloseTo(z, d_.z, 0.001f);
+    return IsCloseTo(x, d_.x, 0.001f) && IsCloseTo(y, d_.y, 0.001f) && IsCloseTo(z, d_.z, 0.001f);
 }
 
 bool DrVec3::operator<(const DrVec3 &v_) const {
-    if (Dr::IsCloseTo(x, v_.x, 0.001f) == false)
+    if (IsCloseTo(x, v_.x, 0.001f) == false)
         return x < v_.x;
-    else if (Dr::IsCloseTo(y, v_.y, 0.001f) == false)
+    else if (IsCloseTo(y, v_.y, 0.001f) == false)
         return y < v_.y;
     else
         return z < v_.z;

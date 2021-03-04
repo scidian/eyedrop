@@ -15,7 +15,7 @@
 #include "core/imaging/Color.h"
 #include "core/imaging/Filter.h"
 #include "core/imaging/Image.h"
-#include "core/math.h"
+#include "core/Math.h"
 #include "engine/s3d/Mesh.h"
 
 // Local Constants
@@ -45,7 +45,7 @@ DrImage::DrImage(std::string image_name, DrBitmap &bitmap, float lod, bool outli
 void DrImage::setSimpleBox() {
     std::vector<DrPointF> one_poly = m_bitmap.polygon().points();
     std::vector<std::vector<DrPointF>> hole_list {{ }};
-    DrPolygonF::ensureWindingOrientation(one_poly, Winding_Orientation::CounterClockwise);
+    DrPolygonF::ensureWindingOrientation(one_poly, DROP_WINDING_COUNTERCLOCKWISE);
     m_poly_list.clear();
     m_hole_list.clear();
     m_poly_list.push_back(one_poly);
@@ -72,7 +72,7 @@ void DrImage::outlinePoints(float lod) {
     // ***** Break pixmap into seperate images for each object in image
     std::vector<DrBitmap>   bitmaps;
     std::vector<DrRect>     rects;
-    bool    cancel = DrFilter::FindObjectsInBitmap(m_bitmap, bitmaps, rects, c_alpha_tolerance, true);
+    bool    cancel = DrFilter::findObjectsInBitmap(m_bitmap, bitmaps, rects, c_alpha_tolerance, true);
     int     number_of_objects = static_cast<int>(bitmaps.size());
 
     //std::cout << "Number of objects in image: " << number_of_objects << std::endl;
@@ -87,7 +87,7 @@ void DrImage::outlinePoints(float lod) {
         if (image.width < 1 || image.height < 1) continue;
 
         // Trace edge of image
-        std::vector<DrPointF> one_poly = DrFilter::TraceImageOutline(image);
+        std::vector<DrPointF> one_poly = DrFilter::traceImageOutline(image);
 
         // Add rect offset, and add 1.00 pixels buffer around image
         double plus_one_pixel_percent_x = 1.0 + (1.00 / m_bitmap.width);
@@ -105,7 +105,7 @@ void DrImage::outlinePoints(float lod) {
         // Optimize point list
         if (one_poly.size() > (c_neighbors * 2)) {
             one_poly = DrMesh::smoothPoints(one_poly, c_neighbors, 20.0, 1.0);
-            one_poly = PolylineSimplification::RamerDouglasPeucker(one_poly, lod);  
+            one_poly = PolylineSimplification::ramerDouglasPeucker(one_poly, lod);  
             //one_poly = DrMesh::insertPoints(one_poly);
         }
 
@@ -120,7 +120,7 @@ void DrImage::outlinePoints(float lod) {
         }
 
         // Check winding
-        DrPolygonF::ensureWindingOrientation(one_poly, Winding_Orientation::CounterClockwise);
+        DrPolygonF::ensureWindingOrientation(one_poly, DROP_WINDING_COUNTERCLOCKWISE);
 
         // Add polygon to list of polygons in shape
         m_poly_list.push_back(one_poly);
@@ -128,12 +128,12 @@ void DrImage::outlinePoints(float lod) {
 
         // ******************** Copy image and finds holes as seperate outlines
         DrBitmap holes = image.copy();
-        DrFilter::FillBorder(holes, DROP_COLOR_WHITE, holes.rect());                      // Ensures only holes are left as black spots
+        DrFilter::fillBorder(holes, DROP_COLOR_WHITE, holes.rect());                      // Ensures only holes are left as black spots
 
         // Breaks holes into seperate images for each Hole
         std::vector<DrBitmap> hole_images;
         std::vector<DrRect>   hole_rects;        
-        DrFilter::FindObjectsInBitmap(holes, hole_images, hole_rects, c_alpha_tolerance, false);
+        DrFilter::findObjectsInBitmap(holes, hole_images, hole_rects, c_alpha_tolerance, false);
 
         // Go through each image (Hole) create list for it
         std::vector<std::vector<DrPointF>> hole_list;
@@ -142,7 +142,7 @@ void DrImage::outlinePoints(float lod) {
             if (hole.width < 1 || hole.height < 1) continue;
 
             // Trace edge of hole
-            std::vector<DrPointF> one_hole = DrFilter::TraceImageOutline(hole);
+            std::vector<DrPointF> one_hole = DrFilter::traceImageOutline(hole);
 
             // Add in sub image offset to points and hole rects
             for (auto &point : one_hole) {
@@ -156,12 +156,12 @@ void DrImage::outlinePoints(float lod) {
             // Optimize point list
             if (one_hole.size() > (c_neighbors * 2)) {
                 one_hole = DrMesh::smoothPoints(one_hole, c_neighbors, 30.0, 1.0);
-                one_hole = PolylineSimplification::RamerDouglasPeucker(one_hole, lod);
+                one_hole = PolylineSimplification::ramerDouglasPeucker(one_hole, lod);
                 //one_hole = DrMesh::insertPoints(one_hole);
             }
 
             if (one_hole.size() > 3) {
-                DrPolygonF::ensureWindingOrientation(one_hole, Winding_Orientation::Clockwise);
+                DrPolygonF::ensureWindingOrientation(one_hole, DROP_WINDING_CLOCKWISE);
                 hole_list.push_back(one_hole);
             }
         }

@@ -13,7 +13,13 @@
 
 // Forward Declarations
 class DrPointF;
-enum class Winding_Orientation;
+
+// Enums
+enum Winding_Orientation {
+    DROP_WINDING_CLOCKWISE           = 0,
+    DROP_WINDING_COUNTERCLOCKWISE    = 1,
+    DROP_WINDING_LINE_SEGMENT        = 2,
+};
 
 
 //####################################################################################

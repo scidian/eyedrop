@@ -13,24 +13,18 @@
 
 // Forward Declarations
 class DrColor;
-
-namespace Dr {
-
     
-    //####################################################################################
-    //##    Random Functions
-    //############################
-    /// @brief: Returns a number between lower (inclusive) and upper (exclusive)
-    int         RandomInt(int lower, int upper);
-    /// @brief: Returns a number between lower (inclusive) and upper (inclusive)
-    double      RandomDouble(double lower, double upper);
-    /// @brief: Returns a random boolean
-    bool        RandomBool();
-    /// @brief: Returns a random DrColor, fully opaque
-    DrColor     RandomColor();
-
-
-}   // End namespace Dr
+//####################################################################################
+//##    Random Functions
+//############################
+/// @brief: Returns a number between lower (inclusive) and upper (exclusive)
+int         RandomInt(int lower, int upper);
+/// @brief: Returns a number between lower (inclusive) and upper (inclusive)
+double      RandomDouble(double lower, double upper);
+/// @brief: Returns a random boolean
+bool        RandomBool();
+/// @brief: Returns a random DrColor, fully opaque
+DrColor     RandomColor();
 
 #endif // DR_RANDOM_H
 

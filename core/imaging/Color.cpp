@@ -9,8 +9,8 @@
 #include <iomanip>
 
 #include "core/imaging/Color.h"
-#include "core/math.h"
-#include "core/string.h"
+#include "core/Math.h"
+#include "core/Strings.h"
 
 
 inline constexpr unsigned char operator "" _uc( unsigned long long arg ) noexcept {
@@ -25,28 +25,28 @@ DrColor::DrColor() {
     r = 0; g = 0; b = 0; a = 255;
 }
 DrColor::DrColor(const unsigned char &r_, const unsigned char &g_, const unsigned char &b_, const unsigned char &a_) {
-    r = Dr::Clamp(static_cast<unsigned char>(r_), 0_uc, 255_uc);
-    g = Dr::Clamp(static_cast<unsigned char>(g_), 0_uc, 255_uc);
-    b = Dr::Clamp(static_cast<unsigned char>(b_), 0_uc, 255_uc);
-    a = Dr::Clamp(static_cast<unsigned char>(a_), 0_uc, 255_uc);
+    r = Clamp(static_cast<unsigned char>(r_), 0_uc, 255_uc);
+    g = Clamp(static_cast<unsigned char>(g_), 0_uc, 255_uc);
+    b = Clamp(static_cast<unsigned char>(b_), 0_uc, 255_uc);
+    a = Clamp(static_cast<unsigned char>(a_), 0_uc, 255_uc);
 }
 DrColor::DrColor(int r_, int g_, int b_, int a_) {
-    r = Dr::Clamp(static_cast<unsigned char>(r_), 0_uc, 255_uc);
-    g = Dr::Clamp(static_cast<unsigned char>(g_), 0_uc, 255_uc);
-    b = Dr::Clamp(static_cast<unsigned char>(b_), 0_uc, 255_uc);
-    a = Dr::Clamp(static_cast<unsigned char>(a_), 0_uc, 255_uc);
+    r = Clamp(static_cast<unsigned char>(r_), 0_uc, 255_uc);
+    g = Clamp(static_cast<unsigned char>(g_), 0_uc, 255_uc);
+    b = Clamp(static_cast<unsigned char>(b_), 0_uc, 255_uc);
+    a = Clamp(static_cast<unsigned char>(a_), 0_uc, 255_uc);
 }
 DrColor::DrColor(float r_, float g_, float b_, float a_) {
-    r = static_cast<unsigned char>(Dr::Clamp(r_, 0.0f, 1.0f) * 255.0f);
-    g = static_cast<unsigned char>(Dr::Clamp(g_, 0.0f, 1.0f) * 255.0f);
-    b = static_cast<unsigned char>(Dr::Clamp(b_, 0.0f, 1.0f) * 255.0f);
-    a = static_cast<unsigned char>(Dr::Clamp(a_, 0.0f, 1.0f) * 255.0f);
+    r = static_cast<unsigned char>(Clamp(r_, 0.0f, 1.0f) * 255.0f);
+    g = static_cast<unsigned char>(Clamp(g_, 0.0f, 1.0f) * 255.0f);
+    b = static_cast<unsigned char>(Clamp(b_, 0.0f, 1.0f) * 255.0f);
+    a = static_cast<unsigned char>(Clamp(a_, 0.0f, 1.0f) * 255.0f);
 }
 DrColor::DrColor(double r_, double g_, double b_, double a_) {
-    r = static_cast<unsigned char>(Dr::Clamp(r_, 0.0, 1.0) * 255.0);
-    g = static_cast<unsigned char>(Dr::Clamp(g_, 0.0, 1.0) * 255.0);
-    b = static_cast<unsigned char>(Dr::Clamp(b_, 0.0, 1.0) * 255.0);
-    a = static_cast<unsigned char>(Dr::Clamp(a_, 0.0, 1.0) * 255.0);
+    r = static_cast<unsigned char>(Clamp(r_, 0.0, 1.0) * 255.0);
+    g = static_cast<unsigned char>(Clamp(g_, 0.0, 1.0) * 255.0);
+    b = static_cast<unsigned char>(Clamp(b_, 0.0, 1.0) * 255.0);
+    a = static_cast<unsigned char>(Clamp(a_, 0.0, 1.0) * 255.0);
 }
 DrColor::DrColor(unsigned int ui) {
     a = (ui & 0xFF000000) >> 24;
@@ -73,9 +73,9 @@ unsigned int DrColor::rgba() {
     return color;
 }
 std::string DrColor::name() {
-    std::string hex_r = Dr::ToHex(static_cast<int>(r));
-    std::string hex_g = Dr::ToHex(static_cast<int>(g));
-    std::string hex_b = Dr::ToHex(static_cast<int>(b));
+    std::string hex_r = HexString(static_cast<int>(r));
+    std::string hex_g = HexString(static_cast<int>(g));
+    std::string hex_b = HexString(static_cast<int>(b));
 
     if (hex_r.length() == 1) hex_r = std::string("0") + hex_r;
     if (hex_g.length() == 1) hex_g = std::string("0") + hex_g;
@@ -87,20 +87,20 @@ std::string DrColor::name() {
 //####################################################################################
 //##    Setters
 //####################################################################################
-void DrColor::setRed(int red)           { r = Dr::Clamp(static_cast<unsigned char>(red),            0_uc, 255_uc); }
-void DrColor::setRedF(double red)       { r = Dr::Clamp(static_cast<unsigned char>(red * 255.0),    0_uc, 255_uc); }
-void DrColor::setGreen(int green)       { g = Dr::Clamp(static_cast<unsigned char>(green),          0_uc, 255_uc); }
-void DrColor::setGreenF(double green)   { g = Dr::Clamp(static_cast<unsigned char>(green * 255.0),  0_uc, 255_uc); }
-void DrColor::setBlue(int blue)         { b = Dr::Clamp(static_cast<unsigned char>(blue),           0_uc, 255_uc); }
-void DrColor::setBlueF(double blue)     { b = Dr::Clamp(static_cast<unsigned char>(blue * 255.0),   0_uc, 255_uc); }
-void DrColor::setAlpha(int alpha)       { a = Dr::Clamp(static_cast<unsigned char>(alpha),          0_uc, 255_uc); }
-void DrColor::setAlphaF(double alpha)   { a = Dr::Clamp(static_cast<unsigned char>(alpha * 255.0),  0_uc, 255_uc); }
+void DrColor::setRed(int red)           { r = Clamp(static_cast<unsigned char>(red),            0_uc, 255_uc); }
+void DrColor::setRedF(double red)       { r = Clamp(static_cast<unsigned char>(red * 255.0),    0_uc, 255_uc); }
+void DrColor::setGreen(int green)       { g = Clamp(static_cast<unsigned char>(green),          0_uc, 255_uc); }
+void DrColor::setGreenF(double green)   { g = Clamp(static_cast<unsigned char>(green * 255.0),  0_uc, 255_uc); }
+void DrColor::setBlue(int blue)         { b = Clamp(static_cast<unsigned char>(blue),           0_uc, 255_uc); }
+void DrColor::setBlueF(double blue)     { b = Clamp(static_cast<unsigned char>(blue * 255.0),   0_uc, 255_uc); }
+void DrColor::setAlpha(int alpha)       { a = Clamp(static_cast<unsigned char>(alpha),          0_uc, 255_uc); }
+void DrColor::setAlphaF(double alpha)   { a = Clamp(static_cast<unsigned char>(alpha * 255.0),  0_uc, 255_uc); }
 
 void DrColor::setRgbF(double red, double green, double blue, double alpha) {
-    r = Dr::Clamp(static_cast<unsigned char>(red * 255.0),      0_uc, 255_uc);
-    g = Dr::Clamp(static_cast<unsigned char>(green * 255.0),    0_uc, 255_uc); 
-    b = Dr::Clamp(static_cast<unsigned char>(blue * 255.0),     0_uc, 255_uc); 
-    a = Dr::Clamp(static_cast<unsigned char>(alpha * 255.0),    0_uc, 255_uc); 
+    r = Clamp(static_cast<unsigned char>(red * 255.0),      0_uc, 255_uc);
+    g = Clamp(static_cast<unsigned char>(green * 255.0),    0_uc, 255_uc); 
+    b = Clamp(static_cast<unsigned char>(blue * 255.0),     0_uc, 255_uc); 
+    a = Clamp(static_cast<unsigned char>(alpha * 255.0),    0_uc, 255_uc); 
 }
 
 //####################################################################################
@@ -122,9 +122,9 @@ DrColor DrColor::redistributeRgb(double r, double g, double b) {
         r += extra * (r / (r + g));
         g += extra * (g / (r + g));
     }
-    int ir = Dr::Clamp(static_cast<int>(r), 0, 255);
-    int ig = Dr::Clamp(static_cast<int>(g), 0, 255);
-    int ib = Dr::Clamp(static_cast<int>(b), 0, 255);
+    int ir = Clamp(static_cast<int>(r), 0, 255);
+    int ig = Clamp(static_cast<int>(g), 0, 255);
+    int ib = Clamp(static_cast<int>(b), 0, 255);
     return DrColor(ir, ig, ib);
 }
 
@@ -161,32 +161,32 @@ DrColor& DrColor::operator=(const DrColor &other) {
 }
 
 DrColor DrColor::operator+(const DrColor &other) const {
-    return DrColor(Dr::Clamp(r + other.r, 0, 255),
-                   Dr::Clamp(g + other.g, 0, 255),
-                   Dr::Clamp(b + other.b, 0, 255),
-                   Dr::Clamp(a + other.a, 0, 255));
+    return DrColor(Clamp(r + other.r, 0, 255),
+                   Clamp(g + other.g, 0, 255),
+                   Clamp(b + other.b, 0, 255),
+                   Clamp(a + other.a, 0, 255));
 }
 
 DrColor DrColor::operator-(const DrColor &other) const {
-    return DrColor(Dr::Clamp(r - other.r, 0, 255),
-                   Dr::Clamp(g - other.g, 0, 255),
-                   Dr::Clamp(b - other.b, 0, 255),
-                   Dr::Clamp(a - other.a, 0, 255));
+    return DrColor(Clamp(r - other.r, 0, 255),
+                   Clamp(g - other.g, 0, 255),
+                   Clamp(b - other.b, 0, 255),
+                   Clamp(a - other.a, 0, 255));
 }
 
 DrColor DrColor::operator*(int k) const {
-    return DrColor(Dr::Clamp(r * k, 0, 255),
-                   Dr::Clamp(g * k, 0, 255),
-                   Dr::Clamp(b * k, 0, 255),
-                   Dr::Clamp(a * k, 0, 255));
+    return DrColor(Clamp(r * k, 0, 255),
+                   Clamp(g * k, 0, 255),
+                   Clamp(b * k, 0, 255),
+                   Clamp(a * k, 0, 255));
 }
 
 DrColor DrColor::operator/(int k) const {
     if (k == 0) return DrColor(255, 255, 255, 255);
-    return DrColor(Dr::Clamp(r / k, 0, 255),
-                   Dr::Clamp(g / k, 0, 255),
-                   Dr::Clamp(b / k, 0, 255),
-                   Dr::Clamp(a / k, 0, 255));
+    return DrColor(Clamp(r / k, 0, 255),
+                   Clamp(g / k, 0, 255),
+                   Clamp(b / k, 0, 255),
+                   Clamp(a / k, 0, 255));
 }
 
 bool DrColor::operator==(const DrColor &other) const {

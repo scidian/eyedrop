@@ -6,8 +6,6 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include <math.h>
-
 #include "Point.h"
 #include "PointF.h"
 

@@ -9,9 +9,25 @@
 #include "engine/sxd/App.h"
 
 
+class Player : public DrApp {
+public:
+    using DrApp::DrApp;                                                 // Inherits base constructor, requires C++ 11
+
+    void onUpdate() override { 
+        uint64_t elapsed = stm_since(m_time_start);
+        double seconds = stm_sec(elapsed);
+        setAppName("Frame count: " + std::to_string(sapp_frame_count()));
+    }
+
+    void onEvent(const sapp_event* event) override {
+       
+    }
+};
+
+
 int main(int argc, char *argv[]) {
 
-    DrApp player("Test Player", DROP_COLOR_PURPLE);
+    Player player("Test Player", DROP_COLOR_PURPLE);
     player.run();
 
 }

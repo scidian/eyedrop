@@ -30,7 +30,7 @@ class PolylineSimplification
 public:
     PolylineSimplification();
 
-    static std::vector<DrPointF> RamerDouglasPeucker(const std::vector<DrPointF> &point_list, double epsilon);
+    static std::vector<DrPointF> ramerDouglasPeucker(const std::vector<DrPointF> &point_list, double epsilon);
 };
 
 

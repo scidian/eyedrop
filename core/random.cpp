@@ -9,9 +9,7 @@
 #include <chrono>
 
 #include "core/imaging/Color.h"
-#include "core/random.h"
-
-namespace Dr {
+#include "core/Random.h"
 
 
 //####################################################################################
@@ -49,14 +47,10 @@ bool RandomBool() {
 // Returns a random color with fully opaque alpha
 DrColor RandomColor() {
     DrColor color(0, 0, 0, 255);
-    color.setRed(   RandomInt(0, 256) );
-    color.setGreen( RandomInt(0, 256) );
-    color.setBlue(  RandomInt(0, 256) );
+            color.setRed(   RandomInt(0, 256) );
+            color.setGreen( RandomInt(0, 256) );
+            color.setBlue(  RandomInt(0, 256) );
     return color;
 }
-
-
-}   // End namespace Dr
-
 
 

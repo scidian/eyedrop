@@ -6,7 +6,7 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "core/math.h"
+#include "core/Math.h"
 #include "Vec2.h"
 
 
@@ -84,15 +84,15 @@ DrVec2 operator-(const float d_, const DrVec2 &vec) {
 //##    Overload Operators - Comparisons
 //####################################################################################
 bool DrVec2::operator!=(const DrVec2 &v_) const {
-    return (Dr::IsCloseTo(x, v_.x, 0.001f) == false) || (Dr::IsCloseTo(y, v_.y, 0.001f) == false);
+    return (IsCloseTo(x, v_.x, 0.001f) == false) || (IsCloseTo(y, v_.y, 0.001f) == false);
 }
 
 bool DrVec2::operator==(const DrVec2 &d_) const {
-    return Dr::IsCloseTo(x, d_.x, 0.001f) && Dr::IsCloseTo(y, d_.y, 0.001f);
+    return IsCloseTo(x, d_.x, 0.001f) && IsCloseTo(y, d_.y, 0.001f);
 }
 
 bool DrVec2::operator<(const DrVec2 &v_) const {
-    if (Dr::IsCloseTo(x, v_.x, 0.001f) == false)
+    if (IsCloseTo(x, v_.x, 0.001f) == false)
         return x < v_.x;
     else
         return y < v_.y;

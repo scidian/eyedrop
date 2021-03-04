@@ -12,14 +12,15 @@
 #include "3rd_party/handmade_math.h"
 #include "3rd_party/stb/stb_image.h"
 #include "core/geometry/Rect.h"
-#include "core/imaging.h"
-#include "core/math.h"
-#include "core/random.h"
-#include "core/types/bitmap.h"
-#include "core/types/color.h"
-#include "core/types/image.h"
-#include "core/types/vec2.h"
-#include "engine/s3d/mesh.h"
+#include "core/imaging/Bitmap.h"
+#include "core/imaging/Color.h"
+#include "core/imaging/Filter.h"
+#include "core/imaging/Image.h"
+#include "core/Math.h"
+#include "core/Random.h"
+#include "engine/s3d/Matrix.h"
+#include "engine/s3d/Mesh.h"
+#include "engine/s3d/Vec2.h"
 
 // ***** Sokol
 #include "3rd_party/sokol/sokol_app.h"
@@ -122,7 +123,7 @@ long fps =   0;
 // Model Rotation
 DrVec2      total_rotation {  0.f,  0.f };
 DrVec2      add_rotation   { 25.f, 25.f };
-hmm_mat4    model =         Dr::IdentityMatrix();
+hmm_mat4    model =         DrMatrix::identityMatrix();
 DrVec2      mouse_down =    { 0, 0 };
 float       rotate_speed =  1.f;
 bool        is_mouse_down = false;
@@ -193,7 +194,7 @@ void init(void) {
 
     // ***** Font Setup, make sure the fontstash atlas width/height is pow-2 
     state.dpi_scale = sapp_dpi_scale();
-    const int atlas_dim = Dr::RoundPowerOf2(512.0f * state.dpi_scale);
+    const int atlas_dim = RoundPowerOf2(512.0f * state.dpi_scale);
     FONScontext* fons_context = sfons_create(atlas_dim, atlas_dim, FONS_ZERO_TOPLEFT);
     state.fons = fons_context;
     state.font_normal = FONS_INVALID;          
@@ -350,9 +351,15 @@ void init(void) {
     sfetch_send(&sokol_fetch_image);
 
     // Load font in background
+    auto fun = +[](const sfetch_response_t* response) {
+        if (response->fetched) {
+            state.font_normal = fonsAddFontMem(state.fons, "sans", (unsigned char*)response->buffer_ptr, (int)response->fetched_size,  false);
+        } 
+    };
+
     sfetch_request_t (sokol_fetch_font) {
         .path = font_file.c_str(),
-        .callback = font_normal_loaded,
+        .callback = fun,//font_normal_loaded,
         .buffer_ptr = state.font_normal_data,
         .buffer_size = sizeof(state.font_normal_data)
     };
@@ -386,7 +393,7 @@ void calculateMesh(bool reset_position) {
     // ***** Initialize Mesh
     image->outlinePoints(level_of_detail);
     mesh = std::make_shared<DrMesh>();
-    mesh->image_size = Dr::Max(image->getBitmap().width, image->getBitmap().height);      
+    mesh->image_size = Max(image->getBitmap().width, image->getBitmap().height);      
     mesh->wireframe = wireframe;
     mesh->initializeExtrudedImage(image.get(), mesh_quality);
     //mesh->initializeTextureQuad();
@@ -423,7 +430,7 @@ void calculateMesh(bool reset_position) {
         if (reset_position) {
             total_rotation.set(0.f, 0.f);
             add_rotation.set(25.f, 25.f);
-            model = Dr::IdentityMatrix();
+            model = DrMatrix::identityMatrix();
         }
     }
 }
@@ -441,7 +448,7 @@ static void load_image(stbi_uc *buffer_ptr, int fetched_size) {
 
         // ********** Copy data into our custom bitmap class, create image and trace outline
         DrBitmap bitmap = DrBitmap(pixels, static_cast<int>(png_width * png_height * 4), false, png_width, png_height);
-        //bitmap = Dr::ApplySinglePixelFilter(Image_Filter_Type::Hue, bitmap, Dr::RandomInt(-100, 100));
+        //bitmap = Dr::ApplySinglePixelFilter(DROP_IMAGE_FILTER_HUE, bitmap, Dr::RandomInt(-100, 100));
         image = std::make_shared<DrImage>("shapes", bitmap, 0.25f);
 
         calculateMesh(true);        
@@ -561,7 +568,7 @@ static void input(const sapp_event* event) {
             case SAPP_KEYCODE_R:
                 total_rotation.set(0.f, 0.f);
                 add_rotation.set(25.f, 25.f);
-                model = Dr::IdentityMatrix();
+                model = DrMatrix::identityMatrix();
                 break;
             case SAPP_KEYCODE_W:
                 mesh->wireframe = !mesh->wireframe;
@@ -572,7 +579,7 @@ static void input(const sapp_event* event) {
                 
     } else if (event->type == SAPP_EVENTTYPE_MOUSE_SCROLL) {
         zoom -= (event->scroll_y * 0.1f);
-        zoom = Dr::Clamp(zoom, 0.5f, 5.0f);
+        zoom = Clamp(zoom, 0.5f, 5.0f);
 
     } else if (event->type == SAPP_EVENTTYPE_MOUSE_DOWN) {
         if (event->mouse_button == SAPP_MOUSEBUTTON_LEFT) {
@@ -604,8 +611,8 @@ static void input(const sapp_event* event) {
 
             mouse_down.x = x_movement;
             mouse_down.y = y_movement;
-            add_rotation.x = Dr::EqualizeAngle0to360(add_rotation.x);
-            add_rotation.y = Dr::EqualizeAngle0to360(add_rotation.y);
+            add_rotation.x = EqualizeAngle0to360(add_rotation.x);
+            add_rotation.y = EqualizeAngle0to360(add_rotation.y);
         }
 
     } else if (event->type == SAPP_EVENTTYPE_FILES_DROPPED) {
@@ -779,8 +786,8 @@ static void frame(void) {
     hmm_mat4 rym = HMM_Rotate(add_rotation.y, HMM_Vec3(0.0f, 1.0f, 0.0f));
     hmm_mat4 rotate = HMM_MultiplyMat4(rxm, rym); 
              model =  HMM_MultiplyMat4(rotate, model);
-    total_rotation.x = Dr::EqualizeAngle0to360(total_rotation.x + add_rotation.x);
-    total_rotation.y = Dr::EqualizeAngle0to360(total_rotation.y + add_rotation.y);
+    total_rotation.x = EqualizeAngle0to360(total_rotation.x + add_rotation.x);
+    total_rotation.y = EqualizeAngle0to360(total_rotation.y + add_rotation.y);
     add_rotation.set(0.f, 0.f);
 
 

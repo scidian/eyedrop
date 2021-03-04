@@ -12,7 +12,7 @@
 //
 #include <math.h>
 
-#include "core/math.h"
+#include "core/Math.h"
 #include "PointF.h"
 #include "PolygonF.h"
 
@@ -45,8 +45,8 @@ void DrPolygonF::addPoint(DrPointF point) {
 //####################################################################################
 // Checks if point lies on line segment made from line_a and line_b
 bool DrPolygonF::onSegment(DrPointF line_a, DrPointF point, DrPointF line_b) {
-    return (point.x <= Dr::Max(line_a.x, line_b.x) && point.x >= Dr::Min(line_a.x, line_b.x) &&
-            point.y <= Dr::Max(line_a.y, line_b.y) && point.y >= Dr::Min(line_a.y, line_b.y));
+    return (point.x <= Max(line_a.x, line_b.x) && point.x >= Min(line_a.x, line_b.x) &&
+            point.y <= Max(line_a.y, line_b.y) && point.y >= Min(line_a.y, line_b.y));
 }
 
 // Finds orientation of three points (p, q, r).
@@ -57,15 +57,15 @@ bool DrPolygonF::onSegment(DrPointF line_a, DrPointF point, DrPointF line_b) {
 Winding_Orientation DrPolygonF::orientation(DrPointF p, DrPointF q, DrPointF r) {
     double value = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
 
-    if (Dr::FuzzyCompare(value, 0.0)) return Winding_Orientation::LineSegment;                      // On a line
-    return ((value > 0) ? Winding_Orientation::Clockwise: Winding_Orientation::CounterClockwise);   // Clock-wise or Counterclock-wise
+    if (FuzzyCompare(value, 0.0)) return DROP_WINDING_LINE_SEGMENT;                         // On a line
+    return ((value > 0) ? DROP_WINDING_CLOCKWISE : DROP_WINDING_COUNTERCLOCKWISE);          // Clock-wise or Counterclock-wise
 }
 
 // Makes sure points are in the desired Winding Orientation
 void DrPolygonF::ensureWindingOrientation(std::vector<DrPointF> &points, Winding_Orientation direction_desired) {
     Winding_Orientation winding = findWindingOrientation(points);
-    if ((winding == Winding_Orientation::Clockwise        && direction_desired == Winding_Orientation::CounterClockwise) ||
-        (winding == Winding_Orientation::CounterClockwise && direction_desired == Winding_Orientation::Clockwise))
+    if ((winding == DROP_WINDING_CLOCKWISE        && direction_desired == DROP_WINDING_COUNTERCLOCKWISE) ||
+        (winding == DROP_WINDING_COUNTERCLOCKWISE && direction_desired == DROP_WINDING_CLOCKWISE))
     {
         std::reverse(points.begin(), points.end());
     }
@@ -80,9 +80,9 @@ Winding_Orientation DrPolygonF::findWindingOrientation(const std::vector<DrPoint
         if (i2 == points.size()) i2 = 0;
         area += points[i1].x * points[i2].y - points[i1].y * points[i2].x;
     }
-    if (area > 0) return Winding_Orientation::CounterClockwise;
-    if (area < 0) return Winding_Orientation::Clockwise;
-    return Winding_Orientation::LineSegment;
+    if (area > 0) return DROP_WINDING_COUNTERCLOCKWISE;
+    if (area < 0) return DROP_WINDING_CLOCKWISE;
+    return DROP_WINDING_LINE_SEGMENT;
 }
 
 
@@ -99,10 +99,10 @@ bool DrPolygonF::doIntersect(DrPointF p1, DrPointF q1, DrPointF p2, DrPointF q2)
     if (o1 != o2 && o3 != o4) return true;
 
     // Special Cases
-    if (o1 == Winding_Orientation::LineSegment && onSegment(p1, p2, q1)) return true;               // p1, q1 and p2 are colinear and p2 lies on segment p1q1
-    if (o2 == Winding_Orientation::LineSegment && onSegment(p1, q2, q1)) return true;               // p1, q1 and p2 are colinear and q2 lies on segment p1q1
-    if (o3 == Winding_Orientation::LineSegment && onSegment(p2, p1, q2)) return true;               // p2, q2 and p1 are colinear and p1 lies on segment p2q2
-    if (o4 == Winding_Orientation::LineSegment && onSegment(p2, q1, q2)) return true;               // p2, q2 and q1 are colinear and q1 lies on segment p2q2
+    if (o1 == DROP_WINDING_LINE_SEGMENT && onSegment(p1, p2, q1)) return true;               // p1, q1 and p2 are colinear and p2 lies on segment p1q1
+    if (o2 == DROP_WINDING_LINE_SEGMENT && onSegment(p1, q2, q1)) return true;               // p1, q1 and p2 are colinear and q2 lies on segment p1q1
+    if (o3 == DROP_WINDING_LINE_SEGMENT && onSegment(p2, p1, q2)) return true;               // p2, q2 and p1 are colinear and p1 lies on segment p2q2
+    if (o4 == DROP_WINDING_LINE_SEGMENT && onSegment(p2, q1, q2)) return true;               // p2, q2 and q1 are colinear and q1 lies on segment p2q2
     return false;                                                                                   // Doesn't fall in any of the above cases
 }
 
@@ -122,7 +122,7 @@ bool DrPolygonF::isInside(DrPointF point) {
         // Check if the line segment from 'p' to 'extreme' intersects with the line segment from 'polygon[i]' to 'polygon[next]'
         if (doIntersect(points()[i], points()[next], point, extreme)) {
             // If the point 'p' is colinear with line segment 'i-next', then check if it lies on segment, if it does, return true
-            if (orientation(points()[i], point, points()[next]) == Winding_Orientation::LineSegment)
+            if (orientation(points()[i], point, points()[next]) == DROP_WINDING_LINE_SEGMENT)
                 return onSegment(points()[i], point, points()[next]);
             count++;
         }
