@@ -7,6 +7,7 @@
         "textMateRules": [
             {   "scope": "variable.other.enummember",   "settings": {   "foreground": "#00836d" }   },
             {   "scope": "variable.other.constant",     "settings": {   "foreground": "#450194" },  },
+            {   "scope": "variable.readonly",           "settings": {   "foreground": "#450194" },  },
         ]
     },
     

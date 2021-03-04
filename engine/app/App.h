@@ -15,6 +15,8 @@
 #include <string>
 #include "3rd_party/cereal/types/map.hpp"
 #include "3rd_party/cereal/types/memory.hpp"
+#include "3rd_party/cereal/types/string.hpp"
+#include "3rd_party/cereal/types/set.hpp"
 #include "3rd_party/cereal/archives/binary.hpp"
 #include "3rd_party/sokol/sokol_app.h"
 #include "3rd_party/sokol/sokol_gfx.h"
@@ -26,6 +28,7 @@
 #include "3rd_party/sokol/sokol_fetch.h"
 #include "core/imaging/Color.h"
 #include "engine/data/Project.h"
+#include "engine/data/Types.h"
 
 // Forward Declarations
 class FONScontext;
@@ -73,7 +76,8 @@ struct state_t {
     uint8_t         font_normal_data[c_max_file_size];
 };
 
-
+// App Containers
+typedef std::map<std::string, std::shared_ptr<DrProject>>    ProjectMap;
 
 
 //####################################################################################
@@ -87,20 +91,11 @@ public:
     DrApp(std::string title = "Drop Creator", DrColor bg_color = DROP_COLOR_BLACK, int width = 800, int height = 600);
     ~DrApp();
 
-
-    // Serialization
-    bool saveProject() {
-        std::ofstream os("out.cereal", std::ios::binary);
-        cereal::BinaryOutputArchive archive( os );
-
-        SomeData myData;
-        archive( myData );
-    };
-
     // #################### VARIABLES ####################
 protected:
     // App Variables
     std::string         m_app_name          { "" };                             // Name of Application   
+    ProjectMap          m_projects          { };                                // Collection of open Projects
 
     // Local Variables
     long                m_key_generator     { c_start_app_key };                // Variable to hand out unique id key's to all child objects
@@ -152,6 +147,18 @@ public:
     long                checkCurrentGeneratorKey()                      { return m_key_generator; }
     long                getNextKey()                                    { return m_key_generator++; }
     void                setGeneratorKeyStartNumber(long initial_key)    { m_key_generator = initial_key; }
+
+    // Serialization
+    bool saveProjects() {
+        std::ofstream os("out.cereal", std::ios::binary);
+        cereal::BinaryOutputArchive archive( os );
+
+        for (auto proj_pair : m_projects) {
+            archive( proj_pair.second );
+        }
+
+        return true;
+    };
 
 };
 

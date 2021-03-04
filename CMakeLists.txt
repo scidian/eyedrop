@@ -73,6 +73,7 @@ endif()
 
 ##### Include Directories
 include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/3rd_party)
 
 
 ##### Glob the files, add the executable
@@ -89,6 +90,7 @@ file(GLOB SOURCE_CODE_FILES
     "engine/*.c**"
     "engine/app/*.c**"
     "engine/app/filesystem.c**"
+    "engine/data/*.c**"
     "engine/interface/*.c**"
     "engine/scene2d/*.c**"
     "engine/scene3d/*.c**"
