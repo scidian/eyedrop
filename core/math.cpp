@@ -162,6 +162,3 @@ bool IsSameColor(const DrColor &color1, const DrColor &color2, double tolerance)
 }
 
 
-
-
-

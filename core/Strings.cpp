@@ -49,5 +49,3 @@ std::string HexString(const int integer) {
     return ss.str();
 }
 
-
-

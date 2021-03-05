@@ -72,5 +72,3 @@ template<class T> void VectorCopy(std::vector<T> &copy_from, std::vector<T> &cop
 
 
 #endif // DR_CONTAINERS_H
-
-

@@ -47,8 +47,5 @@ bool        IsInteger(const std::string &source);
 std::string HexString(const int integer);
 
 
-
-
 #endif // DR_STRINGS_H
-
 

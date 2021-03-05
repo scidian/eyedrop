@@ -14,6 +14,7 @@
 // Forward Declarations
 class DrColor;
     
+    
 //####################################################################################
 //##    Random Functions
 //############################
@@ -27,6 +28,4 @@ bool        RandomBool();
 DrColor     RandomColor();
 
 #endif // DR_RANDOM_H
-
-
 

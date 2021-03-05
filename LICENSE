@@ -38,12 +38,13 @@
 //##
 //##                            Development Started:
 //##                           2018-11-27 - version 1
-//##                           2021-02-22 - version 2
+//##                           2021-02-07 - version 2
 //##
 //##    Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
 //##                         Proprietary and Confidential
 //##       Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //####################################################################################
+
 
 ## System libraries:
 
@@ -52,9 +53,10 @@
 - Dear ImGui (MIT): https://github.com/ocornut/imgui
 - Handmade-Math (CC0): https://github.com/StrangeZak/Handmade-Math
 - Stb (MIT): https://github.com/nothings/stb
-- Fontstash (Zlib): https://github.com/memononen/fontstash
-- Sokol (Zlib): https://github.com/floooh/sokol
+- Fontstash (ZLIB): https://github.com/memononen/fontstash
+- Sokol (ZLIB): https://github.com/floooh/sokol
 - Whereami (MIT): https://github.com/gpakosz/whereami
+
 
 ## Algorithim libraries:
 
@@ -63,3 +65,8 @@
 - Poly Partition (MIT): https://github.com/ivanfratric/polypartition
 - Ramer-Douglas-Peucker (CC0): https://gist.github.com/TimSC/0813573d77734bcb6f2cd2cf6cc7aa51
 
+
+## Tools
+
+- Hex Embed (ZLIB): https://github.com/codeplea/hexembed
+- Sokol Shdc (MIT): https://github.com/floooh/sokol-tools

@@ -7,7 +7,6 @@
 //
 //
 #include <chrono>
-
 #include "core/imaging/Color.h"
 #include "core/Random.h"
 
@@ -52,5 +51,4 @@ DrColor RandomColor() {
             color.setBlue(  RandomInt(0, 256) );
     return color;
 }
-
 

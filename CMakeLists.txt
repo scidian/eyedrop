@@ -21,7 +21,7 @@ cmake_minimum_required(VERSION 3.10)
 ####################################################################################
 
 
-set(EXPORT_TARGET   "web")
+set(EXPORT_TARGET   "osx")
 set(DEBUG_MODE      "false")        # Options:  "true"    or  "false"
 set(APP_TYPE        "player")       # Options:  "editor"  or  "player"
 
@@ -102,14 +102,14 @@ add_executable(${PROJECT_NAME} ${SOURCE_CODE_FILES})
 ##### Compile Shaders
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     execute_process (
-       COMMAND tools/sokol_shdc_bin/osx/./sokol-shdc -i shaders/basic_shader.glsl -o shaders/basic_shader.glsl.h -l glsl330:glsl100:metal_macos
+       COMMAND tools/sokol_shdc_bin/osx/./sokol-shdc -i engine/scene3d/shaders/BasicShader.glsl -o engine/scene3d/shaders/BasicShader.glsl.h -l glsl330:glsl100:metal_macos
        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 endif()
 
 
 ##### Copy 'assets' directory to 'build' directory
-add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets/ $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets/)
+add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets/output/ $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets/)
 
 
 ####################################################################################
@@ -131,8 +131,8 @@ add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E 
 ####################################################################################
 if (EXPORT_TARGET MATCHES "osx")
     # To optimze file size in order: -O0, -O1, -O2, -O3
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -std=c99 -xobjective-c -fobjc-arc")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -std=c++11 -fobjc-arc")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O1 -std=c99 -xobjective-c -fobjc-arc")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -std=c++11 -fobjc-arc")
     set(CMAKE_C_COMPILER "gcc")
     set(CMAKE_CXX_COMPILER "g++")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa -framework OpenGL -framework IOKit -framework Foundation")

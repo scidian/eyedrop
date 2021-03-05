@@ -56,10 +56,10 @@
 
 // ##### Local Includes
 #include "input.h"
-#include "shaders/basic_shader.glsl.h"
+#include "engine/scene3d/shaders/BasicShader.glsl.h"
 
 // ##### Embed Files
-#include "assets_embed/fonts/font_aileron_regular.h"
+#include "assets/embed/fonts/font_aileron_regular.h"
 
 
 //####################################################################################
