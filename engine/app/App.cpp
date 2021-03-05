@@ -73,22 +73,15 @@ sg_blend_state (sokol_blend_alpha) {
 
 
 //####################################################################################
-//##    Globals
+//##    Callbacks
 //####################################################################################
-// Local reference to DrApp Singleton for Sokol App
-DrApp* l_app { nullptr };         
-
-
-//####################################################################################
-//##    Callback: File Loading
-//####################################################################################
-/* The fetch-callback is called by sokol_fetch.h when the data is loaded,
-   or when an error has occurred. */
+// File Loading
 static void image_loaded(const sfetch_response_t* response) {
-    if (response->fetched) {
+    DrApp* app = (DrApp*)(response->user_void_ptr);
+    if (response->fetched && app) {
         // File data has been fetched
         //  Since we provided a big-enough buffer we can be sure that all data has been loaded here
-        l_app->loadImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+        app->loadImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
     
     } else if (response->finished) {
         // If loading the file failed, set clear color to signal reason
@@ -103,27 +96,29 @@ static void image_loaded(const sfetch_response_t* response) {
             sg_pass_action (pass_action7) { .colors[0] = { .action = SG_ACTION_CLEAR, .value = { 0.5f, 0.5f, 0.5f, 1.0f } } };        // black
     
             switch (response->error_code) {
-                case SFETCH_ERROR_NO_ERROR:             l_app->m_state.pass_action = (pass_action0);     break;
-                case SFETCH_ERROR_FILE_NOT_FOUND:       l_app->m_state.pass_action = (pass_action1);     break;
-                case SFETCH_ERROR_NO_BUFFER:            l_app->m_state.pass_action = (pass_action2);     break;
-                case SFETCH_ERROR_BUFFER_TOO_SMALL:     l_app->m_state.pass_action = (pass_action3);     break;
-                case SFETCH_ERROR_UNEXPECTED_EOF:       l_app->m_state.pass_action = (pass_action4);     break;
-                case SFETCH_ERROR_CANCELLED:            l_app->m_state.pass_action = (pass_action5);     break;
-                case SFETCH_ERROR_INVALID_HTTP_STATUS:  l_app->m_state.pass_action = (pass_action6);     break;
-                default:                                l_app->m_state.pass_action = (pass_action7);
+                case SFETCH_ERROR_NO_ERROR:             app->m_state.pass_action = (pass_action0);     break;
+                case SFETCH_ERROR_FILE_NOT_FOUND:       app->m_state.pass_action = (pass_action1);     break;
+                case SFETCH_ERROR_NO_BUFFER:            app->m_state.pass_action = (pass_action2);     break;
+                case SFETCH_ERROR_BUFFER_TOO_SMALL:     app->m_state.pass_action = (pass_action3);     break;
+                case SFETCH_ERROR_UNEXPECTED_EOF:       app->m_state.pass_action = (pass_action4);     break;
+                case SFETCH_ERROR_CANCELLED:            app->m_state.pass_action = (pass_action5);     break;
+                case SFETCH_ERROR_INVALID_HTTP_STATUS:  app->m_state.pass_action = (pass_action6);     break;
+                default:                                app->m_state.pass_action = (pass_action7);
             }            
         }
     }
 }
 
+// C callback wrappers for using member methods as callbacks functions
+std::function<void()>                           initCallback;     
+std::function<void()>                           frameCallback;     
+std::function<void(const sapp_event* event)>    eventCallback;      
+std::function<void()>                           cleanupCallback;    
+extern "C" void initWrapper()                           { initCallback(); }
+extern "C" void frameWrapper()                          { frameCallback(); }
+extern "C" void eventWrapper(const sapp_event* event)   { eventCallback(event); }
+extern "C" void cleanupWrapper()                        { cleanupCallback(); }
 
-// ***** C callback wrappers for using member methods as callbacks functions
-extern "C" {
-    static void initWrapper(void)                      { if (l_app != nullptr) l_app->init(); }
-    static void frameWrapper(void)                     { if (l_app != nullptr) l_app->frame(); }
-    static void eventWrapper(const sapp_event *event)  { if (l_app != nullptr) l_app->event(event); }
-    static void cleanupWrapper(void)                   { if (l_app != nullptr) l_app->cleanup(); }
-}
 
 //####################################################################################
 //##    Constructor / Destructor
@@ -132,9 +127,12 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
     m_app_name = title;
     m_bg_color = bg_color;
 
-    l_app = this;
+    initCallback =      std::bind(&DrApp::init,     this);
+    frameCallback =     std::bind(&DrApp::frame,    this);
+    eventCallback =     std::bind(&DrApp::event,    this, std::placeholders::_1);
+    cleanupCallback =   std::bind(&DrApp::cleanup,  this);
 
-    m_sokol_app.window_title =          m_app_name.c_str();
+    m_sokol_app.window_title =          title.c_str();
     m_sokol_app.init_cb =               initWrapper;    
     m_sokol_app.frame_cb =              frameWrapper;
     m_sokol_app.event_cb =              eventWrapper;
@@ -455,9 +453,10 @@ void DrApp::init(void) {
     // Load inital "shapes.png" image in background
     sfetch_request_t (sokol_fetch_image) {
         .path = image_file.c_str(),
-        .callback = image_loaded,
         .buffer_ptr = m_state.file_buffer,
-        .buffer_size = sizeof(m_state.file_buffer)
+        .buffer_size = sizeof(m_state.file_buffer),
+        .user_void_ptr = this,
+        .callback = image_loaded,
     };
     sfetch_send(&sokol_fetch_image);
 

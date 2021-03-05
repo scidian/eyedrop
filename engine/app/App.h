@@ -50,13 +50,6 @@ class FONScontext;
 //####################################################################################
 //##    Local Structs / Defines
 //############################
-enum loadstate_t {
-    LOADSTATE_UNKNOWN = 0,
-    LOADSTATE_SUCCESS,
-    LOADSTATE_FAILED,
-    LOADSTATE_FILE_TOO_BIG,
-};
-
 struct item_t {
     sapp_event event = { };
 };
@@ -69,7 +62,6 @@ struct state_t {
 
     // Fetch / Drop
     uint8_t         file_buffer[MAX_FILE_SIZE];
-    loadstate_t     load_state;
 
     // Events
     item_t          items[_SAPP_EVENTTYPE_NUM];

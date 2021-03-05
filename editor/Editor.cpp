@@ -25,12 +25,8 @@
 
 
 //####################################################################################
-//##    Sokol File Scope Stuff
+//##    ImGui Custom Styler
 //####################################################################################
-// Local reference to DrApp Singleton for Sokol App
-DrApp* l_editor { nullptr };          
-
-
 static ImVec4 base = ImVec4(0.000f, 0.700f, 0.650f, 1.0f);
 static ImVec4 bg   = ImVec4(0.090f, 0.120f, 0.115f, 1.0f);
 static ImVec4 text = ImVec4(0.900f, 0.930f, 0.925f, 1.0f);
@@ -148,27 +144,27 @@ void theme_generator() {
 //##    Callback: File Dropped
 //####################################################################################
 #if defined(DROP_TARGET_HTML5)
-    // the async-loading callback for sapp_html5_fetch_dropped_file
+    // The async-loading callback for sapp_html5_fetch_dropped_file
     static void emsc_load_callback(const sapp_html5_fetch_response* response) {
-        if (response->succeeded) {
-            l_editor.m_state.load_state = LOADSTATE_SUCCESS;
-            l_editor.loadImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
-        } else if (SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL == response->error_code) {
-            l_editor.m_state.load_state = LOADSTATE_FILE_TOO_BIG;
-        } else {
-            l_editor.m_state.load_state = LOADSTATE_FAILED;
+        DrApp* app = (DrApp*)(response->user_data);
+        if (app) {
+            if (response->succeeded) {
+                app->loadImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+            } else {
+                // File too big if (response->error_code == SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
+            }
         }
     }
 #else
     // the async-loading callback for native platforms
     static void native_load_callback(const sfetch_response_t* response) {
-        if (response->fetched) {
-            l_editor->m_state.load_state = LOADSTATE_SUCCESS;
-            l_editor->loadImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
-        } else if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL) {
-            l_editor->m_state.load_state = LOADSTATE_FILE_TOO_BIG;
-        } else {
-            l_editor->m_state.load_state = LOADSTATE_FAILED;
+        DrApp* app = (DrApp*)(response->user_void_ptr);
+        if (app) {
+            if (response->fetched) {
+                app->loadImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+            } else if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL) {
+                // File too big if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
+            }
         }
     }
 #endif
@@ -182,9 +178,7 @@ class Editor : public DrApp
 public:
     using DrApp::DrApp;                                                 // Inherits base constructor, requires C++ 11
 
-    virtual void onCreate() override {
-        l_editor = this;
-    }
+    virtual void onCreate() override { }
 
     virtual void onUpdateScene() override { 
          // ***** Compute model-view-projection matrix for vertex shader
@@ -211,8 +205,8 @@ public:
 
         // Check if user requested new model quality, if so recalculate
         if (m_mesh_quality != m_before_keys) {
-            //calculateMesh(false);
-            //m_before_keys = m_mesh_quality;
+            calculateMesh(false);
+            m_before_keys = m_mesh_quality;
         }
 
         sg_apply_pipeline(m_state.pip);
@@ -296,18 +290,20 @@ public:
                 // on emscripten need to use the sokol-app helper function to load the file data
                 sapp_html5_fetch_request (sokol_fetch_request) {
                     .dropped_file_index = 0,
-                    .callback = emsc_load_callback,
                     .buffer_ptr = m_state.file_buffer,
                     .buffer_size = sizeof(m_state.file_buffer),
+                    .user_data = this,
+                    .callback = emsc_load_callback,
                 };
                 sapp_html5_fetch_dropped_file(&sokol_fetch_request);
             #else
                 // native platform: use sokol-fetch to load file content
                 sfetch_request_t (sokol_fetch_request) {
                     .path = sapp_get_dropped_file_path(0),
-                    .callback = native_load_callback,
                     .buffer_ptr = m_state.file_buffer,
-                    .buffer_size = sizeof(m_state.file_buffer)
+                    .buffer_size = sizeof(m_state.file_buffer),
+                    .user_void_ptr = this,
+                    .callback = native_load_callback,
                 };
                 sfetch_send(&sokol_fetch_request);
             #endif
