@@ -72,23 +72,11 @@ sg_blend_state (sokol_blend_alpha) {
 };
 
 
-// static void font_normal_loaded(const sfetch_response_t* response) {
-//     if (response->fetched) {
-//         state.font_normal = fonsAddFontMem(state.fons, "sans", (unsigned char*)response->buffer_ptr, (int)response->fetched_size,  false);
-//     } 
-// }
-
 //####################################################################################
-//##    Sokol File Scope Stuff
+//##    Globals
 //####################################################################################
 // Local reference to DrApp Singleton for Sokol App
-DrApp* l_app = nullptr;          
-
-// ***** C callback wrappers for using member methods as callbacks functions
-void initWrapper(void)                      { l_app->init(); }
-void frameWrapper(void)                     { l_app->frame(); }
-void eventWrapper(const sapp_event *event)  { l_app->event(event); }
-void cleanupWrapper(void)                   { l_app->cleanup(); }
+DrApp* l_app { nullptr };         
 
 
 //####################################################################################
@@ -128,6 +116,14 @@ static void image_loaded(const sfetch_response_t* response) {
     }
 }
 
+
+// ***** C callback wrappers for using member methods as callbacks functions
+extern "C" {
+    static void initWrapper(void)                      { if (l_app != nullptr) l_app->init(); }
+    static void frameWrapper(void)                     { if (l_app != nullptr) l_app->frame(); }
+    static void eventWrapper(const sapp_event *event)  { if (l_app != nullptr) l_app->event(event); }
+    static void cleanupWrapper(void)                   { if (l_app != nullptr) l_app->cleanup(); }
+}
 
 //####################################################################################
 //##    Constructor / Destructor

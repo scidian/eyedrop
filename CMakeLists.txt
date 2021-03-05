@@ -187,6 +187,8 @@ elseif (EXPORT_TARGET MATCHES "web")
     #   -s ASSERTIONS=1                         show errors in javascript console
     #   -s ALLOW_MEMORY_GROWTH=1                allow for dynamic memory access
     #   -s TOTAL_MEMORY=x                       embed larger memory up front (default is 16777216... 33554432, 67108864, 134217728, 268435456
+    #   -s EMULATE_FUNCTION_POINTER_CASTS=1     required for c style function callbacks to play nice with emscripten
+    #
     if (DEBUG_MODE MATCHES "true")
         set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s TOTAL_MEMORY=33554432 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind -s ASSERTIONS=2")    
     else()

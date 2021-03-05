@@ -28,7 +28,7 @@
 //##    Sokol File Scope Stuff
 //####################################################################################
 // Local reference to DrApp Singleton for Sokol App
-DrApp* l_editor = nullptr;          
+DrApp* l_editor { nullptr };          
 
 
 static ImVec4 base = ImVec4(0.000f, 0.700f, 0.650f, 1.0f);
@@ -148,29 +148,29 @@ void theme_generator() {
 //##    Callback: File Dropped
 //####################################################################################
 #if defined(DROP_TARGET_HTML5)
-// the async-loading callback for sapp_html5_fetch_dropped_file
-static void emsc_load_callback(const sapp_html5_fetch_response* response) {
-    if (response->succeeded) {
-        l_editor.m_state.load_state = LOADSTATE_SUCCESS;
-        l_editor.loadImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
-    } else if (SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL == response->error_code) {
-        l_editor.m_state.load_state = LOADSTATE_FILE_TOO_BIG;
-    } else {
-        l_editor.m_state.load_state = LOADSTATE_FAILED;
+    // the async-loading callback for sapp_html5_fetch_dropped_file
+    static void emsc_load_callback(const sapp_html5_fetch_response* response) {
+        if (response->succeeded) {
+            l_editor.m_state.load_state = LOADSTATE_SUCCESS;
+            l_editor.loadImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+        } else if (SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL == response->error_code) {
+            l_editor.m_state.load_state = LOADSTATE_FILE_TOO_BIG;
+        } else {
+            l_editor.m_state.load_state = LOADSTATE_FAILED;
+        }
     }
-}
 #else
-// the async-loading callback for native platforms
-static void native_load_callback(const sfetch_response_t* response) {
-    if (response->fetched) {
-        l_editor->m_state.load_state = LOADSTATE_SUCCESS;
-        l_editor->loadImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
-    } else if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL) {
-        l_editor->m_state.load_state = LOADSTATE_FILE_TOO_BIG;
-    } else {
-        l_editor->m_state.load_state = LOADSTATE_FAILED;
+    // the async-loading callback for native platforms
+    static void native_load_callback(const sfetch_response_t* response) {
+        if (response->fetched) {
+            l_editor->m_state.load_state = LOADSTATE_SUCCESS;
+            l_editor->loadImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+        } else if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL) {
+            l_editor->m_state.load_state = LOADSTATE_FILE_TOO_BIG;
+        } else {
+            l_editor->m_state.load_state = LOADSTATE_FAILED;
+        }
     }
-}
 #endif
 
 

@@ -28,7 +28,7 @@ public:
 
 int main(int argc, char* argv[]) {
 
-    Player player("Test Player", DROP_COLOR_PURPLE);
-    player.run();
+    Player* player = new Player("Test Player", DROP_COLOR_PURPLE);
+    player->run();
 
 }
