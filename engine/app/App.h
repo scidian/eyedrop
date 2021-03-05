@@ -28,9 +28,14 @@
 #include "3rd_party/sokol/sokol_time.h"
 #include "3rd_party/sokol/sokol_audio.h"
 #include "3rd_party/sokol/sokol_fetch.h"
+#include "3rd_party/stb/stb_image.h"
+#include "core/geometry/Matrix.h"
+#include "core/geometry/Vec2.h"
 #include "core/imaging/Color.h"
-#include "engine/data/Project.h"
-#include "engine/data/Types.h"
+#include "../data/Game.h"
+#include "../data/Project.h"
+#include "../data/Types.h"
+#include "../scene3d/Mesh.h"
 
 // Forward Declarations
 class FONScontext;
@@ -39,9 +44,7 @@ class FONScontext;
 //####################################################################################
 //##    Constants 
 //############################
-// Constants
-const long      c_max_file_size =   (1024 * 1024);
-const int       c_start_app_key =   1001;
+#define MAX_FILE_SIZE   (1024 * 1024)
 
 
 //####################################################################################
@@ -65,7 +68,7 @@ struct state_t {
     sg_bindings     bind;
 
     // Fetch / Drop
-    uint8_t         file_buffer[c_max_file_size];
+    uint8_t         file_buffer[MAX_FILE_SIZE];
     loadstate_t     load_state;
 
     // Events
@@ -75,7 +78,7 @@ struct state_t {
     FONScontext*    fons;
     float           dpi_scale;
     int             font_normal;
-    uint8_t         font_normal_data[c_max_file_size];
+    uint8_t         font_normal_data[MAX_FILE_SIZE];
 };
 
 // App Containers
@@ -99,9 +102,6 @@ public:
     std::string         m_app_name          { "" };                             // Name of Application   
     ProjectMap          m_projects          { };                                // Collection of open Projects
 
-    // Local Variables
-    long                m_key_generator     { c_start_app_key };                // Variable to hand out unique id key's to all child objects
-
     // Window Variables
     DrColor             m_bg_color          { DROP_COLOR_BLACK };               // Background color of main App
     int                 m_width             { 800 };                            // Window width
@@ -112,6 +112,28 @@ public:
     state_t             m_state;                                                // Sokol_app state for this Window
     sg_imgui_t          m_sg_imgui;                                             // Sokol_gfx_debug keeps track of data structures used by sokol_gfx for Debug View
 
+
+    // ---> Temp Variables, used for demo
+    std::shared_ptr<DrMesh>     m_mesh = std::make_shared<DrMesh>();
+    std::shared_ptr<DrImage>    m_image = nullptr;                              
+    int                         m_mesh_quality = 5;
+
+    // Image Variables
+    bool                        m_initialized_image = false;
+    int                         m_before_keys = m_mesh_quality;
+
+    // Model Rotation
+    DrVec2                      m_total_rotation {  0.f,  0.f };
+    DrVec2                      m_add_rotation   { 25.f, 25.f };
+    hmm_mat4                    m_model =         DrMatrix::identityMatrix();
+    DrVec2                      m_mouse_down =    { 0, 0 };
+    float                       m_rotate_speed =  1.f;
+    bool                        m_is_mouse_down = false;
+    float                       m_zoom = 1.5f;
+    bool                        m_wireframe = true;
+    // <--- End Temp Variables
+
+
     // Time Variables
     uint64_t            m_time_start        { 0 };                              // Sokol_time start time since App started running
     double              m_frames_per_second { 0.0 };                            // Stores current calculated frames per second
@@ -119,15 +141,17 @@ public:
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################
 public:
     virtual void    onCreate(void) { }
-    virtual void    onUpdate(void) { }
-    virtual void    onEvent(const sapp_event *event) { }
+    virtual void    onUpdateScene(void) { }
+    virtual void    onUpdateGUI(void) { }
+    virtual void    onEvent(const sapp_event* event) { }
     virtual void    onDestroy(void) { }
-
     
 
     // #################### INTERNAL FUNCTIONS ####################
 public:
-    // Start app
+    // Sokol Related
+    void calculateMesh(bool reset_position);
+    void loadImage(stbi_uc *buffer_ptr, int fetched_size);
     void run() { sapp_run(m_sokol_app); }
 
     // Linked to internal sokol callbacks
@@ -144,11 +168,6 @@ public:
 
     // Timer Functions
     double              framesPerSecond()                               { return m_frames_per_second; }
-
-    // Key Generator
-    long                checkCurrentGeneratorKey()                      { return m_key_generator; }
-    long                getNextKey()                                    { return m_key_generator++; }
-    void                setGeneratorKeyStartNumber(long initial_key)    { m_key_generator = initial_key; }
 
     // Serialization
     bool saveProjects() {

@@ -8,8 +8,8 @@
 
     Overview:
 
-        Shader program 'extrude3D':
-            Get shader desc: extrude3D_shader_desc(sg_query_backend());
+        Shader program 'basic_shader':
+            Get shader desc: basic_shader_shader_desc(sg_query_backend());
             Vertex shader: vs
                 Attribute slots:
                     ATTR_vs_pos = 0
@@ -31,7 +31,7 @@
 
     Shader descriptor structs:
 
-        sg_shader extrude3D = sg_make_shader(extrude3D_shader_desc(sg_query_backend()));
+        sg_shader basic_shader = sg_make_shader(basic_shader_shader_desc(sg_query_backend()));
 
     Vertex attribute locations for vertex shader 'vs':
 
@@ -834,7 +834,7 @@ static const char fs_source_metal_macos[2127] = {
 #if !defined(SOKOL_GFX_INCLUDED)
   #error "Please include sokol_gfx.h before BasicShader.glsl.h"
 #endif
-static inline const sg_shader_desc* extrude3D_shader_desc(sg_backend backend) {
+static inline const sg_shader_desc* basic_shader_shader_desc(sg_backend backend) {
   if (backend == SG_BACKEND_GLCORE33) {
     static sg_shader_desc desc;
     static bool valid;
@@ -859,7 +859,7 @@ static inline const sg_shader_desc* extrude3D_shader_desc(sg_backend backend) {
       desc.fs.images[0].name = "tex";
       desc.fs.images[0].image_type = SG_IMAGETYPE_2D;
       desc.fs.images[0].sampler_type = SG_SAMPLERTYPE_FLOAT;
-      desc.label = "extrude3D_shader";
+      desc.label = "basic_shader_shader";
     };
     return &desc;
   }
@@ -887,7 +887,7 @@ static inline const sg_shader_desc* extrude3D_shader_desc(sg_backend backend) {
       desc.fs.images[0].name = "tex";
       desc.fs.images[0].image_type = SG_IMAGETYPE_2D;
       desc.fs.images[0].sampler_type = SG_SAMPLERTYPE_FLOAT;
-      desc.label = "extrude3D_shader";
+      desc.label = "basic_shader_shader";
     };
     return &desc;
   }
@@ -905,7 +905,7 @@ static inline const sg_shader_desc* extrude3D_shader_desc(sg_backend backend) {
       desc.fs.images[0].name = "tex";
       desc.fs.images[0].image_type = SG_IMAGETYPE_2D;
       desc.fs.images[0].sampler_type = SG_SAMPLERTYPE_FLOAT;
-      desc.label = "extrude3D_shader";
+      desc.label = "basic_shader_shader";
     };
     return &desc;
   }

@@ -11,9 +11,15 @@
 
 // Includes
 #include <map>
+#include <string>
+#include "../data/Types.h"
 
 // Forward Declarations
 class DrComponent;
+
+// Type Definitions
+typedef std::map<long, std::shared_ptr<DrComponent>>    Components;
+typedef std::map<long, std::shared_ptr<DrEntity>>       Entities;
 
 
 //####################################################################################
@@ -24,15 +30,16 @@ class DrEntity
 {
 public:
     // Constructor / Destructor
-    DrEntity();
-    ~DrEntity();
+    DrEntity(std::shared_ptr<DrEntity> owner_entity, std::string entity_name) { };
+    ~DrEntity() { };
 
     // #################### VARIABLES ####################
 private:
     // Local Variables
-    std::string                         m_name                      { };                            // Name of this Entity
-    std::map<long, DrComponent*>        m_components                { };
-        
+    std::string                 name                    { "" };                     // Name of this Entity
+    long                        id                      { KEY_NONE };               // ID Key of this Entity
+    Entities                    children                { };                        // Children of this Entity
+    Components                  components              { };                        // Components of this Entity       
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################
 public:

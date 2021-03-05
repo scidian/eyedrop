@@ -11,27 +11,23 @@
 
 // Includes
 #include <map>
-
-// Forward Declarations
-class DrEntity;
+#include "Entity.h"
 
 
 //####################################################################################
 //##    DrScene
 //##        Interface class to hold a Scene
 //############################
-class DrScene 
+class DrScene : public DrEntity
 {
 public:
     // Constructor / Destructor
-    DrScene();
-    ~DrScene();
+    DrScene() { };
+    ~DrScene() { };
 
     // #################### VARIABLES ####################
 public:
     // Local Variables
-    std::string                     name            { };                    // Name of this Scene
-    std::map<long, DrEntity*>       children        { };                    // Entities within this Scene
 
         
 

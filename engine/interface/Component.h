@@ -13,9 +13,16 @@
 #include <map>
 #include <string>
 #include "core/Variant.h"
+#include "../data/Types.h"
+
+// Forward Declarations
+class DrEntity;
 
 // Type Definitions
 typedef std::map<std::string, DrVariant>    Properties;
+
+
+
 
 
 //####################################################################################
@@ -25,19 +32,19 @@ typedef std::map<std::string, DrVariant>    Properties;
 class DrComponent 
 {
     // Constructor
-    DrComponent(DrScene *owner_scene, DrEntity *owner_entity, std::string component_name);
-    virtual ~DrComponent();
+    DrComponent(std::shared_ptr<DrEntity> owner_entity, std::string component_name) { };
+    virtual ~DrComponent() { };
 
 
     // #################### VARIABLES ####################
 public:
     // External Borrowed Pointers
-    DrScene            *scene         { nullptr };                          // Pointer to the parent Scene
-    DrEntity           *entity        { nullptr };                          // Pointer to the parent Entity
+    std::shared_ptr<DrEntity>   entity                  { nullptr };                // Pointer to the parent Entity
 
     // Local Variables
-    std::string         name;                                               // Name of this Component
-    Properties          m_properties;                                       // Holds variables for this Component by Property name (as std::string)
+    std::string                 name;                                               // Name of this Component
+    long                        id                      { KEY_NONE };               // ID Key of this Component
+    Properties                  properties;                                         // Holds variables for this Component by Property name (as std::string)
 
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################

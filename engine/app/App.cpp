@@ -33,9 +33,14 @@
 #endif
 
 // ##### Engine
+#include "core/imaging/Bitmap.h"
+#include "core/imaging/Color.h"
+#include "core/imaging/Filter.h"
+#include "core/imaging/Image.h"
 #include "core/Math.h"
 #include "core/Strings.h"
-#include "engine/scene3d/shaders/BasicShader.glsl.h"
+#include "../scene3d/Mesh.h"
+#include "../scene3d/shaders/BasicShader.glsl.h"
 
 
 // ##### Embed Files
@@ -77,13 +82,51 @@ sg_blend_state (sokol_blend_alpha) {
 //##    Sokol File Scope Stuff
 //####################################################################################
 // Local reference to DrApp Singleton for Sokol App
-DrApp   l_app;          
+DrApp* l_app = nullptr;          
 
 // ***** C callback wrappers for using member methods as callbacks functions
-void initWrapper(void)                      { l_app.init(); }
-void frameWrapper(void)                     { l_app.frame(); }
-void eventWrapper(const sapp_event *event)  { l_app.event(event); }
-void cleanupWrapper(void)                   { l_app.cleanup(); }
+void initWrapper(void)                      { l_app->init(); }
+void frameWrapper(void)                     { l_app->frame(); }
+void eventWrapper(const sapp_event *event)  { l_app->event(event); }
+void cleanupWrapper(void)                   { l_app->cleanup(); }
+
+
+//####################################################################################
+//##    Callback: File Loading
+//####################################################################################
+/* The fetch-callback is called by sokol_fetch.h when the data is loaded,
+   or when an error has occurred. */
+static void image_loaded(const sfetch_response_t* response) {
+    if (response->fetched) {
+        // File data has been fetched
+        //  Since we provided a big-enough buffer we can be sure that all data has been loaded here
+        l_app->loadImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+    
+    } else if (response->finished) {
+        // If loading the file failed, set clear color to signal reason
+        if (response->failed) {
+            sg_pass_action (pass_action0) { .colors[0] = { .action = SG_ACTION_CLEAR, .value = { 1.0f, 1.0f, 1.0f, 1.0f } } };        // white
+            sg_pass_action (pass_action1) { .colors[0] = { .action = SG_ACTION_CLEAR, .value = { 1.0f, 0.0f, 0.0f, 1.0f } } };        // red
+            sg_pass_action (pass_action2) { .colors[0] = { .action = SG_ACTION_CLEAR, .value = { 0.0f, 1.0f, 0.0f, 1.0f } } };        // green
+            sg_pass_action (pass_action3) { .colors[0] = { .action = SG_ACTION_CLEAR, .value = { 0.0f, 0.0f, 1.0f, 1.0f } } };        // blue 
+            sg_pass_action (pass_action4) { .colors[0] = { .action = SG_ACTION_CLEAR, .value = { 1.0f, 1.0f, 0.0f, 1.0f } } };        // yellow
+            sg_pass_action (pass_action5) { .colors[0] = { .action = SG_ACTION_CLEAR, .value = { 0.0f, 1.0f, 1.0f, 1.0f } } };        // cyan
+            sg_pass_action (pass_action6) { .colors[0] = { .action = SG_ACTION_CLEAR, .value = { 1.0f, 0.0f, 1.0f, 1.0f } } };        // magenta
+            sg_pass_action (pass_action7) { .colors[0] = { .action = SG_ACTION_CLEAR, .value = { 0.5f, 0.5f, 0.5f, 1.0f } } };        // black
+    
+            switch (response->error_code) {
+                case SFETCH_ERROR_NO_ERROR:             l_app->m_state.pass_action = (pass_action0);     break;
+                case SFETCH_ERROR_FILE_NOT_FOUND:       l_app->m_state.pass_action = (pass_action1);     break;
+                case SFETCH_ERROR_NO_BUFFER:            l_app->m_state.pass_action = (pass_action2);     break;
+                case SFETCH_ERROR_BUFFER_TOO_SMALL:     l_app->m_state.pass_action = (pass_action3);     break;
+                case SFETCH_ERROR_UNEXPECTED_EOF:       l_app->m_state.pass_action = (pass_action4);     break;
+                case SFETCH_ERROR_CANCELLED:            l_app->m_state.pass_action = (pass_action5);     break;
+                case SFETCH_ERROR_INVALID_HTTP_STATUS:  l_app->m_state.pass_action = (pass_action6);     break;
+                default:                                l_app->m_state.pass_action = (pass_action7);
+            }            
+        }
+    }
+}
 
 
 //####################################################################################
@@ -93,7 +136,7 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
     m_app_name = title;
     m_bg_color = bg_color;
 
-    l_app = *this;
+    l_app = this;
 
     m_sokol_app.window_title =          m_app_name.c_str();
     m_sokol_app.init_cb =               initWrapper;    
@@ -119,6 +162,120 @@ DrApp::~DrApp() {
 void DrApp::setAppName(std::string name) { 
     m_app_name = name; 
     sapp_set_window_title(m_app_name.c_str());
+}
+
+
+//####################################################################################
+//##    Create 3D extrusion
+//####################################################################################
+void DrApp::calculateMesh(bool reset_position) {
+    //##    Level of Detail:
+    //##        0.075 = Detailed
+    //##        0.250 = Nice
+    //##        1.000 = Low poly
+    //##       10.000 = Really low poly
+    float level_of_detail = 0.6f;
+    switch (m_mesh_quality) {
+        case 0: level_of_detail = 19.200f;  break;
+        case 1: level_of_detail =  9.600f;  break;
+        case 2: level_of_detail =  4.800f;  break;
+        case 3: level_of_detail =  2.400f;  break;
+        case 4: level_of_detail =  1.200f;  break;
+        case 5: level_of_detail =  0.600f;  break;
+        case 6: level_of_detail =  0.300f;  break;
+        case 7: level_of_detail =  0.150f;  break;
+        case 8: level_of_detail =  0.075f;  break;
+    }
+
+    // ***** Initialize Mesh
+    m_image->outlinePoints(level_of_detail);
+    m_mesh = std::make_shared<DrMesh>();
+    m_mesh->image_size = Max(m_image->getBitmap().width, m_image->getBitmap().height);      
+    m_mesh->wireframe = m_wireframe;
+    m_mesh->initializeExtrudedImage(m_image.get(), m_mesh_quality);
+    //mesh->initializeTextureQuad();
+    //mesh->initializeTextureCube();
+    //mesh->initializeTextureCone();
+            
+    // ***** Copy vertex data and set into state buffer
+    if (m_mesh->vertexCount() > 0) {
+        // ***** Vertex Buffer
+        unsigned int total_vertices = m_mesh->vertices.size();
+
+        Vertex vertices[total_vertices];
+        for (size_t i = 0; i < total_vertices; i++) vertices[i] = m_mesh->vertices[i];
+        sg_buffer_desc (sokol_buffer_vertex) {
+            .data = SG_RANGE(vertices),
+            .label = "extruded-vertices"
+        };
+        sg_destroy_buffer(m_state.bind.vertex_buffers[0]);
+        m_state.bind.vertex_buffers[0] = sg_make_buffer(&sokol_buffer_vertex);
+
+        // ***** Index Buffer
+        unsigned int total_indices = m_mesh->indices.size();
+        uint16_t indices[total_indices];
+        for (size_t i = 0; i < total_indices; i++) indices[i] = m_mesh->indices[i];
+        sg_buffer_desc (sokol_buffer_index) {
+            .type = SG_BUFFERTYPE_INDEXBUFFER,
+            .data = SG_RANGE(indices),
+            .label = "temp-indices"
+        };
+        sg_destroy_buffer(m_state.bind.index_buffer);
+        m_state.bind.index_buffer = sg_make_buffer(&(sokol_buffer_index));
+
+        // ***** Reset rotation
+        if (reset_position) {
+            m_total_rotation.set(0.f, 0.f);
+            m_add_rotation.set(25.f, 25.f);
+            m_model = DrMatrix::identityMatrix();
+        }
+    }
+}
+
+
+//####################################################################################
+//##    Load Image
+//####################################################################################
+void DrApp::loadImage(stbi_uc* buffer_ptr, int fetched_size) {
+    int png_width, png_height, num_channels;
+    const int desired_channels = 4;
+    stbi_uc* pixels = stbi_load_from_memory(buffer_ptr, fetched_size, &png_width, &png_height, &num_channels, desired_channels);
+
+    // Stb Load Succeeded
+    if (pixels) {
+        // ********** Copy data into our custom bitmap class, create image and trace outline
+        DrBitmap bitmap(pixels, static_cast<int>(png_width * png_height * 4), false, png_width, png_height);
+        //bitmap = Dr::ApplySinglePixelFilter(DROP_IMAGE_FILTER_HUE, bitmap, Dr::RandomInt(-100, 100));
+        m_image = std::make_shared<DrImage>("shapes", bitmap, 0.25f);
+
+        calculateMesh(true);        
+
+        // ********** Initialze the sokol-gfx texture
+        sg_image_desc (sokol_image) {
+            .width =        m_image->getBitmap().width,
+            .height =       m_image->getBitmap().height,
+            .pixel_format = SG_PIXELFORMAT_RGBA8,
+            .wrap_u =       SG_WRAP_MIRRORED_REPEAT,
+            .wrap_v =       SG_WRAP_MIRRORED_REPEAT,
+            .min_filter =   SG_FILTER_LINEAR,
+            .mag_filter =   SG_FILTER_LINEAR,
+            .data.subimage[0][0] = {
+                .ptr =  &(m_image->getBitmap().data[0]),
+                .size = (size_t)m_image->getBitmap().size(),
+            }
+        };
+        
+        // If we already have an image in the state buffer, uninit before initializing new image
+        if (m_initialized_image == true) { sg_uninit_image(m_state.bind.fs_images[SLOT_tex]); }
+
+        // Initialize new image into state buffer
+        sg_init_image(m_state.bind.fs_images[SLOT_tex], &sokol_image);
+        m_initialized_image = true;
+        stbi_image_free(pixels);
+
+        std::cout << "Done preparing image..." << std::endl;
+        std::cout << "Has initialized image: " << m_initialized_image << std::endl;
+    }
 }
 
 
@@ -193,14 +350,15 @@ void DrApp::init(void) {
     imgui_io.Fonts->TexID = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
   
     //####################################################################################
-
+    //##    Set Up Pipeline
+    //####################################################################################
     // ***** Pass action for clearing the framebuffer to some color
     m_state.pass_action.colors[0].action = SG_ACTION_CLEAR;
     m_state.pass_action.colors[0].value = { m_bg_color.redf(), m_bg_color.greenf(), m_bg_color.bluef(), m_bg_color.alphaf() };
 
     // ***** Pipeline State Object, sets 3D device parameters
     sg_pipeline_desc (sokol_pipleine) { };
-        sokol_pipleine.shader = sg_make_shader(extrude3D_shader_desc(sg_query_backend()));
+        sokol_pipleine.shader = sg_make_shader(basic_shader_shader_desc(sg_query_backend()));
         sokol_pipleine.layout.attrs[ATTR_vs_pos].format = SG_VERTEXFORMAT_FLOAT3;
         sokol_pipleine.layout.attrs[ATTR_vs_norm].format = SG_VERTEXFORMAT_FLOAT3;
         sokol_pipleine.layout.attrs[ATTR_vs_texcoord0].format = SG_VERTEXFORMAT_FLOAT2; //SG_VERTEXFORMAT_SHORT2N;
@@ -216,7 +374,36 @@ void DrApp::init(void) {
         sokol_pipleine.colors[0].blend = sokol_blend_alpha;
     m_state.pip = sg_make_pipeline(&sokol_pipleine);
 
+    // ***** Allocate an image handle, 
+    //  but don't actually initialize the image yet, this happens later when the asynchronous file load has finished.
+    //  Any draw calls containing such an "incomplete" image handle will be silently dropped.
+    m_state.bind.fs_images[SLOT_tex] = sg_alloc_image();
 
+    // ***** Starter triangle
+    // Vertex buffer
+    const Vertex vertices[] = {
+        // pos                  normals                uvs          barycentric (wireframe)
+        { -1.0f, -1.0f, -1.0f,  1.0f, 1.0f, 1.0f,      0,   0,      1.0f, 1.0f, 1.0f },
+        {  1.0f, -1.0f, -1.0f,  1.0f, 1.0f, 1.0f,      1,   0,      1.0f, 1.0f, 1.0f },
+        {  1.0f,  1.0f, -1.0f,  1.0f, 1.0f, 1.0f,      1,   1,      1.0f, 1.0f, 1.0f },      
+        { -1.0f,  1.0f, -1.0f,  1.0f, 1.0f, 1.0f,      0,   1,      1.0f, 1.0f, 1.0f },      
+    };
+    sg_buffer_desc (sokol_buffer_vertex) {
+        .data = SG_RANGE(vertices),
+        .label = "temp-vertices"
+    };
+    m_state.bind.vertex_buffers[0] = sg_make_buffer(&sokol_buffer_vertex);
+
+    // Index buffer
+    const uint16_t indices[] = { 0, 1, 2, 0, 2, 3 };
+    sg_buffer_desc (sokol_buffer_index) {
+        .type = SG_BUFFERTYPE_INDEXBUFFER,
+        .data = SG_RANGE(indices),
+        .label = "temp-indices"
+    };
+    m_state.bind.index_buffer = sg_make_buffer(&(sokol_buffer_index));
+
+    //####################################################################################
 
     // ***** Font Setup, make sure the fontstash atlas size is pow-2 (all gpu textures should be, especially for webgl)
     m_state.dpi_scale = sapp_dpi_scale();
@@ -272,6 +459,14 @@ void DrApp::init(void) {
         sfetch_send(&sokol_fetch_font);
     #endif
 
+    // Load inital "shapes.png" image in background
+    sfetch_request_t (sokol_fetch_image) {
+        .path = image_file.c_str(),
+        .callback = image_loaded,
+        .buffer_ptr = m_state.file_buffer,
+        .buffer_size = sizeof(m_state.file_buffer)
+    };
+    sfetch_send(&sokol_fetch_image);
 
     // #################### Virtual onCreate() ####################
     this->onCreate();
@@ -288,19 +483,18 @@ void DrApp::frame(void) {
 
     // #################### Begin Renderer ####################
     sg_begin_default_pass(&m_state.pass_action, sapp_width(), sapp_height());
-
-    // ********** Render Here
+    
+    // ********** Render Here, Scene 2D, Scene 3D, Etc...
     // Ex:
-    //sg_apply_pipeline(state.pip);
-    //sg_apply_bindings(&state.bind);
+    //sg_apply_pipeline(m_state.pip);
+    //sg_apply_bindings(&m_state.bind);
     //sg_apply_uniforms(SG_SHADERSTAGE_VS, SLOT_vs_params, SG_RANGE(vs_params));
     //sg_apply_uniforms(SG_SHADERSTAGE_FS, SLOT_fs_params, SG_RANGE(fs_params));
     //sg_draw(0, mesh->indices.size(), 1);
-
-    // #################### Virtual onUpdate() - User Rendering ####################
-    this->onUpdate();
     
-
+    // #################### Virtual onUpdate() - User Rendering ####################
+    this->onUpdateScene();
+    
     // #################### Fontstash Text Rendering ####################
     fonsClearState(m_state.fons);    
     sgl_defaults();
@@ -322,7 +516,6 @@ void DrApp::frame(void) {
     sfons_flush(fs);            // Flush fontstash's font atlas to sokol-gfx texture
     sgl_draw();
 
-
     // #################### ImGui Rendering ####################
     int width = sapp_width();
     int height = sapp_height();
@@ -334,6 +527,10 @@ void DrApp::frame(void) {
            win_pos.y += 80;
     ImGui::SetNextWindowPos(win_pos, ImGuiCond_FirstUseEver);
     ImGui::ShowDemoWindow();
+
+    // #################### Virtual onUpdate() - User Rendering ####################
+    this->onUpdateGUI();
+    // ####################
 
     // Debug Sokol
     #ifdef DEBUG_ON
@@ -367,7 +564,7 @@ void DrApp::frame(void) {
     lap_time += stm_sec(stm_laptime(&last_time));
     frame_count++;
     if (lap_time >= 1.0) {
-        m_frames_per_second = frame_count; //1.0 / stm_sec(stm_laptime(&last_time));
+        m_frames_per_second = frame_count;      //1.0 / stm_sec(stm_laptime(&last_time));
         frame_count = 0;
         lap_time =  0.0;
     }

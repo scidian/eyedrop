@@ -6,13 +6,13 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Thu Mar 04 2021
 //
 //
-#ifndef DRPROJECT_H
-#define DRPROJECT_H
+#ifndef DR_PROJECT_H
+#define DR_PROJECT_H
 
 #include <map>
 #include <set>
 #include <string>
-#include "engine/data/Types.h"
+#include "Types.h"
 
 
 // Project Constants
@@ -50,25 +50,26 @@ public:
     // #################### VARIABLES ####################
 private:
     // Project Variables
-    long            m_key_generator         { KEY_START };              // Variable to hand out unique id key's to all Project classes
+    long            m_key_generator         { KEY_START };              // Variable to hand out unique id key's to all DrProject::DrEntities
     
     // Project Options
-    std::string     m_name                  { "" };                     // Name of Current Project
-    std::string     m_file_path_name        { "" };                     // Full Path and File Name of Project, will save to this unless choose Save As
+    std::string     m_name                  { "" };                     // Name of Current DrProject
+    std::string     m_file_path_name        { "" };                     // Full Path and File Name of DrProject, will save to this unless choose Save As
 
     long            m_current_world         { KEY_NONE };               // World currently displayed in Editor_Mode::World_Creator
     long            m_current_scene         { KEY_NONE };               // Scene currently displayed in Editor_Mode::World_Creator
 
-    int             m_orientation           { ORIENTATION_PORTAIT };    // This Projects target device orientation (enum Orientation)
-    long            m_width                 { DEFAULT_PROJECT_WIDTH };  // This Projects target device window width,  usually 800
-    long            m_height                { DEFAULT_PROJECT_HEIGHT }; // This Projects target device window height, usually 1600
+    int             m_orientation           { ORIENTATION_PORTAIT };    // This DrProject's target device orientation (enum Orientation)
+    long            m_width                 { DEFAULT_PROJECT_WIDTH };  // This DrProject's target device window width,  usually 800
+    long            m_height                { DEFAULT_PROJECT_HEIGHT }; // This DrProject's target device window height, usually 1600
 
     // World Items
     WorldMap        m_worlds;                                           // Holds DrWorlds       (which hold collections of DrScene references)
-    SceneMap        m_scenes;                                           // Holds DrScenes       (which in turn hold DrEntites)
+    SceneMap        m_scenes;                                           // Holds DrScenes       (parent DrEntity, which in turn hold more DrEntites)
 
     // Shared Items
     ImageMap        m_images;                                           // Holds DrImages
+
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################
 public:
@@ -77,7 +78,12 @@ public:
 
     // #################### INTERNAL FUNCTIONS ####################
 public:
-   // Serialization 
+    // Key Generator
+    long                checkCurrentGeneratorKey()                      { return m_key_generator; }
+    long                getNextKey()                                    { return m_key_generator++; }
+    void                setGeneratorKeyStartNumber(long initial_key)    { m_key_generator = initial_key; }
+
+    // Serialization 
     template <class Archive>
     void serialize( Archive & ar, unsigned int version ) {
         ar( m_key_generator,
@@ -93,6 +99,6 @@ public:
 
 };
 
-#endif // DRPROJECT_H
+#endif // DR_PROJECT_H
 
 

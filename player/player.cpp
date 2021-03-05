@@ -6,26 +6,27 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Tue Mar 02 2021
 //
 //
-#include "engine/app/App.h"
+#include "../engine/app/App.h"
 
 
-class Player : public DrApp {
+class Player : public DrApp 
+{
 public:
     using DrApp::DrApp;                                                 // Inherits base constructor, requires C++ 11
 
-    void onUpdate() override { 
+    virtual void onUpdateGUI() override { 
         uint64_t elapsed = stm_since(m_time_start);
         double seconds = stm_sec(elapsed);
         setAppName("Frame count: " + std::to_string(sapp_frame_count()));
     }
 
-    void onEvent(const sapp_event* event) override {
+    virtual void onEvent(const sapp_event* event) override {
        
     }
 };
 
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
 
     Player player("Test Player", DROP_COLOR_PURPLE);
     player.run();

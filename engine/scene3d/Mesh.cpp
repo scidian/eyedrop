@@ -10,7 +10,7 @@
 #include "core/geometry/Vec2.h"
 #include "core/geometry/Vec3.h"
 #include "core/Math.h"
-#include "engine/scene3d/Mesh.h"
+#include "Mesh.h"
 
 
 //####################################################################################

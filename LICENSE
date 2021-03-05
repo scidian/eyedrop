@@ -51,9 +51,9 @@
 - Any-lite (Boost): https://github.com/martinmoene/any-lite                     
 - Cereal (BSD): https://github.com/USCiLab/cereal
 - Dear ImGui (MIT): https://github.com/ocornut/imgui
+- Fontstash (ZLIB): https://github.com/memononen/fontstash
 - Handmade-Math (CC0): https://github.com/StrangeZak/Handmade-Math
 - Stb (MIT): https://github.com/nothings/stb
-- Fontstash (ZLIB): https://github.com/memononen/fontstash
 - Sokol (ZLIB): https://github.com/floooh/sokol
 - Whereami (MIT): https://github.com/gpakosz/whereami
 

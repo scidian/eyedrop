@@ -1,5 +1,13 @@
+//
+// Copyright (C) 2021 Scidian Software - All Rights Reserved
+//
+// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
+// Proprietary and Confidential
+// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
+//
+//
 //####################################################################################
-//##    Shader code
+//##    Basic Shader
 //####################################################################################
 @ctype mat4 hmm_mat4
 
@@ -95,6 +103,6 @@ void main() {
 
 
 //########## Shader Name ##########
-@program extrude3D vs fs
+@program basic_shader vs fs
 
 

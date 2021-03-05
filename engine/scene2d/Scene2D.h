@@ -11,6 +11,7 @@
 
 // Includes
 #include <map>
+#include "../interface/Scene.h"
 
 // Forward Declarations
 class Object2D;
@@ -20,12 +21,12 @@ class Object2D;
 //##    DrScene2D
 //##        Holds a 2D scene, with 2D objects
 //############################
-class DrScene2D 
+class DrScene2D : public DrScene
 {
 public:
     // Constructor / Destructor
-    DrScene2D();
-    ~DrScene2D();
+    DrScene2D() { };
+    ~DrScene2D() { };
 
     // #################### VARIABLES ####################
 private:

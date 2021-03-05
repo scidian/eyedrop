@@ -39,6 +39,7 @@ if     (APP_TYPE MATCHES "player")
     set(MAIN_DIRECTORY "player/*.c**")
     project(player)                                 ##### Project Name for Engine Only
 else()
+    add_compile_definitions(SOKOL_NO_ENTRY)         ##### STOP SOKOL HIJACK    
     set(MAIN_DIRECTORY "editor/*.c**")
     project(drop)                                   ##### Project Name for Editor
 endif()
