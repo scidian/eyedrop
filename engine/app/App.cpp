@@ -6,26 +6,25 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-// ***** Also includes Sokol
+// ##### Also includes Sokol
 #include "App.h"
 
-// ***** Fonts
+// ##### Fonts
 #include "3rd_party/fontstash.h"
 #include "3rd_party/sokol/sokol_fontstash.h"
 
-// ***** ImGui
+// ##### ImGui
 #include "3rd_party/imgui/imgui.h"
-#include "3rd_party/imgui_font.h"
 #define SOKOL_IMGUI_IMPL
 #include "3rd_party/sokol/sokol_imgui.h"
 
-// ***** Debug Menu
+// ##### Debug Menu
 #ifdef DEBUG_ON
     #define SOKOL_GFX_IMGUI_IMPL
     #include "3rd_party/sokol/sokol_gfx_imgui.h"
 #endif
 
-// ***** Html5 / File Handling
+// ##### Html5 / File Handling
 #ifndef DROP_TARGET_HTML5
     #include "3rd_party/wai/whereami.c"
 #else
@@ -33,10 +32,14 @@
     #include <emscripten/html5.h>
 #endif
 
-// ***** Engine
+// ##### Engine
 #include "core/Math.h"
 #include "core/Strings.h"
 #include "shaders/basic_shader.glsl.h"
+
+
+// ##### Embed Files
+#include "assets_embed/fonts/font_aileron_regular.h"
 
 
 //####################################################################################
@@ -159,23 +162,24 @@ void DrApp::init(void) {
 
     // ***** Set some initial ImGui styling, framed / rounded widgets
     ImGuiStyle &style = ImGui::GetStyle();
-    style.FrameRounding =       4.0f;
-    style.FrameBorderSize =     1.0f;
-    style.WindowBorderSize =    1.0f;
+        style.FrameRounding =       4.0f;
+        style.FrameBorderSize =     1.0f;
+        style.WindowBorderSize =    1.0f;
 
     // Configure ImGui with default embedded dear imgui font
-    auto& io = ImGui::GetIO();
-    ImFontConfig fontCfg {};
+    auto &imgui_io = ImGui::GetIO();
+    imgui_io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    ImFontConfig fontCfg { };
         fontCfg.FontDataOwnedByAtlas = false;
         fontCfg.OversampleH = 2;
         fontCfg.OversampleV = 2;
         fontCfg.RasterizerMultiply = 1.5f;
-    io.Fonts->AddFontFromMemoryTTF(dump_font, sizeof(dump_font), 16.0f, &fontCfg);
+    imgui_io.Fonts->AddFontFromMemoryTTF(aileron, sizeof(aileron), 16.0f, &fontCfg);
 
     // Create font texture for the custom font
     unsigned char* font_pixels;
     int font_width, font_height;
-    io.Fonts->GetTexDataAsRGBA32(&font_pixels, &font_width, &font_height);
+    imgui_io.Fonts->GetTexDataAsRGBA32(&font_pixels, &font_width, &font_height);
     sg_image_desc img_desc { };
         img_desc.width = font_width;
         img_desc.height = font_height;
@@ -186,7 +190,7 @@ void DrApp::init(void) {
         img_desc.mag_filter = SG_FILTER_LINEAR;
         img_desc.data.subimage[0][0].ptr = font_pixels;
         img_desc.data.subimage[0][0].size = static_cast<size_t>(font_width * font_height * 4);
-    io.Fonts->TexID = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
+    imgui_io.Fonts->TexID = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
   
     //####################################################################################
 
@@ -325,7 +329,10 @@ void DrApp::frame(void) {
     simgui_new_frame(width, height, 1.0/60.0);
 
     // Demo Window
-    ImGui::SetNextWindowPos(ImVec2(40, 40), ImGuiCond_FirstUseEver);
+    ImVec2 win_pos = ImGui::GetMainViewport()->Pos;
+           win_pos.x += 80;
+           win_pos.y += 80;
+    ImGui::SetNextWindowPos(win_pos, ImGuiCond_FirstUseEver);
     ImGui::ShowDemoWindow();
 
     // Debug Sokol

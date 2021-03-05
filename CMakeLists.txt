@@ -102,7 +102,7 @@ add_executable(${PROJECT_NAME} ${SOURCE_CODE_FILES})
 ##### Compile Shaders
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     execute_process (
-       COMMAND shaders/sokol_shdc_bin/osx/./sokol-shdc -i shaders/basic_shader.glsl -o shaders/basic_shader.glsl.h -l glsl330:glsl100:metal_macos
+       COMMAND tools/sokol_shdc_bin/osx/./sokol-shdc -i shaders/basic_shader.glsl -o shaders/basic_shader.glsl.h -l glsl330:glsl100:metal_macos
        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 endif()
@@ -177,8 +177,8 @@ elseif (EXPORT_TARGET MATCHES "web")
     set(CMAKE_CXX_COMPILER "emcc")
     SET(CMAKE_EXECUTABLE_SUFFIX ".html")
 
-    #   --preload-file assets/shapes.png"       allow access to local filesystem
-    #   --embed-file assets/shapes.png"         embed in js file, not compatible yet with sokol_app
+    #   --preload-file assets/shapes.png        allow access to local filesystem
+    #   --embed-file assets/shapes.png          embed in js file, not compatible yet with sokol_app
     #
     #   --shell-file <path>                     create a html file without emscripten logo and debug shell
     #   -s WASM=0                               force javascript or
@@ -189,7 +189,7 @@ elseif (EXPORT_TARGET MATCHES "web")
     if (DEBUG_MODE MATCHES "true")
         set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s TOTAL_MEMORY=33554432 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind -s ASSERTIONS=2")    
     else()
-        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s TOTAL_MEMORY=33554432 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind ")
+        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s TOTAL_MEMORY=33554432 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind")
     endif()
 
     

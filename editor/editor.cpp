@@ -22,7 +22,7 @@
 #include "core/Random.h"
 #include "engine/scene3d/Mesh.h"
 
-// ***** Sokol
+// ##### Sokol
 #include "3rd_party/sokol/sokol_app.h"
 #include "3rd_party/sokol/sokol_gfx.h"
 #include "3rd_party/sokol/sokol_gl.h"
@@ -31,23 +31,22 @@
 #include "3rd_party/sokol/sokol_audio.h"
 #include "3rd_party/sokol/sokol_fetch.h"
 
-// ***** Fonts
+// ##### Fonts
 #include "3rd_party/fontstash.h"
 #include "3rd_party/sokol/sokol_fontstash.h"
 
-// ***** ImGui
+// ##### ImGui
 #include "3rd_party/imgui/imgui.h"
-#include "3rd_party/imgui_font.h"
 #define SOKOL_IMGUI_IMPL
 #include "3rd_party/sokol/sokol_imgui.h"
 
-// ***** Debug Menu
+// ##### Debug Menu
 #ifdef DEBUG_ON
     #define SOKOL_GFX_IMGUI_IMPL
     #include "3rd_party/sokol/sokol_gfx_imgui.h"
 #endif
 
-// ***** Html5 / File Handling
+// ##### Html5 / File Handling
 #ifndef DROP_TARGET_HTML5
     #include "3rd_party/wai/whereami.c"
 #else
@@ -55,9 +54,12 @@
     #include <emscripten/html5.h>
 #endif
 
-// ***** Local Includes
+// ##### Local Includes
 #include "input.h"
 #include "shaders/basic_shader.glsl.h"
+
+// ##### Embed Files
+#include "assets_embed/fonts/font_aileron_regular.h"
 
 
 //####################################################################################
@@ -221,7 +223,7 @@ void init(void) {
         fontCfg.OversampleH = 2;
         fontCfg.OversampleV = 2;
         fontCfg.RasterizerMultiply = 1.5f;
-    io.Fonts->AddFontFromMemoryTTF(dump_font, sizeof(dump_font), 16.0f, &fontCfg);
+    io.Fonts->AddFontFromMemoryTTF(aileron, sizeof(aileron), 16.0f, &fontCfg);
 
     // Framed widgets
     ImGuiStyle &style = ImGui::GetStyle();
