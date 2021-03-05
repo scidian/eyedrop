@@ -79,33 +79,11 @@ sg_blend_state (sokol_blend_alpha) {
 static void image_loaded(const sfetch_response_t* response) {
     DrApp* app = (DrApp*)(response->user_void_ptr);
     if (response->fetched && app) {
-        // File data has been fetched
-        //  Since we provided a big-enough buffer we can be sure that all data has been loaded here
+        // File data has been fetched, since we provided a big-enough buffer we can be sure that all data has been loaded here
         app->loadImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
-    
     } else if (response->finished) {
         // If loading the file failed, set clear color to signal reason
-        if (response->failed) {
-            sg_pass_action (pass_action0) { .colors[0] = { .action = SG_ACTION_CLEAR, .value = { 1.0f, 1.0f, 1.0f, 1.0f } } };        // white
-            sg_pass_action (pass_action1) { .colors[0] = { .action = SG_ACTION_CLEAR, .value = { 1.0f, 0.0f, 0.0f, 1.0f } } };        // red
-            sg_pass_action (pass_action2) { .colors[0] = { .action = SG_ACTION_CLEAR, .value = { 0.0f, 1.0f, 0.0f, 1.0f } } };        // green
-            sg_pass_action (pass_action3) { .colors[0] = { .action = SG_ACTION_CLEAR, .value = { 0.0f, 0.0f, 1.0f, 1.0f } } };        // blue 
-            sg_pass_action (pass_action4) { .colors[0] = { .action = SG_ACTION_CLEAR, .value = { 1.0f, 1.0f, 0.0f, 1.0f } } };        // yellow
-            sg_pass_action (pass_action5) { .colors[0] = { .action = SG_ACTION_CLEAR, .value = { 0.0f, 1.0f, 1.0f, 1.0f } } };        // cyan
-            sg_pass_action (pass_action6) { .colors[0] = { .action = SG_ACTION_CLEAR, .value = { 1.0f, 0.0f, 1.0f, 1.0f } } };        // magenta
-            sg_pass_action (pass_action7) { .colors[0] = { .action = SG_ACTION_CLEAR, .value = { 0.5f, 0.5f, 0.5f, 1.0f } } };        // black
-    
-            switch (response->error_code) {
-                case SFETCH_ERROR_NO_ERROR:             app->m_state.pass_action = (pass_action0);     break;
-                case SFETCH_ERROR_FILE_NOT_FOUND:       app->m_state.pass_action = (pass_action1);     break;
-                case SFETCH_ERROR_NO_BUFFER:            app->m_state.pass_action = (pass_action2);     break;
-                case SFETCH_ERROR_BUFFER_TOO_SMALL:     app->m_state.pass_action = (pass_action3);     break;
-                case SFETCH_ERROR_UNEXPECTED_EOF:       app->m_state.pass_action = (pass_action4);     break;
-                case SFETCH_ERROR_CANCELLED:            app->m_state.pass_action = (pass_action5);     break;
-                case SFETCH_ERROR_INVALID_HTTP_STATUS:  app->m_state.pass_action = (pass_action6);     break;
-                default:                                app->m_state.pass_action = (pass_action7);
-            }            
-        }
+        if (response->failed) { /*response->error_code*/ }
     }
 }
 
@@ -308,7 +286,7 @@ void DrApp::init(void) {
         simgui_desc.dpi_scale =        sapp_dpi_scale();
     simgui_setup(&simgui_desc);
 
-    // ***** Set some initial ImGui styling, framed / rounded widgets
+    // Set some initial ImGui styling, framed / rounded widgets
     ImGuiStyle &style = ImGui::GetStyle();
         style.FrameRounding =       4.f;
         style.FrameBorderSize =     1.f;
@@ -506,7 +484,7 @@ void DrApp::frame(void) {
         fonsSetColor(fs, sfons_rgba(255, 255, 255, 255));;
         fonsSetBlur(fs, 0);
         fonsSetSpacing(fs, 0.0f);
-        fonsDrawText(fs, 10 * dpis, 40 * dpis, ("FPS: " + RemoveTrailingZeros(std::to_string(framesPerSecond()))).c_str(), NULL);
+        fonsDrawText(fs, 10 * dpis, sapp_height() - (20 * dpis), ("FPS: " + RemoveTrailingZeros(std::to_string(framesPerSecond()))).c_str(), NULL);
     }
     sfons_flush(fs);            // Flush fontstash's font atlas to sokol-gfx texture
     sgl_draw();
@@ -522,21 +500,22 @@ void DrApp::frame(void) {
     simgui_new_frame(width, height, 1.0/60.0);
 
     // Initial call
-    ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
-    ImGui::DockSpaceOverViewport(NULL, dockspace_flags);
+    //ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
+    //ImGui::SetNextWindowBgAlpha(0.0f);
+    //ImGui::DockSpaceOverViewport(NULL, dockspace_flags);
 
     // Demo Window
     ImGui::ShowDemoWindow();
 
     // Menu
-    if (ImGui::BeginMainMenuBar()) {
-        if (ImGui::BeginMenu("File")) {
-            bool clicked_new;
-            ImGui::MenuItem("New", 0, &clicked_new);
-            ImGui::EndMenu();
-        }
-        ImGui::EndMainMenuBar();
-    }
+    // if (ImGui::BeginMainMenuBar()) {
+    //     if (ImGui::BeginMenu("File")) {
+    //         bool clicked_new;
+    //         ImGui::MenuItem("New", 0, &clicked_new);
+    //         ImGui::EndMenu();
+    //     }
+    //     ImGui::EndMainMenuBar();
+    // }
 
     // #################### Virtual onUpdate() - User Rendering ####################
     this->onUpdateGUI();
