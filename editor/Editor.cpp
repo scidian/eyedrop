@@ -27,12 +27,12 @@
 //####################################################################################
 //##    ImGui Custom Styler
 //####################################################################################
-static ImVec4 base = ImVec4(0.000f, 0.700f, 0.650f, 1.0f);
-static ImVec4 bg   = ImVec4(0.090f, 0.120f, 0.115f, 1.0f);
+static ImVec4 base = ImVec4(0.000f, 0.750f, 0.700f, 1.0f);
+static ImVec4 bg   = ImVec4(0.115f, 0.125f, 0.120f, 1.0f);
 static ImVec4 text = ImVec4(0.900f, 0.930f, 0.925f, 1.0f);
 static float high_val =         0.65f;
-static float mid_val =          0.50f;
-static float low_val =          0.35f;
+static float mid_val =          0.55f;
+static float low_val =          0.45f;
 static float window_offset =   -0.05f;
 
 inline ImVec4 make_high(float alpha) {
@@ -218,6 +218,7 @@ public:
 
     virtual void onUpdateGUI() override { 
         // Theme selector
+        ImGui::SetNextWindowContentSize(ImVec2(250, 250));
         theme_generator();
     }
 
@@ -314,7 +315,7 @@ public:
 
 int main(int argc, char* argv[]) {
 
-    Editor* editor = new Editor("Test Editor", DROP_COLOR_BLUE);
+    Editor* editor = new Editor("Test Editor", DrColor(28, 30, 29), 1800, 1000);
     editor->run();
 
 }

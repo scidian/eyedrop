@@ -310,19 +310,22 @@ void DrApp::init(void) {
 
     // ***** Set some initial ImGui styling, framed / rounded widgets
     ImGuiStyle &style = ImGui::GetStyle();
-        style.FrameRounding =       4.0f;
-        style.FrameBorderSize =     1.0f;
-        style.WindowBorderSize =    1.0f;
+        style.FrameRounding =       4.f;
+        style.FrameBorderSize =     1.f;
+        style.WindowBorderSize =    1.f;
+        style.WindowRounding =      6.f;
 
-    // Configure ImGui with default embedded dear imgui font
+    // Configure ImGui 
     auto &imgui_io = ImGui::GetIO();
-    imgui_io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+          imgui_io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;                   // Enable docking
+    
+    // Attach default embedded font
     ImFontConfig fontCfg { };
         fontCfg.FontDataOwnedByAtlas = false;
         fontCfg.OversampleH = 2;
         fontCfg.OversampleV = 2;
         fontCfg.RasterizerMultiply = 1.5f;
-    imgui_io.Fonts->AddFontFromMemoryTTF(aileron, sizeof(aileron), 16.0f, &fontCfg);
+    imgui_io.Fonts->AddFontFromMemoryTTF(aileron, sizeof(aileron), 15.0f, &fontCfg);
 
     // Create font texture for the custom font
     unsigned char* font_pixels;
@@ -509,16 +512,31 @@ void DrApp::frame(void) {
     sgl_draw();
 
     // #################### ImGui Rendering ####################
+    // Initial stuff
+    ImVec2 win_pos = ImGui::GetMainViewport()->Pos;
+    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
+    
+    // Start ImGui Frame
     int width = sapp_width();
     int height = sapp_height();
     simgui_new_frame(width, height, 1.0/60.0);
 
+    // Initial call
+    ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
+    ImGui::DockSpaceOverViewport(NULL, dockspace_flags);
+
     // Demo Window
-    ImVec2 win_pos = ImGui::GetMainViewport()->Pos;
-           win_pos.x += 80;
-           win_pos.y += 80;
-    ImGui::SetNextWindowPos(win_pos, ImGuiCond_FirstUseEver);
     ImGui::ShowDemoWindow();
+
+    // Menu
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            bool clicked_new;
+            ImGui::MenuItem("New", 0, &clicked_new);
+            ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
+    }
 
     // #################### Virtual onUpdate() - User Rendering ####################
     this->onUpdateGUI();
