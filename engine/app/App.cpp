@@ -272,9 +272,6 @@ void DrApp::loadImage(stbi_uc* buffer_ptr, int fetched_size) {
         sg_init_image(m_state.bind.fs_images[SLOT_tex], &sokol_image);
         m_initialized_image = true;
         stbi_image_free(pixels);
-
-        std::cout << "Done preparing image..." << std::endl;
-        std::cout << "Has initialized image: " << m_initialized_image << std::endl;
     }
 }
 

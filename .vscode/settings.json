@@ -94,7 +94,6 @@
         "unordered_map": "cpp",
         "utility": "cpp",
         "any": "cpp",
-        "iostream": "cpp",
         "fstream": "cpp",
         "compare": "cpp",
         "forward_list": "cpp",

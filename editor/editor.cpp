@@ -23,8 +23,6 @@
 #include "../engine/scene3d/Mesh.h"
 #include "../engine/scene3d/shaders/BasicShader.glsl.h"
 
-#include <iostream>
-
 
 //####################################################################################
 //##    Sokol File Scope Stuff
@@ -164,7 +162,6 @@ static void emsc_load_callback(const sapp_html5_fetch_response* response) {
 #else
 // the async-loading callback for native platforms
 static void native_load_callback(const sfetch_response_t* response) {
-    std::cout << "Result: " << response->error_code << std::endl;
     if (response->fetched) {
         l_editor->m_state.load_state = LOADSTATE_SUCCESS;
         l_editor->loadImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);

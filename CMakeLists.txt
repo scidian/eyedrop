@@ -21,7 +21,7 @@ cmake_minimum_required(VERSION 3.10)
 ####################################################################################
 
 
-set(EXPORT_TARGET   "osx")
+set(EXPORT_TARGET   "web")
 set(DEBUG_MODE      "false")        # Options:  "true"    or  "false"
 set(APP_TYPE        "player")       # Options:  "editor"  or  "player"
 
