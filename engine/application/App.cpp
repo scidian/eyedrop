@@ -14,11 +14,13 @@
 #include "3rd_party/sokol/sokol_fontstash.h"
 
 // ##### ImGui Implmentation
-#define SOKOL_IMGUI_IMPL
-#include "3rd_party/sokol/sokol_imgui.h"
+#if defined (ENABLE_IMGUI)
+    #define SOKOL_IMGUI_IMPL
+    #include "3rd_party/sokol/sokol_imgui.h"
+#endif
 
 // ##### Debug Menu
-#ifdef DEBUG_ON
+#if defined (ENABLE_DEBUG)
     #define SOKOL_GFX_IMGUI_IMPL
     #include "3rd_party/sokol/sokol_gfx_imgui.h"
 #endif
@@ -148,64 +150,66 @@ void DrApp::init(void) {
     sfetch_setup(&sokol_fetch); 
 
     // #################### Sokol Debug ####################
-    #ifdef DEBUG_ON
+    #if defined (ENABLE_DEBUG)
         sg_imgui_init(&m_sg_imgui);
     #endif
 
     //####################################################################################
     //##    Sokol ImGui Renderer
     //####################################################################################
-    simgui_desc_t simgui_desc {};
-        simgui_desc.sample_count =     sapp_sample_count();
-        simgui_desc.no_default_font =  true;
-        simgui_desc.dpi_scale =        sapp_dpi_scale();
-    simgui_setup(&simgui_desc);
+    #if defined (ENABLE_IMGUI)
+        simgui_desc_t simgui_desc {};
+            simgui_desc.sample_count =     sapp_sample_count();
+            simgui_desc.no_default_font =  true;
+            simgui_desc.dpi_scale =        sapp_dpi_scale();
+        simgui_setup(&simgui_desc);
 
-    // Set some initial ImGui styling, framed / rounded widgets
-    ImGuiStyle &style = ImGui::GetStyle();
-        style.FrameRounding =       6.f;
-        style.FrameBorderSize =     1.f;
-        style.FramePadding =        ImVec2(4.f, 4.f);
-        style.GrabRounding =        6.f;
-        style.IndentSpacing =       16.0f;
-        style.ItemInnerSpacing =    ImVec2(8.f, 4.f);
-        style.ItemSpacing =         ImVec2(8.f, 4.f);
-        style.PopupRounding =       0.f;
-        style.TabBorderSize =       1.0f;
-        style.TabRounding =         6.f;
-        style.WindowBorderSize =    1.f;
-        style.WindowRounding =      0.f;
-        style.WindowPadding =       ImVec2(3.f, 3.f);
-        style.WindowTitleAlign =    ImVec2(0.5f, 0.5f);
-        style.WindowMenuButtonPosition = ImGuiDir_None; // (default: ImGuiDir_Left)
+        // Set some initial ImGui styling, framed / rounded widgets
+        ImGuiStyle &style = ImGui::GetStyle();
+            style.FrameRounding =       6.f;
+            style.FrameBorderSize =     1.f;
+            style.FramePadding =        ImVec2(4.f, 4.f);
+            style.GrabRounding =        6.f;
+            style.IndentSpacing =       16.0f;
+            style.ItemInnerSpacing =    ImVec2(8.f, 4.f);
+            style.ItemSpacing =         ImVec2(8.f, 4.f);
+            style.PopupRounding =       0.f;
+            style.TabBorderSize =       1.0f;
+            style.TabRounding =         6.f;
+            style.WindowBorderSize =    1.f;
+            style.WindowRounding =      0.f;
+            style.WindowPadding =       ImVec2(3.f, 3.f);
+            style.WindowTitleAlign =    ImVec2(0.5f, 0.5f);
+            style.WindowMenuButtonPosition = ImGuiDir_None; // (default: ImGuiDir_Left)
 
-    // Configure ImGui 
-    auto &imgui_io = ImGui::GetIO();
-          imgui_io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;                   // Enable docking
+        // Configure ImGui 
+        auto &imgui_io = ImGui::GetIO();
+            imgui_io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;                   // Enable docking
+        
+        // Attach default embedded font
+        ImFontConfig fontCfg { };
+            fontCfg.FontDataOwnedByAtlas = false;
+            fontCfg.OversampleH = 2;
+            fontCfg.OversampleV = 2;
+            fontCfg.RasterizerMultiply = 1.5f;
+        imgui_io.Fonts->AddFontFromMemoryTTF(aileron, sizeof(aileron), 16.0f, &fontCfg);
     
-    // Attach default embedded font
-    ImFontConfig fontCfg { };
-        fontCfg.FontDataOwnedByAtlas = false;
-        fontCfg.OversampleH = 2;
-        fontCfg.OversampleV = 2;
-        fontCfg.RasterizerMultiply = 1.5f;
-    imgui_io.Fonts->AddFontFromMemoryTTF(aileron, sizeof(aileron), 16.0f, &fontCfg);
-
-    // Create font texture for the custom font
-    unsigned char* font_pixels;
-    int font_width, font_height;
-    imgui_io.Fonts->GetTexDataAsRGBA32(&font_pixels, &font_width, &font_height);
-    sg_image_desc img_desc { };
-        img_desc.width = font_width;
-        img_desc.height = font_height;
-        img_desc.pixel_format = SG_PIXELFORMAT_RGBA8;
-        img_desc.wrap_u = SG_WRAP_CLAMP_TO_EDGE;
-        img_desc.wrap_v = SG_WRAP_CLAMP_TO_EDGE;
-        img_desc.min_filter = SG_FILTER_LINEAR;
-        img_desc.mag_filter = SG_FILTER_LINEAR;
-        img_desc.data.subimage[0][0].ptr = font_pixels;
-        img_desc.data.subimage[0][0].size = static_cast<size_t>(font_width * font_height * 4);
-    imgui_io.Fonts->TexID = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
+        // Create font texture for the custom font
+        unsigned char* font_pixels;
+        int font_width, font_height;
+        imgui_io.Fonts->GetTexDataAsRGBA32(&font_pixels, &font_width, &font_height);
+        sg_image_desc img_desc { };
+            img_desc.width = font_width;
+            img_desc.height = font_height;
+            img_desc.pixel_format = SG_PIXELFORMAT_RGBA8;
+            img_desc.wrap_u = SG_WRAP_CLAMP_TO_EDGE;
+            img_desc.wrap_v = SG_WRAP_CLAMP_TO_EDGE;
+            img_desc.min_filter = SG_FILTER_LINEAR;
+            img_desc.mag_filter = SG_FILTER_LINEAR;
+            img_desc.data.subimage[0][0].ptr = font_pixels;
+            img_desc.data.subimage[0][0].size = static_cast<size_t>(font_width * font_height * 4);
+        imgui_io.Fonts->TexID = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
+    #endif
   
     //####################################################################################
     //##    Set Up Pipeline
@@ -267,14 +271,13 @@ void DrApp::init(void) {
     m_state.dpi_scale = sapp_dpi_scale();
     const int atlas_size = RoundPowerOf2(512.0f * m_state.dpi_scale);
     m_state.fons = sfons_create(atlas_size, atlas_size, FONS_ZERO_TOPLEFT);
-    m_state.font_normal = FONS_INVALID;       
+    m_state.font_normal = fonsAddFontMem(m_state.fons, "sans", aileron, sizeof(aileron), false);
+
 
     // ***** Start loading the PNG File
-    //  We don't need the returned handle since we can also get that inside the fetch-callback from the response
-    //  structure. NOTE: we're not using the user_data member, since all required state is in a global variable anyway
     char* path = NULL;
-    int length, dirname_length;
-    std::string image_file = "", font_file = "";
+    int length = 0, dirname_length = 0;
+    std::string image_file { "" };
 
     #ifndef DROP_TARGET_HTML5
         length = wai_getExecutablePath(NULL, 0, &dirname_length);
@@ -288,7 +291,6 @@ void DrApp::init(void) {
             //printf("  basename: %s\n", path + dirname_length + 1);
             std::string base = path;
             image_file = base + "/assets/blob.png";
-            font_file  = base + "/assets/aileron-regular.otf";
             free(path);
         }
     #else        
@@ -297,27 +299,9 @@ void DrApp::init(void) {
         //  On Safari, with 'Develop' menu enabled select "Disable Cross-Origin Restrictions"
         //image_file = "http://github.com/stevinz/extrude/blob/master/assets/shapes.png?raw=true";
         image_file = "assets/shapes.png";
-        font_file  = "assets/aileron-regular.otf";
     #endif
 
-    // Load font in background
-    #ifndef DROP_TARGET_HTML5
-        sfetch_request_t (sokol_fetch_font) {
-            .path = font_file.c_str(),
-            .buffer_ptr = m_state.font_normal_data,
-            .buffer_size = sizeof(m_state.font_normal_data),
-            .user_void_ptr = this,
-            .callback = +[](const sfetch_response_t* response) {
-                DrApp *app = (DrApp*)(response->user_void_ptr);
-                if (response->fetched && app) {
-                    app->m_state.font_normal = fonsAddFontMem(app->m_state.fons, "sans", (unsigned char*)response->buffer_ptr, (int)response->fetched_size, false);
-                } 
-            },       
-        };
-        sfetch_send(&sokol_fetch_font);
-    #endif
-
-    // Load inital "shapes.png" image in background
+    // Initiate Fetch
     loadImage(image_file);
 
     // #################### Virtual onCreate() ####################
@@ -348,35 +332,37 @@ void DrApp::frame(void) {
     this->onUpdateScene();
     
     // #################### ImGui Rendering ####################
-    // Start ImGui Frame
-    int width = sapp_width();
-    int height = sapp_height();
-    simgui_new_frame(width, height, 1.0/60.0);
+    #if defined (ENABLE_IMGUI)
+        // Start ImGui Frame
+        int width = sapp_width();
+        int height = sapp_height();
+        simgui_new_frame(width, height, 1.0/60.0);
 
-    // #################### Virtual onUpdate() - User Rendering ####################
-    this->onUpdateGUI();
-    // ####################
+        // #################### Virtual onUpdate() - User Rendering ####################
+        this->onUpdateGUI();
+        // ####################
 
-    // Debug Sokol
-    #ifdef DEBUG_ON
-        if (ImGui::BeginMainMenuBar()) {
-            if (ImGui::BeginMenu("sokol-gfx")) {
-                ImGui::MenuItem("Capabilities", 0, &m_sg_imgui.caps.open);
-                ImGui::MenuItem("Buffers", 0, &m_sg_imgui.buffers.open);
-                ImGui::MenuItem("Images", 0, &m_sg_imgui.images.open);
-                ImGui::MenuItem("Shaders", 0, &m_sg_imgui.shaders.open);
-                ImGui::MenuItem("Pipelines", 0, &m_sg_imgui.pipelines.open);
-                ImGui::MenuItem("Passes", 0, &m_sg_imgui.passes.open);
-                ImGui::MenuItem("Calls", 0, &m_sg_imgui.capture.open);
-                ImGui::EndMenu();
+        // Debug Sokol
+        #if defined (ENABLE_DEBUG)
+            if (ImGui::BeginMainMenuBar()) {
+                if (ImGui::BeginMenu("sokol-gfx")) {
+                    ImGui::MenuItem("Capabilities", 0, &m_sg_imgui.caps.open);
+                    ImGui::MenuItem("Buffers", 0, &m_sg_imgui.buffers.open);
+                    ImGui::MenuItem("Images", 0, &m_sg_imgui.images.open);
+                    ImGui::MenuItem("Shaders", 0, &m_sg_imgui.shaders.open);
+                    ImGui::MenuItem("Pipelines", 0, &m_sg_imgui.pipelines.open);
+                    ImGui::MenuItem("Passes", 0, &m_sg_imgui.passes.open);
+                    ImGui::MenuItem("Calls", 0, &m_sg_imgui.capture.open);
+                    ImGui::EndMenu();
+                }
+                ImGui::EndMainMenuBar();
             }
-            ImGui::EndMainMenuBar();
-        }
-        sg_imgui_draw(&m_sg_imgui);
+            sg_imgui_draw(&m_sg_imgui);
+        #endif
+        
+        // Render ImGui
+        simgui_render();
     #endif
-    
-    // Render ImGui
-    simgui_render();
 
     // #################### Fontstash Text Rendering ####################
     fonsClearState(m_state.fons);    
@@ -425,7 +411,9 @@ void DrApp::event(const sapp_event *event) {
     m_state.items[event->type].event = *event;
 
     // Pass event to ImGui
-    simgui_handle_event(event);
+    #if defined (ENABLE_IMGUI)
+        simgui_handle_event(event);
+    #endif
 
     // #################### Virtual onEvent() ####################
     this->onEvent(event);
@@ -443,9 +431,11 @@ void DrApp::cleanup(void) {
     sfetch_shutdown();
     sfons_destroy(m_state.fons);
     sgl_shutdown();
-    simgui_shutdown();
-    #ifdef DEBUG_ON
-        sg_imgui_discard(&m_sg_imgui);
+    #if defined (ENABLE_IMGUI)
+        simgui_shutdown();
+        #if defined (ENABLE_DEBUG)
+            sg_imgui_discard(&m_sg_imgui);
+        #endif
     #endif
     sg_shutdown();
 }

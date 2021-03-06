@@ -21,17 +21,23 @@
     #include "3rd_party/cereal/archives/binary.hpp"
 #endif
 #include "3rd_party/handmade_math.h"
-#include "3rd_party/imgui/imgui.h"
-#include "3rd_party/imgui/imgui_internal.h"
+#if defined (ENABLE_IMGUI)
+    #include "3rd_party/imgui/imgui.h"
+    #include "3rd_party/imgui/imgui_internal.h"
+#endif
 #include "3rd_party/sokol/sokol_app.h"
 #include "3rd_party/sokol/sokol_gfx.h"
 #include "3rd_party/sokol/sokol_gl.h"
-#include "3rd_party/sokol/sokol_gfx_imgui.h"
+#if defined (ENABLE_DEBUG)
+    #include "3rd_party/sokol/sokol_gfx_imgui.h"
+#endif
 #include "3rd_party/sokol/sokol_glue.h"
 #include "3rd_party/sokol/sokol_time.h"
 #include "3rd_party/sokol/sokol_audio.h"
 #include "3rd_party/sokol/sokol_fetch.h"
-#include "3rd_party/sokol/sokol_imgui.h"
+#if defined (ENABLE_IMGUI)
+    #include "3rd_party/sokol/sokol_imgui.h"
+#endif
 #include "3rd_party/stb/stb_image.h"
 #include "core/geometry/Matrix.h"
 #include "core/geometry/Vec2.h"
@@ -40,6 +46,7 @@
 #include "../data/Project.h"
 #include "../data/Types.h"
 #include "../scene3d/Mesh.h"
+#include "../scene3d/shaders/BasicShader.glsl.h"
 
 // Forward Declarations
 class FONScontext;
@@ -106,8 +113,11 @@ public:
     // Local Variables
     sapp_desc           m_sokol_app;                                            // Sokol_app descriptor for this Window
     state_t             m_state;                                                // Sokol_app state for this Window
-    sg_imgui_t          m_sg_imgui;                                             // Sokol_gfx_debug keeps track of data structures used by sokol_gfx for Debug View
 
+    // ImGui, disabled by default
+    #if defined (ENABLE_DEBUG)
+        sg_imgui_t      m_sg_imgui;                                             // Sokol_gfx_debug keeps track of data structures used by sokol_gfx for Debug View
+    #endif
 
     // ---> Temp Variables, used for demo
     std::shared_ptr<DrMesh>     m_mesh = std::make_shared<DrMesh>();
