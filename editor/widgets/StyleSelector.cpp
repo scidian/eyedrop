@@ -13,107 +13,79 @@
 //####################################################################################
 //##    ImGui Custom Styler
 //####################################################################################
-static ImVec4   base = ImVec4(0.000f, 0.750f, 0.720f, 1.0f);
+static ImVec4   base = ImVec4(0.000f, 0.650f, 0.620f, 1.0f);
 static ImVec4   bg   = ImVec4(0.150f, 0.152f, 0.151f, 1.0f);
-static ImVec4   text = ImVec4(0.900f, 0.930f, 0.925f, 1.0f);
-static float    high_val =         0.65f;
-static float    mid_val =          0.55f;
-static float    low_val =          0.45f;
-static float    window_offset =   -0.05f;
+static ImVec4   text = ImVec4(0.980f, 1.000f, 0.990f, 1.0f);
+static float    high_val =         0.05f;
+static float    mid_val =          0.00f;
+static float    low_val =         -0.05f;
 
-inline ImVec4 make_high(float alpha) {
+ImVec4 adjust_color(ImVec4 start, float adjust, float alpha) {
     ImVec4 res(0, 0, 0, alpha);
-    ImGui::ColorConvertRGBtoHSV(base.x, base.y, base.z, res.x, res.y, res.z);
-    res.z = high_val;
+    ImGui::ColorConvertRGBtoHSV(start.x, start.y, start.z, res.x, res.y, res.z);
+    res.z = Clamp(res.z + adjust, 0.f, 1.f);
     ImGui::ColorConvertHSVtoRGB(res.x, res.y, res.z, res.x, res.y, res.z);
     return res;
-}
-
-inline ImVec4 make_mid(float alpha) {
-    ImVec4 res(0, 0, 0, alpha);
-    ImGui::ColorConvertRGBtoHSV(base.x, base.y, base.z, res.x, res.y, res.z);
-    res.z = mid_val;
-    ImGui::ColorConvertHSVtoRGB(res.x, res.y, res.z, res.x, res.y, res.z);
-    return res;
-}
-
-inline ImVec4 make_low(float alpha) {
-    ImVec4 res(0, 0, 0, alpha);
-    ImGui::ColorConvertRGBtoHSV(base.x, base.y, base.z, res.x, res.y, res.z);
-    res.z = low_val;
-    ImGui::ColorConvertHSVtoRGB(res.x, res.y, res.z, res.x, res.y, res.z);
-    return res;
-}
-
-inline ImVec4 make_bg(float alpha, float offset = 0.f) {
-    ImVec4 res(0, 0, 0, alpha);
-    ImGui::ColorConvertRGBtoHSV(bg.x, bg.y, bg.z, res.x, res.y, res.z);
-    res.z = Clamp(res.z + offset, 0.f, 1.f);
-    ImGui::ColorConvertHSVtoRGB(res.x, res.y, res.z, res.x, res.y, res.z);
-    return res;
-}
-
-inline ImVec4 make_text(float alpha) {
-    return ImVec4(text.x, text.y, text.z, alpha);
 }
 
 // Shows Selector Widget
-void ThemeSelector() {
-    ImGui::Begin("Style Selector");
+void ThemeSelector(bool &open, ImGuiWindowFlags flags) {
+    if (open == false) return;
+    
+    ImGui::Begin("Style Selector", &open, flags);
     ImGui::ColorEdit3("base",   (float*) &base, ImGuiColorEditFlags_PickerHueWheel);
     ImGui::ColorEdit3("bg",     (float*) &bg,   ImGuiColorEditFlags_PickerHueWheel);
     ImGui::ColorEdit3("text",   (float*) &text, ImGuiColorEditFlags_PickerHueWheel);
     ImGui::SliderFloat("high",  &high_val,  0, 1);
     ImGui::SliderFloat("mid",   &mid_val,   0, 1);
     ImGui::SliderFloat("low",   &low_val,   0, 1);
-    ImGui::SliderFloat("win",   &window_offset, -0.5f, 0.5f);
-
+    
     ImGuiStyle &style = ImGui::GetStyle();
-    style.Colors[ImGuiCol_Text]                 = make_text(0.78f);
-    style.Colors[ImGuiCol_TextDisabled]         = make_text(0.28f);
-    style.Colors[ImGuiCol_WindowBg]             = make_bg(1.00f, window_offset);
-    style.Colors[ImGuiCol_ChildBg]              = make_bg(0.58f);
-    style.Colors[ImGuiCol_PopupBg]              = make_bg(0.9f);
-    style.Colors[ImGuiCol_Border]               = make_bg(0.6f, -0.6f);
-    style.Colors[ImGuiCol_BorderShadow]         = make_bg(0.0f, -0.8f);
-    style.Colors[ImGuiCol_FrameBg]              = make_bg(1.00f);
-    style.Colors[ImGuiCol_FrameBgHovered]       = make_mid(0.78f);
-    style.Colors[ImGuiCol_FrameBgActive]        = make_mid(1.00f);
-    style.Colors[ImGuiCol_TitleBg]              = make_low(1.00f);
-    style.Colors[ImGuiCol_TitleBgActive]        = make_high(1.00f);
-    style.Colors[ImGuiCol_TitleBgCollapsed]     = make_bg(0.75f);
-    style.Colors[ImGuiCol_MenuBarBg]            = make_bg(0.47f);
-    style.Colors[ImGuiCol_ScrollbarBg]          = make_bg(1.00f);
-    style.Colors[ImGuiCol_ScrollbarGrab]        = make_low(1.00f);
-    style.Colors[ImGuiCol_ScrollbarGrabHovered] = make_mid(0.78f);
-    style.Colors[ImGuiCol_ScrollbarGrabActive]  = make_mid(1.00f);
-    style.Colors[ImGuiCol_CheckMark]            = make_high(1.00f);
-    style.Colors[ImGuiCol_SliderGrab]           = make_bg(1.0f, .1f);
-    style.Colors[ImGuiCol_SliderGrabActive]     = make_high(1.0f);
-    style.Colors[ImGuiCol_Button]               = make_bg(1.0f, .2f);
-    style.Colors[ImGuiCol_ButtonHovered]        = make_mid(1.00f);
-    style.Colors[ImGuiCol_ButtonActive]         = make_high(1.00f);
-    style.Colors[ImGuiCol_Header]               = make_mid(0.76f);
-    style.Colors[ImGuiCol_HeaderHovered]        = make_mid(0.86f);
-    style.Colors[ImGuiCol_HeaderActive]         = make_high(1.00f);
-    style.Colors[ImGuiCol_Separator]            = make_bg(1.0f, -0.025f);
-    style.Colors[ImGuiCol_SeparatorHovered]     = make_low(1.00f);
-    style.Colors[ImGuiCol_SeparatorActive]      = make_high(1.00f);
-    style.Colors[ImGuiCol_ResizeGrip]           = make_bg(1.0f, 0.025f);
-    style.Colors[ImGuiCol_ResizeGripHovered]    = make_mid(0.78f);
-    style.Colors[ImGuiCol_ResizeGripActive]     = make_mid(1.00f);
-    style.Colors[ImGuiCol_PlotLines]            = make_text(0.63f);
-    style.Colors[ImGuiCol_PlotLinesHovered]     = make_mid(1.00f);
-    style.Colors[ImGuiCol_PlotHistogram]        = make_text(0.63f);
-    style.Colors[ImGuiCol_PlotHistogramHovered] = make_mid(1.00f);
-    style.Colors[ImGuiCol_TextSelectedBg]       = make_mid(0.43f);
-    style.Colors[ImGuiCol_ModalWindowDimBg]     = make_bg(0.73f);
-    style.Colors[ImGuiCol_Tab]                  = make_bg(0.40f);
-    style.Colors[ImGuiCol_TabHovered]           = make_high(1.00f);
-    style.Colors[ImGuiCol_TabActive]            = make_mid(1.00f);
-    style.Colors[ImGuiCol_TabUnfocused]         = make_bg(0.40f);
-    style.Colors[ImGuiCol_TabUnfocusedActive]   = make_bg(0.70f);
-    style.Colors[ImGuiCol_DockingPreview]       = make_high(0.30f);
+    style.Colors[ImGuiCol_Text]                 = adjust_color(text,  0.0f,     1.00f);
+    style.Colors[ImGuiCol_TextDisabled]         = adjust_color(text, -0.3f,     0.80f);
+    style.Colors[ImGuiCol_WindowBg]             = adjust_color(bg,    low_val,  1.00f);
+    style.Colors[ImGuiCol_ChildBg]              = adjust_color(bg,    low_val,  1.00f);
+    style.Colors[ImGuiCol_PopupBg]              = adjust_color(bg,    low_val,  0.95f);
+    style.Colors[ImGuiCol_Border]               = adjust_color(bg,   -0.4f,     0.75f);
+    style.Colors[ImGuiCol_BorderShadow]         = adjust_color(bg,   -0.8f,     0.05f);
+    style.Colors[ImGuiCol_FrameBg]              = adjust_color(bg,    0.0f,     1.00f);
+    style.Colors[ImGuiCol_FrameBgHovered]       = adjust_color(base,  mid_val,  0.78f);
+    style.Colors[ImGuiCol_FrameBgActive]        = adjust_color(base,  mid_val,  1.00f);
+    style.Colors[ImGuiCol_TitleBg]              = adjust_color(base,  low_val,  1.00f);
+    style.Colors[ImGuiCol_TitleBgActive]        = adjust_color(base,  high_val, 1.00f);
+    style.Colors[ImGuiCol_TitleBgCollapsed]     = adjust_color(bg,    0.0f,     0.75f);
+    style.Colors[ImGuiCol_MenuBarBg]            = adjust_color(bg,    0.0f,     0.47f);
+    style.Colors[ImGuiCol_ScrollbarBg]          = adjust_color(bg,    0.0f,     1.00f);
+    style.Colors[ImGuiCol_ScrollbarGrab]        = adjust_color(base,  low_val,  1.00f);
+    style.Colors[ImGuiCol_ScrollbarGrabHovered] = adjust_color(base,  mid_val,  0.78f);
+    style.Colors[ImGuiCol_ScrollbarGrabActive]  = adjust_color(base,  mid_val,  1.00f);
+    style.Colors[ImGuiCol_CheckMark]            = adjust_color(base,  high_val, 1.00f);
+    style.Colors[ImGuiCol_SliderGrab]           = adjust_color(bg,    0.0f,     0.10f);
+    style.Colors[ImGuiCol_SliderGrabActive]     = adjust_color(base,  high_val, 1.00f);
+    style.Colors[ImGuiCol_Button]               = adjust_color(bg,    0.0f,     0.20f);
+    style.Colors[ImGuiCol_ButtonHovered]        = adjust_color(base,  mid_val,  1.00f);
+    style.Colors[ImGuiCol_ButtonActive]         = adjust_color(base,  high_val, 1.00f);
+    style.Colors[ImGuiCol_Header]               = adjust_color(base,  mid_val,  0.76f);
+    style.Colors[ImGuiCol_HeaderHovered]        = adjust_color(base,  mid_val,  0.86f);
+    style.Colors[ImGuiCol_HeaderActive]         = adjust_color(base,  high_val, 1.00f);
+    style.Colors[ImGuiCol_Separator]            = adjust_color(bg,   -0.025f,   1.00f);
+    style.Colors[ImGuiCol_SeparatorHovered]     = adjust_color(base,  low_val,  1.00f);
+    style.Colors[ImGuiCol_SeparatorActive]      = adjust_color(base,  high_val, 1.00f);
+    style.Colors[ImGuiCol_ResizeGrip]           = adjust_color(bg,    0.025f,   1.00f);
+    style.Colors[ImGuiCol_ResizeGripHovered]    = adjust_color(base,  mid_val,  0.78f);
+    style.Colors[ImGuiCol_ResizeGripActive]     = adjust_color(base,  mid_val,  1.00f);
+    style.Colors[ImGuiCol_PlotLines]            = adjust_color(text,  0.0f,     0.63f);
+    style.Colors[ImGuiCol_PlotLinesHovered]     = adjust_color(base,  mid_val,  1.00f);
+    style.Colors[ImGuiCol_PlotHistogram]        = adjust_color(text,  0.0f,     0.63f);
+    style.Colors[ImGuiCol_PlotHistogramHovered] = adjust_color(base,  mid_val,  1.00f);
+    style.Colors[ImGuiCol_TextSelectedBg]       = adjust_color(base,  mid_val,  0.43f);
+    style.Colors[ImGuiCol_ModalWindowDimBg]     = adjust_color(bg,    0.0f,     0.73f);
+    style.Colors[ImGuiCol_Tab]                  = adjust_color(bg,    0.0f,     0.40f);
+    style.Colors[ImGuiCol_TabHovered]           = adjust_color(base,  high_val, 1.00f);
+    style.Colors[ImGuiCol_TabActive]            = adjust_color(base,  mid_val,  1.00f);
+    style.Colors[ImGuiCol_TabUnfocused]         = adjust_color(bg,    0.0f,     0.40f);
+    style.Colors[ImGuiCol_TabUnfocusedActive]   = adjust_color(bg,    0.0f,     0.70f);
+    style.Colors[ImGuiCol_DockingPreview]       = adjust_color(base,  high_val, 0.30f);
     style.Colors[ImGuiCol_DockingEmptyBg]       = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
 
     if (ImGui::Button("Export")) {

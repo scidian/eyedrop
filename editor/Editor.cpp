@@ -15,8 +15,8 @@
 #include "core/imaging/Image.h"
 #include "core/Math.h"
 #include "core/Random.h"
-#include "../engine/app/App.h"
-#include "../engine/app/sokol/Event__strings.h"
+#include "../engine/application/App.h"
+#include "../engine/application/sokol/Event__strings.h"
 #include "../engine/scene3d/Mesh.h"
 #include "../engine/scene3d/shaders/BasicShader.glsl.h"
 #include "widgets/StyleSelector.h"
@@ -31,7 +31,7 @@
         DrApp* app = (DrApp*)(response->user_data);
         if (app) {
             if (response->succeeded) {
-                app->loadImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+                app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
             } else {
                 // File too big if (response->error_code == SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
             }
@@ -43,7 +43,7 @@
         DrApp* app = (DrApp*)(response->user_void_ptr);
         if (app) {
             if (response->fetched) {
-                app->loadImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+                app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
             } else if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL) {
                 // File too big if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
             }
@@ -62,6 +62,10 @@ public:
 
     virtual void onCreate() override { }
 
+
+    //####################################################################################
+    //##    Render Update
+    //####################################################################################
     virtual void onUpdateScene() override { 
          // ***** Compute model-view-projection matrix for vertex shader
         hmm_mat4 proj = HMM_Perspective(52.5f, (float)sapp_width()/(float)sapp_height(), 5.f, 20000.0f);
@@ -98,12 +102,26 @@ public:
         sg_draw(0, m_mesh->indices.size(), 1);
     }
 
+
+    //####################################################################################
+    //##    Gui Update
+    //####################################################################################
     virtual void onUpdateGUI() override { 
+        // Keep track of open windows
+        static bool open_main = true;
+        static bool open_tool = true;
+        static bool open_status = true;
+        static bool open_asset = true;
+        static bool open_inspector = true;
+        static bool open_style = true;
 
         // Menu
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("File")) {
-                bool clicked_new, clicked_open, clicked_save;
+                bool clicked_new  { false };
+                bool clicked_open { false };
+                bool clicked_save { false };
                 if (ImGui::MenuItem("New",  "CTRL+N", &clicked_new)) { }
                 if (ImGui::MenuItem("Open", "CTRL+O", &clicked_open)) { }
                 if (ImGui::MenuItem("Save", "CTRL+S", &clicked_save)) { }
@@ -118,15 +136,16 @@ public:
                 ImGui::EndMenu();
             }
             if (ImGui::BeginMenu("View")) {
-                bool clicked_themes;
-                ImGui::MenuItem("Style Selector", 0, &clicked_themes);
+                ImGui::MenuItem("Asset Viewer", 0,      &open_asset);
+                ImGui::MenuItem("Object Inspector", 0,  &open_inspector);
+                ImGui::MenuItem("Style Selector", 0,    &open_style);
                 ImGui::EndMenu();
             }
             ImGui::EndMainMenuBar();
         }
-
+        ImGui::PopStyleVar();
+        
         // Create main background window for DockSpace
-        bool open = true;
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
             window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 	        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
@@ -136,78 +155,118 @@ public:
 	    ImGui::SetNextWindowViewport(viewport->ID);
 	    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 	    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);    
-	    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	    ImGui::Begin("DockSpaceViewport", &open, window_flags);
+	    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.f, 1.f));
+	    ImGui::Begin("DockSpaceViewport", &open_main, window_flags);
 	    ImGui::PopStyleVar(3);
-	    
+        	    
         // Programatically build dock space
         ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
         if (ImGui::DockBuilderGetNode(dockspace_id) == NULL) {
             ImGuiViewport* viewport = ImGui::GetMainViewport();
             ImGui::DockBuilderRemoveNode(dockspace_id);                                                             // Clear out existing layout
-            ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlagsPrivate_::ImGuiDockNodeFlags_DockSpace);      // Add empty node
-            ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
+
+            ImGuiDockNodeFlags node_flags = ImGuiDockNodeFlags_DockSpace | ImGuiDockNodeFlags_PassthruCentralNode | 
+                                            ImGuiDockNodeFlags_NoDockingInCentralNode;
+            ImGui::DockBuilderAddNode(dockspace_id, node_flags);                                                    // Add empty node
+            ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);           
 
             ImGuiID dock_main_id =      dockspace_id; 
-            ImGuiID dock_id_top =       ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up,    0.15f, NULL, &dock_main_id);
-            ImGuiID dock_id_left =      ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left,  0.15f, NULL, &dock_main_id);
-            ImGuiID dock_id_right =     ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.15f, NULL, &dock_main_id);
-            ImGuiID dock_id_bottom =    ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down,  0.10f, NULL, &dock_main_id);
-
-            ImGui::DockBuilderDockWindow("Assets",              dock_id_left);
-            ImGui::DockBuilderDockWindow("Toolbar",             dock_id_top);               // ---> To apply to central node: dock_main_id);
-            ImGui::DockBuilderDockWindow("Property Inspector",  dock_id_right);
+            ImGuiID dock_id_top =       ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up,    0.001f, NULL, &dock_main_id);
+            ImGuiID dock_id_bottom =    ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down,  0.001f, NULL, &dock_main_id);
+            ImGuiID dock_id_left =      ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left,  0.150f, NULL, &dock_main_id);
+            ImGuiID dock_id_right =     ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.150f, NULL, &dock_main_id);
+            
+            ImGui::DockBuilderDockWindow("Toolbar",             dock_id_top);               // ---> To apply to central node: "dock_main_id"
             ImGui::DockBuilderDockWindow("Status Bar",          dock_id_bottom);
+            ImGui::DockBuilderDockWindow("Assets",              dock_id_left);
+            ImGui::DockBuilderDockWindow("Property Inspector",  dock_id_right);
+            
+            ImGuiDockNode* Node;
+            // Main
+            Node = ImGui::DockBuilderGetNode( dockspace_id );
+            Node->LocalFlags |= ImGuiDockNodeFlags_NoDockingSplitMe;
+            // Toolbar
+            Node = ImGui::DockBuilderGetNode( dock_id_top );
+            Node->LocalFlags |= ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDocking | ImGuiDockNodeFlags_NoDockingSplitMe | 
+                                ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoResizeY;
+            // Status
+            Node = ImGui::DockBuilderGetNode( dock_id_bottom );
+            Node->LocalFlags |= ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDocking | ImGuiDockNodeFlags_NoDockingSplitMe | 
+                                ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoResizeY;
+            // Assets
+            Node = ImGui::DockBuilderGetNode( dock_id_left );
+            Node->LocalFlags |= ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoCloseButton;
+            // Inspector
+            Node = ImGui::DockBuilderGetNode( dock_id_right );
+            Node->LocalFlags |= ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoCloseButton;
+
             ImGui::DockBuilderFinish(dockspace_id);
         }
 
         // Apply dockspace to main dock space viewport
         ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoDockingInCentralNode;// | ImGuiDockNodeFlags_AutoHideTabBar;
         dockspace_id = ImGui::GetID("MyDockspace");
-        ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, ImVec4(0.f,0.f,0.f,0.f));
+        ImGui::PushStyleColor(ImGuiCol_ChildBg,         ImVec4(0.f,0.f,0.f,0.f));
+        ImGui::PushStyleColor(ImGuiCol_WindowBg,        ImVec4(0.f,0.f,0.f,0.f));
+        ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg,  ImVec4(0.f,0.f,0.f,0.f));
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-        ImGui::PopStyleColor();
+        ImGui::PopStyleColor(3);
         ImGui::End();
 
-        // Widget Windows
-        window_flags = ImGuiWindowFlags_NoCollapse;
+        // ##### Widget Windows
+        ImGuiWindowFlags child_flags = 0; //ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
 
-        ImGui::Begin("Toolbar", &open, window_flags);
-            ImGui::Text("Text 2");
-        ImGui::End();
+        if (open_tool) {
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(100, 200));
+            ImGui::Begin("Toolbar", &open_tool, child_flags);
+                ImGui::Text("Text 2");
+            ImGui::End();
+            ImGui::PopStyleVar();
+        }
 
-        ImGui::Begin("Assets", &open, window_flags);
-            ImGui::Text("Asset 1");
-            ImGui::Text("Asset 2");
-            ImGui::Text("Asset 3");
-            ImGui::Text("Asset 4");
-        ImGui::End();
-        ImGuiID assets_id = ImGui::GetID("Assets");
-        //ImGui::SetWi
-
-
-        ImGui::Begin("Property Inspector", &open, window_flags);
-            static ImVec4 base = ImVec4(0.000f, 0.750f, 0.720f, 1.0f);
-            static float f1 = 0.123f, f2 = 0.0f;
-            ImGui::SliderFloat("slider float", &f1, 0.0f, 1.0f, "ratio = %.3f");
-            ImGui::SliderFloat("slider float (log)", &f2, -10.0f, 10.0f, "%.4f", ImGuiSliderFlags_Logarithmic);
-            static float angle = 0.0f;
-            ImGui::SliderAngle("slider angle", &angle);
-            ImGui::ColorEdit3("base", (float*) &base, ImGuiColorEditFlags_PickerHueWheel);
-        ImGui::End();
-
-        ImGui::Begin("Status Bar", &open, window_flags);
-            ImGui::Text("Some status text");
-        ImGui::End();
+        if (open_status) {
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(100, 100));
+            ImGui::Begin("Status Bar", &open_status, child_flags);
+                ImGui::Text("Some status text");
+            ImGui::End();
+            ImGui::PopStyleVar();
+        }
+        
+        if (open_asset) {
+            ImGui::Begin("Assets", &open_asset, child_flags);
+                ImGui::Text("Asset 1");
+                ImGui::Text("Asset 2");
+                ImGui::Text("Asset 3");
+                ImGui::Text("Asset 4");
+            ImGui::End();
+        }
+        
+        if (open_inspector) {
+            ImGui::Begin("Property Inspector", &open_inspector, child_flags);
+                static ImVec4 base = ImVec4(0.000f, 0.750f, 0.720f, 1.0f);
+                static float f1 = 0.123f, f2 = 0.0f;
+                ImGui::SliderFloat("slider float", &f1, 0.0f, 1.0f, "ratio = %.3f");
+                ImGui::SliderFloat("slider float (log)", &f2, -10.0f, 10.0f, "%.4f", ImGuiSliderFlags_Logarithmic);
+                static float angle = 0.0f;
+                ImGui::SliderAngle("slider angle", &angle);
+                ImGui::ColorEdit3("base", (float*) &base, ImGuiColorEditFlags_PickerHueWheel);
+            ImGui::End();
+        }
 
         // Demo Window
         //ImGui::ShowDemoWindow();
+        //ImGui::ShowStyleEditor();
 
         // Theme selector
+        //ImGui::SetNextWindowPos(ImVec2(100, 200));
         ImGui::SetNextWindowContentSize(ImVec2(250, 250));
-        ThemeSelector();
+        ThemeSelector(open_style, child_flags);
     }
 
+
+    //####################################################################################
+    //##    Event Update
+    //####################################################################################
     virtual void onEvent(const sapp_event* event) override {
         if ((event->type == SAPP_EVENTTYPE_KEY_DOWN) && !event->key_repeat) {
             switch (event->key_code) {
@@ -299,6 +358,9 @@ public:
 };
 
 
+//####################################################################################
+//##    Program Start
+//####################################################################################
 int main(int argc, char* argv[]) {
 
     Editor* editor = new Editor("Test Editor", DrColor(28, 30, 29), 1800, 1000);

@@ -74,23 +74,11 @@ sg_blend_state (sokol_blend_alpha) {
 //####################################################################################
 //##    Callbacks
 //####################################################################################
-// File Loading
-static void image_loaded(const sfetch_response_t* response) {
-    DrApp* app = (DrApp*)(response->user_void_ptr);
-    if (response->fetched && app) {
-        // File data has been fetched, since we provided a big-enough buffer we can be sure that all data has been loaded here
-        app->loadImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
-    } else if (response->finished) {
-        // If loading the file failed, set clear color to signal reason
-        if (response->failed) { /*response->error_code*/ }
-    }
-}
-
 // C callback wrappers for using member methods as callbacks functions
-std::function<void()>                           initCallback;     
-std::function<void()>                           frameCallback;     
-std::function<void(const sapp_event* event)>    eventCallback;      
-std::function<void()>                           cleanupCallback;    
+std::function<void()>                                   initCallback;     
+std::function<void()>                                   frameCallback;     
+std::function<void(const sapp_event* event)>            eventCallback;      
+std::function<void()>                                   cleanupCallback;    
 extern "C" void initWrapper()                           { initCallback(); }
 extern "C" void frameWrapper()                          { frameCallback(); }
 extern "C" void eventWrapper(const sapp_event* event)   { eventCallback(event); }
@@ -98,7 +86,7 @@ extern "C" void cleanupWrapper()                        { cleanupCallback(); }
 
 
 //####################################################################################
-//##    Constructor / Destructor
+//##    Constructor / Destructor / Getters / Setters
 //####################################################################################
 DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
     m_app_name = title;
@@ -121,129 +109,15 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
     m_sokol_app.max_dropped_files =     100;
 }
 
+// Destructor
 DrApp::~DrApp() {
         
 }
 
-
-//####################################################################################
-//##    Getters / setters
-//####################################################################################
 // Sets application name, updates title bar
 void DrApp::setAppName(std::string name) { 
     m_app_name = name; 
     sapp_set_window_title(m_app_name.c_str());
-}
-
-
-//####################################################################################
-//##    Create 3D extrusion
-//####################################################################################
-void DrApp::calculateMesh(bool reset_position) {
-    //##    Level of Detail:
-    //##        0.075 = Detailed
-    //##        0.250 = Nice
-    //##        1.000 = Low poly
-    //##       10.000 = Really low poly
-    float level_of_detail = 0.6f;
-    switch (m_mesh_quality) {
-        case 0: level_of_detail = 19.200f;  break;
-        case 1: level_of_detail =  9.600f;  break;
-        case 2: level_of_detail =  4.800f;  break;
-        case 3: level_of_detail =  2.400f;  break;
-        case 4: level_of_detail =  1.200f;  break;
-        case 5: level_of_detail =  0.600f;  break;
-        case 6: level_of_detail =  0.300f;  break;
-        case 7: level_of_detail =  0.150f;  break;
-        case 8: level_of_detail =  0.075f;  break;
-    }
-
-    // ***** Initialize Mesh
-    m_image->outlinePoints(level_of_detail);
-    m_mesh = std::make_shared<DrMesh>();
-    m_mesh->image_size = Max(m_image->getBitmap().width, m_image->getBitmap().height);      
-    m_mesh->wireframe = m_wireframe;
-    m_mesh->initializeExtrudedImage(m_image.get(), m_mesh_quality);
-    //mesh->initializeTextureQuad();
-    //mesh->initializeTextureCube();
-    //mesh->initializeTextureCone();
-            
-    // ***** Copy vertex data and set into state buffer
-    if (m_mesh->vertexCount() > 0) {
-        // ***** Vertex Buffer
-        unsigned int total_vertices = m_mesh->vertices.size();
-
-        Vertex vertices[total_vertices];
-        for (size_t i = 0; i < total_vertices; i++) vertices[i] = m_mesh->vertices[i];
-        sg_buffer_desc (sokol_buffer_vertex) {
-            .data = SG_RANGE(vertices),
-            .label = "extruded-vertices"
-        };
-        sg_destroy_buffer(m_state.bind.vertex_buffers[0]);
-        m_state.bind.vertex_buffers[0] = sg_make_buffer(&sokol_buffer_vertex);
-
-        // ***** Index Buffer
-        unsigned int total_indices = m_mesh->indices.size();
-        uint16_t indices[total_indices];
-        for (size_t i = 0; i < total_indices; i++) indices[i] = m_mesh->indices[i];
-        sg_buffer_desc (sokol_buffer_index) {
-            .type = SG_BUFFERTYPE_INDEXBUFFER,
-            .data = SG_RANGE(indices),
-            .label = "temp-indices"
-        };
-        sg_destroy_buffer(m_state.bind.index_buffer);
-        m_state.bind.index_buffer = sg_make_buffer(&(sokol_buffer_index));
-
-        // ***** Reset rotation
-        if (reset_position) {
-            m_total_rotation.set(0.f, 0.f);
-            m_add_rotation.set(25.f, 25.f);
-            m_model = DrMatrix::identityMatrix();
-        }
-    }
-}
-
-
-//####################################################################################
-//##    Load Image
-//####################################################################################
-void DrApp::loadImage(stbi_uc* buffer_ptr, int fetched_size) {
-    int png_width, png_height, num_channels;
-    const int desired_channels = 4;
-    stbi_uc* pixels = stbi_load_from_memory(buffer_ptr, fetched_size, &png_width, &png_height, &num_channels, desired_channels);
-
-    // Stb Load Succeeded
-    if (pixels) {
-        // ********** Copy data into our custom bitmap class, create image and trace outline
-        DrBitmap bitmap(pixels, static_cast<int>(png_width * png_height * 4), false, png_width, png_height);
-        //bitmap = Dr::ApplySinglePixelFilter(DROP_IMAGE_FILTER_HUE, bitmap, Dr::RandomInt(-100, 100));
-        m_image = std::make_shared<DrImage>("shapes", bitmap, 0.25f);
-
-        calculateMesh(true);        
-
-        // ********** Initialze the sokol-gfx texture
-        sg_image_desc (sokol_image) {
-            .width =        m_image->getBitmap().width,
-            .height =       m_image->getBitmap().height,
-            .pixel_format = SG_PIXELFORMAT_RGBA8,
-            .wrap_u =       SG_WRAP_MIRRORED_REPEAT,
-            .wrap_v =       SG_WRAP_MIRRORED_REPEAT,
-            .min_filter =   SG_FILTER_LINEAR,
-            .mag_filter =   SG_FILTER_LINEAR,
-            .data.subimage[0][0] = {
-                .ptr =  &(m_image->getBitmap().data[0]),
-                .size = (size_t)m_image->getBitmap().size(),
-            }
-        };
-        
-        // If we already have an image in the state buffer, uninit before initializing new image
-        if (m_initialized_image == true) { sg_uninit_image(m_state.bind.fs_images[SLOT_tex]); }
-
-        // Initialize new image into state buffer
-        sg_init_image(m_state.bind.fs_images[SLOT_tex], &sokol_image);
-        m_initialized_image = true;
-        stbi_image_free(pixels);
-    }
 }
 
 
@@ -296,11 +170,11 @@ void DrApp::init(void) {
         style.IndentSpacing =       16.0f;
         style.ItemInnerSpacing =    ImVec2(8.f, 4.f);
         style.ItemSpacing =         ImVec2(8.f, 4.f);
-        style.PopupRounding =       6.f;
+        style.PopupRounding =       0.f;
         style.TabBorderSize =       1.0f;
         style.TabRounding =         6.f;
         style.WindowBorderSize =    1.f;
-        style.WindowRounding =      6.f;
+        style.WindowRounding =      0.f;
         style.WindowPadding =       ImVec2(3.f, 3.f);
         style.WindowTitleAlign =    ImVec2(0.5f, 0.5f);
         style.WindowMenuButtonPosition = ImGuiDir_None; // (default: ImGuiDir_Left)
@@ -315,7 +189,7 @@ void DrApp::init(void) {
         fontCfg.OversampleH = 2;
         fontCfg.OversampleV = 2;
         fontCfg.RasterizerMultiply = 1.5f;
-    imgui_io.Fonts->AddFontFromMemoryTTF(aileron, sizeof(aileron), 15.0f, &fontCfg);
+    imgui_io.Fonts->AddFontFromMemoryTTF(aileron, sizeof(aileron), 16.0f, &fontCfg);
 
     // Create font texture for the custom font
     unsigned char* font_pixels;
@@ -444,14 +318,7 @@ void DrApp::init(void) {
     #endif
 
     // Load inital "shapes.png" image in background
-    sfetch_request_t (sokol_fetch_image) {
-        .path = image_file.c_str(),
-        .buffer_ptr = m_state.file_buffer,
-        .buffer_size = sizeof(m_state.file_buffer),
-        .user_void_ptr = this,
-        .callback = image_loaded,
-    };
-    sfetch_send(&sokol_fetch_image);
+    loadImage(image_file);
 
     // #################### Virtual onCreate() ####################
     this->onCreate();
@@ -480,27 +347,6 @@ void DrApp::frame(void) {
     // #################### Virtual onUpdate() - User Rendering ####################
     this->onUpdateScene();
     
-    // #################### Fontstash Text Rendering ####################
-    fonsClearState(m_state.fons);    
-    sgl_defaults();
-    sgl_matrix_mode_projection();
-    sgl_ortho(0.0f, sapp_widthf(), sapp_heightf(), 0.0f, -1.0f, +1.0f);
-
-    const float dpis = m_state.dpi_scale;
-    FONScontext* fs = m_state.fons;
-
-    if (m_state.font_normal != FONS_INVALID) {
-        fonsSetAlign(fs, FONS_ALIGN_LEFT | FONS_ALIGN_BASELINE);
-        fonsSetFont(fs, m_state.font_normal);
-        fonsSetSize(fs, 18.0f * dpis);
-        fonsSetColor(fs, sfons_rgba(255, 255, 255, 255));;
-        fonsSetBlur(fs, 0);
-        fonsSetSpacing(fs, 0.0f);
-        fonsDrawText(fs, 10 * dpis, sapp_height() - (10 * dpis), ("FPS: " + RemoveTrailingZeros(std::to_string(framesPerSecond()))).c_str(), NULL);
-    }
-    sfons_flush(fs);            // Flush fontstash's font atlas to sokol-gfx texture
-    sgl_draw();
-
     // #################### ImGui Rendering ####################
     // Start ImGui Frame
     int width = sapp_width();
@@ -532,11 +378,32 @@ void DrApp::frame(void) {
     // Render ImGui
     simgui_render();
 
+    // #################### Fontstash Text Rendering ####################
+    fonsClearState(m_state.fons);    
+    sgl_defaults();
+    sgl_matrix_mode_projection();
+    sgl_ortho(0.0f, sapp_widthf(), sapp_heightf(), 0.0f, -1.0f, +1.0f);
+
+    const float dpis = m_state.dpi_scale;
+    FONScontext* fontstash = m_state.fons;
+
+    if (m_state.font_normal != FONS_INVALID) {
+        fonsSetAlign(fontstash,     FONS_ALIGN_LEFT | FONS_ALIGN_TOP); //FONS_ALIGN_BASELINE);
+        fonsSetFont(fontstash,      m_state.font_normal);
+        fonsSetSize(fontstash,      16.0f * dpis);
+        fonsSetColor(fontstash,     sfons_rgba(255, 255, 255, 255));;
+        fonsSetBlur(fontstash,      0);
+        fonsSetSpacing(fontstash,   0.0f);
+        fonsDrawText(fontstash, sapp_width() - (60 * dpis), (4 * dpis), ("FPS: " + RemoveTrailingZeros(std::to_string(framesPerSecond()))).c_str(), NULL);
+    }
+    sfons_flush(fontstash);                     // Flush fontstash's font atlas to sokol-gfx texture
+    sgl_draw();
+
     // #################### End Renderer ####################
     sg_end_pass();
     sg_commit();
 
-    // #################### FPS ####################
+    // #################### Delta Time / FPS ####################
     static uint64_t last_time =     0;
     static double   lap_time =      0.0;
     static int      frame_count =   0;
@@ -582,4 +449,145 @@ void DrApp::cleanup(void) {
     #endif
     sg_shutdown();
 }
+
+
+//####################################################################################
+//####################################################################################
+//####################################################################################
+//##    Image Stuff
+//####################################################################################
+//####################################################################################
+//####################################################################################
+// Start a sokol fetch of desired image
+void DrApp::loadImage(std::string filename) {
+    sfetch_request_t (sokol_fetch_image) {
+        .path = filename.c_str(),
+        .buffer_ptr = m_state.file_buffer,
+        .buffer_size = sizeof(m_state.file_buffer),
+        .user_void_ptr = this,
+        .callback = +[](const sfetch_response_t* response) {
+            DrApp* app = (DrApp*)(response->user_void_ptr);
+            if (response->fetched && app) {
+                // File data has been fetched, since we provided a big-enough buffer we can be sure that all data has been loaded here
+                app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+            } else if (response->finished) {
+                // If loading the file failed, set clear color to signal reason
+                if (response->failed) { /*response->error_code*/ }
+            }
+        },       
+    };
+    sfetch_send(&sokol_fetch_image);
+}
+
+
+//####################################################################################
+//##    Load Image
+//####################################################################################
+void DrApp::initImage(stbi_uc* buffer_ptr, int fetched_size) {
+    int png_width, png_height, num_channels;
+    const int desired_channels = 4;
+    stbi_uc* pixels = stbi_load_from_memory(buffer_ptr, fetched_size, &png_width, &png_height, &num_channels, desired_channels);
+
+    // Stb Load Succeeded
+    if (pixels) {
+        // ********** Copy data into our custom bitmap class, create image and trace outline
+        DrBitmap bitmap(pixels, static_cast<int>(png_width * png_height * 4), false, png_width, png_height);
+        //bitmap = Dr::ApplySinglePixelFilter(DROP_IMAGE_FILTER_HUE, bitmap, Dr::RandomInt(-100, 100));
+        m_image = std::make_shared<DrImage>("shapes", bitmap, 0.25f);
+
+        calculateMesh(true);        
+
+        // ********** Initialze the sokol-gfx texture
+        sg_image_desc (sokol_image) {
+            .width =        m_image->getBitmap().width,
+            .height =       m_image->getBitmap().height,
+            .pixel_format = SG_PIXELFORMAT_RGBA8,
+            .wrap_u =       SG_WRAP_MIRRORED_REPEAT,
+            .wrap_v =       SG_WRAP_MIRRORED_REPEAT,
+            .min_filter =   SG_FILTER_LINEAR,
+            .mag_filter =   SG_FILTER_LINEAR,
+            .data.subimage[0][0] = {
+                .ptr =  &(m_image->getBitmap().data[0]),
+                .size = (size_t)m_image->getBitmap().size(),
+            }
+        };
+        
+        // If we already have an image in the state buffer, uninit before initializing new image
+        if (m_initialized_image == true) { sg_uninit_image(m_state.bind.fs_images[SLOT_tex]); }
+
+        // Initialize new image into state buffer
+        sg_init_image(m_state.bind.fs_images[SLOT_tex], &sokol_image);
+        m_initialized_image = true;
+        stbi_image_free(pixels);
+    }
+}
+
+
+//####################################################################################
+//##    Create 3D extrusion
+//####################################################################################
+void DrApp::calculateMesh(bool reset_position) {
+    //##    Level of Detail:
+    //##        0.075 = Detailed
+    //##        0.250 = Nice
+    //##        1.000 = Low poly
+    //##       10.000 = Really low poly
+    float level_of_detail = 0.6f;
+    switch (m_mesh_quality) {
+        case 0: level_of_detail = 19.200f;  break;
+        case 1: level_of_detail =  9.600f;  break;
+        case 2: level_of_detail =  4.800f;  break;
+        case 3: level_of_detail =  2.400f;  break;
+        case 4: level_of_detail =  1.200f;  break;
+        case 5: level_of_detail =  0.600f;  break;
+        case 6: level_of_detail =  0.300f;  break;
+        case 7: level_of_detail =  0.150f;  break;
+        case 8: level_of_detail =  0.075f;  break;
+    }
+
+    // ***** Initialize Mesh
+    m_image->outlinePoints(level_of_detail);
+    m_mesh = std::make_shared<DrMesh>();
+    m_mesh->image_size = Max(m_image->getBitmap().width, m_image->getBitmap().height);      
+    m_mesh->wireframe = m_wireframe;
+    m_mesh->initializeExtrudedImage(m_image.get(), m_mesh_quality);
+    //mesh->initializeTextureQuad();
+    //mesh->initializeTextureCube();
+    //mesh->initializeTextureCone();
+            
+    // ***** Copy vertex data and set into state buffer
+    if (m_mesh->vertexCount() > 0) {
+        // ***** Vertex Buffer
+        unsigned int total_vertices = m_mesh->vertices.size();
+
+        Vertex vertices[total_vertices];
+        for (size_t i = 0; i < total_vertices; i++) vertices[i] = m_mesh->vertices[i];
+        sg_buffer_desc (sokol_buffer_vertex) {
+            .data = SG_RANGE(vertices),
+            .label = "extruded-vertices"
+        };
+        sg_destroy_buffer(m_state.bind.vertex_buffers[0]);
+        m_state.bind.vertex_buffers[0] = sg_make_buffer(&sokol_buffer_vertex);
+
+        // ***** Index Buffer
+        unsigned int total_indices = m_mesh->indices.size();
+        uint16_t indices[total_indices];
+        for (size_t i = 0; i < total_indices; i++) indices[i] = m_mesh->indices[i];
+        sg_buffer_desc (sokol_buffer_index) {
+            .type = SG_BUFFERTYPE_INDEXBUFFER,
+            .data = SG_RANGE(indices),
+            .label = "temp-indices"
+        };
+        sg_destroy_buffer(m_state.bind.index_buffer);
+        m_state.bind.index_buffer = sg_make_buffer(&(sokol_buffer_index));
+
+        // ***** Reset rotation
+        if (reset_position) {
+            m_total_rotation.set(0.f, 0.f);
+            m_add_rotation.set(25.f, 25.f);
+            m_model = DrMatrix::identityMatrix();
+        }
+    }
+}
+
 
