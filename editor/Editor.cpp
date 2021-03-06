@@ -27,13 +27,13 @@
 //####################################################################################
 //##    ImGui Custom Styler
 //####################################################################################
-static ImVec4 base = ImVec4(0.000f, 0.750f, 0.700f, 1.0f);
-static ImVec4 bg   = ImVec4(0.115f, 0.125f, 0.120f, 1.0f);
-static ImVec4 text = ImVec4(0.900f, 0.930f, 0.925f, 1.0f);
-static float high_val =         0.65f;
-static float mid_val =          0.55f;
-static float low_val =          0.45f;
-static float window_offset =   -0.05f;
+static ImVec4   base = ImVec4(0.000f, 0.750f, 0.700f, 1.0f);
+static ImVec4   bg   = ImVec4(0.115f, 0.125f, 0.120f, 1.0f);
+static ImVec4   text = ImVec4(0.900f, 0.930f, 0.925f, 1.0f);
+static float    high_val =         0.65f;
+static float    mid_val =          0.55f;
+static float    low_val =          0.45f;
+static float    window_offset =   -0.05f;
 
 inline ImVec4 make_high(float alpha) {
     ImVec4 res(0, 0, 0, alpha);
@@ -62,7 +62,7 @@ inline ImVec4 make_low(float alpha) {
 inline ImVec4 make_bg(float alpha, float offset = 0.f) {
     ImVec4 res(0, 0, 0, alpha);
     ImGui::ColorConvertRGBtoHSV(bg.x, bg.y, bg.z, res.x, res.y, res.z);
-    res.z += offset;
+    res.z = Clamp(res.z + offset, 0.f, 1.f);
     ImGui::ColorConvertHSVtoRGB(res.x, res.y, res.z, res.x, res.y, res.z);
     return res;
 }
@@ -72,14 +72,14 @@ inline ImVec4 make_text(float alpha) {
 }
 
 void theme_generator() {
-    ImGui::Begin("Theme generator");
-    ImGui::ColorEdit3("base", (float*) &base, ImGuiColorEditFlags_PickerHueWheel);
-    ImGui::ColorEdit3("bg", (float*) &bg, ImGuiColorEditFlags_PickerHueWheel);
-    ImGui::ColorEdit3("text", (float*) &text, ImGuiColorEditFlags_PickerHueWheel);
-    ImGui::SliderFloat("high", &high_val, 0, 1);
-    ImGui::SliderFloat("mid", &mid_val, 0, 1);
-    ImGui::SliderFloat("low", &low_val, 0, 1);
-    ImGui::SliderFloat("window", &window_offset, -0.4f, 0.4f);
+    ImGui::Begin("Theme Selector");
+    ImGui::ColorEdit3("base",   (float*) &base, ImGuiColorEditFlags_PickerHueWheel);
+    ImGui::ColorEdit3("bg",     (float*) &bg,   ImGuiColorEditFlags_PickerHueWheel);
+    ImGui::ColorEdit3("text",   (float*) &text, ImGuiColorEditFlags_PickerHueWheel);
+    ImGui::SliderFloat("high",  &high_val,  0, 1);
+    ImGui::SliderFloat("mid",   &mid_val,   0, 1);
+    ImGui::SliderFloat("low",   &low_val,   0, 1);
+    ImGui::SliderFloat("win",   &window_offset, -0.5f, 0.5f);
 
     ImGuiStyle &style = ImGui::GetStyle();
     style.Colors[ImGuiCol_Text]                  = make_text(0.78f);
@@ -109,7 +109,7 @@ void theme_generator() {
     style.Colors[ImGuiCol_Header]                = make_mid(0.76f);
     style.Colors[ImGuiCol_HeaderHovered]         = make_mid(0.86f);
     style.Colors[ImGuiCol_HeaderActive]          = make_high(1.00f);
-    style.Colors[ImGuiCol_ResizeGrip]            = ImVec4(0.47f, 0.77f, 0.83f, 0.04f);
+    style.Colors[ImGuiCol_ResizeGrip]            = make_bg(1.0f, 0.025f);
     style.Colors[ImGuiCol_ResizeGripHovered]     = make_mid(0.78f);
     style.Colors[ImGuiCol_ResizeGripActive]      = make_mid(1.00f);
     style.Colors[ImGuiCol_PlotLines]             = make_text(0.63f);
@@ -124,6 +124,7 @@ void theme_generator() {
     style.Colors[ImGuiCol_TabUnfocused]          = make_bg(0.40f);
     style.Colors[ImGuiCol_TabUnfocusedActive]    = make_bg(0.70f);
     style.Colors[ImGuiCol_DockingPreview]        = make_high(0.30f);
+    //style.Colors[ImGuiCol_DockingEmptyBg]        = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
 
     if (ImGui::Button("Export")) {
         ImGui::LogToTTY();
@@ -217,6 +218,43 @@ public:
     }
 
     virtual void onUpdateGUI() override { 
+        // Dock Stuff
+        ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoDockingInCentralNode;
+        ImGui::SetNextWindowBgAlpha(0.0f);
+        ImGui::DockSpaceOverViewport(NULL, dockspace_flags);
+
+        // Initial positioning stuff
+        ImVec2 win_pos = ImGui::GetMainViewport()->Pos;
+        ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
+            
+        // Demo Window
+        ImGui::ShowDemoWindow();
+
+        // Menu
+        if (ImGui::BeginMainMenuBar()) {
+            if (ImGui::BeginMenu("File")) {
+                bool clicked_new, clicked_open, clicked_save;
+                if (ImGui::MenuItem("New",  "CTRL+N", &clicked_new)) { }
+                if (ImGui::MenuItem("Open", "CTRL+O", &clicked_open)) { }
+                if (ImGui::MenuItem("Save", "CTRL+S", &clicked_save)) { }
+                ImGui::Separator();
+                if (ImGui::MenuItem("Quit", "CTRL+Q")) { sapp_request_quit(); }
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Edit")) {
+                if (ImGui::MenuItem("Cut", "CTRL+X")) { }
+                if (ImGui::MenuItem("Copy", "CTRL+C")) { }
+                if (ImGui::MenuItem("Paste", "CTRL+V")) { }
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("View")) {
+                bool clicked_themes;
+                ImGui::MenuItem("Color Themes", 0, &clicked_themes);
+                ImGui::EndMenu();
+            }
+            ImGui::EndMainMenuBar();
+        }
+
         // Theme selector
         ImGui::SetNextWindowContentSize(ImVec2(250, 250));
         theme_generator();

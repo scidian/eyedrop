@@ -484,38 +484,16 @@ void DrApp::frame(void) {
         fonsSetColor(fs, sfons_rgba(255, 255, 255, 255));;
         fonsSetBlur(fs, 0);
         fonsSetSpacing(fs, 0.0f);
-        fonsDrawText(fs, 10 * dpis, sapp_height() - (20 * dpis), ("FPS: " + RemoveTrailingZeros(std::to_string(framesPerSecond()))).c_str(), NULL);
+        fonsDrawText(fs, 10 * dpis, sapp_height() - (15 * dpis), ("FPS: " + RemoveTrailingZeros(std::to_string(framesPerSecond()))).c_str(), NULL);
     }
     sfons_flush(fs);            // Flush fontstash's font atlas to sokol-gfx texture
     sgl_draw();
 
     // #################### ImGui Rendering ####################
-    // Initial stuff
-    ImVec2 win_pos = ImGui::GetMainViewport()->Pos;
-    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
-    
     // Start ImGui Frame
     int width = sapp_width();
     int height = sapp_height();
     simgui_new_frame(width, height, 1.0/60.0);
-
-    // Initial call
-    //ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
-    //ImGui::SetNextWindowBgAlpha(0.0f);
-    //ImGui::DockSpaceOverViewport(NULL, dockspace_flags);
-
-    // Demo Window
-    ImGui::ShowDemoWindow();
-
-    // Menu
-    // if (ImGui::BeginMainMenuBar()) {
-    //     if (ImGui::BeginMenu("File")) {
-    //         bool clicked_new;
-    //         ImGui::MenuItem("New", 0, &clicked_new);
-    //         ImGui::EndMenu();
-    //     }
-    //     ImGui::EndMainMenuBar();
-    // }
 
     // #################### Virtual onUpdate() - User Rendering ####################
     this->onUpdateGUI();

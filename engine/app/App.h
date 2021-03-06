@@ -20,6 +20,8 @@
     #include "3rd_party/cereal/types/set.hpp"
     #include "3rd_party/cereal/archives/binary.hpp"
 #endif
+#include "3rd_party/handmade_math.h"
+#include "3rd_party/imgui/imgui.h"
 #include "3rd_party/sokol/sokol_app.h"
 #include "3rd_party/sokol/sokol_gfx.h"
 #include "3rd_party/sokol/sokol_gl.h"
@@ -28,6 +30,7 @@
 #include "3rd_party/sokol/sokol_time.h"
 #include "3rd_party/sokol/sokol_audio.h"
 #include "3rd_party/sokol/sokol_fetch.h"
+#include "3rd_party/sokol/sokol_imgui.h"
 #include "3rd_party/stb/stb_image.h"
 #include "core/geometry/Matrix.h"
 #include "core/geometry/Vec2.h"
