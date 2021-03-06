@@ -181,11 +181,9 @@ void DrEditor::onUpdateGUI() {
     //ImGui::ShowStyleEditor();
 
     // Theme selector
-    if (widgets[EDITOR_WIDGET_STYLE]) {
-        //ImGui::SetNextWindowPos(ImVec2(100, 200));
-        ImGui::SetNextWindowContentSize(ImVec2(250, 250));
-        ThemeSelector(child_flags);
-    }
+    //ImGui::SetNextWindowPos(ImVec2(100, 200));
+    ImGui::SetNextWindowContentSize(ImVec2(250, 250));
+    ThemeSelector(widgets[EDITOR_WIDGET_STYLE], child_flags);
 }
 
 

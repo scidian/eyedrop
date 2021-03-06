@@ -18,7 +18,7 @@
 //####################################################################################
 //##    ImGui Style Theme Selector
 //############################
-void    ThemeSelector(ImGuiWindowFlags flags);
+void    ThemeSelector(bool &open, ImGuiWindowFlags flags);
 
 
 #endif // DR_STYLE_THEME_H

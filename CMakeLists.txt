@@ -22,8 +22,8 @@ cmake_minimum_required(VERSION 3.10)
 
 
 set(EXPORT_TARGET   "web")
-set(APP_TYPE        "player")       # Options:  "editor"  or  "player", !!!!! #NOTE: By default, "player" does not have ImGui enabled unless DEBUG_MODE is on
-set(DEBUG_MODE      "true")        # Options:  "true"    or  "false"
+set(APP_TYPE        "editor")       # Options:  "editor"  or  "player", !!!!! #NOTE: By default, "player" does not have ImGui enabled unless DEBUG_MODE is on
+set(DEBUG_MODE      "false")        # Options:  "true"    or  "false"
 
 
 ####################################################################################
@@ -69,6 +69,13 @@ endif()
 ##### Include Directories, allows for easy #includes...
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/3rd_party)
+
+
+##### Change output directory thanks to iCloud constatly backing up builds
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(BUILD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build.nosync/)
+    set(EXECUTABLE_OUTPUT_PATH ${BUILD_DIR} CACHE PATH "Build directory" FORCE)
+endif()
 
 
 ##### SELECT DESIRED EXECUTABLE (MAIN)

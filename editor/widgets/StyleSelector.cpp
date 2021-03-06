@@ -29,8 +29,9 @@ ImVec4 adjust_color(ImVec4 start, float adjust, float alpha) {
 }
 
 // Shows Selector Widget
-void ThemeSelector(ImGuiWindowFlags flags) {
-    bool open = true;
+void ThemeSelector(bool &open, ImGuiWindowFlags flags) {
+    if (open == false) return;
+    
     ImGui::Begin("Style Selector", &open, flags);
     ImGui::ColorEdit3("base",   (float*) &base, ImGuiColorEditFlags_PickerHueWheel);
     ImGui::ColorEdit3("bg",     (float*) &bg,   ImGuiColorEditFlags_PickerHueWheel);
