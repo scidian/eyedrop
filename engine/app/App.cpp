@@ -279,7 +279,9 @@ void DrApp::init(void) {
         sg_imgui_init(&m_sg_imgui);
     #endif
 
-    // #################### Sokol ImGui Renderer ####################
+    //####################################################################################
+    //##    Sokol ImGui Renderer
+    //####################################################################################
     simgui_desc_t simgui_desc {};
         simgui_desc.sample_count =     sapp_sample_count();
         simgui_desc.no_default_font =  true;
@@ -288,10 +290,21 @@ void DrApp::init(void) {
 
     // Set some initial ImGui styling, framed / rounded widgets
     ImGuiStyle &style = ImGui::GetStyle();
-        style.FrameRounding =       4.f;
+        style.FrameRounding =       6.f;
         style.FrameBorderSize =     1.f;
+        style.FramePadding =        ImVec2(4.f, 4.f);
+        style.GrabRounding =        6.f;
+        style.IndentSpacing =       16.0f;
+        style.ItemInnerSpacing =    ImVec2(8.f, 4.f);
+        style.ItemSpacing =         ImVec2(8.f, 4.f);
+        style.PopupRounding =       6.f;
+        style.TabBorderSize =       1.0f;
+        style.TabRounding =         6.f;
         style.WindowBorderSize =    1.f;
         style.WindowRounding =      6.f;
+        style.WindowPadding =       ImVec2(8.f, 4.f);
+        style.WindowTitleAlign =    ImVec2(0.f, 0.5f);
+        style.WindowMenuButtonPosition = ImGuiDir_None; // (default: ImGuiDir_Left)
 
     // Configure ImGui 
     auto &imgui_io = ImGui::GetIO();
@@ -484,7 +497,7 @@ void DrApp::frame(void) {
         fonsSetColor(fs, sfons_rgba(255, 255, 255, 255));;
         fonsSetBlur(fs, 0);
         fonsSetSpacing(fs, 0.0f);
-        fonsDrawText(fs, 10 * dpis, sapp_height() - (15 * dpis), ("FPS: " + RemoveTrailingZeros(std::to_string(framesPerSecond()))).c_str(), NULL);
+        fonsDrawText(fs, 10 * dpis, sapp_height() - (10 * dpis), ("FPS: " + RemoveTrailingZeros(std::to_string(framesPerSecond()))).c_str(), NULL);
     }
     sfons_flush(fs);            // Flush fontstash's font atlas to sokol-gfx texture
     sgl_draw();
