@@ -33,17 +33,6 @@ if     (DEBUG_MODE MATCHES "true")
     add_compile_definitions(SOKOL_TRACE_HOOKS)      ##### Needed for Sokol Debug Viewer
 endif()
 
-##### SELECT DESIRED EXECUTABLE (MAIN)
-if     (APP_TYPE MATCHES "player")
-    add_compile_definitions(SOKOL_NO_ENTRY)         ##### STOP SOKOL HIJACK
-    set(MAIN_DIRECTORY "player/*.c**")
-    project(player)                                 ##### Project Name for Engine Only
-else()
-    add_compile_definitions(SOKOL_NO_ENTRY)         ##### STOP SOKOL HIJACK    
-    set(MAIN_DIRECTORY "editor/*.c**")
-    project(drop)                                   ##### Project Name for Editor
-endif()
-
 ##### TARGET
 if     (EXPORT_TARGET MATCHES "osx")
     add_compile_definitions(DROP_TARGET_APPLE)
@@ -77,9 +66,25 @@ include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/3rd_party)
 
 
+##### SELECT DESIRED EXECUTABLE (MAIN)
+if     (APP_TYPE MATCHES "player")
+    add_compile_definitions(SOKOL_NO_ENTRY)         ##### STOP SOKOL HIJACK
+    file(GLOB MAIN_DIRECTORY_FILES
+        "player/*.c**"
+    )
+    project(player)                                 ##### Project Name for Engine Only
+else()
+    add_compile_definitions(SOKOL_NO_ENTRY)         ##### STOP SOKOL HIJACK    
+    file(GLOB MAIN_DIRECTORY_FILES
+        "editor/*.c**"
+        "editor/widgets/*.c**"
+    )
+    project(drop)                                   ##### Project Name for Editor
+endif()
+
 ##### Glob the files, add the executable
 file(GLOB SOURCE_CODE_FILES 
-    ${MAIN_DIRECTORY}
+    ${MAIN_DIRECTORY_FILES}
     "*.c**"
     "3rd_party/*.c**"
     "3rd_party/imgui/*.c**"

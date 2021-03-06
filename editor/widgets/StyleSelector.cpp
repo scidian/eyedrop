@@ -6,7 +6,8 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Fri Mar 05 2021
 //
 //
-#include "StyleTheme.h"
+#include "core/Math.h"
+#include "StyleSelector.h"
 
 
 //####################################################################################
@@ -56,8 +57,9 @@ inline ImVec4 make_text(float alpha) {
     return ImVec4(text.x, text.y, text.z, alpha);
 }
 
+// Shows Selector Widget
 void ThemeSelector() {
-    ImGui::Begin("Theme Selector");
+    ImGui::Begin("Style Selector");
     ImGui::ColorEdit3("base",   (float*) &base, ImGuiColorEditFlags_PickerHueWheel);
     ImGui::ColorEdit3("bg",     (float*) &bg,   ImGuiColorEditFlags_PickerHueWheel);
     ImGui::ColorEdit3("text",   (float*) &text, ImGuiColorEditFlags_PickerHueWheel);

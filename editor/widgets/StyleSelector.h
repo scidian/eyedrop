@@ -9,6 +9,8 @@
 #ifndef DR_STYLE_THEME_H
 #define DR_STYLE_THEME_H
 
+#include "3rd_party/sokol/sokol_app.h"
+#include "3rd_party/sokol/sokol_gfx.h"
 #include "3rd_party/imgui/imgui.h"
 #include "3rd_party/sokol/sokol_imgui.h"
     
@@ -16,6 +18,7 @@
 //####################################################################################
 //##    ImGui Style Theme Selector
 //############################
+void    ThemeSelector();
 
 
 #endif // DR_STYLE_THEME_H
