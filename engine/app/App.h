@@ -22,6 +22,7 @@
 #endif
 #include "3rd_party/handmade_math.h"
 #include "3rd_party/imgui/imgui.h"
+#include "3rd_party/imgui/imgui_internal.h"
 #include "3rd_party/sokol/sokol_app.h"
 #include "3rd_party/sokol/sokol_gfx.h"
 #include "3rd_party/sokol/sokol_gl.h"

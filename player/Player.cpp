@@ -15,9 +15,15 @@ public:
     using DrApp::DrApp;                                                 // Inherits base constructor, requires C++ 11
 
     virtual void onUpdateGUI() override { 
+            
+        // Demo Window
+        ImGui::ShowDemoWindow();
+
+        // Playing with frame count
         uint64_t elapsed = stm_since(m_time_start);
         double seconds = stm_sec(elapsed);
         setAppName("Frame count: " + std::to_string(sapp_frame_count()));
+        
     }
 
     virtual void onEvent(const sapp_event* event) override {

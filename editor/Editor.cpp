@@ -99,17 +99,6 @@ public:
     }
 
     virtual void onUpdateGUI() override { 
-        // Dock Stuff
-        ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoDockingInCentralNode;
-        ImGui::SetNextWindowBgAlpha(0.0f);
-        ImGui::DockSpaceOverViewport(NULL, dockspace_flags);
-
-        // Initial positioning stuff
-        ImVec2 win_pos = ImGui::GetMainViewport()->Pos;
-        ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
-            
-        // Demo Window
-        ImGui::ShowDemoWindow();
 
         // Menu
         if (ImGui::BeginMainMenuBar()) {
@@ -135,6 +124,84 @@ public:
             }
             ImGui::EndMainMenuBar();
         }
+
+        // Create main background window for DockSpace
+        bool open = true;
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+            window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+	        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
+	    ImGuiViewport* viewport = ImGui::GetMainViewport();
+	    ImGui::SetNextWindowPos(viewport->Pos);
+	    ImGui::SetNextWindowSize(viewport->Size);
+	    ImGui::SetNextWindowViewport(viewport->ID);
+	    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+	    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);    
+	    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	    ImGui::Begin("DockSpaceViewport", &open, window_flags);
+	    ImGui::PopStyleVar(3);
+	    
+        // Programatically build dock space
+        ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
+        if (ImGui::DockBuilderGetNode(dockspace_id) == NULL) {
+            ImGuiViewport* viewport = ImGui::GetMainViewport();
+            ImGui::DockBuilderRemoveNode(dockspace_id);                                                             // Clear out existing layout
+            ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlagsPrivate_::ImGuiDockNodeFlags_DockSpace);      // Add empty node
+            ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
+
+            ImGuiID dock_main_id =      dockspace_id; 
+            ImGuiID dock_id_top =       ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up,    0.15f, NULL, &dock_main_id);
+            ImGuiID dock_id_left =      ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left,  0.15f, NULL, &dock_main_id);
+            ImGuiID dock_id_right =     ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.15f, NULL, &dock_main_id);
+            ImGuiID dock_id_bottom =    ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down,  0.10f, NULL, &dock_main_id);
+
+            ImGui::DockBuilderDockWindow("Assets",              dock_id_left);
+            ImGui::DockBuilderDockWindow("Toolbar",             dock_id_top);               // ---> To apply to central node: dock_main_id);
+            ImGui::DockBuilderDockWindow("Property Inspector",  dock_id_right);
+            ImGui::DockBuilderDockWindow("Status Bar",          dock_id_bottom);
+            ImGui::DockBuilderFinish(dockspace_id);
+        }
+
+        // Apply dockspace to main dock space viewport
+        ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoDockingInCentralNode;// | ImGuiDockNodeFlags_AutoHideTabBar;
+        dockspace_id = ImGui::GetID("MyDockspace");
+        ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, ImVec4(0.f,0.f,0.f,0.f));
+        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+        ImGui::PopStyleColor();
+        ImGui::End();
+
+        // Widget Windows
+        window_flags = ImGuiWindowFlags_NoCollapse;
+
+        ImGui::Begin("Toolbar", &open, window_flags);
+            ImGui::Text("Text 2");
+        ImGui::End();
+
+        ImGui::Begin("Assets", &open, window_flags);
+            ImGui::Text("Asset 1");
+            ImGui::Text("Asset 2");
+            ImGui::Text("Asset 3");
+            ImGui::Text("Asset 4");
+        ImGui::End();
+        ImGuiID assets_id = ImGui::GetID("Assets");
+        //ImGui::SetWi
+
+
+        ImGui::Begin("Property Inspector", &open, window_flags);
+            static ImVec4 base = ImVec4(0.000f, 0.750f, 0.720f, 1.0f);
+            static float f1 = 0.123f, f2 = 0.0f;
+            ImGui::SliderFloat("slider float", &f1, 0.0f, 1.0f, "ratio = %.3f");
+            ImGui::SliderFloat("slider float (log)", &f2, -10.0f, 10.0f, "%.4f", ImGuiSliderFlags_Logarithmic);
+            static float angle = 0.0f;
+            ImGui::SliderAngle("slider angle", &angle);
+            ImGui::ColorEdit3("base", (float*) &base, ImGuiColorEditFlags_PickerHueWheel);
+        ImGui::End();
+
+        ImGui::Begin("Status Bar", &open, window_flags);
+            ImGui::Text("Some status text");
+        ImGui::End();
+
+        // Demo Window
+        ImGui::ShowDemoWindow();
 
         // Theme selector
         ImGui::SetNextWindowContentSize(ImVec2(250, 250));

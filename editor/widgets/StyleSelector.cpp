@@ -13,8 +13,8 @@
 //####################################################################################
 //##    ImGui Custom Styler
 //####################################################################################
-static ImVec4   base = ImVec4(0.000f, 0.750f, 0.700f, 1.0f);
-static ImVec4   bg   = ImVec4(0.090f, 0.094f, 0.092f, 1.0f);
+static ImVec4   base = ImVec4(0.000f, 0.750f, 0.720f, 1.0f);
+static ImVec4   bg   = ImVec4(0.150f, 0.152f, 0.151f, 1.0f);
 static ImVec4   text = ImVec4(0.900f, 0.930f, 0.925f, 1.0f);
 static float    high_val =         0.65f;
 static float    mid_val =          0.55f;
@@ -96,7 +96,7 @@ void ThemeSelector() {
     style.Colors[ImGuiCol_Header]               = make_mid(0.76f);
     style.Colors[ImGuiCol_HeaderHovered]        = make_mid(0.86f);
     style.Colors[ImGuiCol_HeaderActive]         = make_high(1.00f);
-    style.Colors[ImGuiCol_Separator]            = make_bg(1.0f, -0.1f);
+    style.Colors[ImGuiCol_Separator]            = make_bg(1.0f, -0.025f);
     style.Colors[ImGuiCol_SeparatorHovered]     = make_low(1.00f);
     style.Colors[ImGuiCol_SeparatorActive]      = make_high(1.00f);
     style.Colors[ImGuiCol_ResizeGrip]           = make_bg(1.0f, 0.025f);

@@ -13,8 +13,7 @@
 #include "3rd_party/fontstash.h"
 #include "3rd_party/sokol/sokol_fontstash.h"
 
-// ##### ImGui
-#include "3rd_party/imgui/imgui.h"
+// ##### ImGui Implmentation
 #define SOKOL_IMGUI_IMPL
 #include "3rd_party/sokol/sokol_imgui.h"
 
@@ -302,8 +301,8 @@ void DrApp::init(void) {
         style.TabRounding =         6.f;
         style.WindowBorderSize =    1.f;
         style.WindowRounding =      6.f;
-        style.WindowPadding =       ImVec2(8.f, 4.f);
-        style.WindowTitleAlign =    ImVec2(0.f, 0.5f);
+        style.WindowPadding =       ImVec2(3.f, 3.f);
+        style.WindowTitleAlign =    ImVec2(0.5f, 0.5f);
         style.WindowMenuButtonPosition = ImGuiDir_None; // (default: ImGuiDir_Left)
 
     // Configure ImGui 
