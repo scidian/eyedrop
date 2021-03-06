@@ -201,7 +201,7 @@ public:
         ImGui::End();
 
         // Demo Window
-        ImGui::ShowDemoWindow();
+        //ImGui::ShowDemoWindow();
 
         // Theme selector
         ImGui::SetNextWindowContentSize(ImVec2(250, 250));
