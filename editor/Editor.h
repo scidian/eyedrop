@@ -15,6 +15,10 @@
 #define DOCKSPACE_NAME          "EditorDockspace"
 #define EDITOR_TOOLBAR_SIZE     40
 
+enum Editor_Images {
+    EDITOR_IMAGE_WORLD_GRAPH,
+    EDITOR_IMAGE_TOTAL,
+};
 
 //####################################################################################
 //##    Editor
@@ -26,6 +30,13 @@ public:
     using DrApp::DrApp;                                                 
     virtual ~DrEditor();
 
+
+    // #################### VARIABLES ####################
+public:
+    ImTextureID images[EDITOR_IMAGE_TOTAL];
+
+
+    // #################### INTERNAL FUNCTIONS ####################
     // Override update functions
     virtual void onCreate() override;
     virtual void onUpdateScene() override;

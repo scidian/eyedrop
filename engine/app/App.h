@@ -55,14 +55,15 @@ class FONScontext;
 //####################################################################################
 //##    Constants 
 //############################
-#define MAX_FILE_SIZE   (1024 * 1024)
+#define MAX_FILE_SIZE   (512 * 512)
+#define INVALID_IMAGE   -1
 
 
 //####################################################################################
 //##    Local Structs / Defines
 //############################
 struct item_t {
-    sapp_event      event = { };
+    sapp_event      event { };
 };
 
 struct state_t {
@@ -73,14 +74,15 @@ struct state_t {
 
     // Fetch / Drop
     uint8_t         file_buffer[MAX_FILE_SIZE];
+    uint8_t         file_buffer2[MAX_FILE_SIZE];
 
     // Events
     item_t          items[_SAPP_EVENTTYPE_NUM];
 
     // Font
     FONScontext*    fons;
-    float           dpi_scale;
-    int             font_normal;
+    float           dpi_scale = 1.f;
+    int             font_normal = INVALID_IMAGE;
     uint8_t         font_normal_data[MAX_FILE_SIZE];
 };
 

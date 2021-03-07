@@ -13,7 +13,7 @@
 //####################################################################################
 //##    Toolbar
 //############################
-void    ToolbarUI(bool* widgets, int menu_height);
+void    ToolbarUI(bool* widgets, ImTextureID* images, int menu_height);
 
 
 #endif // DR_TOOLBAR_H

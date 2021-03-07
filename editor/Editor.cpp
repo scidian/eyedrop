@@ -30,7 +30,7 @@
 //####################################################################################
 int main(int argc, char* argv[]) {
 
-    DrEditor* editor = new DrEditor("Test Editor", DrColor(28, 30, 29), 1800, 1000);
+    DrEditor* editor = new DrEditor("Test Editor", DrColor(28, 30, 29), 1750, 1000);
     editor->run();
 
 }
@@ -45,7 +45,49 @@ DrEditor::~DrEditor() { }
 //####################################################################################
 //##    On Create
 //####################################################################################
-void DrEditor::onCreate() { }
+void DrEditor::onCreate() { 
+
+    for (int i = 0; i < EDITOR_IMAGE_TOTAL; i++) {
+        images[i] = nullptr;
+    }
+
+    // Reference:
+    // (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
+    // std::string image_file = m_app_directory + "assets/blob.png";
+    
+    sfetch_request_t (sokol_fetch_image) {
+        .path = (m_app_directory + "assets/toolbar_icons/toolbar_world_graph.png").c_str(),
+        .buffer_ptr = m_state.file_buffer2,
+        .buffer_size = sizeof(m_state.file_buffer2),
+        .user_void_ptr = this,
+        .callback = +[](const sfetch_response_t* response) {
+            DrEditor* app = (DrEditor*)(response->user_void_ptr);
+            if (response->fetched && app) {
+                int png_width, png_height, num_channels;
+                const int desired_channels = 4;
+                stbi_uc* pixels = stbi_load_from_memory((stbi_uc *)response->buffer_ptr, (int)response->fetched_size,
+                                                        &png_width, &png_height, &num_channels, desired_channels);
+
+                // Stb Load Succeeded
+                if (pixels) {
+                    sg_image_desc img_desc { };
+                        img_desc.width =    png_width;
+                        img_desc.height =   png_height;
+                        img_desc.pixel_format = SG_PIXELFORMAT_RGBA8;
+                        img_desc.wrap_u =       SG_WRAP_CLAMP_TO_EDGE;
+                        img_desc.wrap_v =       SG_WRAP_CLAMP_TO_EDGE;
+                        img_desc.min_filter =   SG_FILTER_LINEAR;
+                        img_desc.mag_filter =   SG_FILTER_LINEAR;
+                        img_desc.data.subimage[0][0].ptr = pixels;
+                        img_desc.data.subimage[0][0].size = static_cast<size_t>(png_width * png_height * num_channels);
+                    app->images[EDITOR_IMAGE_WORLD_GRAPH] = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
+                }
+                
+            }
+        },       
+    };
+    sfetch_send(&sokol_fetch_image);    
+}
 
 
 //####################################################################################
@@ -67,12 +109,12 @@ void DrEditor::onUpdateScene() {
 
     // Uniforms for vertex shader
     vs_params_t vs_params;
-    vs_params.m =   m_model;
-    vs_params.mvp = HMM_MultiplyMat4(view_proj, m_model);
+        vs_params.m =   m_model;
+        vs_params.mvp = HMM_MultiplyMat4(view_proj, m_model);
     
     // Uniforms for fragment shader
     fs_params_t fs_params;
-    fs_params.u_wireframe = (m_mesh->wireframe) ? 1.0f : 0.0f;
+        fs_params.u_wireframe = (m_mesh->wireframe) ? 1.0f : 0.0f;
 
     // Check if user requested new model quality, if so recalculate
     if (m_mesh_quality != m_before_keys) {
@@ -87,6 +129,7 @@ void DrEditor::onUpdateScene() {
     sg_draw(0, m_mesh->indices.size(), 1);
 }
 
+#define HZ_CORE_IMGUI_COMPONENT_VAR(func, label, code) ImGui::TextUnformatted(label); ImGui::NextColumn(); ImGui::SetNextItemWidth(-1); if(func) { code } ImGui::NextColumn();
 
 //####################################################################################
 //##    Gui Update
@@ -109,7 +152,7 @@ void DrEditor::onUpdateGUI() {
     DockspaceUI(widgets, menu_height);
 
     // Handle Toolbar
-    ToolbarUI(widgets, menu_height);
+    ToolbarUI(widgets, images, menu_height);
 
 
     // ##### Widget Windows
@@ -134,13 +177,23 @@ void DrEditor::onUpdateGUI() {
     
     if (widgets[EDITOR_WIDGET_INSPECTOR]) {
         ImGui::Begin("Property Inspector", &widgets[EDITOR_WIDGET_INSPECTOR], child_flags);
-            static ImVec4 base = ImVec4(0.000f, 0.750f, 0.720f, 1.0f);
+            static ImVec4 base  = ImVec4(0.000f, 0.750f, 0.720f, 1.0f);
+            static ImVec4 base2 = ImVec4(0.000f, 0.750f, 0.720f, 1.0f);
             static float f1 = 0.123f, f2 = 0.0f;
+            static float angle = 0.0f;
+
             ImGui::SliderFloat("slider float", &f1, 0.0f, 1.0f, "ratio = %.3f");
             ImGui::SliderFloat("slider float (log)", &f2, -10.0f, 10.0f, "%.4f", ImGuiSliderFlags_Logarithmic);
-            static float angle = 0.0f;
             ImGui::SliderAngle("slider angle", &angle);
-            ImGui::ColorEdit3("base", (float*) &base, ImGuiColorEditFlags_PickerHueWheel);
+            ImGui::Text("Base: "); ImGui::SameLine(); ImGui::ColorEdit3("##Base", (float*) &base, ImGuiColorEditFlags_PickerHueWheel);
+
+            ImGui::BeginColumns("Cols", 2);
+            {
+                bool flag;
+	            HZ_CORE_IMGUI_COMPONENT_VAR(ImGui::ColorEdit3("##Color 2", (float*) &base2), "Color 2", int i;);
+                HZ_CORE_IMGUI_COMPONENT_VAR(ImGui::Checkbox("##Fixed Aspect Ratio", &flag), "Fixed Aspect Ratio", int j;);
+            }
+            ImGui::EndColumns();
         ImGui::End();
     }
 

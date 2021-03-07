@@ -10,7 +10,7 @@
 #define ENUMS_TYPES_H
 
 // Global Enum Constants
-#define DROP_VERSION        200                     // Drop Creator version number, important for file loading / saving through Cereal
+#define DROP_VERSION        2000                    // Drop Creator version number, important for file loading / saving through Cereal
 
 #define KEY_NONE            -1                      // Value that represents no item selected
 #define KEY_SAME            -100                    // Value signifying to use the value already obtained

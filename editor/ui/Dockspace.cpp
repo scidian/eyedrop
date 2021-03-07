@@ -51,8 +51,8 @@ void DockspaceUI(bool* widgets, int& menu_height) {
         ImGuiID dock_main_id =      dockspace_id; 
         //ImGuiID dock_id_top =       ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up,    0.001f, NULL, &dock_main_id);
         //ImGuiID dock_id_bottom =    ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down,  0.050f, NULL, &dock_main_id);
-        ImGuiID dock_id_left =      ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left,  0.150f, NULL, &dock_main_id);
-        ImGuiID dock_id_right =     ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.150f, NULL, &dock_main_id);
+        ImGuiID dock_id_left =      ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left,  0.175f, NULL, &dock_main_id);
+        ImGuiID dock_id_right =     ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.200f, NULL, &dock_main_id);
         
         //ImGui::DockBuilderDockWindow("Toolbar",             dock_id_top);             // ---> To apply to central node: "dock_main_id"
         //ImGui::DockBuilderDockWindow("Status Bar",          dock_id_bottom);

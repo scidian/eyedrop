@@ -144,9 +144,9 @@ void DrApp::init(void) {
     // #################### Sokol Fetch ####################
     // Used for loading files with the minimal "resource limits"
     sfetch_desc_t sokol_fetch {};
-        sokol_fetch.max_requests = 128;
-        sokol_fetch.num_channels = 2;
-        sokol_fetch.num_lanes =    1;
+        sokol_fetch.max_requests = 1024;
+        sokol_fetch.num_channels = 4;
+        sokol_fetch.num_lanes =    2;
     sfetch_setup(&sokol_fetch); 
 
     // #################### Sokol Debug ####################
@@ -158,7 +158,7 @@ void DrApp::init(void) {
     //##    Sokol ImGui Renderer
     //####################################################################################
     #if defined (ENABLE_IMGUI)
-        simgui_desc_t simgui_desc {};
+        simgui_desc_t simgui_desc { };
             simgui_desc.sample_count =     sapp_sample_count();
             simgui_desc.no_default_font =  true;
             simgui_desc.dpi_scale =        sapp_dpi_scale();
@@ -182,9 +182,9 @@ void DrApp::init(void) {
             style.WindowTitleAlign =    ImVec2(0.5f, 0.5f);
             style.WindowMenuButtonPosition = ImGuiDir_None; // (default: ImGuiDir_Left)
 
-        // Configure ImGui 
+        // Configure ImGui, enable docking 
         auto &imgui_io = ImGui::GetIO();
-            imgui_io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;                   // Enable docking
+            imgui_io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
         
         // Attach default embedded font
         ImFontConfig fontCfg { };
@@ -199,13 +199,13 @@ void DrApp::init(void) {
         int font_width, font_height;
         imgui_io.Fonts->GetTexDataAsRGBA32(&font_pixels, &font_width, &font_height);
         sg_image_desc img_desc { };
-            img_desc.width = font_width;
-            img_desc.height = font_height;
+            img_desc.width =    font_width;
+            img_desc.height =   font_height;
             img_desc.pixel_format = SG_PIXELFORMAT_RGBA8;
-            img_desc.wrap_u = SG_WRAP_CLAMP_TO_EDGE;
-            img_desc.wrap_v = SG_WRAP_CLAMP_TO_EDGE;
-            img_desc.min_filter = SG_FILTER_LINEAR;
-            img_desc.mag_filter = SG_FILTER_LINEAR;
+            img_desc.wrap_u =       SG_WRAP_CLAMP_TO_EDGE;
+            img_desc.wrap_v =       SG_WRAP_CLAMP_TO_EDGE;
+            img_desc.min_filter =   SG_FILTER_LINEAR;
+            img_desc.mag_filter =   SG_FILTER_LINEAR;
             img_desc.data.subimage[0][0].ptr = font_pixels;
             img_desc.data.subimage[0][0].size = static_cast<size_t>(font_width * font_height * 4);
         imgui_io.Fonts->TexID = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
@@ -225,12 +225,12 @@ void DrApp::init(void) {
         sokol_pipleine.layout.attrs[ATTR_vs_norm].format = SG_VERTEXFORMAT_FLOAT3;
         sokol_pipleine.layout.attrs[ATTR_vs_texcoord0].format = SG_VERTEXFORMAT_FLOAT2; //SG_VERTEXFORMAT_SHORT2N;
         sokol_pipleine.layout.attrs[ATTR_vs_bary].format = SG_VERTEXFORMAT_FLOAT3;
-        //sokol_pipleine.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
-        //sokol_pipleine.index_type = SG_INDEXTYPE_NONE;
-        sokol_pipleine.index_type = SG_INDEXTYPE_UINT16;
-        //sokol_pipleine.cull_mode = SG_CULLMODE_NONE; 
-        sokol_pipleine.cull_mode = SG_CULLMODE_FRONT;
-        sokol_pipleine.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
+        sokol_pipleine.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
+        //sokol_pipleine.index_type =   SG_INDEXTYPE_NONE;
+        sokol_pipleine.index_type =     SG_INDEXTYPE_UINT16;
+        //sokol_pipleine.cull_mode =    SG_CULLMODE_NONE; 
+        sokol_pipleine.cull_mode =      SG_CULLMODE_FRONT;
+        sokol_pipleine.depth.compare =  SG_COMPAREFUNC_LESS_EQUAL;
         sokol_pipleine.depth.write_enabled = true;
         sokol_pipleine.label = "extrude-pipeline";
         sokol_pipleine.colors[0].blend = sokol_blend_alpha;
@@ -269,7 +269,7 @@ void DrApp::init(void) {
 
     // ***** Font Setup, make sure the fontstash atlas size is pow-2 (all gpu textures should be, especially for webgl)
     m_state.dpi_scale = sapp_dpi_scale();
-    const int atlas_size = RoundPowerOf2(512.0f * m_state.dpi_scale);
+    const int atlas_size = RoundPowerOf2(256.0f * m_state.dpi_scale);
     m_state.fons = sfons_create(atlas_size, atlas_size, FONS_ZERO_TOPLEFT);
     m_state.font_normal = fonsAddFontMem(m_state.fons, "sans", aileron, sizeof(aileron), false);
 
@@ -502,7 +502,7 @@ void DrApp::initImage(stbi_uc* buffer_ptr, int fetched_size) {
         };
         
         // To store an image onto the gpu:
-        //long image_id = sg_make_image(&sokol_image).id;
+        long image_id = sg_make_image(&sokol_image).id;
 
         // If we already have an image in the state buffer, uninit before initializing new image
         if (m_initialized_image == true) { sg_uninit_image(m_state.bind.fs_images[SLOT_tex]); }

@@ -14,7 +14,7 @@
 //####################################################################################
 //##    Toolbar
 //####################################################################################
-void ToolbarUI(bool* widgets, int menu_height) {
+void ToolbarUI(bool* widgets, ImTextureID* images, int menu_height) {
     ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + menu_height));
 	ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, EDITOR_TOOLBAR_SIZE));
@@ -33,13 +33,16 @@ void ToolbarUI(bool* widgets, int menu_height) {
 	ImGui::PopStyleVar();
 	ImGui::PopStyleVar();
   
-	    ImGui::Button("Button 1", ImVec2(0, EDITOR_TOOLBAR_SIZE - 6));
+		if (images[EDITOR_IMAGE_WORLD_GRAPH] != nullptr) {
+	    	ImGui::ImageButton(images[EDITOR_IMAGE_WORLD_GRAPH], ImVec2(EDITOR_TOOLBAR_SIZE - 10, EDITOR_TOOLBAR_SIZE - 14));
+		}
+		ImGui::SameLine();
+		ImGui::Button("Button 1", ImVec2(0, EDITOR_TOOLBAR_SIZE - 6));
 		ImGui::SameLine();
         ImGui::Button("Button 2", ImVec2(0, EDITOR_TOOLBAR_SIZE - 6));
   		ImGui::SameLine();
         ImGui::Button("Button 3", ImVec2(0, EDITOR_TOOLBAR_SIZE - 6));
-
-        //ImGui::ImageButton();
+       
 
 	ImGui::End();
 }
