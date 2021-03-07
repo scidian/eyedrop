@@ -50,12 +50,17 @@
 
 - Any-lite (Boost): https://github.com/martinmoene/any-lite                     
 - Cereal (BSD): https://github.com/USCiLab/cereal
-- Dear ImGui (MIT): https://github.com/ocornut/imgui
-- Fontstash (ZLIB): https://github.com/memononen/fontstash
 - Handmade-Math (CC0): https://github.com/StrangeZak/Handmade-Math
 - Stb (MIT): https://github.com/nothings/stb
 - Sokol (ZLIB): https://github.com/floooh/sokol
 - Whereami (MIT): https://github.com/gpakosz/whereami
+
+
+## Gui
+
+- Dear ImGui (MIT): https://github.com/ocornut/imgui
+- Fontstash (ZLIB): https://github.com/memononen/fontstash
+- IconFontCppHeaders (ZLIB): https://github.com/juliettef/IconFontCppHeaders
 
 
 ## Algorithim libraries:
@@ -70,3 +75,9 @@
 
 - Hex Embed (ZLIB): https://github.com/codeplea/hexembed
 - Sokol Shdc (MIT): https://github.com/floooh/sokol-tools
+
+
+## Fonts
+
+- Aileron (CC0): https://github.com/Nicholaiii/Aileron (source: http://dotcolon.net)
+- Font Awesome 5 (): https://github.com/FortAwesome/Font-Awesome

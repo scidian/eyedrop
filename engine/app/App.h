@@ -24,6 +24,7 @@
 #if defined (ENABLE_IMGUI)
     #include "3rd_party/imgui/imgui.h"
     #include "3rd_party/imgui/imgui_internal.h"
+    #include "3rd_party/icons_font_awesome5.h"
 #endif
 #include "3rd_party/sokol/sokol_app.h"
 #include "3rd_party/sokol/sokol_gfx.h"
@@ -38,6 +39,8 @@
 #if defined (ENABLE_IMGUI)
     #include "3rd_party/sokol/sokol_imgui.h"
 #endif
+#include "3rd_party/fontstash.h"
+#include "3rd_party/sokol/sokol_fontstash.h"
 #include "3rd_party/stb/stb_image.h"
 #include "core/geometry/Matrix.h"
 #include "core/geometry/Vec2.h"
@@ -47,9 +50,6 @@
 #include "../data/Types.h"
 #include "../scene3d/Mesh.h"
 #include "../scene3d/shaders/BasicShader.glsl.h"
-
-// Forward Declarations
-class FONScontext;
 
 
 //####################################################################################
@@ -122,6 +122,12 @@ protected:
         sg_imgui_t      m_sg_imgui;                                             // Sokol_gfx_debug keeps track of data structures used by sokol_gfx for Debug View
     #endif
 
+    // Time Variables
+    bool                m_first_frame       { true };                           // Turns false after first frame, allows for some initialization (colors, themeing, etc)
+    uint64_t            m_time_start        { 0 };                              // Sokol_time start time since App started running
+    double              m_frames_per_second { 0.0 };                            // Stores current calculated frames per second
+
+
     // ---> Temp Variables, used for demo
     std::shared_ptr<DrMesh>     m_mesh = std::make_shared<DrMesh>();
     std::shared_ptr<DrImage>    m_image = nullptr;                              
@@ -143,11 +149,7 @@ protected:
     // <--- End Temp Variables
 
 
-    // Time Variables
-    bool                m_first_frame       { true };                           // Turns false after first frame, allows for some initialization (colors, themeing, etc)
-    uint64_t            m_time_start        { 0 };                              // Sokol_time start time since App started running
-    double              m_frames_per_second { 0.0 };                            // Stores current calculated frames per second
-
+    
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################
 public:
     virtual void    onCreate(void) { }

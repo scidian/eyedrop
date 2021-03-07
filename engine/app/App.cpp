@@ -9,10 +9,6 @@
 // ##### Also includes Sokol
 #include "App.h"
 
-// ##### Fonts
-#include "3rd_party/fontstash.h"
-#include "3rd_party/sokol/sokol_fontstash.h"
-
 // ##### ImGui Implmentation
 #if defined (ENABLE_IMGUI)
     #define SOKOL_IMGUI_IMPL
@@ -37,11 +33,11 @@
 #include "core/imaging/Bitmap.h"
 #include "core/imaging/Color.h"
 #include "core/imaging/Filter.h"
-#include "core/imaging/Image.h"
 #include "core/Math.h"
 #include "core/Strings.h"
 #include "../scene3d/Mesh.h"
 #include "../scene3d/shaders/BasicShader.glsl.h"
+#include "Image.h"
 
 
 // ##### Embed Files
@@ -128,6 +124,9 @@ void DrApp::setAppName(std::string name) {
 //####################################################################################
 // Initializes all sokol libraries
 void DrApp::init(void) {
+    // #################### Sokol App ####################
+    m_state.dpi_scale = sapp_dpi_scale();
+
     // #################### Sokol Gfx ####################
     sg_desc sokol_gfx {};
         sokol_gfx.context = sapp_sgcontext();                   // Call sokol_glue function to auto obtain values from sokol_app      
@@ -153,6 +152,27 @@ void DrApp::init(void) {
     #if defined (ENABLE_DEBUG)
         sg_imgui_init(&m_sg_imgui);
     #endif
+
+    // #################### Store local app directory ####################
+    #ifndef DROP_TARGET_HTML5
+        char* path = NULL;
+        int dirname_length = 0;
+        int length = wai_getExecutablePath(NULL, 0, &dirname_length);
+        if (length > 0) {
+            path = (char*)malloc(length + 1);
+            wai_getExecutablePath(path, length, &dirname_length);
+            path[dirname_length] = '\0';
+            m_app_directory = path;
+            m_app_directory += "/";
+            free(path);
+        }
+    #endif
+
+    // #################### Fontstash  ####################     
+    // Ensure atlas size is pow-2 (all gpu textures should be, especially webgl)
+    const int atlas_size = RoundPowerOf2(256.0f * m_state.dpi_scale);           
+    m_state.fons = sfons_create(atlas_size, atlas_size, FONS_ZERO_TOPLEFT);
+    m_state.font_normal = fonsAddFontMem(m_state.fons, "sans", aileron, sizeof(aileron), false);
 
     //####################################################################################
     //##    Sokol ImGui Renderer
@@ -193,7 +213,15 @@ void DrApp::init(void) {
             fontCfg.OversampleV = 2;
             fontCfg.RasterizerMultiply = 1.5f;
         imgui_io.Fonts->AddFontFromMemoryTTF(aileron, sizeof(aileron), 16.0f, &fontCfg);
-    
+           
+        // Merge in icons from Font Awesome
+        static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+        ImFontConfig icons_config { }; 
+            icons_config.MergeMode = true; 
+            icons_config.PixelSnapH = true;
+        imgui_io.Fonts->AddFontFromFileTTF((m_app_directory + FONT_ICON_FILE_NAME_FAR).c_str(), 16.0f, &icons_config, icons_ranges);
+        imgui_io.Fonts->AddFontFromFileTTF((m_app_directory + FONT_ICON_FILE_NAME_FAS).c_str(), 16.0f, &icons_config, icons_ranges);
+
         // Create font texture for the custom font
         unsigned char* font_pixels;
         int font_width, font_height;
@@ -265,32 +293,10 @@ void DrApp::init(void) {
     };
     m_state.bind.index_buffer = sg_make_buffer(&(sokol_buffer_index));
 
-    //####################################################################################
-
-    // ***** Font Setup, make sure the fontstash atlas size is pow-2 (all gpu textures should be, especially for webgl)
-    m_state.dpi_scale = sapp_dpi_scale();
-    const int atlas_size = RoundPowerOf2(256.0f * m_state.dpi_scale);
-    m_state.fons = sfons_create(atlas_size, atlas_size, FONS_ZERO_TOPLEFT);
-    m_state.font_normal = fonsAddFontMem(m_state.fons, "sans", aileron, sizeof(aileron), false);
-
-    // ***** Store app directory    
-    #ifndef DROP_TARGET_HTML5
-        char* path = NULL;
-        int dirname_length = 0;
-        int length = wai_getExecutablePath(NULL, 0, &dirname_length);
-        if (length > 0) {
-            path = (char*)malloc(length + 1);
-            wai_getExecutablePath(path, length, &dirname_length);
-            path[dirname_length] = '\0';
-            m_app_directory = path;
-            m_app_directory += "/";
-            free(path);
-        }
-    #endif
-    
-    // ********** NOTE: About loading images with Emscripten **********
-    //  When running html on local machine, must disable CORS in broswer.
-    //  On Safari, with 'Develop' menu enabled select "Disable Cross-Origin Restrictions"
+    //####################################################################################    
+    //##    Load Images
+    //##        NOTE: About loading images with Emscripten, when running html on local machine, must disable CORS in broswer.
+    //##              On Safari, with 'Develop' menu enabled select "Disable Cross-Origin Restrictions"
     std::string image_file = m_app_directory + "assets/blob.png";
     //image_file = "http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true";
 

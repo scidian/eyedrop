@@ -28,7 +28,7 @@ class DrEditor : public DrApp
 public:
     // Inherits base ctor, requires C++ 11
     using DrApp::DrApp;                                                 
-    virtual ~DrEditor();
+    virtual ~DrEditor() { }
 
 
     // #################### VARIABLES ####################

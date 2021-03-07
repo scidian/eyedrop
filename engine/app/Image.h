@@ -37,8 +37,6 @@ public:
     bool                        m_outline_processed     { false };                          // Turns true when autoOutlinePoints() has completed successfully
 
 private:
-    // Internal Variables
-    std::string                 m_folder_name           { "" };                             // Used for External Images to belong to a category
 
 
 public:
@@ -57,11 +55,6 @@ public:
     // Getters / Setters
     std::string         getSimplifiedName()                 { return m_simple_name; }
     const DrBitmap&     getBitmap() const                   { return m_bitmap; }
-
-
-    // Internal Variable Functions
-    std::string         getFolderName()                     { return m_folder_name; }
-    void                setFolderName(std::string folder)   { m_folder_name = folder; }
 
 };
 

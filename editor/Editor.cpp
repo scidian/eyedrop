@@ -12,10 +12,10 @@
 #include "core/imaging/Bitmap.h"
 #include "core/imaging/Color.h"
 #include "core/imaging/Filter.h"
-#include "core/imaging/Image.h"
 #include "core/Math.h"
 #include "core/Random.h"
 #include "../engine/app/sokol/Event__strings.h"
+#include "../engine/app/Image.h"
 #include "../engine/scene3d/Mesh.h"
 #include "Editor.h"
 #include "Types.h"
@@ -34,12 +34,6 @@ int main(int argc, char* argv[]) {
     editor->run();
 
 }
-
-
-//####################################################################################
-//##    Destructor
-//####################################################################################
-DrEditor::~DrEditor() { }
 
 
 //####################################################################################
@@ -67,7 +61,6 @@ void DrEditor::onCreate() {
                 const int desired_channels = 4;
                 stbi_uc* pixels = stbi_load_from_memory((stbi_uc *)response->buffer_ptr, (int)response->fetched_size,
                                                         &png_width, &png_height, &num_channels, desired_channels);
-
                 // Stb Load Succeeded
                 if (pixels) {
                     sg_image_desc img_desc { };
@@ -81,8 +74,8 @@ void DrEditor::onCreate() {
                         img_desc.data.subimage[0][0].ptr = pixels;
                         img_desc.data.subimage[0][0].size = static_cast<size_t>(png_width * png_height * num_channels);
                     app->images[EDITOR_IMAGE_WORLD_GRAPH] = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
+                    free(pixels);
                 }
-                
             }
         },       
     };

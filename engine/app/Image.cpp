@@ -14,8 +14,8 @@
 #include "core/geometry/RectF.h"
 #include "core/imaging/Color.h"
 #include "core/imaging/Filter.h"
-#include "core/imaging/Image.h"
 #include "core/Math.h"
+#include "engine/app/Image.h"
 #include "engine/scene3d/Mesh.h"
 
 // Local Constants
