@@ -6,15 +6,15 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Sat Mar 06 2021
 //
 //
-#ifndef DR_DOCKSPACE_H
-#define DR_DOCKSPACE_H
+#ifndef DR_TOOLBAR_H
+#define DR_TOOLBAR_H
 
      
 //####################################################################################
-//##    Dockspace Handling
+//##    Toolbar
 //############################
-void    DockspaceUI(bool* widgets, int& menu_height);
+void    ToolbarUI(bool* widgets, int menu_height);
 
 
-#endif // DR_DOCKSPACE_H
+#endif // DR_TOOLBAR_H
 

@@ -15,13 +15,14 @@
 #include "core/imaging/Image.h"
 #include "core/Math.h"
 #include "core/Random.h"
-#include "../engine/application/sokol/Event__strings.h"
+#include "../engine/app/sokol/Event__strings.h"
 #include "../engine/scene3d/Mesh.h"
 #include "Editor.h"
 #include "Types.h"
 #include "ui/Dockspace.h"
 #include "ui/Menu.h"
-#include "widgets/StyleSelector.h"
+#include "ui/Toolbar.h"
+#include "widgets/ThemeSelector.h"
 
 
 //####################################################################################
@@ -33,36 +34,6 @@ int main(int argc, char* argv[]) {
     editor->run();
 
 }
-
-
-//####################################################################################
-//##    Callback: File Dropped
-//####################################################################################
-#if defined(DROP_TARGET_HTML5)
-    // The async-loading callback for sapp_html5_fetch_dropped_file
-    static void emsc_load_callback(const sapp_html5_fetch_response* response) {
-        DrApp* app = (DrApp*)(response->user_data);
-        if (app) {
-            if (response->succeeded) {
-                app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
-            } else {
-                // File too big if (response->error_code == SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
-            }
-        }
-    }
-#else
-    // the async-loading callback for native platforms
-    static void native_load_callback(const sfetch_response_t* response) {
-        DrApp* app = (DrApp*)(response->user_void_ptr);
-        if (app) {
-            if (response->fetched) {
-                app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
-            } else if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL) {
-                // File too big if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
-            }
-        }
-    }
-#endif
 
 
 //####################################################################################
@@ -123,37 +94,34 @@ void DrEditor::onUpdateScene() {
 void DrEditor::onUpdateGUI() { 
     // Keep track of open windows / widgets
     static bool widgets[EDITOR_WIDGET_TOTAL_NUMBER];
-    static bool first_time = true;
-    if (first_time) {
+    if (m_first_frame) {
         std::fill(widgets, widgets + EDITOR_WIDGET_TOTAL_NUMBER, true);
-        //for (int fill = 0; fill < EDITOR_WIDGET_TOTAL_NUMBER; fill++) widgets[fill] = true;
-        first_time = false;
+        widgets[EDITOR_WIDGET_THEME] = false;
+        widgets[EDITOR_WIDGET_STYLE] = false;
+        widgets[EDITOR_WIDGET_DEMO] =  false;
     }
     
     // Menu
-    MainMenu(widgets);
+    MainMenuUI(widgets);
     
     // Handle Dockspace
-    DockspaceUI(widgets[EDITOR_WIDGET_MAIN_WINDOW]);
+    int menu_height = 0;
+    DockspaceUI(widgets, menu_height);
+
+    // Handle Toolbar
+    ToolbarUI(widgets, menu_height);
+
 
     // ##### Widget Windows
     ImGuiWindowFlags child_flags = 0; //ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
-
-    if (widgets[EDITOR_WIDGET_TOOLBAR]) {
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(100, 200));
-        ImGui::Begin("Toolbar", &widgets[EDITOR_WIDGET_TOOLBAR], child_flags);
-            ImGui::Text("Text 2");
-        ImGui::End();
-        ImGui::PopStyleVar();
-    }
-
-    if (widgets[EDITOR_WIDGET_STATUS]) {
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(100, 100));
-        ImGui::Begin("Status Bar", &widgets[EDITOR_WIDGET_STATUS], child_flags);
-            ImGui::Text("Some status text");
-        ImGui::End();
-        ImGui::PopStyleVar();
-    }
+    
+    // if (widgets[EDITOR_WIDGET_STATUS]) {
+    //     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(100, 100));
+    //     ImGui::Begin("Status Bar", &widgets[EDITOR_WIDGET_STATUS], child_flags);
+    //         ImGui::Text("Some status text");
+    //     ImGui::End();
+    //     ImGui::PopStyleVar();
+    // }
     
     if (widgets[EDITOR_WIDGET_ASSETS]) {
         ImGui::Begin("Assets", &widgets[EDITOR_WIDGET_ASSETS], child_flags);
@@ -177,13 +145,21 @@ void DrEditor::onUpdateGUI() {
     }
 
     // Demo Window
-    //ImGui::ShowDemoWindow();
-    //ImGui::ShowStyleEditor();
+    if (widgets[EDITOR_WIDGET_DEMO]) {
+        ImGui::ShowDemoWindow();
+    }
+
+    // Style Selector
+    if (widgets[EDITOR_WIDGET_STYLE]) {
+        ImGui::ShowStyleEditor();
+    }   
 
     // Theme selector
-    //ImGui::SetNextWindowPos(ImVec2(100, 200));
-    ImGui::SetNextWindowContentSize(ImVec2(250, 250));
-    ThemeSelector(widgets[EDITOR_WIDGET_STYLE], child_flags);
+    if (widgets[EDITOR_WIDGET_THEME] || m_first_frame) {
+        //ImGui::SetNextWindowPos(ImVec2(100, 200));
+        ImGui::SetNextWindowContentSize(ImVec2(250, 250));
+        ThemeSelectorUI(widgets[EDITOR_WIDGET_THEME], child_flags, m_first_frame);
+    }
 }
 
 
@@ -262,7 +238,16 @@ void DrEditor::onEvent(const sapp_event* event) {
                 .buffer_ptr = m_state.file_buffer,
                 .buffer_size = sizeof(m_state.file_buffer),
                 .user_data = this,
-                .callback = emsc_load_callback,
+                .callback = +[](const sfetch_response_t* response) {
+                    DrApp* app = (DrApp*)(response->user_data);
+                    if (app) {
+                        if (response->succeeded) {
+                            app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+                        } else {
+                            // File too big if (response->error_code == SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
+                        }
+                    }
+                },
             };
             sapp_html5_fetch_dropped_file(&sokol_fetch_request);
         #else
@@ -272,7 +257,16 @@ void DrEditor::onEvent(const sapp_event* event) {
                 .buffer_ptr = m_state.file_buffer,
                 .buffer_size = sizeof(m_state.file_buffer),
                 .user_void_ptr = this,
-                .callback = native_load_callback,
+                .callback = +[](const sfetch_response_t* response) {
+                    DrApp* app = (DrApp*)(response->user_void_ptr);
+                    if (app) {
+                        if (response->fetched) {
+                            app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+                        } else {
+                            // File too big if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
+                        }
+                    }
+                },       
             };
             sfetch_send(&sokol_fetch_request);
         #endif

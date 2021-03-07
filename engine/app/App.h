@@ -62,7 +62,7 @@ class FONScontext;
 //##    Local Structs / Defines
 //############################
 struct item_t {
-    sapp_event event = { };
+    sapp_event      event = { };
 };
 
 struct state_t {
@@ -100,9 +100,10 @@ public:
     ~DrApp();
 
     // #################### VARIABLES ####################
-public:
+protected:
     // App Variables
     std::string         m_app_name          { "" };                             // Name of Application   
+    std::string         m_app_directory     { "" };                             // Root OS directory of application
     ProjectMap          m_projects          { };                                // Collection of open Projects
 
     // Window Variables
@@ -141,6 +142,7 @@ public:
 
 
     // Time Variables
+    bool                m_first_frame       { true };                           // Turns false after first frame, allows for some initialization (colors, themeing, etc)
     uint64_t            m_time_start        { 0 };                              // Sokol_time start time since App started running
     double              m_frames_per_second { 0.0 };                            // Stores current calculated frames per second
 

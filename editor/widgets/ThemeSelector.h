@@ -6,8 +6,8 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Fri Mar 05 2021
 //
 //
-#ifndef DR_STYLE_THEME_H
-#define DR_STYLE_THEME_H
+#ifndef DR_THEME_SELECTOR_H
+#define DR_THEME_SELECTOR_H
 
 #include "3rd_party/sokol/sokol_app.h"
 #include "3rd_party/sokol/sokol_gfx.h"
@@ -16,10 +16,10 @@
     
     
 //####################################################################################
-//##    ImGui Style Theme Selector
+//##    ImGui Color Theme Selector
 //############################
-void    ThemeSelector(bool &open, ImGuiWindowFlags flags);
+void    ThemeSelectorUI(bool &open, ImGuiWindowFlags flags, bool force);
 
 
-#endif // DR_STYLE_THEME_H
+#endif // DR_THEME_SELECTOR_H
 

@@ -21,9 +21,9 @@ cmake_minimum_required(VERSION 3.10)
 ####################################################################################
 
 
-set(EXPORT_TARGET   "web")
+set(EXPORT_TARGET   "osx")
 set(APP_TYPE        "editor")       # Options:  "editor"  or  "player", !!!!! #NOTE: By default, "player" does not have ImGui enabled unless DEBUG_MODE is on
-set(DEBUG_MODE      "false")        # Options:  "true"    or  "false"
+set(DEBUG_MODE      "true")         # Options:  "true"    or  "false"
 
 
 ####################################################################################
@@ -108,8 +108,8 @@ file(GLOB SOURCE_CODE_FILES
     "core/geometry/*.c**"
     "core/imaging/*.c**"
     "engine/*.c**"
-    "engine/application/*.c**"
-    "engine/application/filesystem.c**"
+    "engine/app/*.c**"
+    "engine/app/filesystem.c**"
     "engine/data/*.c**"
     "engine/interface/*.c**"
     "engine/scene2d/*.c**"

@@ -13,7 +13,7 @@
 //####################################################################################
 //##    Menu Handling
 //############################
-void    MainMenu(bool* widgets);
+void    MainMenuUI(bool* widgets);
 
 
 #endif // DR_MENU_H

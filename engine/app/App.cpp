@@ -273,33 +273,26 @@ void DrApp::init(void) {
     m_state.fons = sfons_create(atlas_size, atlas_size, FONS_ZERO_TOPLEFT);
     m_state.font_normal = fonsAddFontMem(m_state.fons, "sans", aileron, sizeof(aileron), false);
 
-
-    // ***** Start loading the PNG File
-    char* path = NULL;
-    int length = 0, dirname_length = 0;
-    std::string image_file { "" };
-
+    // ***** Store app directory    
     #ifndef DROP_TARGET_HTML5
-        length = wai_getExecutablePath(NULL, 0, &dirname_length);
+        char* path = NULL;
+        int dirname_length = 0;
+        int length = wai_getExecutablePath(NULL, 0, &dirname_length);
         if (length > 0) {
             path = (char*)malloc(length + 1);
             wai_getExecutablePath(path, length, &dirname_length);
-            //path[length] = '\0';
-            //printf("executable path: %s\n", path);
             path[dirname_length] = '\0';
-            //printf("  dirname: %s\n", path);
-            //printf("  basename: %s\n", path + dirname_length + 1);
-            std::string base = path;
-            image_file = base + "/assets/blob.png";
+            m_app_directory = path;
+            m_app_directory += "/";
             free(path);
         }
-    #else        
-        // ********** NOTE: About loading images with Emscripten **********
-        //  When running html on local machine, must disable CORS in broswer
-        //  On Safari, with 'Develop' menu enabled select "Disable Cross-Origin Restrictions"
-        //image_file = "http://github.com/stevinz/extrude/blob/master/assets/shapes.png?raw=true";
-        image_file = "assets/shapes.png";
     #endif
+    
+    // ********** NOTE: About loading images with Emscripten **********
+    //  When running html on local machine, must disable CORS in broswer.
+    //  On Safari, with 'Develop' menu enabled select "Disable Cross-Origin Restrictions"
+    std::string image_file = m_app_directory + "assets/blob.png";
+    //image_file = "http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true";
 
     // Initiate Fetch
     loadImage(image_file);
@@ -361,7 +354,11 @@ void DrApp::frame(void) {
         #endif
         
         // Render ImGui
-        simgui_render();
+        if (m_first_frame == false) {
+            simgui_render();
+        } else {
+            ImGui::EndFrame();
+        }
     #endif
 
     // #################### Fontstash Text Rendering ####################
@@ -400,6 +397,8 @@ void DrApp::frame(void) {
         frame_count = 0;
         lap_time =  0.0;
     }
+
+    m_first_frame = false;
 }
 
 
@@ -502,6 +501,9 @@ void DrApp::initImage(stbi_uc* buffer_ptr, int fetched_size) {
             }
         };
         
+        // To store an image onto the gpu:
+        //long image_id = sg_make_image(&sokol_image).id;
+
         // If we already have an image in the state buffer, uninit before initializing new image
         if (m_initialized_image == true) { sg_uninit_image(m_state.bind.fs_images[SLOT_tex]); }
 

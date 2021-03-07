@@ -14,7 +14,7 @@
 //####################################################################################
 //##    Main Menu
 //####################################################################################
-void MainMenu(bool* widgets) {
+void MainMenuUI(bool* widgets) {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
@@ -35,9 +35,13 @@ void MainMenu(bool* widgets) {
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("View")) {
-            ImGui::MenuItem("Asset Viewer", 0,      &widgets[EDITOR_WIDGET_ASSETS]);
-            ImGui::MenuItem("Object Inspector", 0,  &widgets[EDITOR_WIDGET_INSPECTOR]);
-            ImGui::MenuItem("Style Selector", 0,    &widgets[EDITOR_WIDGET_STYLE]);
+            ImGui::MenuItem("Asset Viewer", 0,          &widgets[EDITOR_WIDGET_ASSETS]);
+            ImGui::MenuItem("Object Inspector", 0,      &widgets[EDITOR_WIDGET_INSPECTOR]);
+            ImGui::Separator();
+            ImGui::MenuItem("Color Theme Selector", 0,  &widgets[EDITOR_WIDGET_THEME]);
+            ImGui::MenuItem("Style Selector", 0,        &widgets[EDITOR_WIDGET_STYLE]);
+            ImGui::Separator();
+            ImGui::MenuItem("ImGui Demo", 0,            &widgets[EDITOR_WIDGET_DEMO]);
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();

@@ -7,7 +7,7 @@
 //
 //
 #include "core/Math.h"
-#include "StyleSelector.h"
+#include "ThemeSelector.h"
 
 
 //####################################################################################
@@ -29,16 +29,16 @@ ImVec4 adjust_color(ImVec4 start, float adjust, float alpha) {
 }
 
 // Shows Selector Widget
-void ThemeSelector(bool &open, ImGuiWindowFlags flags) {
-    if (open == false) return;
+void ThemeSelectorUI(bool &open, ImGuiWindowFlags flags, bool force) {
+    if ((open == false) && (force == false)) return;
     
     ImGui::Begin("Style Selector", &open, flags);
     ImGui::ColorEdit3("base",   (float*) &base, ImGuiColorEditFlags_PickerHueWheel);
     ImGui::ColorEdit3("bg",     (float*) &bg,   ImGuiColorEditFlags_PickerHueWheel);
     ImGui::ColorEdit3("text",   (float*) &text, ImGuiColorEditFlags_PickerHueWheel);
-    ImGui::SliderFloat("high",  &high_val,  0, 1);
-    ImGui::SliderFloat("mid",   &mid_val,   0, 1);
-    ImGui::SliderFloat("low",   &low_val,   0, 1);
+    ImGui::SliderFloat("high",  &high_val, -0.5, 0.5);
+    ImGui::SliderFloat("mid",   &mid_val,  -0.5, 0.5);
+    ImGui::SliderFloat("low",   &low_val,  -0.5, 0.5);
     
     ImGuiStyle &style = ImGui::GetStyle();
     style.Colors[ImGuiCol_Text]                 = adjust_color(text,  0.0f,     1.00f);
@@ -60,8 +60,8 @@ void ThemeSelector(bool &open, ImGuiWindowFlags flags) {
     style.Colors[ImGuiCol_ScrollbarGrabHovered] = adjust_color(base,  mid_val,  0.78f);
     style.Colors[ImGuiCol_ScrollbarGrabActive]  = adjust_color(base,  mid_val,  1.00f);
     style.Colors[ImGuiCol_CheckMark]            = adjust_color(base,  high_val, 1.00f);
-    style.Colors[ImGuiCol_SliderGrab]           = adjust_color(bg,    0.0f,     0.10f);
-    style.Colors[ImGuiCol_SliderGrabActive]     = adjust_color(base,  high_val, 1.00f);
+    style.Colors[ImGuiCol_SliderGrab]           = adjust_color(bg,    0.2f,     1.00f);
+    style.Colors[ImGuiCol_SliderGrabActive]     = adjust_color(base, -0.2f,     1.00f);
     style.Colors[ImGuiCol_Button]               = adjust_color(bg,    0.0f,     0.20f);
     style.Colors[ImGuiCol_ButtonHovered]        = adjust_color(base,  mid_val,  1.00f);
     style.Colors[ImGuiCol_ButtonActive]         = adjust_color(base,  high_val, 1.00f);

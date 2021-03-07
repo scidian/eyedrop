@@ -9,10 +9,11 @@
 #ifndef DR_EDITOR_H
 #define DR_EDITOR_H
 
-#include "../engine/application/App.h"
+#include "../engine/app/App.h"
 
 // Constants
-#define DOCKSPACE_NAME  "EditorDockspace"
+#define DOCKSPACE_NAME          "EditorDockspace"
+#define EDITOR_TOOLBAR_SIZE     40
 
 
 //####################################################################################

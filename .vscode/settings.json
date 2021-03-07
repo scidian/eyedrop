@@ -104,6 +104,7 @@
         "unordered_set": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "clocale": "cpp"
     },
 }
