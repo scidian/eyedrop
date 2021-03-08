@@ -93,10 +93,6 @@ public:
     double                  greenF() const  { return static_cast<double>(g) / 255.0; }
     double                  blueF() const   { return static_cast<double>(b) / 255.0; }
     double                  alphaF() const  { return static_cast<double>(a) / 255.0; }
-    float                   redf() const    { return static_cast<float>(r) / 255.0; }
-    float                   greenf() const  { return static_cast<float>(g) / 255.0; }
-    float                   bluef() const   { return static_cast<float>(b) / 255.0; }
-    float                   alphaf() const  { return static_cast<float>(a) / 255.0; }
 
     void        setRed(int red);
     void        setRedF(double red);

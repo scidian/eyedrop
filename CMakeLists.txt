@@ -21,9 +21,9 @@ cmake_minimum_required(VERSION 3.10)
 ####################################################################################
 
 
-set(EXPORT_TARGET   "osx")
-set(APP_TYPE        "editor")       # Options:  "editor"  or  "player", !!!!! #NOTE: By default, "player" does not have ImGui enabled unless DEBUG_MODE is on
-set(DEBUG_MODE      "true")         # Options:  "true"    or  "false"
+set(EXPORT_TARGET   "web")
+set(APP_TYPE        "player")       # Options:  "editor"  or  "player", !!!!! #NOTE: By default, "player" does not have ImGui enabled unless DEBUG_MODE is on
+set(DEBUG_MODE      "false")        # Options:  "true"    or  "false"
 
 
 ####################################################################################
@@ -209,9 +209,9 @@ elseif (EXPORT_TARGET MATCHES "web")
     #   -s EMULATE_FUNCTION_POINTER_CASTS=1     required for c style function callbacks to play nice with emscripten
     #
     if (DEBUG_MODE MATCHES "true")
-        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s TOTAL_MEMORY=16777216 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind -s ASSERTIONS=2")    
+        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s ALLOW_MEMORY_GROWTH=1 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind -s ASSERTIONS=2")    
     else()
-        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s TOTAL_MEMORY=16777216 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind")
+        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s ALLOW_MEMORY_GROWTH=1 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind")
     endif()
 
     

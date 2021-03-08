@@ -105,6 +105,8 @@
         "valarray": "cpp",
         "variant": "cpp",
         "iostream": "cpp",
-        "clocale": "cpp"
+        "clocale": "cpp",
+        "filesystem": "cpp",
+        "whereami.c": "cpp"
     },
 }

@@ -9,7 +9,7 @@
 #ifndef DR_EDITOR_H
 #define DR_EDITOR_H
 
-#include "../engine/app/App.h"
+#include "engine/app/App.h"
 
 // Constants
 #define DOCKSPACE_NAME          "EditorDockspace"
@@ -19,6 +19,7 @@ enum Editor_Images {
     EDITOR_IMAGE_WORLD_GRAPH,
     EDITOR_IMAGE_TOTAL,
 };
+
 
 //####################################################################################
 //##    Editor

@@ -14,15 +14,17 @@
 #include "core/imaging/Filter.h"
 #include "core/Math.h"
 #include "core/Random.h"
-#include "../engine/app/sokol/Event__strings.h"
-#include "../engine/app/Image.h"
-#include "../engine/scene3d/Mesh.h"
-#include "Editor.h"
-#include "Types.h"
+#include "engine/app/sokol/Event__strings.h"
+#include "engine/app/App.h"
+#include "engine/app/Image.h"
+#include "engine/app/RenderContext.h"
+#include "engine/scene3d/Mesh.h"
 #include "ui/Dockspace.h"
 #include "ui/Menu.h"
 #include "ui/Toolbar.h"
 #include "widgets/ThemeSelector.h"
+#include "Editor.h"
+#include "Types.h"
 
 
 //####################################################################################
@@ -51,31 +53,28 @@ void DrEditor::onCreate() {
     
     sfetch_request_t (sokol_fetch_image) {
         .path = (m_app_directory + "assets/toolbar_icons/toolbar_world_graph.png").c_str(),
-        .buffer_ptr = m_state.file_buffer2,
-        .buffer_size = sizeof(m_state.file_buffer2),
-        .user_void_ptr = this,
+        .buffer_ptr = m_file_buffer2,
+        .buffer_size = sizeof(m_file_buffer2),
         .callback = +[](const sfetch_response_t* response) {
-            DrEditor* app = (DrEditor*)(response->user_void_ptr);
-            if (response->fetched && app) {
-                int png_width, png_height, num_channels;
-                const int desired_channels = 4;
-                stbi_uc* pixels = stbi_load_from_memory((stbi_uc *)response->buffer_ptr, (int)response->fetched_size,
-                                                        &png_width, &png_height, &num_channels, desired_channels);
-                // Stb Load Succeeded
-                if (pixels) {
-                    sg_image_desc img_desc { };
-                        img_desc.width =    png_width;
-                        img_desc.height =   png_height;
-                        img_desc.pixel_format = SG_PIXELFORMAT_RGBA8;
-                        img_desc.wrap_u =       SG_WRAP_CLAMP_TO_EDGE;
-                        img_desc.wrap_v =       SG_WRAP_CLAMP_TO_EDGE;
-                        img_desc.min_filter =   SG_FILTER_LINEAR;
-                        img_desc.mag_filter =   SG_FILTER_LINEAR;
-                        img_desc.data.subimage[0][0].ptr = pixels;
-                        img_desc.data.subimage[0][0].size = static_cast<size_t>(png_width * png_height * num_channels);
-                    app->images[EDITOR_IMAGE_WORLD_GRAPH] = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
-                    free(pixels);
-                }
+            int png_width, png_height, num_channels;
+            const int desired_channels = 4;
+            stbi_uc* pixels = stbi_load_from_memory((stbi_uc *)response->buffer_ptr, (int)response->fetched_size,
+                                                    &png_width, &png_height, &num_channels, desired_channels);
+            // Stb Load Succeeded
+            if (pixels) {
+                sg_image_desc img_desc { };
+                    img_desc.width =    png_width;
+                    img_desc.height =   png_height;
+                    img_desc.pixel_format = SG_PIXELFORMAT_RGBA8;
+                    img_desc.wrap_u =       SG_WRAP_CLAMP_TO_EDGE;
+                    img_desc.wrap_v =       SG_WRAP_CLAMP_TO_EDGE;
+                    img_desc.min_filter =   SG_FILTER_LINEAR;
+                    img_desc.mag_filter =   SG_FILTER_LINEAR;
+                    img_desc.data.subimage[0][0].ptr = pixels;
+                    img_desc.data.subimage[0][0].size = static_cast<size_t>(png_width * png_height * num_channels);
+                DrEditor* editor = dynamic_cast<DrEditor*>(g_app);
+                editor->images[EDITOR_IMAGE_WORLD_GRAPH] = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
+                free(pixels);
             }
         },       
     };
@@ -115,8 +114,8 @@ void DrEditor::onUpdateScene() {
         m_before_keys = m_mesh_quality;
     }
 
-    sg_apply_pipeline(m_state.pip);
-    sg_apply_bindings(&m_state.bind);
+    sg_apply_pipeline(m_context->pipeline);
+    sg_apply_bindings(&m_context->bindings);
     sg_apply_uniforms(SG_SHADERSTAGE_VS, SLOT_vs_params, SG_RANGE(vs_params));
     sg_apply_uniforms(SG_SHADERSTAGE_FS, SLOT_fs_params, SG_RANGE(fs_params));
     sg_draw(0, m_mesh->indices.size(), 1);
@@ -281,17 +280,13 @@ void DrEditor::onEvent(const sapp_event* event) {
             // on emscripten need to use the sokol-app helper function to load the file data
             sapp_html5_fetch_request (sokol_fetch_request) {
                 .dropped_file_index = 0,
-                .buffer_ptr = m_state.file_buffer,
-                .buffer_size = sizeof(m_state.file_buffer),
-                .user_data = this,
-                .callback = +[](const sfetch_response_t* response) {
-                    DrApp* app = (DrApp*)(response->user_data);
-                    if (app) {
-                        if (response->succeeded) {
-                            app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
-                        } else {
-                            // File too big if (response->error_code == SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
-                        }
+                .buffer_ptr = m_file_buffer,
+                .buffer_size = sizeof(m_file_buffer),
+                .callback = +[](const sapp_html5_fetch_response* response) {
+                    if (response->succeeded) {
+                        g_app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+                    } else {
+                        // File too big if (response->error_code == SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
                     }
                 },
             };
@@ -300,18 +295,14 @@ void DrEditor::onEvent(const sapp_event* event) {
             // native platform: use sokol-fetch to load file content
             sfetch_request_t (sokol_fetch_request) {
                 .path = sapp_get_dropped_file_path(0),
-                .buffer_ptr = m_state.file_buffer,
-                .buffer_size = sizeof(m_state.file_buffer),
-                .user_void_ptr = this,
+                .buffer_ptr = m_file_buffer,
+                .buffer_size = sizeof(m_file_buffer),
                 .callback = +[](const sfetch_response_t* response) {
-                    DrApp* app = (DrApp*)(response->user_void_ptr);
-                    if (app) {
-                        if (response->fetched) {
-                            app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
-                        } else {
-                            // File too big if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
-                        }
-                    }
+                    if (response->fetched) {
+                        g_app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+                    } else {
+                        // File too big if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
+                    }                   
                 },       
             };
             sfetch_send(&sokol_fetch_request);

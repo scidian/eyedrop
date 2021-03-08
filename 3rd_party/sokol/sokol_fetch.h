@@ -888,7 +888,6 @@ typedef struct sfetch_response_t {
     uint32_t lane;                  /* the lane this request occupies on its channel */
     const char* path;               /* the original filesystem path of the request (FIXME: this is unsafe, wrap in API call?) */
     void* user_data;                /* pointer to read/write user-data area (FIXME: this is unsafe, wrap in API call?) */
-    void* user_void_ptr;            /* Added by Stevinz for passing class pointers  */
     uint32_t fetched_offset;        /* current offset of fetched data chunk in file data */
     uint32_t fetched_size;          /* size of fetched data chunk in number of bytes */
     void* buffer_ptr;               /* pointer to buffer with fetched data */
@@ -909,7 +908,6 @@ typedef struct sfetch_request_t {
     uint32_t chunk_size;            /* number of bytes to load per stream-block (optional) */
     const void* user_data_ptr;      /* pointer to a POD user-data block which will be memcpy'd(!) (optional) */
     uint32_t user_data_size;        /* size of user-data block (optional) */
-    void* user_void_ptr;            /* Added by Stevinz for passing class pointers  */
     uint32_t _end_canary;
 } sfetch_request_t;
 
@@ -1093,7 +1091,6 @@ typedef struct {
     /* user thread only */
     uint32_t user_data_size;
     uint64_t user_data[SFETCH_MAX_USERDATA_UINT64];
-    void*    user_void_ptr;     // added by Stevinz
 } _sfetch_item_user_t;
 
 /* thread-side per-request state */
@@ -1349,12 +1346,6 @@ _SOKOL_PRIVATE void _sfetch_item_init(_sfetch_item_t* item, uint32_t slot_id, co
         item->user.user_data_size = request->user_data_size;
         memcpy(item->user.user_data, request->user_data_ptr, request->user_data_size);
     }
-    // Added by Stevinz
-    if (request->user_void_ptr) 
-    {
-        item->user.user_void_ptr = request->user_void_ptr;
-    }
-    // end Stevinz
 }
 
 _SOKOL_PRIVATE void _sfetch_item_discard(_sfetch_item_t* item) {
@@ -2178,7 +2169,6 @@ _SOKOL_PRIVATE void _sfetch_invoke_response_callback(_sfetch_item_t* item) {
     response.lane = item->lane;
     response.path = item->path.buf;
     response.user_data = item->user.user_data;
-    response.user_void_ptr = item->user.user_void_ptr;
     response.fetched_offset = item->user.fetched_offset - item->user.fetched_size;
     response.fetched_size = item->user.fetched_size;
     response.buffer_ptr = item->buffer.ptr;

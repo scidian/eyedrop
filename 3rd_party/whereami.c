@@ -3,6 +3,9 @@
 //   by Gregory Pakosz (@gpakosz)
 // https://github.com/gpakosz/whereami
 
+// Make sure we arent targeting html5, added by Stevinz...
+#ifndef __EMSCRIPTEN__
+
 // in case you want to #include "whereami.c" in a larger compilation unit
 #if !defined(WHEREAMI_H)
 #include "whereami.h"
@@ -688,3 +691,6 @@ int WAI_PREFIX(getModulePath)(char* out, int capacity, int* dirname_length)
 #ifdef __cplusplus
 }
 #endif
+
+
+#endif  // __EMSCRIPTEN__

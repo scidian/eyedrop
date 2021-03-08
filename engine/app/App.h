@@ -9,23 +9,12 @@
 #ifndef DR_APP_H
 #define DR_APP_H
 
-// Includes
+// ##### STL
 #include <fstream>
 #include <map>
 #include <string>
-#ifndef DROP_TARGET_HTML5
-    #include "3rd_party/cereal/types/map.hpp"
-    #include "3rd_party/cereal/types/memory.hpp"
-    #include "3rd_party/cereal/types/string.hpp"
-    #include "3rd_party/cereal/types/set.hpp"
-    #include "3rd_party/cereal/archives/binary.hpp"
-#endif
-#include "3rd_party/handmade_math.h"
-#if defined (ENABLE_IMGUI)
-    #include "3rd_party/imgui/imgui.h"
-    #include "3rd_party/imgui/imgui_internal.h"
-    #include "3rd_party/icons_font_awesome5.h"
-#endif
+
+// ##### 3rd Party
 #include "3rd_party/sokol/sokol_app.h"
 #include "3rd_party/sokol/sokol_gfx.h"
 #include "3rd_party/sokol/sokol_gl.h"
@@ -36,58 +25,60 @@
 #include "3rd_party/sokol/sokol_time.h"
 #include "3rd_party/sokol/sokol_audio.h"
 #include "3rd_party/sokol/sokol_fetch.h"
-#if defined (ENABLE_IMGUI)
-    #include "3rd_party/sokol/sokol_imgui.h"
-#endif
 #include "3rd_party/fontstash.h"
 #include "3rd_party/sokol/sokol_fontstash.h"
 #include "3rd_party/stb/stb_image.h"
+#ifndef DROP_TARGET_HTML5
+    #include "3rd_party/cereal/types/map.hpp"
+    #include "3rd_party/cereal/types/memory.hpp"
+    #include "3rd_party/cereal/types/string.hpp"
+    #include "3rd_party/cereal/types/set.hpp"
+    #include "3rd_party/cereal/archives/binary.hpp"
+    #include "3rd_party/whereami.h"
+#else
+    #include <emscripten/emscripten.h>
+    #include <emscripten/html5.h>
+#endif
+#include "3rd_party/handmade_math.h"
+#if defined (ENABLE_IMGUI)
+    #include "3rd_party/imgui/imgui.h"
+    #include "3rd_party/imgui/imgui_internal.h"
+    #include "3rd_party/icons_font_awesome5.h"
+    #include "3rd_party/sokol/sokol_imgui.h"
+#endif
+
+// ##### Engine
 #include "core/geometry/Matrix.h"
 #include "core/geometry/Vec2.h"
 #include "core/imaging/Color.h"
-#include "../data/Game.h"
-#include "../data/Project.h"
-#include "../data/Types.h"
-#include "../scene3d/Mesh.h"
-#include "../scene3d/shaders/BasicShader.glsl.h"
+#include "engine/data/Game.h"
+#include "engine/data/Project.h"
+#include "engine/data/Types.h"
+#include "engine/scene3d/Mesh.h"
+
+// Forward Declarations
+class DrApp;
+class DrRenderContext;
 
 
 //####################################################################################
 //##    Constants 
 //############################
-#define MAX_FILE_SIZE   (512 * 512)
-#define INVALID_IMAGE   -1
+#define MAX_FILE_SIZE   (1024 * 1024)                                           // Used for filebuffers with sokol_fetch
+#define INVALID_IMAGE   -1                                                      // Used to identify DrImages that have been initialized, but not loaded yet
+
+
+//####################################################################################
+//##    Globals 
+//##        Defined in App.cpp
+//############################
+extern DrApp*       g_app;                                                      // Global pointer to App singleton
 
 
 //####################################################################################
 //##    Local Structs / Defines
 //############################
-struct item_t {
-    sapp_event      event { };
-};
-
-struct state_t {
-    // Gfx
-    sg_pass_action  pass_action;
-    sg_pipeline     pip;
-    sg_bindings     bind;
-
-    // Fetch / Drop
-    uint8_t         file_buffer[MAX_FILE_SIZE];
-    uint8_t         file_buffer2[MAX_FILE_SIZE];
-
-    // Events
-    item_t          items[_SAPP_EVENTTYPE_NUM];
-
-    // Font
-    FONScontext*    fons;
-    float           dpi_scale = 1.f;
-    int             font_normal = INVALID_IMAGE;
-    uint8_t         font_normal_data[MAX_FILE_SIZE];
-};
-
-// App Containers
-typedef std::map<std::string, std::shared_ptr<DrProject>>    ProjectMap;
+typedef std::map<std::string, std::shared_ptr<DrProject>>    ProjectMap;        // Holds open projects
 
 
 //####################################################################################
@@ -103,19 +94,31 @@ public:
 
     // #################### VARIABLES ####################
 protected:
+    // Modules
+    DrRenderContext*    m_context               { nullptr };                    // Rendering context for this App (currently built on Sokol_Gfx)
+
     // App Variables
-    std::string         m_app_name          { "" };                             // Name of Application   
-    std::string         m_app_directory     { "" };                             // Root OS directory of application
-    ProjectMap          m_projects          { };                                // Collection of open Projects
+    std::string         m_app_name              { "" };                         // Name of Application   
+    std::string         m_app_directory         { "" };                         // Root OS directory of application
+    ProjectMap          m_projects              { };                            // Collection of open Projects
 
     // Window Variables
-    DrColor             m_bg_color          { DROP_COLOR_BLACK };               // Background color of main App
-    int                 m_width             { 800 };                            // Window width
-    int                 m_height            { 600 };                            // Window height
+    DrColor             m_bg_color              { DROP_COLOR_BLACK };           // Background color of main App
+    int                 m_width                 { 800 };                        // Window width
+    int                 m_height                { 600 };                        // Window height
+    float               m_dpi_scale             { 1.f };                        // Dpi scale of device we're running on
 
     // Local Variables
     sapp_desc           m_sokol_app;                                            // Sokol_app descriptor for this Window
-    state_t             m_state;                                                // Sokol_app state for this Window
+
+    // Fetch / Drop Buffers
+    uint8_t             m_file_buffer[MAX_FILE_SIZE];
+    uint8_t             m_file_buffer2[MAX_FILE_SIZE];
+
+    // Fonts
+    FONScontext*        m_fontstash;
+    int                 m_font_normal = INVALID_IMAGE;
+    uint8_t             m_font_normal_data[MAX_FILE_SIZE];
 
     // ImGui, disabled by default
     #if defined (ENABLE_DEBUG)
@@ -176,6 +179,7 @@ public:
     // Local Variable Functions
     std::string         appName()                                       { return m_app_name; }
     void                setAppName(std::string name);
+    DrColor             backgroundColor()                               { return m_bg_color; }
     int                 getWidth() { return m_width; }
     int                 getHeight() { return m_height; }
 

@@ -61,8 +61,9 @@ void DockspaceUI(bool* widgets, int& menu_height) {
         
         ImGuiDockNode* Node;
         // Main
-        Node = ImGui::DockBuilderGetNode( dockspace_id );
-        Node->LocalFlags |= ImGuiDockNodeFlags_NoDockingSplitMe;
+        //Node = ImGui::DockBuilderGetNode( dockspace_id );
+        //Node->LocalFlags; |= ImGuiDockNodeFlags_NoDockingSplitMe;
+        
         // Old top and bottom toolbar / status bar docks
         /*
             // Toolbar

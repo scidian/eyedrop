@@ -8,7 +8,7 @@
 //
 //####################################################################################
 //##
-//##    Single Header Library Initialization
+//##    C Single Header Library Initialization
 //##
 //####################################################################################
 #if defined(DROP_TARGET_WINDOWS)
@@ -17,7 +17,7 @@
 
 
 //####################################################################################
-//##    Sokol Libraries
+//##    Sokol Library Implmentations
 //####################################################################################
 #define SOKOL_IMPL
 #include "3rd_party/sokol/sokol_app.h"
@@ -29,8 +29,9 @@
 #include "3rd_party/sokol/sokol_time.h"
 #include "3rd_party/sokol/sokol_audio.h"
 
+
 //####################################################################################
-//##    Font Stash
+//##    Font Stash Implmentations
 //####################################################################################
 #include <stdio.h>					// malloc, free, fopen, fclose, ftell, fseek, fread
 #include <string.h>					// memset
@@ -48,7 +49,7 @@
 
 
 //####################################################################################
-//##    STB Libraries
+//##    STB Library Implmentations
 //####################################################################################
 #define STB_IMAGE_IMPLEMENTATION
 #include "3rd_party/stb/stb_image.h"
