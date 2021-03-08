@@ -10,18 +10,18 @@
 #define DR_SCENE2D_H
 
 // Includes
-#include <map>
-#include "../interface/Scene.h"
+#include "engine/entity/Entity.h"
 
 // Forward Declarations
-class Object2D;
+class DrCamera;
+class DrObject2D;
 
 
 //####################################################################################
 //##    DrScene2D
 //##        Holds a 2D scene, with 2D objects
 //############################
-class DrScene2D : public DrScene
+class DrScene2D : public DrEntity
 {
 public:
     // Constructor / Destructor

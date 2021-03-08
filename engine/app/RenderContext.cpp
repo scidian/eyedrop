@@ -47,11 +47,12 @@ DrRenderContext::DrRenderContext(DrApp* parent_app) : m_app(parent_app) {
     float blue =    static_cast<float>(color.blueF());
     float alpha =   static_cast<float>(color.redF());
 
-    // ***** Pass action for clearing the framebuffer to some color
+    // Pass Action (action at start of render)
+    // The default action for all pass attachments is SG_ACTION_CLEAR, with the clear color rgba = {0.5f, 0.5f, 0.5f, 1.0f}, depth=1.0 and stencil=0
     pass_action.colors[0].action = SG_ACTION_CLEAR;
     pass_action.colors[0].value = { red, green, blue, alpha };
 
-    // ***** Pipeline State Object, sets 3D device parameters
+    // Pipeline State Object
     sg_pipeline_desc (sokol_pipleine) { };
         sokol_pipleine.shader = sg_make_shader(basic_shader_shader_desc(sg_query_backend()));
         sokol_pipleine.layout.attrs[ATTR_vs_pos].format =       SG_VERTEXFORMAT_FLOAT3;

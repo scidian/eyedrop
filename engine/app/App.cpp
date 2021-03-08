@@ -24,7 +24,7 @@
 //####################################################################################
 //##    Definition of Global Variables
 //####################################################################################
-DrApp*          g_app =         nullptr;                                        // Global pointer to App singleton, asigned in DrApp::DrApp()
+DrApp*          g_app =         nullptr;                                        // Global pointer to App singleton, assigned in DrApp::DrApp()
 
 
 //####################################################################################

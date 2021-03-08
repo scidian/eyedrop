@@ -10,19 +10,12 @@
 #define DR_COMPONENT_H
 
 // Includes
-#include <map>
-#include <string>
 #include "core/Variant.h"
 #include "engine/data/Types.h"
-
-// Forward Declarations
-class DrEntity;
+#include "engine/entity/Entity.h
 
 // Type Definitions
 typedef std::map<std::string, DrVariant>    Properties;
-
-
-
 
 
 //####################################################################################
@@ -32,7 +25,13 @@ typedef std::map<std::string, DrVariant>    Properties;
 class DrComponent 
 {
     // Constructor
-    DrComponent(std::shared_ptr<DrEntity> owner_entity, std::string component_name) { };
+    DrComponent(std::shared_ptr<DrEntity> owner_entity, std::string component_name) { 
+        if (owner_entity == nullptr) {
+            // Error!!
+        }
+        entity = owner_entity;
+        entity_id = owner_entity.id;
+    };
     virtual ~DrComponent() { };
 
 
@@ -40,6 +39,7 @@ class DrComponent
 public:
     // External Borrowed Pointers
     std::shared_ptr<DrEntity>   entity                  { nullptr };                // Pointer to the parent Entity
+    long                        entity_id               { KEY_NONE };               // ID Key of parent Entity
 
     // Local Variables
     std::string                 name;                                               // Name of this Component
@@ -51,10 +51,10 @@ public:
 public:
     // Component Events
     virtual void        init() = 0;                                                                 // Called when component is first created in active Scene
-    virtual void        addedToScene() = 0;                                                         // Called when Entity is added to active Scene
+    virtual void        addedToScene() = 0;                                                         // Called when Entity is added to an active Scene
     virtual void        draw() = 0;                                                                 // Called when it is time to Render Entity
-    virtual bool        update(double time_passed, double time_warp) = 0;                           // Called during App->onUpdate() step
-    virtual void        destroy() = 0;                                                              // Called when component is being removed from active Scene
+    virtual bool        update(double time_passed, double time_warp) = 0;                           // Called during Scene->update() step
+    virtual void        destroy() = 0;                                                              // Called when component is being removed from an active Scene
 
 
     // #################### INTERNAL FUNCTIONS ####################
@@ -62,8 +62,7 @@ public:
     // Getters / Setters
     
 
-
 };
 
-
 #endif  // DR_COMPONENT_H
+

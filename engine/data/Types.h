@@ -9,12 +9,28 @@
 #ifndef ENUMS_TYPES_H
 #define ENUMS_TYPES_H
 
+// Includes
+#include <map>
+#include <set>
+#include <string>
+#include <unordered_map>
+
 // Global Enum Constants
 #define DROP_VERSION        2000                    // Drop Creator version number, important for file loading / saving through Cereal
 
 #define KEY_NONE            -1                      // Value that represents no item selected
 #define KEY_SAME            -100                    // Value signifying to use the value already obtained
 #define KEY_START           1001                    // Starting value for key generators
+
+// Forward Declarations
+class DrImage;                      // Holds images for use in Project
+class DrScene;                      // Holds Scenes
+class DrWorld;                      // Holds info about separate Worlds (collections of Scenes)
+
+// Project Objects
+typedef std::unordered_map<long, std::shared_ptr<DrImage>>    ImageMap;
+typedef std::unordered_map<long, std::shared_ptr<DrScene>>    SceneMap;
+typedef std::unordered_map<long, std::shared_ptr<DrWorld>>    WorldMap;
 
 
 //####################################################################################

@@ -9,17 +9,8 @@
 #ifndef DR_GAME_H
 #define DR_GAME_H
 
-#include <map>
-#include <string>
+// Includes
 #include "Types.h"
-
-// Forward Declarations
-class DrScene;                      // Holds Scenes
-class DrWorld;                      // Holds info about separate Worlds (collections of Scenes)
-
-// Game Objects
-typedef std::map<long, std::shared_ptr<DrScene>>    SceneMap;
-typedef std::map<long, std::shared_ptr<DrWorld>>    WorldMap;
 
 
 //####################################################################################
@@ -41,7 +32,7 @@ private:
 
     // Scene Variables
     long            m_current_scene         { KEY_NONE };               // Scene currently displayed in Editor_Mode::World_Creator
-    WorldMap        m_worlds;                                           // Holds DrWorlds       (which hold collections of DrScene references)
+    WorldMap        m_worlds;                                           // Holds DrWorlds       (holds data about different open DrWorlds, i.e. Physics, Lighting, etc)
     SceneMap        m_scenes;                                           // Holds DrScenes       (parent DrEntity, which in turn hold more DrEntites)
 
 

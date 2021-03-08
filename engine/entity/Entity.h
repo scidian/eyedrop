@@ -12,14 +12,15 @@
 // Includes
 #include <map>
 #include <string>
+#include <unordered_map>
 #include "engine/data/Types.h"
 
 // Forward Declarations
 class DrComponent;
 
 // Type Definitions
-typedef std::map<long, std::shared_ptr<DrComponent>>    Components;
-typedef std::map<long, std::shared_ptr<DrEntity>>       Entities;
+typedef std::unordered_map<long, std::shared_ptr<DrComponent>>    Components;
+typedef std::unordered_map<long, std::shared_ptr<DrEntity>>       Entities;
 
 
 //####################################################################################
@@ -30,11 +31,11 @@ class DrEntity
 {
 public:
     // Constructor / Destructor
-    DrEntity(std::shared_ptr<DrEntity> owner_entity, std::string entity_name) { };
+    DrEntity(std::shared_ptr<DrEntity> owner_entity = nullptr, std::string entity_name = "") { };
     ~DrEntity() { };
 
     // #################### VARIABLES ####################
-private:
+public:
     // Local Variables
     std::string                 name                    { "" };                     // Name of this Entity
     long                        id                      { KEY_NONE };               // ID Key of this Entity

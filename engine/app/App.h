@@ -164,10 +164,12 @@ public:
 
     // #################### INTERNAL FUNCTIONS ####################
 public:
-    // Sokol Related
+    // Mesh
     void calculateMesh(bool reset_position);
     void loadImage(std::string filename);
     void initImage(stbi_uc *buffer_ptr, int fetched_size);
+
+    // Sokol Related
     void run() { sapp_run(m_sokol_app); }
 
     // Linked to internal sokol callbacks

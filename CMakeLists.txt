@@ -8,23 +8,34 @@
 #
 cmake_minimum_required(VERSION 3.10)
 ####################################################################################
+#   BEFORE COMPILING, set the following options below!
 #
-#   To compile, set target manually below:
+#   EXPORT_TARGET:
+#       "osx"       Apple MacOS                     defines DROP_TARGET_OSX, DROP_TARGET_APPLE
+#       "ios"       Apple iOS                       defines DROP_TARGET_IOS, DROP_TARGET_APPLE
+#       "web"       Emscripten                      defines DROP_TARGET_HTML5
+#       "android"   Google Android                  defines DROP_TARGET_GOOGLE
+#       "windows"   Microsoft Windows               defines DROP_TARGET_WINDOWS
+#       "linux"     Linux                           defines DROP_TARGET_LINUX
 #
-#       "osx"       Apple MacOS                     (defines DROP_TARGET_APPLE)
-#       "ios"       Apple iOS                       (defines DROP_TARGET_APPLE)
-#       "web"       Emscripten                      (defines DROP_TARGET_HTML5)
-#       "android"   Google Android                  (defines DROP_TARGET_GOOGLE)
-#       "windows"   Microsoft Windows               (defines DROP_TARGET_WINDOWS)
-#       "linux"     Linux                           (defines DROP_TARGET_LINUX)
+#   APP_TYPE
+#       "editor"                                    Drop Editor, defines ENABLE_DEBUG
+#       "player"                                    Drop Engine, by default does not have ImGui enabled unless DEBUG_MODE is set to "true"
 #
+#   DEBUG_MODE
+#       "true"                                      defines ENABLE_DEBUG, ENABLE_IMGUI (turns on ImGui and Sokol Gfx debug menus by default)
+#       "false"                                     
 ####################################################################################
 
+# Standard editor build:
+set(EXPORT_TARGET   "osx")
+set(APP_TYPE        "editor")
+set(DEBUG_MODE      "true")
 
-set(EXPORT_TARGET   "web")
-set(APP_TYPE        "player")       # Options:  "editor"  or  "player", !!!!! #NOTE: By default, "player" does not have ImGui enabled unless DEBUG_MODE is on
-set(DEBUG_MODE      "false")        # Options:  "true"    or  "false"
-
+# For testing no-gui html5 build:
+#set(EXPORT_TARGET   "web")
+#set(APP_TYPE        "player")
+#set(DEBUG_MODE      "false")  
 
 ####################################################################################
 ####################################################################################

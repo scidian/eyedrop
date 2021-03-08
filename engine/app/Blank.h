@@ -17,7 +17,7 @@ class OtherClass;
 
 
 //####################################################################################
-//##    DrBlank
+//##    Dr 
 //##        Blank template header
 //############################
 class DrBlank 
@@ -29,7 +29,7 @@ public:
 
     // #################### VARIABLES ####################
 private:
-    // Blank Variables
+    // Local Variables
     int                 m_variable              { 0 };                          // Description
         
 

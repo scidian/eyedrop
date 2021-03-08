@@ -6,8 +6,8 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Sat Mar 06 2021
 //
 //
-#include "../Editor.h"
-#include "../Types.h"
+#include "editor/Editor.h"
+#include "editor/Types.h"
 #include "Menu.h"
 
 

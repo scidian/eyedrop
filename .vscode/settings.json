@@ -2,9 +2,26 @@
     "C_Cpp.enhancedColorization": "Enabled",
 
     "editor.tokenColorCustomizations": {
-        "comments": "#504a47",
+        //"comments": "#504a47",
 
         "textMateRules": [
+            {
+                "scope": [
+                    "comment.block",
+                    "punctuation.definition.comment.end",
+                    "punctuation.definition.comment.begin"
+                ],
+                "settings": {
+                    "foreground": "#363231",
+                }
+            },
+            {
+                "scope":["comment.line", "punctuation.definition.comment"],
+                "settings": {
+                    "foreground": "#524b48",
+                }
+            }
+
             {   "scope": "variable.other.enummember",   "settings": {   "foreground": "#00836d" }   },
             {   "scope": "variable.other.constant",     "settings": {   "foreground": "#450194" },  },
             {   "scope": "variable.readonly",           "settings": {   "foreground": "#450194" },  },
