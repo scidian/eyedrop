@@ -6,6 +6,8 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Sat Mar 06 2021
 //
 //
+#ifndef DR_EDITOR_TYPES_H
+#define DR_EDITOR_TYPES_H
 
 //####################################################################################
 //##    Modes for Interface Editor Form
@@ -60,4 +62,4 @@ enum Editor_Widgets {
 };
 
 
-
+#endif  // DR_EDITOR_TYPES_H

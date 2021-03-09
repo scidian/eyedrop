@@ -27,14 +27,14 @@ class DrImage
 {
 private:
     // Local Variables
-    std::string                 m_simple_name;                                              // Simple name, i.e. "pretty tree 1"
-    DrBitmap                    m_bitmap;                                                   // Stored image as DrBitmap
+    std::string                 m_simple_name;                                      // Simple name, i.e. "pretty tree 1"
+    DrBitmap                    m_bitmap;                                           // Stored image as Bitmap
 
 public:
-    vtr<vtr<DrPointF>>          m_poly_list;                                                // Stores list of image outline points
-    vtr<vtr<vtr<DrPointF>>>     m_hole_list;                                                // Stores list of hole  outline points
-    bool                        m_outline_canceled      { false };                          // True when Image Outline has been canceled, when true extrudes in 3D as simple square
-    bool                        m_outline_processed     { false };                          // Turns true when autoOutlinePoints() has completed successfully
+    vtr<vtr<DrPointF>>          m_poly_list;                                        // Stores list of image outline points
+    vtr<vtr<vtr<DrPointF>>>     m_hole_list;                                        // Stores list of hole  outline points
+    bool                        m_outline_canceled      { false };                  // True when Image Outline has been canceled, when true extrudes in 3D as simple square
+    bool                        m_outline_processed     { false };                  // Turns true when autoOutlinePoints() has completed successfully
 
 private:
 

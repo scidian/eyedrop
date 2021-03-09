@@ -54,6 +54,7 @@
 #include "engine/data/Game.h"
 #include "engine/data/Project.h"
 #include "engine/data/Types.h"
+#include "engine/entity/Meta.h"
 #include "engine/scene3d/Mesh.h"
 
 // Forward Declarations
@@ -64,21 +65,22 @@ class DrRenderContext;
 //####################################################################################
 //##    Constants 
 //############################
-#define MAX_FILE_SIZE   (1024 * 1024)                                           // Used for filebuffers with sokol_fetch
-#define INVALID_IMAGE   -1                                                      // Used to identify DrImages that have been initialized, but not loaded yet
+#define MAX_FILE_SIZE   (1024 * 1024)                                               // Used for filebuffers with sokol_fetch
+#define INVALID_IMAGE   -1                                                          // Used to identify DrImages that have been initialized, but not loaded yet
 
 
 //####################################################################################
 //##    Globals 
 //##        Defined in App.cpp
 //############################
-extern DrApp*       g_app;                                                      // Global pointer to App singleton
+extern DrApp*       g_app;                                                          // Global pointer to App singleton
 
 
 //####################################################################################
 //##    Local Structs / Defines
 //############################
-typedef std::map<std::string, std::shared_ptr<DrProject>>    ProjectMap;        // Holds open projects
+typedef std::map<std::string, std::shared_ptr<DrProject>>    GameMap;               // Holds data of open Game instances
+typedef std::map<std::string, std::shared_ptr<DrProject>>    ProjectMap;            // Holds data of open Projects
 
 
 //####################################################################################
@@ -95,40 +97,42 @@ public:
     // #################### VARIABLES ####################
 protected:
     // Modules
-    DrRenderContext*    m_context               { nullptr };                    // Rendering context for this App (currently built on Sokol_Gfx)
+    DrRenderContext*        m_context               { nullptr };                    // Rendering context for this App (currently built on Sokol_Gfx)
+    DrMeta*                 m_meta                  { nullptr };                    // Structure that holds data about Components and Properties
 
     // App Variables
-    std::string         m_app_name              { "" };                         // Name of Application   
-    std::string         m_app_directory         { "" };                         // Root OS directory of application
-    ProjectMap          m_projects              { };                            // Collection of open Projects
-
+    std::string             m_app_name              { "" };                         // Name of Application   
+    std::string             m_app_directory         { "" };                         // Root OS directory of application
+    GameMap                 m_game                  { };                            // Collection of open Game instances
+    ProjectMap              m_projects              { };                            // Collection of open Projects
+    
     // Window Variables
-    DrColor             m_bg_color              { DROP_COLOR_BLACK };           // Background color of main App
-    int                 m_width                 { 800 };                        // Window width
-    int                 m_height                { 600 };                        // Window height
-    float               m_dpi_scale             { 1.f };                        // Dpi scale of device we're running on
+    DrColor                 m_bg_color              { DROP_COLOR_BLACK };           // Background color of main App
+    int                     m_width                 { 800 };                        // Window width
+    int                     m_height                { 600 };                        // Window height
+    float                   m_dpi_scale             { 1.f };                        // Dpi scale of device we're running on
 
     // Local Variables
-    sapp_desc           m_sokol_app;                                            // Sokol_app descriptor for this Window
+    sapp_desc               m_sokol_app;                                            // Sokol_app descriptor for this Window
 
     // Fetch / Drop Buffers
-    uint8_t             m_file_buffer[MAX_FILE_SIZE];
-    uint8_t             m_file_buffer2[MAX_FILE_SIZE];
+    uint8_t                 m_file_buffer[MAX_FILE_SIZE];
+    uint8_t                 m_file_buffer2[MAX_FILE_SIZE];
 
     // Fonts
-    FONScontext*        m_fontstash;
-    int                 m_font_normal = INVALID_IMAGE;
-    uint8_t             m_font_normal_data[MAX_FILE_SIZE];
+    FONScontext*            m_fontstash;
+    int                     m_font_normal = INVALID_IMAGE;
+    uint8_t                 m_font_normal_data[MAX_FILE_SIZE];
 
     // ImGui, disabled by default
     #if defined (ENABLE_DEBUG)
-        sg_imgui_t      m_sg_imgui;                                             // Sokol_gfx_debug keeps track of data structures used by sokol_gfx for Debug View
+        sg_imgui_t          m_sg_imgui;                                             // Sokol_gfx_debug keeps track of data structures used by sokol_gfx for Debug View
     #endif
 
     // Time Variables
-    bool                m_first_frame       { true };                           // Turns false after first frame, allows for some initialization (colors, themeing, etc)
-    uint64_t            m_time_start        { 0 };                              // Sokol_time start time since App started running
-    double              m_frames_per_second { 0.0 };                            // Stores current calculated frames per second
+    bool                m_first_frame       { true };                               // Turns false after first frame, allows for some initialization (colors, themeing, etc)
+    uint64_t            m_time_start        { 0 };                                  // Sokol_time start time since App started running
+    double              m_frames_per_second { 0.0 };                                // Stores current calculated frames per second
 
 
     // ---> Temp Variables, used for demo

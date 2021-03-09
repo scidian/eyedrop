@@ -10,7 +10,7 @@
 #define DR_GAME_H
 
 // Includes
-#include "Types.h"
+#include "Declares.h"
 
 
 //####################################################################################
@@ -28,12 +28,13 @@ public:
     // #################### VARIABLES ####################
 private:
     // Game Variables
-    long            m_key_generator         { KEY_START };              // Variable to hand out unique id key's to all DrGame::DrEntities
+    long            m_key_generator         { KEY_START };                  // Variable to hand out unique id key's to all Game::Entities
 
     // Scene Variables
-    long            m_current_scene         { KEY_NONE };               // Scene currently displayed in Editor_Mode::World_Creator
-    WorldMap        m_worlds;                                           // Holds DrWorlds       (holds data about different open DrWorlds, i.e. Physics, Lighting, etc)
-    SceneMap        m_scenes;                                           // Holds DrScenes       (parent DrEntity, which in turn hold more DrEntites)
+    long            m_current_scene         { KEY_NONE };                   // Scene currently displayed in Editor_Mode::World_Creator
+    Entities        m_entities;                                             // Holds all the game's Entities
+    EntityLists     m_lists;                                                // Holds lists of Archetypes of available Entities in the game
+
 
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################

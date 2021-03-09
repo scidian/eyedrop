@@ -10,17 +10,8 @@
 #define DR_ENTITY_H
 
 // Includes
-#include <map>
-#include <string>
-#include <unordered_map>
-#include "engine/data/Types.h"
-
-// Forward Declarations
-class DrComponent;
-
-// Type Definitions
-typedef std::unordered_map<long, std::shared_ptr<DrComponent>>    Components;
-typedef std::unordered_map<long, std::shared_ptr<DrEntity>>       Entities;
+#include "../data/Declares.h"
+#include "Component.h"
 
 
 //####################################################################################
@@ -31,17 +22,21 @@ class DrEntity
 {
 public:
     // Constructor / Destructor
-    DrEntity(std::shared_ptr<DrEntity> owner_entity = nullptr, std::string entity_name = "") { };
-    ~DrEntity() { };
+    DrEntity(std::string name_ = "", long parent_id_ = KEY_NONE);
+    ~DrEntity();
 
     // #################### VARIABLES ####################
 public:
     // Local Variables
     std::string                 name                    { "" };                     // Name of this Entity
     long                        id                      { KEY_NONE };               // ID Key of this Entity
-    Entities                    children                { };                        // Children of this Entity
     Components                  components              { };                        // Components of this Entity       
 
+    // Relationship Variables
+    long                        project_id              { KEY_NONE };               // FOR GAME ENTITIES ONLY!! Key to original starting data Project::Entity    
+    long                        parent_id               { KEY_NONE };               // ID Key of parent Entity, if applicable
+    Entities                    children                { };                        // Children of this Entity
+    
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################
 public:
 

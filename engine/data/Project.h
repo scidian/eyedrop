@@ -10,7 +10,7 @@
 #define DR_PROJECT_H
 
 // Includes
-#include "Types.h"
+#include "Declares.h"
 
 // Project Constants
 #define DEFAULT_PROJECT_WIDTH            800            // Default Width  for Game
@@ -37,24 +37,21 @@ public:
     // #################### VARIABLES ####################
 private:
     // Project Variables
-    long            m_key_generator         { KEY_START };              // Variable to hand out unique id key's to all DrProject::DrEntities
+    long            m_key_generator         { KEY_START };                          // Variable to hand out unique id key's to all Project::Entities
     
     // Project Options
-    std::string     m_name                  { "" };                     // Name of Current DrProject
-    std::string     m_file_path_name        { "" };                     // Full Path and File Name of DrProject, will save to this unless choose Save As
+    std::string     m_name                  { "" };                                 // Name of Current Project
+    std::string     m_file_path_name        { "" };                                 // Full Path and File Name of Project, will save to this unless choose Save As
 
-    int             m_orientation           { ORIENTATION_PORTAIT };    // This DrProject's target device orientation (enum Orientation)
-    long            m_width                 { DEFAULT_PROJECT_WIDTH };  // This DrProject's target device window width,  usually 800
-    long            m_height                { DEFAULT_PROJECT_HEIGHT }; // This DrProject's target device window height, usually 1600
+    int             m_orientation           { ORIENTATION_PORTAIT };                // This Project's target device orientation (enum Orientation)
+    long            m_width                 { DEFAULT_PROJECT_WIDTH };              // This Project's target device window width,  usually 800
+    long            m_height                { DEFAULT_PROJECT_HEIGHT };             // This Project's target device window height, usually 1600
 
-    long            m_current_scene         { KEY_NONE };               // Scene currently displayed in Editor_Mode::World_Creator
+    long            m_current_scene         { KEY_NONE };                           // Scene currently displayed in Editor_Mode::World_Creator
 
-    // World Items
-    WorldMap        m_worlds;                                           // Holds DrWorlds       (which hold collections of DrScene references)
-    SceneMap        m_scenes;                                           // Holds DrScenes       (parent DrEntity, which in turn hold more DrEntites)
-
-    // Shared Items
-    ImageMap        m_images;                                           // Holds DrImages
+    // Project Items
+    Entities        m_entities;                                                     // Holds all the Project's Entities
+    EntityLists     m_lists;                                                        // Holds lists of Archetypes of available Entities in the Project
 
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################

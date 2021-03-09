@@ -9,7 +9,10 @@
 #include "engine/app/App.h"
 
 
-class Player : public DrApp 
+//####################################################################################
+//##    Player (engine runtime only)
+//####################################################################################
+class DrPlayer : public DrApp 
 {
 public:
     using DrApp::DrApp;                                                 // Inherits base constructor, requires C++ 11
@@ -36,7 +39,7 @@ public:
 
 int main(int argc, char* argv[]) {
 
-    Player* player = new Player("Test Player", DROP_COLOR_PURPLE);
+    DrPlayer* player = new DrPlayer("Test Player", DROP_COLOR_PURPLE);
     player->run();
 
 }

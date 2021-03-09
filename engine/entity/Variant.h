@@ -9,6 +9,10 @@
 #ifndef DR_VARIANT_H
 #define DR_VARIANT_H
 
+#include <deque>
+#include <list>
+#include <vector>
+
 #include "3rd_party/any.h"
 #include "core/geometry/Point.h"
 #include "core/geometry/PointF.h"

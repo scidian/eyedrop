@@ -10,12 +10,16 @@
 #define DR_COMPONENT_H
 
 // Includes
-#include "core/Variant.h"
-#include "engine/data/Types.h"
-#include "engine/entity/Entity.h
+#include "../data/Declares.h"
+#include "Data.h"
+#include "Variant.h"
+
+struct DrProperty {
+
+};
 
 // Type Definitions
-typedef std::map<std::string, DrVariant>    Properties;
+typedef std::unordered_map<std::string, DrProperty>    Properties;
 
 
 //####################################################################################
@@ -25,26 +29,28 @@ typedef std::map<std::string, DrVariant>    Properties;
 class DrComponent 
 {
     // Constructor
-    DrComponent(std::shared_ptr<DrEntity> owner_entity, std::string component_name) { 
-        if (owner_entity == nullptr) {
-            // Error!!
-        }
-        entity = owner_entity;
-        entity_id = owner_entity.id;
-    };
-    virtual ~DrComponent() { };
+    DrComponent(long entity_id_, std::string component_name) : entity_id(entity_id_) { }
+    virtual ~DrComponent() { }
 
 
     // #################### VARIABLES ####################
 public:
-    // External Borrowed Pointers
-    std::shared_ptr<DrEntity>   entity                  { nullptr };                // Pointer to the parent Entity
-    long                        entity_id               { KEY_NONE };               // ID Key of parent Entity
-
     // Local Variables
     std::string                 name;                                               // Name of this Component
+    long                        entity_id               { KEY_NONE };               // ID Key of parent Entity
     long                        id                      { KEY_NONE };               // ID Key of this Component
-    Properties                  properties;                                         // Holds variables for this Component by Property name (as std::string)
+    Properties                  properties;                                         // Holds extended attributes for this Component by Property name (as std::string)
+
+
+    // #################### PROPERTY REFLECTION ####################
+public:
+    virtual void initializeProperties() {
+        //properies.addProperty();
+    }
+
+    virtual void propertyDescription(const std::string& name) {
+
+    }
 
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################

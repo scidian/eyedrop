@@ -6,14 +6,8 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Thu Mar 04 2021
 //
 //
-#ifndef ENUMS_TYPES_H
-#define ENUMS_TYPES_H
-
-// Includes
-#include <map>
-#include <set>
-#include <string>
-#include <unordered_map>
+#ifndef DR_ENGINE_DATA_TYPES_H
+#define DR_ENGINE_DATA_TYPES_H
 
 // Global Enum Constants
 #define DROP_VERSION        2000                    // Drop Creator version number, important for file loading / saving through Cereal
@@ -21,16 +15,6 @@
 #define KEY_NONE            -1                      // Value that represents no item selected
 #define KEY_SAME            -100                    // Value signifying to use the value already obtained
 #define KEY_START           1001                    // Starting value for key generators
-
-// Forward Declarations
-class DrImage;                      // Holds images for use in Project
-class DrScene;                      // Holds Scenes
-class DrWorld;                      // Holds info about separate Worlds (collections of Scenes)
-
-// Project Objects
-typedef std::unordered_map<long, std::shared_ptr<DrImage>>    ImageMap;
-typedef std::unordered_map<long, std::shared_ptr<DrScene>>    SceneMap;
-typedef std::unordered_map<long, std::shared_ptr<DrWorld>>    WorldMap;
 
 
 //####################################################################################
@@ -44,7 +28,8 @@ enum class Property_Type {
     Bool            =  1,   // bool                 True or False
     BoolDouble      =  2,   // vector<variant>      True or False, when True shows double spinbox,  sizeof 6 - bool: value1, doubles: value2, min, max, step size, string: spinText
     BoolInt         =  3,   // vector<variant>      True or False, when True shows int spinbox,     sizeof 6 - bool: value1, ints:    value2, min, max, step size, string: spinText
-    
+    BoolColor       =  4,   // vector<variant>      True or False, when True shows color,           sizeof 2 - bool: value1, unsigned int: color
+
     Int             =  5,   // long                 Integer
     Positive        =  6,   // long                 Integer >= 0
     RangedInt       =  7,   // vector<variant>      Integer >= min and <= max,                      sizeof 4 - longs: value, min, max, step size
@@ -56,8 +41,8 @@ enum class Property_Type {
     Slider          = 12,   // vector<variant>      Decimal >= min and <= max, with a slider        sizeof 5 - doubles: value, min, max, step size, string: suffix ("%", etc)
     Percent         = 13,   // double               Decimal from 0.0 to 100.0, shows percent symbol, with a slider
 
-    String          = 14,   // string               Uses QLineEdit
-    Textbox         = 15,   // string               Uses QTextEdit for multi-line html text input
+    String          = 14,   // string               Uses LineEdit
+    Textbox         = 15,   // string               Uses TextEdit for multi-line html text input
 
     PointF          = 16,   // DrPointF             Decimal pair x and y
     PositionF       = 17,   // DrPointF             Decimal pair x and y, used for object positions in scene
@@ -87,42 +72,32 @@ enum class Property_Type {
 //####################################################################################
 //##
 //##    Main Types of Entities possible in Project
-//##        - All Entities inherit DrSettings to use DrComponents which contain DrProperties compatible with the Inspector
+//##        - All Entities inherit DrEntity which contain DrComponents, which are displayed in the Inspector
 //##
 //############################
-enum class DrType {    
+enum Archetype {    
     // Misc Types
     NotFound = 0,                   // For passing a value in functions that represents No Type Selected / Found, !!!!! #NOTE: Keep as zero
 
     // Shared Types
-    Image,                          // Entities contained within DrProject::m_images
+    Image,                          // Images for use in Project
 
-    // Mapped Types
-    World,                          // Entities contained within 
-    Scene,                          // Entities contained within DrProject::m_scenes
-        Entity,                     // Entities contained within DrProject::DrScene::m_entities
+    // Game Types
+    World,                          // Describes a World (physics, lighting, etc), also holds a colleciton of Scenes
+    Scene,                          // Holds a collection of Objects
+    Object,                         // Objects contained within Scene
 
 };
 
 
 // ################## Project Mapped Types ####################
-// Worlds,    Entities contained within DrProject::m_worlds / DrProject::m_uis
-enum class DrWorldType {
-    // Editor Worlds
+enum class SceneType {
     Physics_2D,
+    Physics_3D,
     UI,
 };
 
 
-// Things,    Entities contained within DrProject::DrScenes::m_entities
-enum class DrEntityType {
-    None,
 
-    // ***** 2D Physics World Sub Types
-    Character,
-    Object,
-};
-
-
-#endif  // ENUMS_TYPES_H
+#endif  // DR_ENGINE_DATA_TYPES_H
 

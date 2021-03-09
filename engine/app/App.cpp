@@ -50,6 +50,8 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
     m_app_name = title;
     m_bg_color = bg_color;
 
+    m_meta = new DrMeta();                                          
+
     initCallback =      std::bind(&DrApp::init,     this);
     frameCallback =     std::bind(&DrApp::frame,    this);
     eventCallback =     std::bind(&DrApp::event,    this, std::placeholders::_1);
@@ -70,6 +72,7 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
 // Destructor
 DrApp::~DrApp() {
     delete m_context;
+    delete m_meta;
 }
 
 // Sets application name, updates title bar

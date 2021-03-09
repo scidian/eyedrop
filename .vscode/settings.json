@@ -33,6 +33,8 @@
     },
 
     "workbench.colorCustomizations": {
+        "statusBar.foreground": "#000000"
+        //"statusBar.background" : "#c9bb00",
         //"editor.background": "#070F0E",
         //"titleBar.activeBackground": "#ff0000"
     },

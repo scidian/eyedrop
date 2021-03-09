@@ -28,7 +28,7 @@ public:
     // #################### VARIABLES ####################
 public:
     // External Borrowed Pointers
-    DrApp*              m_app                   { nullptr };                    // Pointer to the parent DrApp
+    DrApp*              m_app                   { nullptr };                        // Pointer to the parent App
 
     // Render Context Variables
     sg_pass_action      pass_action     {};     
