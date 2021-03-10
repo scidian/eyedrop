@@ -10,7 +10,7 @@
 #define DR_PROJECT_H
 
 // Includes
-#include "Declares.h"
+#include "Types.h"
 
 // Project Constants
 #define DEFAULT_PROJECT_WIDTH            800            // Default Width  for Game
@@ -50,8 +50,8 @@ private:
     long            m_current_scene         { KEY_NONE };                           // Scene currently displayed in Editor_Mode::World_Creator
 
     // Project Items
-    Entities        m_entities;                                                     // Holds all the Project's Entities
-    EntityLists     m_lists;                                                        // Holds lists of Archetypes of available Entities in the Project
+    //Entities        m_entities;                                                     // Holds all the Project's Entities
+    //EntityLists     m_lists;                                                        // Holds lists of Archetypes of available Entities in the Project
 
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################

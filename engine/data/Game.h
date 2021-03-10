@@ -10,7 +10,7 @@
 #define DR_GAME_H
 
 // Includes
-#include "Declares.h"
+#include "Types.h"
 
 
 //####################################################################################
@@ -32,8 +32,8 @@ private:
 
     // Scene Variables
     long            m_current_scene         { KEY_NONE };                   // Scene currently displayed in Editor_Mode::World_Creator
-    Entities        m_entities;                                             // Holds all the game's Entities
-    EntityLists     m_lists;                                                // Holds lists of Archetypes of available Entities in the game
+    //Entities        m_entities;                                             // Holds all the game's Entities
+    //EntityLists     m_lists;                                                // Holds lists of Archetypes of available Entities in the game
 
 
 

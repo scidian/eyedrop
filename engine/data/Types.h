@@ -80,6 +80,7 @@ enum Archetype {
     NotFound = 0,                   // For passing a value in functions that represents No Type Selected / Found, !!!!! #NOTE: Keep as zero
 
     // Shared Types
+    Prefab,                         // Keeps information about an Object so we can easily make a copy
     Image,                          // Images for use in Project
 
     // Game Types
