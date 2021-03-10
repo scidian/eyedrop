@@ -61,19 +61,11 @@
 class DrApp;
 class DrRenderContext;
 
-
 //####################################################################################
 //##    Constants 
 //############################
 #define MAX_FILE_SIZE   (1024 * 1024)                                               // Used for filebuffers with sokol_fetch
 #define INVALID_IMAGE   -1                                                          // Used to identify DrImages that have been initialized, but not loaded yet
-
-
-//####################################################################################
-//##    Globals 
-//##        Defined in App.cpp
-//############################
-extern DrApp*       g_app;                                                          // Global pointer to App singleton
 
 
 //####################################################################################
@@ -93,6 +85,9 @@ public:
     // Constructor / Destructor
     DrApp(std::string title = "Drop Creator", DrColor bg_color = DROP_COLOR_BLACK, int width = 800, int height = 600);
     ~DrApp();
+
+    // Returns pointer to the current running App
+    static DrApp* GetApp();
 
     // #################### VARIABLES ####################
 protected:

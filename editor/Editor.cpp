@@ -72,7 +72,7 @@ void DrEditor::onCreate() {
                     img_desc.mag_filter =   SG_FILTER_LINEAR;
                     img_desc.data.subimage[0][0].ptr = pixels;
                     img_desc.data.subimage[0][0].size = static_cast<size_t>(png_width * png_height * num_channels);
-                DrEditor* editor = dynamic_cast<DrEditor*>(g_app);
+                DrEditor* editor = dynamic_cast<DrEditor*>(DrApp::GetApp());
                 editor->images[EDITOR_IMAGE_WORLD_GRAPH] = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
                 free(pixels);
             }
@@ -284,7 +284,7 @@ void DrEditor::onEvent(const sapp_event* event) {
                 .buffer_size = sizeof(m_file_buffer),
                 .callback = +[](const sapp_html5_fetch_response* response) {
                     if (response->succeeded) {
-                        g_app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+                        DrApp::GetApp()->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
                     } else {
                         // File too big if (response->error_code == SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
                     }
@@ -299,7 +299,7 @@ void DrEditor::onEvent(const sapp_event* event) {
                 .buffer_size = sizeof(m_file_buffer),
                 .callback = +[](const sfetch_response_t* response) {
                     if (response->fetched) {
-                        g_app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+                        DrApp::GetApp()->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
                     } else {
                         // File too big if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
                     }                   

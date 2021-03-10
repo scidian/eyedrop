@@ -22,9 +22,9 @@
 
 
 //####################################################################################
-//##    Definition of Global Variables
+//##    Definition of File Scope Globals
 //####################################################################################
-DrApp*          g_app =         nullptr;                                        // Global pointer to App singleton, assigned in DrApp::DrApp()
+DrApp*          l_app =         nullptr;                                            // Pointer to App singleton
 
 
 //####################################################################################
@@ -45,7 +45,7 @@ extern "C" void cleanupWrapper()                        { cleanupCallback(); }
 //##    Constructor / Destructor 
 //####################################################################################
 DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
-    g_app = this;
+    l_app = this;
 
     m_app_name = title;
     m_bg_color = bg_color;
@@ -74,6 +74,9 @@ DrApp::~DrApp() {
     delete m_context;
     delete m_meta;
 }
+
+// Returns pointer to the current running App
+DrApp* DrApp::GetApp() { return l_app; }
 
 // Sets application name, updates title bar
 void DrApp::setAppName(std::string name) { 
@@ -371,7 +374,7 @@ void DrApp::loadImage(std::string filename) {
         .callback = +[](const sfetch_response_t* response) {
             if (response->fetched) {
                 // File data has been fetched, since we provided a big-enough buffer we can be sure that all data has been loaded here
-                g_app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+                DrApp::GetApp()->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
             } else if (response->finished) {
                 // If loading the file failed, set clear color to signal reason
                 if (response->failed) { /*response->error_code*/ }
