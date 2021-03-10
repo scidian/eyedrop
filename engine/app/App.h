@@ -54,7 +54,6 @@
 #include "engine/data/Game.h"
 #include "engine/data/Project.h"
 #include "engine/data/Types.h"
-#include "engine/entity/Meta.h"
 #include "engine/scene3d/Mesh.h"
 
 // Forward Declarations
@@ -92,25 +91,22 @@ public:
     // #################### VARIABLES ####################
 protected:
     // Modules
+    sapp_desc               m_sokol_app;                                            // Sokol_app descriptor for this Window
     DrRenderContext*        m_context               { nullptr };                    // Rendering context for this App (currently built on Sokol_Gfx)
-    DrMeta*                 m_meta                  { nullptr };                    // Structure that holds data about Components and Properties
 
-    // App Variables
-    std::string             m_app_name              { "" };                         // Name of Application   
-    std::string             m_app_directory         { "" };                         // Root OS directory of application
+    // Data
     GameMap                 m_game                  { };                            // Collection of open Game instances
     ProjectMap              m_projects              { };                            // Collection of open Projects
     
-    // Window Variables
+    // App Variables
+    std::string             m_app_name              { "" };                         // Name of Application   
+    std::string             m_app_directory         { "" };                         // Root OS directory of application
     DrColor                 m_bg_color              { DROP_COLOR_BLACK };           // Background color of main App
     int                     m_width                 { 800 };                        // Window width
     int                     m_height                { 600 };                        // Window height
     float                   m_dpi_scale             { 1.f };                        // Dpi scale of device we're running on
 
-    // Local Variables
-    sapp_desc               m_sokol_app;                                            // Sokol_app descriptor for this Window
-
-    // Fetch / Drop Buffers
+    // Fetch / Drag & Drop Buffers
     uint8_t                 m_file_buffer[MAX_FILE_SIZE];
     uint8_t                 m_file_buffer2[MAX_FILE_SIZE];
 
@@ -125,9 +121,9 @@ protected:
     #endif
 
     // Time Variables
-    bool                m_first_frame       { true };                               // Turns false after first frame, allows for some initialization (colors, themeing, etc)
-    uint64_t            m_time_start        { 0 };                                  // Sokol_time start time since App started running
-    double              m_frames_per_second { 0.0 };                                // Stores current calculated frames per second
+    bool                    m_first_frame       { true };                           // Turns false after first frame, allows for some initialization (colors, themeing, etc)
+    uint64_t                m_time_start        { 0 };                              // Sokol_time start time since App started running
+    double                  m_frames_per_second { 0.0 };                            // Stores current calculated frames per second
 
 
     // ---> Temp Variables, used for demo
@@ -191,7 +187,7 @@ public:
     bool saveProjects() {
         #ifndef DROP_TARGET_HTML5
             std::ofstream os("out.cereal", std::ios::binary);
-            cereal::BinaryOutputArchive archive( os );
+            cereal::BinaryOutputArchive archive(os);
 
             for (auto proj_pair : m_projects) {
                 archive( proj_pair.second );

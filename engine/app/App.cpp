@@ -50,8 +50,6 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
     m_app_name = title;
     m_bg_color = bg_color;
 
-    m_meta = new DrMeta();                                          
-
     initCallback =      std::bind(&DrApp::init,     this);
     frameCallback =     std::bind(&DrApp::frame,    this);
     eventCallback =     std::bind(&DrApp::event,    this, std::placeholders::_1);
@@ -72,7 +70,6 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
 // Destructor
 DrApp::~DrApp() {
     delete m_context;
-    delete m_meta;
 }
 
 // Returns pointer to the current running App
@@ -147,7 +144,7 @@ void DrApp::init(void) {
         simgui_desc_t simgui_desc { };
             simgui_desc.sample_count =     sapp_sample_count();
             simgui_desc.no_default_font =  true;
-            simgui_desc.dpi_scale =        sapp_dpi_scale();
+            simgui_desc.dpi_scale =        m_dpi_scale;
         simgui_setup(&simgui_desc);
 
         // Set some initial ImGui styling, framed / rounded widgets
@@ -210,7 +207,7 @@ void DrApp::init(void) {
     //##    Set Up Render Context
     //##        Handles initial pipeline / bindings
     //####################################################################################
-    m_context = new DrRenderContext(this);
+    m_context = new DrRenderContext(m_bg_color);
     
     //####################################################################################    
     //##    Load Images

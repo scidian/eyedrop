@@ -22,14 +22,11 @@ class DrRenderContext
 {
 public:
     // Constructor / Destructor
-    DrRenderContext(DrApp* parent_app);
+    DrRenderContext(DrColor color);
     ~DrRenderContext() { }
 
     // #################### VARIABLES ####################
 public:
-    // External Borrowed Pointers
-    DrApp*              m_app                   { nullptr };                        // Pointer to the parent App
-
     // Render Context Variables
     sg_pass_action      pass_action     {};     
     sg_pipeline         pipeline        {};     // Shader... Pipeline holds shader, vertex shader attribute type, primitive type, index type, cull mode, depth info, blend mode

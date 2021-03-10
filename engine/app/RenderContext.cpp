@@ -39,13 +39,12 @@ sg_blend_state (sokol_blend_alpha) {
 //####################################################################################
 //##    Constructor / Destructor
 //####################################################################################
-DrRenderContext::DrRenderContext(DrApp* parent_app) : m_app(parent_app) {
-    // Get clear color from parent DrApp
-    DrColor color = parent_app->backgroundColor();
-    float red =     static_cast<float>(color.redF());
-    float green =   static_cast<float>(color.greenF());
-    float blue =    static_cast<float>(color.blueF());
-    float alpha =   static_cast<float>(color.redF());
+DrRenderContext::DrRenderContext(DrColor initial_color) {
+    // Set initial background color
+    float red =     static_cast<float>(initial_color.redF());
+    float green =   static_cast<float>(initial_color.greenF());
+    float blue =    static_cast<float>(initial_color.blueF());
+    float alpha =   static_cast<float>(initial_color.redF());
 
     // Pass Action (action at start of render)
     // The default action for all pass attachments is SG_ACTION_CLEAR, with the clear color rgba = {0.5f, 0.5f, 0.5f, 1.0f}, depth=1.0 and stencil=0
