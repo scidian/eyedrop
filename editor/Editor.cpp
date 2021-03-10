@@ -52,7 +52,7 @@ void DrEditor::onCreate() {
     // std::string image_file = m_app_directory + "assets/blob.png";
     
     sfetch_request_t (sokol_fetch_image) {
-        .path = (m_app_directory + "assets/toolbar_icons/toolbar_world_graph.png").c_str(),
+        .path = (appDirectory() + "assets/toolbar_icons/toolbar_world_graph.png").c_str(),
         .buffer_ptr = m_file_buffer2,
         .buffer_size = sizeof(m_file_buffer2),
         .callback = +[](const sfetch_response_t* response) {
@@ -72,7 +72,7 @@ void DrEditor::onCreate() {
                     img_desc.mag_filter =   SG_FILTER_LINEAR;
                     img_desc.data.subimage[0][0].ptr = pixels;
                     img_desc.data.subimage[0][0].size = static_cast<size_t>(png_width * png_height * num_channels);
-                DrEditor* editor = dynamic_cast<DrEditor*>(DrApp::GetApp());
+                DrEditor* editor = dynamic_cast<DrEditor*>(g_app);
                 editor->images[EDITOR_IMAGE_WORLD_GRAPH] = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
                 free(pixels);
             }
@@ -114,8 +114,8 @@ void DrEditor::onUpdateScene() {
         m_before_keys = m_mesh_quality;
     }
 
-    sg_apply_pipeline(m_context->pipeline);
-    sg_apply_bindings(&m_context->bindings);
+    sg_apply_pipeline(renderContext()->pipeline);
+    sg_apply_bindings(&renderContext()->bindings);
     sg_apply_uniforms(SG_SHADERSTAGE_VS, SLOT_vs_params, SG_RANGE(vs_params));
     sg_apply_uniforms(SG_SHADERSTAGE_FS, SLOT_fs_params, SG_RANGE(fs_params));
     sg_draw(0, m_mesh->indices.size(), 1);
@@ -129,7 +129,7 @@ void DrEditor::onUpdateScene() {
 void DrEditor::onUpdateGUI() { 
     // Keep track of open windows / widgets
     static bool widgets[EDITOR_WIDGET_TOTAL_NUMBER];
-    if (m_first_frame) {
+    if (isFirstFrame()) {
         std::fill(widgets, widgets + EDITOR_WIDGET_TOTAL_NUMBER, true);
         widgets[EDITOR_WIDGET_THEME] = false;
         widgets[EDITOR_WIDGET_STYLE] = false;
@@ -200,10 +200,10 @@ void DrEditor::onUpdateGUI() {
     }   
 
     // Theme selector
-    if (widgets[EDITOR_WIDGET_THEME] || m_first_frame) {
+    if (widgets[EDITOR_WIDGET_THEME] || isFirstFrame()) {
         //ImGui::SetNextWindowPos(ImVec2(100, 200));
         ImGui::SetNextWindowContentSize(ImVec2(250, 250));
-        ThemeSelectorUI(widgets[EDITOR_WIDGET_THEME], child_flags, m_first_frame);
+        ThemeSelectorUI(widgets[EDITOR_WIDGET_THEME], child_flags, isFirstFrame());
     }
 }
 
@@ -284,7 +284,7 @@ void DrEditor::onEvent(const sapp_event* event) {
                 .buffer_size = sizeof(m_file_buffer),
                 .callback = +[](const sapp_html5_fetch_response* response) {
                     if (response->succeeded) {
-                        DrApp::GetApp()->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+                        g_app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
                     } else {
                         // File too big if (response->error_code == SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
                     }
@@ -299,7 +299,7 @@ void DrEditor::onEvent(const sapp_event* event) {
                 .buffer_size = sizeof(m_file_buffer),
                 .callback = +[](const sfetch_response_t* response) {
                     if (response->fetched) {
-                        DrApp::GetApp()->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+                        g_app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
                     } else {
                         // File too big if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
                     }                   

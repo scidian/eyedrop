@@ -11,6 +11,7 @@
 #include "core/imaging/Filter.h"
 #include "core/Math.h"
 #include "core/Strings.h"
+#include "engine/ecs/Coordinator.h"
 #include "engine/scene3d/Mesh.h"
 #include "App.h"
 #include "Image.h"
@@ -22,9 +23,10 @@
 
 
 //####################################################################################
-//##    Definition of File Scope Globals
+//##    Definition of Global Variables
 //####################################################################################
-DrApp*          l_app =         nullptr;                                            // Pointer to App singleton
+DrApp*              g_app =         nullptr;                                        // App singleton
+DrCoordinator*      g_ecs =         nullptr;                                        // ECS singleton
 
 
 //####################################################################################
@@ -45,16 +47,22 @@ extern "C" void cleanupWrapper()                        { cleanupCallback(); }
 //##    Constructor / Destructor 
 //####################################################################################
 DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
-    l_app = this;
+    // Assign global pointer to the current App
+    g_app = this;
 
+    // Initialize Entity Component System
+    m_coordinator = new DrCoordinator();        
+    m_coordinator->Init();
+
+    // Set locals
     m_app_name = title;
     m_bg_color = bg_color;
 
+    // Initialize Sokol App
     initCallback =      std::bind(&DrApp::init,     this);
     frameCallback =     std::bind(&DrApp::frame,    this);
     eventCallback =     std::bind(&DrApp::event,    this, std::placeholders::_1);
     cleanupCallback =   std::bind(&DrApp::cleanup,  this);
-
     m_sokol_app.window_title =          title.c_str();
     m_sokol_app.init_cb =               initWrapper;    
     m_sokol_app.frame_cb =              frameWrapper;
@@ -70,10 +78,8 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
 // Destructor
 DrApp::~DrApp() {
     delete m_context;
+    delete m_coordinator;
 }
-
-// Returns pointer to the current running App
-DrApp* DrApp::GetApp() { return l_app; }
 
 // Sets application name, updates title bar
 void DrApp::setAppName(std::string name) { 
@@ -371,7 +377,7 @@ void DrApp::loadImage(std::string filename) {
         .callback = +[](const sfetch_response_t* response) {
             if (response->fetched) {
                 // File data has been fetched, since we provided a big-enough buffer we can be sure that all data has been loaded here
-                DrApp::GetApp()->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+                g_app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
             } else if (response->finished) {
                 // If loading the file failed, set clear color to signal reason
                 if (response->failed) { /*response->error_code*/ }

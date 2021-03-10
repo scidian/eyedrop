@@ -18,7 +18,7 @@
 //##    Decimal Strings
 //############################
 /// @brief: Returns number as string with decimal_places precision
-template <typename T> std::string RoundToDecimalPlace(const T& number, const int decimal_places) {
+template<typename T> std::string RoundToDecimalPlace(const T& number, const int decimal_places) {
     double num_as_double = static_cast<double>(number);
     std::stringstream ss;
     ss << std::fixed;

@@ -10,7 +10,7 @@
 #define DR_PROJECT_H
 
 // Includes
-#include "Types.h"
+#include "../ecs/Types.h"
 
 // Project Constants
 #define DEFAULT_PROJECT_WIDTH            800            // Default Width  for Game
@@ -67,8 +67,8 @@ public:
     void                setGeneratorKeyStartNumber(long initial_key)    { m_key_generator = initial_key; }
 
     // Serialization 
-    template <class Archive>
-    void serialize( Archive & ar, unsigned int version ) {
+    template<class Archive>
+    void serialize(Archive & ar, unsigned int version) {
         ar( m_key_generator,
             m_name, 
             m_file_path_name, 

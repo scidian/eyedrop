@@ -10,9 +10,7 @@
 #define DR_APP_H
 
 // ##### STL
-#include <fstream>
-#include <map>
-#include <string>
+#include <fstream>      // For Cereal
 
 // ##### 3rd Party
 #include "3rd_party/sokol/sokol_app.h"
@@ -53,11 +51,12 @@
 #include "core/imaging/Color.h"
 #include "engine/data/Game.h"
 #include "engine/data/Project.h"
-#include "engine/data/Types.h"
+#include "engine/ecs/Types.h"
 #include "engine/scene3d/Mesh.h"
 
 // Forward Declarations
 class DrApp;
+class DrCoordinator;
 class DrRenderContext;
 
 //####################################################################################
@@ -68,10 +67,16 @@ class DrRenderContext;
 
 
 //####################################################################################
+//##    Globals, assigned in App.h
+//####################################################################################
+extern DrApp*               g_app;                                                  // App singleton
+
+
+//####################################################################################
 //##    Local Structs / Defines
 //############################
-typedef std::map<std::string, std::shared_ptr<DrProject>>    GameMap;               // Holds data of open Game instances
-typedef std::map<std::string, std::shared_ptr<DrProject>>    ProjectMap;            // Holds data of open Projects
+typedef std::map<std::string, std::shared_ptr<DrGame>>      GameMap;                // Holds data of open Game instances
+typedef std::map<std::string, std::shared_ptr<DrProject>>   ProjectMap;             // Holds data of open Projects
 
 
 //####################################################################################
@@ -85,14 +90,12 @@ public:
     DrApp(std::string title = "Drop Creator", DrColor bg_color = DROP_COLOR_BLACK, int width = 800, int height = 600);
     ~DrApp();
 
-    // Returns pointer to the current running App
-    static DrApp* GetApp();
-
     // #################### VARIABLES ####################
-protected:
+private:
     // Modules
     sapp_desc               m_sokol_app;                                            // Sokol_app descriptor for this Window
     DrRenderContext*        m_context               { nullptr };                    // Rendering context for this App (currently built on Sokol_Gfx)
+    DrCoordinator*          m_coordinator           { nullptr };                    // Entity Component System
 
     // Data
     GameMap                 m_game                  { };                            // Collection of open Game instances
@@ -105,10 +108,6 @@ protected:
     int                     m_width                 { 800 };                        // Window width
     int                     m_height                { 600 };                        // Window height
     float                   m_dpi_scale             { 1.f };                        // Dpi scale of device we're running on
-
-    // Fetch / Drag & Drop Buffers
-    uint8_t                 m_file_buffer[MAX_FILE_SIZE];
-    uint8_t                 m_file_buffer2[MAX_FILE_SIZE];
 
     // Fonts
     FONScontext*            m_fontstash;
@@ -124,6 +123,11 @@ protected:
     bool                    m_first_frame       { true };                           // Turns false after first frame, allows for some initialization (colors, themeing, etc)
     uint64_t                m_time_start        { 0 };                              // Sokol_time start time since App started running
     double                  m_frames_per_second { 0.0 };                            // Stores current calculated frames per second
+
+protected:
+    // Fetch / Drag & Drop Buffers
+    uint8_t                 m_file_buffer[MAX_FILE_SIZE];
+    uint8_t                 m_file_buffer2[MAX_FILE_SIZE];
 
 
     // ---> Temp Variables, used for demo
@@ -159,28 +163,34 @@ public:
 
     // #################### INTERNAL FUNCTIONS ####################
 public:
-    // Mesh
-    void calculateMesh(bool reset_position);
-    void loadImage(std::string filename);
-    void initImage(stbi_uc *buffer_ptr, int fetched_size);
-
     // Sokol Related
-    void run() { sapp_run(m_sokol_app); }
+    void            run() { sapp_run(m_sokol_app); }                                // Starts Sokol App
+    void            init(void);                                                     // Linked to internal sokol callbacks
+    void            frame(void);                                                    // Linked to internal sokol callbacks
+    void            event(const sapp_event *event);                                 // Linked to internal sokol callbacks
+    void            cleanup(void);                                                  // Linked to internal sokol callbacks
 
-    // Linked to internal sokol callbacks
-    void init(void);
-    void frame(void);
-    void event(const sapp_event *event);
-    void cleanup(void);
+    // Singletons
+    DrRenderContext*    renderContext()                                 { return m_context; }
+    DrCoordinator*      ecs()                                           { return m_coordinator; }
 
-    // Local Variable Functions
+    // Local Variable Getters
     std::string         appName()                                       { return m_app_name; }
-    void                setAppName(std::string name);
+    std::string         appDirectory()                                  { return m_app_directory; }
     DrColor             backgroundColor()                               { return m_bg_color; }
     int                 getWidth() { return m_width; }
     int                 getHeight() { return m_height; }
 
+    // Local Variable Setters
+    void                setAppName(std::string name);
+
+    // Mesh
+    void                calculateMesh(bool reset_position);
+    void                loadImage(std::string filename);
+    void                initImage(stbi_uc *buffer_ptr, int fetched_size);
+
     // Timer Functions
+    bool                isFirstFrame()                                  { return m_first_frame; }
     double              framesPerSecond()                               { return m_frames_per_second; }
 
     // Serialization

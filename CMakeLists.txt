@@ -33,9 +33,9 @@ set(APP_TYPE        "editor")
 set(DEBUG_MODE      "true")
 
 # For testing no-gui html5 build:
-#set(EXPORT_TARGET   "web")
-#set(APP_TYPE        "player")
-#set(DEBUG_MODE      "false")  
+# set(EXPORT_TARGET   "web")
+# set(APP_TYPE        "player")
+# set(DEBUG_MODE      "false")  
 
 ####################################################################################
 ####################################################################################

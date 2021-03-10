@@ -9,12 +9,6 @@
 #ifndef DR_BLANK_H
 #define DR_BLANK_H
 
-// Includes
-#include <string>
-
-// Forward Declarations
-class OtherClass;
-
 
 //####################################################################################
 //##    Dr 
@@ -45,5 +39,6 @@ public:
 
 };
 
-
 #endif  // DR_BLANK_H
+
+

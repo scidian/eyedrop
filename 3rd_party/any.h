@@ -1,7 +1,7 @@
 //
 // Description:     Any Lite
 // Author:          Martin Moene
-// License:         Distributed under the Boost Software License, Version 1.0.v
+// License:         Distributed under the Boost Software License, Version 1.0
 // Source(s):       https://github.com/martinmoene/any-lite
 //
 // Copyright (c) 2016-2018 Martin Moene
