@@ -24,10 +24,14 @@ struct Transform2D {
 };
 
 
-#ifdef REGISTER_ECS_COMPONENT_TRANSFORM2D
-	void RegisterMetaData () {
-		AddProperty("Locaitron", "This is the location", "#FF0000", Proieprty_Type::Slider, "Tree.png")
-	}
+//####################################################################################
+//##    Register Meta Data
+//############################
+#ifdef REGISTER_META_DATA
+    RegisterComponentData<Transform2D> transform2d_component_data { 
+		"Transform 2D", 
+		"Describes the location of this object in 2D space." 
+	};
 #endif
 
 

@@ -42,6 +42,18 @@ private:
 
 	// #################### INTERNAL FUNCTIONS ####################
 public:
+	void EntityDestroyed(DrEntity entity) override {
+		if (m_entity_to_index.find(entity) != m_entity_to_index.end()) {
+			RemoveData(entity);
+		}
+	}
+
+	T& GetData(DrEntity entity) {
+		//assert(m_entity_to_index.find(entity) != m_entity_to_index.end() && "Retrieving non-existent component!");
+		assert((entity > KEY_START && entity < MAX_ENTITIES) && "Entity out of range!");
+		return m_component_array[m_entity_to_index[entity]];
+	}
+
 	// Adds a Component to the ComponentArray for an Entity
 	void InsertData(DrEntity entity, T component) {
 		assert(m_entity_to_index.find(entity) == m_entity_to_index.end() && "Component added to same entity more than once!");
@@ -70,18 +82,6 @@ public:
 		m_entity_to_index.erase(entity);
 		m_index_to_entity.erase(index_of_last_element);
 		--m_size;
-	}
-
-	T& GetData(DrEntity entity) {
-		//assert(m_entity_to_index.find(entity) != m_entity_to_index.end() && "Retrieving non-existent component!");
-		assert((entity > KEY_START && entity < MAX_ENTITIES) && "Entity out of range!");
-		return m_component_array[m_entity_to_index[entity]];
-	}
-
-	void EntityDestroyed(DrEntity entity) override {
-		if (m_entity_to_index.find(entity) != m_entity_to_index.end()) {
-			RemoveData(entity);
-		}
 	}
 
 };

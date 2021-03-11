@@ -9,20 +9,41 @@
 #ifndef DR_META_H
 #define DR_META_H
 
-// Forward Declares
-class DrMeta;
+// Includes
+#include <string>
+
 
 //####################################################################################
-//##    Global Declarations, Defined in build_meta.cpp
+//##    Component / Property data structs
+//############################
+struct ComponentData {
+    std::string     name;
+    std::string     description;
+};
+
+struct PropertyData {
+    std::string     name;
+    std::string     description;
+};
+
+
 //####################################################################################
-extern DrMeta*              g_meta;                                                 // Meta Data Singleton
+//##    Meta Data Funciton Declarations
+//############################
+void AddMetaComponent(const char* type_name, std::string comp_name, std::string description);
 
 
-void RegisterMetaData () 
-
-
-
-
+//####################################################################################
+//##    Template Class, calls this funciton that registers the meta data at initialization
+//############################
+template<typename T>
+class RegisterComponentData { 
+public:
+    RegisterComponentData(std::string comp_name, std::string description) { 
+        const char* type_name = typeid(T).name();
+	    AddMetaComponent(type_name, comp_name, description); 
+    } 
+};
 
 #endif  // DR_META_H
 
