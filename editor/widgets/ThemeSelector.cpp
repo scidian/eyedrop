@@ -29,7 +29,7 @@ ImVec4 adjust_color(ImVec4 start, float adjust, float alpha) {
 }
 
 // Shows Selector Widget
-void ThemeSelectorUI(bool &open, ImGuiWindowFlags flags, bool force) {
+void ThemeSelectorUI(bool& open, ImGuiWindowFlags flags, bool force) {
     if ((open == false) && (force == false)) return;
     
     ImGui::Begin("Style Selector", &open, flags);

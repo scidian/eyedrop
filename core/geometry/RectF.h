@@ -31,9 +31,9 @@ public:
     // Constructors
     DrRectF();
     DrRectF(double x_, double y_, double width_, double height_);
-    DrRectF(const DrPointF &top_left, const DrPointF &bottom_right);
-    DrRectF(const DrRect  &r);
-    DrRectF(const DrRectF &r);
+    DrRectF(const DrPointF& top_left, const DrPointF& bottom_right);
+    DrRectF(const DrRect& r);
+    DrRectF(const DrRectF& r);
     
     // Conversion
     DrRect          toRect();

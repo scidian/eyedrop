@@ -20,7 +20,7 @@
 //####################################################################################
 //##    Deque Functions
 //############################
-template<class T> bool DequeContains(const std::deque<T> &my_deque, T variable_to_check) {
+template<class T> bool DequeContains(const std::deque<T>& my_deque, T variable_to_check) {
     bool found = (std::find(my_deque.begin(), my_deque.end(), variable_to_check) != my_deque.end());
     return found;
 }
@@ -29,7 +29,7 @@ template<class T> bool DequeContains(const std::deque<T> &my_deque, T variable_t
 //####################################################################################
 //##    List Functions
 //############################
-template<class T> bool ListContains(const std::list<T> &my_list, T variable_to_check) {
+template<class T> bool ListContains(const std::list<T>& my_list, T variable_to_check) {
     bool found = (std::find(my_list.begin(), my_list.end(), variable_to_check) != my_list.end());
     return found;
 }
@@ -38,7 +38,7 @@ template<class T> bool ListContains(const std::list<T> &my_list, T variable_to_c
 //####################################################################################
 //##    Map Functions
 //############################
-template<class T, class T2> bool MapHasKey(const std::map<T, T2> &my_map, T key_to_find) {
+template<class T, class T2> bool MapHasKey(const std::map<T, T2>& my_map, T key_to_find) {
     auto it = my_map.find(key_to_find);
     return (it != my_map.end());
 }
@@ -47,7 +47,7 @@ template<class T, class T2> bool MapHasKey(const std::map<T, T2> &my_map, T key_
 //####################################################################################
 //##    Set Functions
 //############################
-template<class T> bool SetContains(const std::set<T> &my_set, T variable_to_check) {
+template<class T> bool SetContains(const std::set<T>& my_set, T variable_to_check) {
     bool found = (std::find(my_set.begin(), my_set.end(), variable_to_check) != my_set.end());
     return found;
 }
@@ -56,12 +56,12 @@ template<class T> bool SetContains(const std::set<T> &my_set, T variable_to_chec
 //####################################################################################
 //##    Vector Functions
 //############################
-template<class T> bool VectorContains(const std::vector<T> &my_vector, T variable_to_check) {
+template<class T> bool VectorContains(const std::vector<T>& my_vector, T variable_to_check) {
     bool found = (std::find(my_vector.begin(), my_vector.end(), variable_to_check) != my_vector.end());
     return found;
 }
 
-template<class T> void VectorCopy(std::vector<T> &copy_from, std::vector<T> &copy_to) {
+template<class T> void VectorCopy(std::vector<T>& copy_from, std::vector<T>& copy_to) {
     copy_to.clear();
     if (copy_from.size() > 0) {
         for (auto element : copy_from) {

@@ -24,7 +24,7 @@ DrPolygonF::DrPolygonF() {
     m_points.clear();
 }
 
-DrPolygonF::DrPolygonF(const DrPolygonF &polygon) {
+DrPolygonF::DrPolygonF(const DrPolygonF& polygon) {
     m_points.clear();
     for (auto point : polygon.m_points) {
         m_points.push_back(point);
@@ -62,7 +62,7 @@ Winding_Orientation DrPolygonF::orientation(DrPointF p, DrPointF q, DrPointF r) 
 }
 
 // Makes sure points are in the desired Winding Orientation
-void DrPolygonF::ensureWindingOrientation(std::vector<DrPointF> &points, Winding_Orientation direction_desired) {
+void DrPolygonF::ensureWindingOrientation(std::vector<DrPointF>& points, Winding_Orientation direction_desired) {
     Winding_Orientation winding = findWindingOrientation(points);
     if ((winding == DROP_WINDING_CLOCKWISE        && direction_desired == DROP_WINDING_COUNTERCLOCKWISE) ||
         (winding == DROP_WINDING_COUNTERCLOCKWISE && direction_desired == DROP_WINDING_CLOCKWISE))
@@ -72,7 +72,7 @@ void DrPolygonF::ensureWindingOrientation(std::vector<DrPointF> &points, Winding
 }
 
 // Returns winding direction of points
-Winding_Orientation DrPolygonF::findWindingOrientation(const std::vector<DrPointF> &points) {
+Winding_Orientation DrPolygonF::findWindingOrientation(const std::vector<DrPointF>& points) {
     size_t i1, i2;
     double area = 0;
     for (i1 = 0; i1 < points.size(); i1++) {

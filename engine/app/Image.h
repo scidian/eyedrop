@@ -41,7 +41,7 @@ private:
 
 public:
     // Constructors
-    DrImage(std::string image_name, DrBitmap &bitmap, float lod = 0.25, bool outline = true);
+    DrImage(std::string image_name, DrBitmap& bitmap, float lod = 0.25, bool outline = true);
 
     // Settings
     std::string         getName()   { return m_simple_name; }

@@ -68,7 +68,7 @@ private:
 public:
     // Constructors
     DrColor();
-    DrColor(const unsigned char &r_, const unsigned char &g_, const unsigned char &b_, const unsigned char &a_ = static_cast<unsigned char>(255));
+    DrColor(const unsigned char& r_, const unsigned char& g_, const unsigned char& b_, const unsigned char& a_ = static_cast<unsigned char>(255));
     DrColor(int r_, int g_, int b_, int a_ = 255);
     DrColor(float r_, float g_, float b_, float a_ = 1.0f);
     DrColor(double r_, double g_, double b_, double a_ = 1.0);
@@ -107,13 +107,13 @@ public:
 
 
     // Operator Overloads
-    DrColor&    operator=   (const DrColor &other);
-    DrColor     operator+   (const DrColor &other) const;
-    DrColor     operator-   (const DrColor &other) const;
+    DrColor&    operator=   (const DrColor& other);
+    DrColor     operator+   (const DrColor& other) const;
+    DrColor     operator-   (const DrColor& other) const;
     DrColor     operator*   (int k) const;
     DrColor     operator/   (int k) const;
-    bool        operator==  (const DrColor &other) const;
-    bool        operator!=  (const DrColor &other) const;
+    bool        operator==  (const DrColor& other) const;
+    bool        operator!=  (const DrColor& other) const;
 
 
     // Hsv 

@@ -15,13 +15,13 @@
 //####################################################################################
 //##    Overload Operators
 //####################################################################################
-DrVariant& DrVariant::operator=(const DrVariant &other) {
+DrVariant& DrVariant::operator=(const DrVariant& other) {
     m_value = other.value();
     m_type = other.getType();
     return *this;
 }
 
-bool DrVariant::operator==(DrVariant &other) {
+bool DrVariant::operator==(DrVariant& other) {
     if (m_type != other.getType()) return false;
     switch (m_type) {
         case Variant_Type::Bool:            return (toBool() ==     other.toBool());

@@ -6,6 +6,25 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Thu Mar 04 2021
 //
 //
+//
+//####################################################################################
+//                                                      App Hierarchy
+//                                           _________________|_________________
+//                                          |                                   |
+//                                       Project                              Game
+//                                          |                                   |
+//  Font, Image, Prefab, Shader, Sound, World, Etc... Scenes__________________Scenes
+//  |                                                     |         |
+//  |________________________Assets_______________________|       Entity
+//                              |                                   |
+//                         DrComponent----------|-------------ECS Component
+//                              |               |                   |
+//                         DrProperty           |              ECS Property
+//                              |_______________|___________________|
+//                                              |
+//                                          Meta Data
+//
+//####################################################################################
 #ifndef DR_PROJECT_H
 #define DR_PROJECT_H
 
@@ -68,7 +87,7 @@ public:
 
     // Serialization 
     template<class Archive>
-    void serialize(Archive & ar, unsigned int version) {
+    void serialize(Archive& ar, unsigned int version) {
         ar( m_key_generator,
             m_name, 
             m_file_path_name, 

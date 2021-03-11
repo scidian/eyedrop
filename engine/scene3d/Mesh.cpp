@@ -46,7 +46,7 @@ DrMesh::DrMesh() { }
 //##        Vec2 UV Texture Coordinates
 //##        Vec3 Barycentric Coordinates (gives shader a number between 0.0 and 1.0 to lerp to)
 //####################################################################################
-void DrMesh::add(const DrVec3 &vertex, const DrVec3 &normal, const DrVec2 &text_coord, Triangle_Point point_number) {
+void DrMesh::add(const DrVec3& vertex, const DrVec3& normal, const DrVec2& text_coord, Triangle_Point point_number) {
     Vertex v;
     v.px = vertex.x;
     v.py = vertex.y;
@@ -64,7 +64,7 @@ void DrMesh::add(const DrVec3 &vertex, const DrVec3 &normal, const DrVec2 &text_
     vertices.push_back(v);
 }
 
-void DrMesh::set(Vertex &from_vertex, Vertex &to_vertex) {
+void DrMesh::set(Vertex& from_vertex, Vertex& to_vertex) {
     to_vertex.px = from_vertex.px;
     to_vertex.py = from_vertex.py;
     to_vertex.pz = from_vertex.pz;

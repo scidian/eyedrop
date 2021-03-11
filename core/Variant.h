@@ -73,8 +73,8 @@ public:
     template<class T> DrVariant(T value)    { m_value = value;      m_type = Variant_Type::Unknown; }
 
     // Operator Overloads
-    DrVariant&      operator=   (const DrVariant &other);
-    bool            operator==  (DrVariant &other);
+    DrVariant&      operator=   (const DrVariant& other);
+    bool            operator==  (DrVariant& other);
 
     // Getters
     std::string     getRawType()        { return m_value.type().name(); }

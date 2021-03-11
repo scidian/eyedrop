@@ -34,17 +34,17 @@ DrPointF::DrPointF(const DrPoint point) {
 //####################################################################################
 //##    Overload Operators
 //####################################################################################
-DrPointF& DrPointF::operator=(const DrPointF &other) {
+DrPointF& DrPointF::operator=(const DrPointF& other) {
     x = other.x;
     y = other.y;
     return *this;
 }
 
-DrPointF DrPointF::operator+(const DrPointF &other) const {
+DrPointF DrPointF::operator+(const DrPointF& other) const {
     return DrPointF(x + other.x, y + other.y);
 }
 
-DrPointF DrPointF::operator-(const DrPointF &other) const {
+DrPointF DrPointF::operator-(const DrPointF& other) const {
     return DrPointF(x - other.x, y - other.y);
 }
 
@@ -62,26 +62,26 @@ DrPointF& DrPointF::operator*=(double k) {
     return *this;
 }
 
-bool DrPointF::operator==(const DrPointF &other) const {
+bool DrPointF::operator==(const DrPointF& other) const {
     return FuzzyCompare(x, other.x) && FuzzyCompare(y, other.y);
 }
 
 //####################################################################################
 //##    Point Functions
 //####################################################################################
-double DrPointF::dotProduct(const DrPointF &other) const {
+double DrPointF::dotProduct(const DrPointF& other) const {
     return x * other.x + y * other.y;
 }
 
-double DrPointF::distanceSquared(const DrPointF &to) const {
+double DrPointF::distanceSquared(const DrPointF& to) const {
     return static_cast<double>( ((to.x - x) * (to.x - x) + (to.y - y) * (to.y - y)) );
 }
 
-double DrPointF::distance(const DrPointF &to) const {
+double DrPointF::distance(const DrPointF& to) const {
     return sqrt(distanceSquared(to));
 }
 
-double DrPointF::distance(const DrPointF &segment_start, const DrPointF &segment_end) const {
+double DrPointF::distance(const DrPointF& segment_start, const DrPointF& segment_end) const {
     const double l2 = segment_start.distanceSquared(segment_end);
     if (l2 == 0.0) {
         return distance(segment_start);          // v == w case
@@ -102,7 +102,7 @@ double DrPointF::distance(const DrPointF &segment_start, const DrPointF &segment
     return distance(projection);
 }
 
-double DrPointF::decisionDistance(const std::vector<DrPointF> &DrPointFs) const {
+double DrPointF::decisionDistance(const std::vector<DrPointF>& DrPointFs) const {
     DrPointF result = DrPointFs[0];
     double dst = distance(DrPointFs[0]);
     for (std::size_t i = 1; i < DrPointFs.size(); i++) {

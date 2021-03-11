@@ -30,7 +30,7 @@
 #define KEY_START              1                            // Starting value for key generators
 
 #define MAX_ENTITIES       10000                            // Total of number of entities allowed for now
-#define MAX_COMPONENTS       256                            // Current maximum number of compoenents (uint_8), used for sizing Signature
+#define MAX_COMPONENTS        32                            // Current maximum number of compoenents (uint_8), used for sizing Signature
 
 // ECS System
 using DrEntity =            std::uint32_t;                  // Unique Entity ID Key

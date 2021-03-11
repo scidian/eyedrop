@@ -33,16 +33,16 @@ public:
     // Constructors
     DrRect();
     DrRect(int x_, int y_, int width_, int height_);
-    DrRect(const DrPoint &top_left, const DrPoint &bottom_right);
-    DrRect(const DrRect  &r);
-    DrRect(const DrRectF &r);
-    DrRect(const hmm_vec4 &v);
+    DrRect(const DrPoint& top_left, const DrPoint& bottom_right);
+    DrRect(const DrRect& r);
+    DrRect(const DrRectF& r);
+    DrRect(const hmm_vec4& v);
 
     // Conversion
     DrRectF         toRectF();
 
     // Operator Overloads
-    DrRectF&        operator=   (const DrRectF &other);
+    DrRectF&        operator=   (const DrRectF& other);
 
     // Helper Functions
     bool            contains(const DrPoint);

@@ -154,7 +154,7 @@ DrPointF RotatePointAroundOrigin(DrPointF point, DrPointF origin, double angle, 
 //##    Color Helper Functions
 //####################################################################################
 // Compares 2 colors, returns true if they are the same
-bool IsSameColor(const DrColor &color1, const DrColor &color2, double tolerance) {
+bool IsSameColor(const DrColor& color1, const DrColor& color2, double tolerance) {
     return (IsCloseTo(color1.redF(),   color2.redF(),   tolerance) &&
             IsCloseTo(color1.greenF(), color2.greenF(), tolerance) &&
             IsCloseTo(color1.blueF(),  color2.blueF(),  tolerance) &&

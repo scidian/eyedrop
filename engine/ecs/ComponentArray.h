@@ -42,7 +42,7 @@ private:
 
 	// #################### INTERNAL FUNCTIONS ####################
 public:
-	// Adds Component to Entity
+	// Adds a Component to the ComponentArray for an Entity
 	void InsertData(DrEntity entity, T component) {
 		assert(m_entity_to_index.find(entity) == m_entity_to_index.end() && "Component added to same entity more than once!");
 
@@ -73,7 +73,8 @@ public:
 	}
 
 	T& GetData(DrEntity entity) {
-		assert(m_entity_to_index.find(entity) != m_entity_to_index.end() && "Retrieving non-existent component!");
+		//assert(m_entity_to_index.find(entity) != m_entity_to_index.end() && "Retrieving non-existent component!");
+		assert((entity > KEY_START && entity < MAX_ENTITIES) && "Entity out of range!");
 		return m_component_array[m_entity_to_index[entity]];
 	}
 

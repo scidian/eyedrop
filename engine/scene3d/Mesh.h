@@ -13,7 +13,6 @@
 #include <vector>
 #include "core/geometry/Vec3.h"
 
-
 // Forward Declarations
 class DrBitmap;
 class DrImage;
@@ -89,7 +88,7 @@ public:
     int             vertexCount() const     { return vertices.size(); }
 
     // Creation Functions
-    void    initializeExtrudedImage(DrImage *image, int quality);
+    void    initializeExtrudedImage(DrImage* image, int quality);
     void    initializeTextureCone();
     void    initializeTextureCube();
     void    initializeTextureQuad();
@@ -99,20 +98,20 @@ public:
     void    smoothMesh();
 
     // Helper Functions
-    static  std::vector<DrPointF>   insertPoints(  const std::vector<DrPointF> &outline_points);
-    static  std::vector<DrPointF>   smoothPoints(  const std::vector<DrPointF> &outline_points, int neighbors, double neighbor_distance, double weight);
+    static  std::vector<DrPointF>   insertPoints(const std::vector<DrPointF>& outline_points);
+    static  std::vector<DrPointF>   smoothPoints(const std::vector<DrPointF>& outline_points, int neighbors, double neighbor_distance, double weight);
 
 
     // Extrusion Functions
-    void    extrudeFacePolygon(const std::vector<DrPointF> &outline_points, int width, int height, int steps, bool reverse = false);
-    void    triangulateFace(const std::vector<DrPointF> &outline_points, const std::vector<std::vector<DrPointF>> &hole_list,
-                            const DrBitmap &image, bool wireframe, Triangulation type, double alpha_tolerance);
+    void    extrudeFacePolygon(const std::vector<DrPointF>& outline_points, int width, int height, int steps, bool reverse = false);
+    void    triangulateFace(const std::vector<DrPointF>& outline_points, const std::vector<std::vector<DrPointF>>& hole_list,
+                            const DrBitmap& image, bool wireframe, Triangulation type, double alpha_tolerance);
 
     // Assignment
     static  void set(Vertex &from_vertex, Vertex &to_vertex);    
 
     // Building Functions
-    void    add(const DrVec3 &vertex, const DrVec3 &normal, const DrVec2 &text_coord, Triangle_Point point_number);
+    void    add(const DrVec3& vertex, const DrVec3& normal, const DrVec2& text_coord, Triangle_Point point_number);
     void    extrude(float x1, float y1, float tx1, float ty1,
                     float x2, float y2, float tx2, float ty2, int steps = 1);
     void    cube(float x1, float y1, float tx1, float ty1,

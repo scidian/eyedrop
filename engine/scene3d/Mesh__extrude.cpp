@@ -28,8 +28,7 @@
 //####################################################################################
 //##    Builds an Extruded DrImage Model
 //####################################################################################
-void DrMesh::initializeExtrudedImage(DrImage *image, int quality) {
-
+void DrMesh::initializeExtrudedImage(DrImage* image, int quality) {
     int w = image->getBitmap().width;
     int h = image->getBitmap().height;
 
@@ -222,7 +221,7 @@ void DrMesh::smoothMesh() {
 //##    Smooth / Curve a collection of points representing a 2D outline
 //####################################################################################
 // Returns a point from a vector with wrap around coverage of vector indices
-const DrPointF& pointAt(const std::vector<DrPointF> &point_list, int index) {
+const DrPointF& pointAt(const std::vector<DrPointF>& point_list, int index) {
     if (index < 0)
         return point_list[index + point_list.size()];
     else if (index >= static_cast<int>(point_list.size()))
@@ -326,7 +325,7 @@ std::vector<DrPointF> DrMesh::smoothPoints(const std::vector<DrPointF> &outline_
 //##        Useful for adding points before a smoothing function to add weight to the
 //##        middle of ong straight sections
 //####################################################################################
-std::vector<DrPointF> DrMesh::insertPoints(const std::vector<DrPointF> &outline_points) {
+std::vector<DrPointF> DrMesh::insertPoints(const std::vector<DrPointF>& outline_points) {
     std::vector<DrPointF> insert_points { };
 
     // Don't insert extra points for simple shapes
@@ -352,14 +351,14 @@ std::vector<DrPointF> DrMesh::insertPoints(const std::vector<DrPointF> &outline_
 //##    Triangulate Face and add Triangles to Vertex Data
 //####################################################################################
 // Finds average number of pixels in a small grid that are transparent
-DrColor getRoundedPixel(const DrBitmap &bitmap, const DrPointF &at_point) {
+DrColor getRoundedPixel(const DrBitmap& bitmap, const DrPointF& at_point) {
     int px = Clamp(static_cast<int>(round(at_point.x)), 0, (bitmap.width -  1));
     int py = Clamp(static_cast<int>(round(at_point.y)), 0, (bitmap.height - 1));
     return bitmap.getPixel(px, py);
 }
 
 // Finds average number of pixels in a small grid that are transparent
-double averageTransparentPixels(const DrBitmap &bitmap, const DrPointF &at_point, const double &alpha_tolerance) {
+double averageTransparentPixels(const DrBitmap& bitmap, const DrPointF& at_point, const double& alpha_tolerance) {
     int px = Clamp(static_cast<int>(round(at_point.x)), 0, (bitmap.width -  1));
     int py = Clamp(static_cast<int>(round(at_point.y)), 0, (bitmap.height - 1));
     int x_start = (px > 0) ?                 px - 1 : 0;
@@ -377,8 +376,8 @@ double averageTransparentPixels(const DrBitmap &bitmap, const DrPointF &at_point
     return (transparent_count / total_count);
 }
 
-void DrMesh::triangulateFace(const std::vector<DrPointF> &outline_points, const std::vector<std::vector<DrPointF>> &hole_list,
-                                         const DrBitmap &image, bool wireframe, Triangulation type, double alpha_tolerance) {
+void DrMesh::triangulateFace(const std::vector<DrPointF>& outline_points, const std::vector<std::vector<DrPointF>>& hole_list,
+                             const DrBitmap& image, bool wireframe, Triangulation type, double alpha_tolerance) {
     int width =  image.width;
     int height = image.height;
     double w2d = width  / 2.0;
@@ -605,7 +604,7 @@ void DrMesh::triangulateFace(const std::vector<DrPointF> &outline_points, const 
 //####################################################################################
 //##    Add Extrusion Triangles to Vertex Data
 //####################################################################################
-void DrMesh::extrudeFacePolygon(const std::vector<DrPointF> &outline_points, int width, int height, int steps, bool reverse) {
+void DrMesh::extrudeFacePolygon(const std::vector<DrPointF>& outline_points, int width, int height, int steps, bool reverse) {
     double w2d = width  / 2.0;
     double h2d = height / 2.0;
 

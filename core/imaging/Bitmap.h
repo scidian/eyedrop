@@ -44,10 +44,10 @@ public:
     // Constructors
     DrBitmap(Bitmap_Format desired_format = DROP_BITMAP_FORMAT_ARGB);
     ~DrBitmap();
-    DrBitmap(const DrBitmap &bitmap, Bitmap_Format desired_format = DROP_BITMAP_FORMAT_ARGB);
+    DrBitmap(const DrBitmap& bitmap, Bitmap_Format desired_format = DROP_BITMAP_FORMAT_ARGB);
     DrBitmap(int width_, int height_, Bitmap_Format desired_format = DROP_BITMAP_FORMAT_ARGB);
     DrBitmap(std::string filename, Bitmap_Format desired_format = DROP_BITMAP_FORMAT_ARGB);
-    DrBitmap(const unsigned char *from_data, const int &number_of_bytes,
+    DrBitmap(const unsigned char* from_data, const int& number_of_bytes,
              bool compressed = true, int width_ = 0, int height_ = 0);
 
     // Info
@@ -66,11 +66,11 @@ public:
 
     // Image Loaders
     void    loadFromFile(std::string filename, Bitmap_Format desired_format = DROP_BITMAP_FORMAT_ARGB);
-    void    loadFromMemory(const unsigned char *compressed_data, const int &number_of_bytes,
+    void    loadFromMemory(const unsigned char* compressed_data, const int& number_of_bytes,
                            bool compressed = true, int width_ = 0, int height_ = 0);
 
 
-    void    saveFormat(std::vector<unsigned char> &formatted);          // Realigns pixels with stb image format
+    void    saveFormat(std::vector<unsigned char>& formatted);          // Realigns pixels with stb image format
     int     saveAsBmp(std::string filename);                            // Returns 0 on failure, non-zero on success
     int     saveAsJpg(std::string filename, int quality = 100);         // Returns 0 on failure, non-zero on success, Quality 0-100
     int     saveAsPng(std::string filename);                            // Returns 0 on failure, non-zero on success

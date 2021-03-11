@@ -19,7 +19,7 @@
 //##    Loops through image and changes one pixel at a time based on a
 //##    premultiplied table
 //####################################################################################
-DrBitmap DrFilter::applySinglePixelFilter(Image_Filter_Type filter, const DrBitmap &from_bitmap, int value) {
+DrBitmap DrFilter::applySinglePixelFilter(Image_Filter_Type filter, const DrBitmap& from_bitmap, int value) {
     DrBitmap image = from_bitmap;
     
     int table[256];
@@ -83,7 +83,7 @@ DrBitmap DrFilter::applySinglePixelFilter(Image_Filter_Type filter, const DrBitm
 //####################################################################################
 //##    Returns True if bitmaps are identical, false if not
 //####################################################################################
-bool DrFilter::compareBitmaps(const DrBitmap &bitmap1, const DrBitmap &bitmap2) {
+bool DrFilter::compareBitmaps(const DrBitmap& bitmap1, const DrBitmap& bitmap2) {
     if (bitmap1.width  != bitmap2.width ) return false;
     if (bitmap1.height != bitmap2.height) return false;
     for (int x = 0; x < bitmap1.width; ++x) {
@@ -101,7 +101,7 @@ bool DrFilter::compareBitmaps(const DrBitmap &bitmap1, const DrBitmap &bitmap2) 
 //##        NORMAL  (inverse == false): transparent areas are black, objects are white
 //##        INVERSE (inverse == true) : transparent areas are white, objects are black
 //####################################################################################
-DrBitmap DrFilter::blackAndWhiteFromAlpha(const DrBitmap &bitmap, double alpha_tolerance, bool inverse, Bitmap_Format desired_format) {
+DrBitmap DrFilter::blackAndWhiteFromAlpha(const DrBitmap& bitmap, double alpha_tolerance, bool inverse, Bitmap_Format desired_format) {
     DrColor color1 = DROP_COLOR_TRANSPARENT;
     DrColor color2 = DROP_COLOR_WHITE;
     if (inverse) Swap(color1, color2);
@@ -132,8 +132,8 @@ DrBitmap DrFilter::blackAndWhiteFromAlpha(const DrBitmap &bitmap, double alpha_t
 #define FLOOD_WAS_PROCESSED         1
 #define FLOOD_MARKED_FOR_PROCESS    2
 
-DrBitmap DrFilter::floodFill(DrBitmap &bitmap, int at_x, int at_y, DrColor fill_color, double tolerance, Flood_Fill_Type type,
-                             int &flood_pixel_count, DrRect &flood_rect) {
+DrBitmap DrFilter::floodFill(DrBitmap& bitmap, int at_x, int at_y, DrColor fill_color, double tolerance, Flood_Fill_Type type,
+                             int& flood_pixel_count, DrRect& flood_rect) {
     flood_pixel_count = 0;
 
     // Get scan lines
@@ -235,7 +235,7 @@ DrBitmap DrFilter::floodFill(DrBitmap &bitmap, int at_x, int at_y, DrColor fill_
 //##    Fill border
 //##        Traces Border of 'rect' and makes sure to fill in any DROP_COLOR_TRANSPARENT areas with fill_color
 //####################################################################################
-void DrFilter::fillBorder(DrBitmap &bitmap, DrColor fill_color, DrRect rect) {
+void DrFilter::fillBorder(DrBitmap& bitmap, DrColor fill_color, DrRect rect) {
     DrRect fill_rect;
     int    fill_qty;
 
@@ -274,7 +274,7 @@ void DrFilter::fillBorder(DrBitmap &bitmap, DrColor fill_color, DrRect rect) {
 //####################################################################################
 #define INVERTED_COLORS     true
 
-bool DrFilter::findObjectsInBitmap(const DrBitmap &bitmap, std::vector<DrBitmap> &bitmaps, std::vector<DrRect> &rects,
+bool DrFilter::findObjectsInBitmap(const DrBitmap& bitmap, std::vector<DrBitmap>& bitmaps, std::vector<DrRect>& rects,
                         double alpha_tolerance, bool convert) {
     DrBitmap     black_white;
     if (convert) black_white = blackAndWhiteFromAlpha(bitmap, alpha_tolerance, INVERTED_COLORS);
@@ -353,7 +353,7 @@ bool DrFilter::findObjectsInBitmap(const DrBitmap &bitmap, std::vector<DrBitmap>
 #define TRACE_PROCESSED_ONCE        3           // Pixels that added to the border once
 #define TRACE_PROCESSED_TWICE       4           // Pixels that added to the border twice        (after a there and back again trace)
 
-std::vector<DrPointF> DrFilter::traceImageOutline(const DrBitmap &bitmap) {
+std::vector<DrPointF> DrFilter::traceImageOutline(const DrBitmap& bitmap) {
     // Initialize images
     DrBitmap processed = bitmap;
     int border_pixel_count = 0;

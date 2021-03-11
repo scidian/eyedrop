@@ -15,7 +15,7 @@
 
 //####################################################################################
 //##    DrVec3
-//##        3D Vector with the usual operations + - * / overloaded
+//##        3D Vector with the usual operators (+ - * / etc) overloaded
 //############################
 class DrVec3
 {
@@ -31,12 +31,12 @@ public:
     DrVec3(float  x_, float  y_, float  z_);
     DrVec3(double x_, double y_, double z_);
     DrVec3(int    x_, int    y_, int    z_);
-    DrVec3(const DrVec3 &v);
-    DrVec3(const hmm_vec3 &v);
+    DrVec3(const DrVec3& v);
+    DrVec3(const hmm_vec3& v);
 
     // Vector 3 Functions
     /// @brief Calculates triangle normal from three points of triangle
-    static DrVec3   triangleNormal(const DrVec3 &point_1, const DrVec3 &point_2, const DrVec3 &point_3);
+    static DrVec3   triangleNormal(const DrVec3& point_1, const DrVec3& point_2, const DrVec3& point_3);
 
     // Common Vector 3 Types
     static DrVec3   unitX()       { return DrVec3(1.f, 0.f, 0.f); }
@@ -54,48 +54,48 @@ public:
     // Overload Operators - Additions
     DrVec3&         operator+=  (const DrVec3 &v_);
     DrVec3&         operator+=  (float f_);
-    DrVec3          operator+   (const DrVec3 &v_) const;
+    DrVec3          operator+   (const DrVec3& v_) const;
     DrVec3          operator+   (float f_) const;
-    friend DrVec3   operator+   (const float d_, const DrVec3 &vec);                // Left hand side (lhs) scalar cwise addition
+    friend DrVec3   operator+   (const float d_, const DrVec3& vec);                // Left hand side (lhs) scalar cwise addition
 
     // Overload Operators - Subtractions
-    DrVec3&         operator-=  (const DrVec3 &v_);                                  // Opposite vector
+    DrVec3&         operator-=  (const DrVec3& v_);                                  // Opposite vector
     DrVec3&         operator-=  (float f_);
-    DrVec3          operator-   (const DrVec3 &v_) const;
+    DrVec3          operator-   (const DrVec3& v_) const;
     DrVec3          operator-   (float f_) const;
-    friend DrVec3   operator-   (const float d_, const DrVec3 &vec);                // Left hand side (lhs) scalar cwise substraction
+    friend DrVec3   operator-   (const float d_, const DrVec3& vec);                // Left hand side (lhs) scalar cwise substraction
 
     // Overload Operators - Negative
     DrVec3          operator-   () const;
 
     // Overload Operators - Comparisons
-    bool            operator!=  (const DrVec3 &v_) const;
-    bool            operator==  (const DrVec3 &d_) const;
-    bool            operator<   (const DrVec3 &v_) const;                           // No mathematical meaning, but nice for std::map ordering
+    bool            operator!=  (const DrVec3& v_) const;
+    bool            operator==  (const DrVec3& d_) const;
+    bool            operator<   (const DrVec3& v_) const;                           // No mathematical meaning, but nice for std::map ordering
 
     // Overload Operators - Divisions
     DrVec3&         operator/=  (const float d_);
     DrVec3          operator/   (const float d_) const;
-    DrVec3          operator/   (const DrVec3 &v_) const;
+    DrVec3          operator/   (const DrVec3& v_) const;
 
     // Overload Operators - Multiplication    
-    DrVec3&         operator*=  (const DrVec3 &d_);
+    DrVec3&         operator*=  (const DrVec3& d_);
     DrVec3&         operator*=  (const float d_);
-    DrVec3          operator*   (const DrVec3 &v_) const;
+    DrVec3          operator*   (const DrVec3& v_) const;
     DrVec3          operator*   (const float d_) const;                             // Right hand side (rhs) scalar multiplication
-    friend DrVec3   operator*   (const float d_, const DrVec3 &vec);                // Left  hand side (lhs) scalar multiplication
-    friend DrVec3   operator*   (const hmm_mat4 &matrix, const DrVec3 &vec);        // Left  hand side (lhs) matrix multiplication
+    friend DrVec3   operator*   (const float d_, const DrVec3& vec);                // Left  hand side (lhs) scalar multiplication
+    friend DrVec3   operator*   (const hmm_mat4& matrix, const DrVec3& vec);        // Left  hand side (lhs) matrix multiplication
 
     // Operators on Vector3
-    DrVec3          cross       (const DrVec3 &v_) const;                           // Cross product
-    DrVec3          operator%   (const DrVec3 &rhs) const;                          // Cross product
-    float           dot         (const DrVec3 &v_) const;                           // Dot product
-    float           cotan       (const DrVec3 &v_) const;                           // Cotangent (i.e. 1/tan) between 'this' and v_
+    DrVec3          cross       (const DrVec3& v_) const;                           // Cross product
+    DrVec3          operator%   (const DrVec3& rhs) const;                          // Cross product
+    float           dot         (const DrVec3& v_) const;                           // Dot product
+    float           cotan       (const DrVec3& v_) const;                           // Cotangent (i.e. 1/tan) between 'this' and v_
     float           normSquared() const;
     DrVec3          normalized() const;
     float           normalize();
     float           norm() const;
-    float           distance    (const DrVec3 &v_) const;   
+    float           distance    (const DrVec3& v_) const;   
 
     // Accessors
     const float& operator[]     (int i) const;

@@ -160,7 +160,7 @@ add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E 
 # - Android:                OpenSLES (link with OpenSLES)
 ####################################################################################
 if (EXPORT_TARGET MATCHES "osx")
-    # To optimze file size in order: -O0, -O1, -O2, -O3
+    # To optimze file size in order: -O0, -O1, -O2, -O3, 0s (size), -0fast (speed)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O1 -std=c99 -xobjective-c -fobjc-arc")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -std=c++11 -fobjc-arc")
     set(CMAKE_C_COMPILER "gcc")

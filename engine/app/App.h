@@ -67,9 +67,9 @@ class DrRenderContext;
 
 
 //####################################################################################
-//##    Globals, assigned in App.h
+//##    Global Declarations, Defined in App.cpp
 //####################################################################################
-extern DrApp*               g_app;                                                  // App singleton
+extern DrApp*               g_app;                                                  // App singleton, assigned in App::App()
 
 
 //####################################################################################
@@ -167,7 +167,7 @@ public:
     void            run() { sapp_run(m_sokol_app); }                                // Starts Sokol App
     void            init(void);                                                     // Linked to internal sokol callbacks
     void            frame(void);                                                    // Linked to internal sokol callbacks
-    void            event(const sapp_event *event);                                 // Linked to internal sokol callbacks
+    void            event(const sapp_event* event);                                 // Linked to internal sokol callbacks
     void            cleanup(void);                                                  // Linked to internal sokol callbacks
 
     // Singletons
@@ -187,7 +187,7 @@ public:
     // Mesh
     void                calculateMesh(bool reset_position);
     void                loadImage(std::string filename);
-    void                initImage(stbi_uc *buffer_ptr, int fetched_size);
+    void                initImage(stbi_uc* buffer_ptr, int fetched_size);
 
     // Timer Functions
     bool                isFirstFrame()                                  { return m_first_frame; }

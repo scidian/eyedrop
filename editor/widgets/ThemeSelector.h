@@ -18,7 +18,7 @@
 //####################################################################################
 //##    ImGui Color Theme Selector
 //############################
-void    ThemeSelectorUI(bool &open, ImGuiWindowFlags flags, bool force);
+void    ThemeSelectorUI(bool& open, ImGuiWindowFlags flags, bool force);
 
 
 #endif // DR_THEME_SELECTOR_H

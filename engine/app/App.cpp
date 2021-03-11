@@ -23,10 +23,9 @@
 
 
 //####################################################################################
-//##    Definition of Global Variables
+//##    Definition of Global Variables, Declared in App.h
 //####################################################################################
-DrApp*              g_app =         nullptr;                                        // App singleton
-DrCoordinator*      g_ecs =         nullptr;                                        // ECS singleton
+DrApp*              g_app =         nullptr;                                        // App singleton, assigned in App:App()
 
 
 //####################################################################################
@@ -329,7 +328,7 @@ void DrApp::frame(void) {
 //####################################################################################
 //##    Sokol App Events - event (input, windowing, etc)
 //####################################################################################
-void DrApp::event(const sapp_event *event) {
+void DrApp::event(const sapp_event* event) {
     // Pass event to ImGui
     #if defined (ENABLE_IMGUI)
         simgui_handle_event(event);

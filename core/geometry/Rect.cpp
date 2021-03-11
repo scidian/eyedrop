@@ -28,25 +28,25 @@ DrRect::DrRect(int x_, int y_, int width_, int height_) {
     width =     width_;
     height =    height_;
 }
-DrRect::DrRect(const DrPoint &top_left, const DrPoint &bottom_right) {
+DrRect::DrRect(const DrPoint& top_left, const DrPoint& bottom_right) {
     x =         top_left.x;
     y =         top_left.y;
     width =     (bottom_right.x - top_left.x);
     height =    (bottom_right.y - top_left.y);
 }
-DrRect::DrRect(const DrRect &r) {
+DrRect::DrRect(const DrRect& r) {
     x =         r.x;
     y =         r.y;
     width =     r.width;
     height =    r.height;
 }
-DrRect::DrRect(const DrRectF &r) {
+DrRect::DrRect(const DrRectF& r) {
     x =         static_cast<int>(r.x);
     y =         static_cast<int>(r.y);
     width =     static_cast<int>(r.width);
     height =    static_cast<int>(r.height);
 }
-DrRect::DrRect(const hmm_vec4 &v) {
+DrRect::DrRect(const hmm_vec4& v) {
     x =         static_cast<int>(v.X);
     y =         static_cast<int>(v.Y);
     width =     static_cast<int>(v.Z);

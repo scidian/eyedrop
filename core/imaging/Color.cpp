@@ -24,7 +24,7 @@ inline constexpr unsigned char operator "" _uc( unsigned long long arg ) noexcep
 DrColor::DrColor() {
     r = 0; g = 0; b = 0; a = 255;
 }
-DrColor::DrColor(const unsigned char &r_, const unsigned char &g_, const unsigned char &b_, const unsigned char &a_) {
+DrColor::DrColor(const unsigned char& r_, const unsigned char& g_, const unsigned char& b_, const unsigned char& a_) {
     r = Clamp(static_cast<unsigned char>(r_), 0_uc, 255_uc);
     g = Clamp(static_cast<unsigned char>(g_), 0_uc, 255_uc);
     b = Clamp(static_cast<unsigned char>(b_), 0_uc, 255_uc);
@@ -152,7 +152,7 @@ DrColor DrColor::lighter(int percent) {
 //####################################################################################
 //##    Overload Operators
 //####################################################################################
-DrColor& DrColor::operator=(const DrColor &other) {
+DrColor& DrColor::operator=(const DrColor& other) {
     r = other.r;
     g = other.g;
     b = other.b;
@@ -160,14 +160,14 @@ DrColor& DrColor::operator=(const DrColor &other) {
     return *this;
 }
 
-DrColor DrColor::operator+(const DrColor &other) const {
+DrColor DrColor::operator+(const DrColor& other) const {
     return DrColor(Clamp(r + other.r, 0, 255),
                    Clamp(g + other.g, 0, 255),
                    Clamp(b + other.b, 0, 255),
                    Clamp(a + other.a, 0, 255));
 }
 
-DrColor DrColor::operator-(const DrColor &other) const {
+DrColor DrColor::operator-(const DrColor& other) const {
     return DrColor(Clamp(r - other.r, 0, 255),
                    Clamp(g - other.g, 0, 255),
                    Clamp(b - other.b, 0, 255),
@@ -189,11 +189,11 @@ DrColor DrColor::operator/(int k) const {
                    Clamp(a / k, 0, 255));
 }
 
-bool DrColor::operator==(const DrColor &other) const {
+bool DrColor::operator==(const DrColor& other) const {
     return (r == other.r) && (g == other.g) && (b == other.b) && (a == other.a);
 }
 
-bool DrColor::operator!=(const DrColor &other) const {
+bool DrColor::operator!=(const DrColor& other) const {
     return (r != other.r) || (g != other.g) || (b != other.b) || (a != other.a);
 }
 

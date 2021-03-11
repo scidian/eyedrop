@@ -25,7 +25,7 @@ const int c_neighbors =             5;                  // Number of neighbors t
 //####################################################################################
 //##    Constructors
 //####################################################################################
-DrImage::DrImage(std::string image_name, DrBitmap &bitmap, float lod, bool outline) {
+DrImage::DrImage(std::string image_name, DrBitmap& bitmap, float lod, bool outline) {
     this->m_simple_name = image_name;
     this->m_bitmap = bitmap;
 

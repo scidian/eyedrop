@@ -31,7 +31,7 @@ DrBitmap::~DrBitmap() {
     data.clear(); 
 }
 
-DrBitmap::DrBitmap(const DrBitmap &bitmap, Bitmap_Format desired_format) : DrBitmap(bitmap.width, bitmap.height, desired_format) {
+DrBitmap::DrBitmap(const DrBitmap& bitmap, Bitmap_Format desired_format) : DrBitmap(bitmap.width, bitmap.height, desired_format) {
     if (bitmap.format == format) {
         channels =  bitmap.channels;
         width =     bitmap.width;
@@ -59,7 +59,7 @@ DrBitmap::DrBitmap(std::string filename, Bitmap_Format desired_format) {
     loadFromFile(filename, desired_format);
 }
 
-DrBitmap::DrBitmap(const unsigned char *from_data, const int &number_of_bytes, bool compressed, int width_, int height_) {
+DrBitmap::DrBitmap(const unsigned char* from_data, const int& number_of_bytes, bool compressed, int width_, int height_) {
     loadFromMemory(from_data, number_of_bytes, compressed, width_, height_);
 }
 
@@ -69,7 +69,7 @@ DrBitmap::DrBitmap(const unsigned char *from_data, const int &number_of_bytes, b
 //####################################################################################
 DrBitmap DrBitmap::copy() { return (*this); }
 
-DrBitmap DrBitmap::copy(DrRect &copy_rect) {
+DrBitmap DrBitmap::copy(DrRect& copy_rect) {
     // Bounds checking
     int check_left = copy_rect.left();
     int check_top  = copy_rect.top();
@@ -181,7 +181,7 @@ void DrBitmap::loadFromFile(std::string filename, Bitmap_Format desired_format) 
     stbi_image_free(ptr);                                                                       // Free the loaded pixels
 }
 
-void DrBitmap::loadFromMemory(const unsigned char *from_data, const int &number_of_bytes, bool compressed, int width_, int height_) {
+void DrBitmap::loadFromMemory(const unsigned char* from_data, const int& number_of_bytes, bool compressed, int width_, int height_) {
     // Load Raw Data
     if (compressed == false) {
         width = width_;
@@ -208,7 +208,7 @@ void DrBitmap::loadFromMemory(const unsigned char *from_data, const int &number_
 }
 
 // Aligns pixel format (stb ABGR vs QImage ARGB) for stbi_write
-void DrBitmap::saveFormat(std::vector<unsigned char> &formatted) {
+void DrBitmap::saveFormat(std::vector<unsigned char>& formatted) {
     formatted.resize(width * height * channels);
     for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {

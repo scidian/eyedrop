@@ -28,19 +28,19 @@ DrRectF::DrRectF(double x_, double y_, double width_, double height_) {
     width =     width_;
     height =    height_;
 }
-DrRectF::DrRectF(const DrPointF &top_left, const DrPointF &bottom_right) {
+DrRectF::DrRectF(const DrPointF& top_left, const DrPointF& bottom_right) {
     x =         top_left.x;
     y =         top_left.y;
     width =     (bottom_right.x - top_left.x);
     height =    (bottom_right.y - top_left.y);
 }
-DrRectF::DrRectF(const DrRect &r) {
+DrRectF::DrRectF(const DrRect& r) {
     x =         r.x;
     y =         r.y;
     width =     r.width;
     height =    r.height;
 }
-DrRectF::DrRectF(const DrRectF &r) {
+DrRectF::DrRectF(const DrRectF& r) {
     x =         r.x;
     y =         r.y;
     width =     r.width;

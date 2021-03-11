@@ -28,20 +28,20 @@ template<typename T> std::string RoundToDecimalPlace(const T& number, const int 
 }
 
 /// @brief: Removes trailing zeros from a number, returns as string
-std::string RemoveTrailingZeros(const std::string &source);
+std::string RemoveTrailingZeros(const std::string& source);
 
 
 //####################################################################################
 //##    String Functions
 //############################
 /// @brief: Returns (length) number of characters from the left side of a string
-std::string Left(const std::string &source, const size_t length);
+std::string Left(const std::string& source, const size_t length);
 
 /// @brief: Returns (length) number of characters from the right side of a string
-std::string Right(const std::string &source, const size_t length);
+std::string Right(const std::string& source, const size_t length);
 
 /// @brief: Returns true if string is a positive integer, otherwise false
-bool        IsInteger(const std::string &source);
+bool        IsInteger(const std::string& source);
 
 /// @brief: Returns integer as hex string
 std::string HexString(const int integer);

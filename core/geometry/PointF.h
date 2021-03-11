@@ -32,20 +32,20 @@ public:
     DrPointF(const DrPoint point);
 
     // Operator Overloads
-    DrPointF&   operator=   (const DrPointF &other);
-    DrPointF    operator+   (const DrPointF &other) const;
-    DrPointF    operator-   (const DrPointF &other) const;
+    DrPointF&   operator=   (const DrPointF& other);
+    DrPointF    operator+   (const DrPointF& other) const;
+    DrPointF    operator-   (const DrPointF& other) const;
     DrPointF    operator*   (double k) const;
     DrPointF    operator/   (double k) const;
     DrPointF&   operator*=  (double k);
-    bool        operator==  (const DrPointF &other) const;
+    bool        operator==  (const DrPointF& other) const;
 
     // Functions
-    double      dotProduct(const DrPointF &other) const;
-    double      distanceSquared(const DrPointF &to) const;
-    double      distance(const DrPointF &to) const;
-    double      distance(const DrPointF &segment_start, const DrPointF &segment_end) const;
-    double      decisionDistance(const std::vector<DrPointF> &points) const;
+    double      dotProduct(const DrPointF& other) const;
+    double      distanceSquared(const DrPointF& to) const;
+    double      distance(const DrPointF& to) const;
+    double      distance(const DrPointF& segment_start, const DrPointF& segment_end) const;
+    double      decisionDistance(const std::vector<DrPointF>& points) const;
 
     // Conversions
     DrPoint     toPoint();

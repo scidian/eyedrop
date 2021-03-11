@@ -46,17 +46,17 @@ DrPoint::DrPoint(const DrPointF pointf) {
 //####################################################################################
 //##    Overload Operators
 //####################################################################################
-DrPoint& DrPoint::operator=(const DrPoint &other) {
+DrPoint& DrPoint::operator=(const DrPoint& other) {
     x = other.x;
     y = other.y;
     return *this;
 }
 
-DrPoint DrPoint::operator+(const DrPoint &other) const {
+DrPoint DrPoint::operator+(const DrPoint& other) const {
     return DrPoint(x + other.x, y + other.y);
 }
 
-DrPoint DrPoint::operator-(const DrPoint &other) const {
+DrPoint DrPoint::operator-(const DrPoint& other) const {
     return DrPoint(x - other.x, y - other.y);
 }
 
@@ -68,7 +68,7 @@ DrPoint DrPoint::operator/(int k) const {
     return DrPoint(x / k, y / k);
 }
 
-bool DrPoint::operator==(const DrPoint &other) const {
+bool DrPoint::operator==(const DrPoint& other) const {
     return (x == other.x) && (y == other.y);
 }
 

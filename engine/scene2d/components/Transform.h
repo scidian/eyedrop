@@ -10,17 +10,25 @@
 #define DR_COMP_TRANSFORM2D_H
 
 #include "core/geometry/Vec3.h"
+#include "engine/data/Meta.h"
 
 
 //####################################################################################
-//##    Component: Transform2D
+//##    ECS Component: Transform2D
 //##        Used to descibe a location of a 2D object in space
 //############################
 struct Transform2D {
-	Vec3 	position;
-	Vec3 	rotation;
-	Vec3 	scale;
+	DrVec3 	position;
+	DrVec3 	rotation;
+	DrVec3 	scale;
 };
+
+
+#ifdef REGISTER_ECS_COMPONENT_TRANSFORM2D
+	void RegisterMetaData () {
+		AddProperty("Locaitron", "This is the location", "#FF0000", Proieprty_Type::Slider, "Tree.png")
+	}
+#endif
 
 
 #endif	// DR_COMP_TRANSFORM2D_H

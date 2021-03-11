@@ -16,14 +16,14 @@
 DrVec2::DrVec2()                        { x = 0.f;                      y = 0.f; }
 DrVec2::DrVec2(float f)                 { x = f;                        y = f; }
 DrVec2::DrVec2(float x_, float y_)      { x = x_;                       y = y_; }
-DrVec2::DrVec2(const DrVec2 &v)         { x = static_cast<float>(v.x);  y = static_cast<float>(v.y); }
-DrVec2::DrVec2(const hmm_vec2 &v)       { x = static_cast<float>(v.X);  y = static_cast<float>(v.Y); }
+DrVec2::DrVec2(const DrVec2& v)         { x = static_cast<float>(v.x);  y = static_cast<float>(v.y); }
+DrVec2::DrVec2(const hmm_vec2& v)       { x = static_cast<float>(v.X);  y = static_cast<float>(v.Y); }
 
 
 //####################################################################################
 //##    Overload Operators - Additions
 //####################################################################################
-DrVec2& DrVec2::operator+=(const DrVec2 &v_) {
+DrVec2& DrVec2::operator+=(const DrVec2& v_) {
     x += v_.x;
     y += v_.y;
     return *this;
@@ -35,7 +35,7 @@ DrVec2& DrVec2::operator+=(float f_) {
     return *this;
 }
 
-DrVec2 DrVec2::operator+(const DrVec2 &v_) const {
+DrVec2 DrVec2::operator+(const DrVec2& v_) const {
     return DrVec2(x+v_.x, y+v_.y);
 }
 
@@ -44,7 +44,7 @@ DrVec2 DrVec2::operator+(float f_) const {
 }
 
 // Friend function, left hand side addition
-DrVec2 operator+(const float d_, const DrVec2 &vec) {
+DrVec2 operator+(const float d_, const DrVec2& vec) {
     return DrVec2(d_+vec.x, d_+vec.y);
 }
 
@@ -52,7 +52,7 @@ DrVec2 operator+(const float d_, const DrVec2 &vec) {
 //####################################################################################
 //##    Overload Operators - Subtractions
 //####################################################################################
-DrVec2& DrVec2::operator-=(const DrVec2 &v_) {
+DrVec2& DrVec2::operator-=(const DrVec2& v_) {
     x -= v_.x;
     y -= v_.y;
     return *this;
@@ -69,14 +69,14 @@ DrVec2 DrVec2::operator-() const {
     return DrVec2(-x, -y);
 }
 
-DrVec2 DrVec2::operator-(const DrVec2 &v_) const {
+DrVec2 DrVec2::operator-(const DrVec2& v_) const {
     return DrVec2(x-v_.x, y-v_.y);
 }
 
 DrVec2 DrVec2::operator-(float f_) const { return DrVec2(x-f_, y-f_); }
 
 // Friend function, left hand side subtraction
-DrVec2 operator-(const float d_, const DrVec2 &vec) {
+DrVec2 operator-(const float d_, const DrVec2& vec) {
     return DrVec2(d_-vec.x, d_-vec.y);
 }
 
@@ -84,15 +84,15 @@ DrVec2 operator-(const float d_, const DrVec2 &vec) {
 //####################################################################################
 //##    Overload Operators - Comparisons
 //####################################################################################
-bool DrVec2::operator!=(const DrVec2 &v_) const {
+bool DrVec2::operator!=(const DrVec2& v_) const {
     return (IsCloseTo(x, v_.x, 0.001f) == false) || (IsCloseTo(y, v_.y, 0.001f) == false);
 }
 
-bool DrVec2::operator==(const DrVec2 &d_) const {
+bool DrVec2::operator==(const DrVec2& d_) const {
     return IsCloseTo(x, d_.x, 0.001f) && IsCloseTo(y, d_.y, 0.001f);
 }
 
-bool DrVec2::operator<(const DrVec2 &v_) const {
+bool DrVec2::operator<(const DrVec2& v_) const {
     if (IsCloseTo(x, v_.x, 0.001f) == false)
         return x < v_.x;
     else
@@ -113,7 +113,7 @@ DrVec2 DrVec2::operator/(const float d_) const {
     return DrVec2(x/d_, y/d_);
 }
 
-DrVec2 DrVec2::operator/(const DrVec2 &v_) const {
+DrVec2 DrVec2::operator/(const DrVec2& v_) const {
     return DrVec2(x/v_.x, y/v_.y);
 }
 
@@ -121,7 +121,7 @@ DrVec2 DrVec2::operator/(const DrVec2 &v_) const {
 //####################################################################################
 //##    Overload Operators - Divisions
 //####################################################################################
-DrVec2& DrVec2::operator*=(const DrVec2 &d_) {
+DrVec2& DrVec2::operator*=(const DrVec2& d_) {
     x *= d_.x;
     y *= d_.y;
     return *this;
@@ -133,7 +133,7 @@ DrVec2& DrVec2::operator*=(const float d_) {
     return *this;
 }
 
-DrVec2 DrVec2::operator*(const DrVec2 &v_) const {
+DrVec2 DrVec2::operator*(const DrVec2& v_) const {
     return DrVec2(x*v_.x, y*v_.y);
 }
 
@@ -143,7 +143,7 @@ DrVec2 DrVec2::operator*(const float d_) const {
 }
 
 // Left hand side scalar multiplication
-DrVec2 operator*(const float d_, const DrVec2 &vec) {
+DrVec2 operator*(const float d_, const DrVec2& vec) {
     return DrVec2(d_*vec.x, d_*vec.y);
 }
 
@@ -151,7 +151,7 @@ DrVec2 operator*(const float d_, const DrVec2 &vec) {
 //##    Operators on DrVec2
 //####################################################################################
 // Dot product
-float DrVec2::dot(const DrVec2 &v_) const {
+float DrVec2::dot(const DrVec2& v_) const {
     return x*v_.x + y*v_.y;
 }
 
