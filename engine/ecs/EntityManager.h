@@ -56,13 +56,13 @@ public:
 
 	// Stores Archetype of Entity for fast lookup
 	void SetArchetype(DrEntity entity, DrArchetype archetype) {
-		assert((entity > KEY_START && entity < MAX_ENTITIES) && "Entity out of range!");
+		assert((entity >= KEY_START && entity < MAX_ENTITIES) && "Entity out of range!");
 		m_archetypes[entity] = archetype;
 	}
 
 	// Retrieve Entity Archetype
 	DrArchetype GetArchetype(DrEntity entity) {
-		assert((entity > KEY_START && entity < MAX_ENTITIES) && "Entity out of range!");
+		assert((entity >= KEY_START && entity < MAX_ENTITIES) && "Entity out of range!");
 		return m_archetypes[entity];
 	}
 

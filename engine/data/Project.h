@@ -28,7 +28,7 @@
 #define DR_PROJECT_H
 
 // Includes
-#include "engine/data/Types.h"
+#include "engine/ecs/Coordinator.h"
 
 // Project Constants
 #define DEFAULT_PROJECT_WIDTH            800            // Default Width  for Game

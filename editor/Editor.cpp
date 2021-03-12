@@ -27,6 +27,12 @@
 #include "Types.h"
 
 
+// !!!!! #TEMP
+#include "engine/scene2d/components/Transform.h"
+
+
+
+
 //####################################################################################
 //##    Program Start
 //####################################################################################
@@ -42,6 +48,24 @@ int main(int argc, char* argv[]) {
 //##    On Create
 //####################################################################################
 void DrEditor::onCreate() { 
+
+
+
+    int entity = ecs()->CreateEntity();
+
+    ecs()->RegisterComponent<Transform2D>();
+
+    ecs()->AddComponent(
+        entity,
+        Transform2D {
+            .position = std::vector<double>({1.0, 2.0, 3.0}),
+            .rotation = std::vector<double>({4.0, 5.0, 6.0}),
+            .scale =    std::vector<double>({7.0, 8.0, 9.0}),
+        });
+
+
+
+
 
     for (int i = 0; i < EDITOR_IMAGE_TOTAL; i++) {
         images[i] = nullptr;

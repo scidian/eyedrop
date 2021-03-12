@@ -6,54 +6,47 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Thu Mar 11 2021
 //
 //
-//####################################################################################
-//##    Register Components / Properties
-//####################################################################################
 #include "engine/data/Meta.h"
 
-// Tell headers we want to register data
-#define REGISTER_META_DATA
-
 //####################################################################################
+//##    Register Components / Properties with Meta Data System
 //####################################################################################
-//####################################################################################
-//############################ Include all Components Here!!!!!
+//##
+#define REGISTER_META_DATA                  // Tell headers we want to register data
+//##
+//##    !!!!! NOTE: Include all Components below
+//##
 #include "engine/scene2d/components/Transform.h"
 
 
 
 
-
 //####################################################################################
 //####################################################################################
-//####################################################################################
-
 //####################################################################################
 //##    Local Static Variables
 //####################################################################################
-static std::map<const char*, ComponentData>                     l_components    { };        // Holds data about DrComponent / ECS Component structs
-static std::map<std::pair<const char*, int>, PropertyData>      l_properties    { };        // Holds data about Properies (of Components)
+static std::unordered_map<const char*, ComponentData>   l_components    { };        // Holds data about DrComponent / ECS Component structs and its Properties
+
 
 //####################################################################################
 //##    Meta Data Functions
 //####################################################################################
-void AddMetaComponent(const char* type_name, std::string comp_name, std::string description) {
-    ComponentData (comp_data) {
+void AddMetaComponent(const char* type_name, std::string comp_name, std::string comp_description) {
+    ComponentData comp_data {
         .name =             comp_name,
-        .description =      description,
-        .property_count =   0,
+        .description =      comp_description,
     };
-    l_components.insert({type_name, comp_data});
+    l_components.insert(std::make_pair(type_name, comp_data));
 }
 
-void AddMetaProperty(const char* type_name, std::string prop_name, std::string description) {
+void AddMetaProperty(const char* type_name, std::string prop_name, std::string prop_description) {
     PropertyData (prop_data) {
         .name =             prop_name,
-        .description =      description,
+        .description =      prop_description,
     };
     assert(l_components.find(type_name) != l_components.end() && "Component never set with AddMetaComponent before calling AddMetaProperty!");
-    int property_number = l_components[type_name].property_count++;
-    l_properties.insert({std::make_pair(type_name, property_number), prop_data});
+    l_components[type_name].properties.insert(std::make_pair(l_components[type_name].properties.size(), prop_data));
 }
 
 

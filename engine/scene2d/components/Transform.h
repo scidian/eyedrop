@@ -19,9 +19,9 @@
 //##        Used to descibe a location of a 2D object in space
 //############################
 struct Transform2D {
-	DrVec3 	position;
-	DrVec3 	rotation;
-	DrVec3 	scale;
+	std::vector<double> 	position  	{ };
+	std::vector<double> 	rotation	{ };
+	std::vector<double>		scale		{ };
 };
 
 

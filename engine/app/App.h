@@ -49,14 +49,12 @@
 #include "core/geometry/Matrix.h"
 #include "core/geometry/Vec2.h"
 #include "core/imaging/Color.h"
-#include "engine/data/Types.h"
 #include "engine/data/Game.h"
 #include "engine/data/Project.h"
 #include "engine/scene3d/Mesh.h"
 
 // Forward Declarations
 class DrApp;
-class DrCoordinator;
 class DrRenderContext;
 
 //####################################################################################
@@ -130,7 +128,7 @@ protected:
     uint8_t                 m_file_buffer2[MAX_FILE_SIZE];
 
 
-    // ---> Temp Variables, used for demo
+    // !!!!! #TEMP: Variables, used for demo
     std::shared_ptr<DrMesh>     m_mesh = std::make_shared<DrMesh>();
     std::shared_ptr<DrImage>    m_image = nullptr;                              
     int                         m_mesh_quality = 5;
@@ -148,7 +146,7 @@ protected:
     bool                        m_is_mouse_down = false;
     float                       m_zoom = 1.5f;
     bool                        m_wireframe = true;
-    // <--- End Temp Variables
+    // !!!!! End temp variables
 
 
     

@@ -10,7 +10,7 @@
 #define DR_GAME_H
 
 // Includes
-#include "engine/data/Types.h"
+#include "engine/ecs/Coordinator.h"
 
 
 //####################################################################################

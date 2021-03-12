@@ -10,31 +10,29 @@
 #define DR_META_H
 
 // Includes
-#include <map>
-#include <string>
+#include "engine/data/Types.h"
 
 
 //####################################################################################
 //##    Component / Property data structs
 //############################
-struct ComponentData {
-    std::string     name;
-    std::string     description;
-    // ##### Internal
-    int             property_count = 0;         // DO NOT SET! Automated increase during call to AddMetaProperty()
+struct PropertyData {
+    std::string                     name            { "" };
+    std::string                     description     { "" };    
 };
 
-struct PropertyData {
-    std::string     name;
-    std::string     description;
+struct ComponentData {
+    std::string                     name            { "" };
+    std::string                     description     { "" };
+    std::map<int, PropertyData>     properties      { };
 };
 
 
 //####################################################################################
 //##    Meta Data Funciton Declarations
 //############################
-void AddMetaComponent   (const char* type_name, std::string comp_name, std::string description);
-void AddMetaProperty    (const char* type_name, std::string prop_name, std::string description);
+void AddMetaComponent   (const char* type_name, std::string comp_name, std::string comp_description);
+void AddMetaProperty    (const char* type_name, std::string prop_name, std::string prop_description);
 
 
 //####################################################################################
@@ -44,18 +42,18 @@ void AddMetaProperty    (const char* type_name, std::string prop_name, std::stri
 template<typename T>
 class RegisterMetaComponent { 
 public:
-    RegisterMetaComponent(std::string comp_name, std::string description) { 
+    RegisterMetaComponent(std::string comp_name, std::string comp_description) { 
         const char* type_name = typeid(T).name();
-	    AddMetaComponent(type_name, comp_name, description); 
+	    AddMetaComponent(type_name, comp_name, comp_description); 
     } 
 };
 
 template<typename T>
 class RegisterMetaProperty { 
 public:
-    RegisterMetaProperty(std::string prop_name, std::string description) { 
+    RegisterMetaProperty(std::string prop_name, std::string prop_description) { 
         const char* type_name = typeid(T).name();
-	    AddMetaProperty(type_name, prop_name, description); 
+	    AddMetaProperty(type_name, prop_name, prop_description); 
     } 
 };
 
