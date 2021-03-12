@@ -10,7 +10,7 @@
 #define DR_ECS_COMPONENT_ARRAY_H
 
 // Includes
-#include "Types.h"
+#include "engine/data/Types.h"
 
 
 //####################################################################################

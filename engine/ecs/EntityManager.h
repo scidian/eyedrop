@@ -10,10 +10,7 @@
 #define DR_ECS_ENTITY_MANAGER_H
 
 // Includes
-#include "Types.h"
-
-// Defines
-#define MAX_ENTITIES       10000
+#include "engine/data/Types.h"
 
 
 //####################################################################################

@@ -9,6 +9,7 @@
 #ifndef DR_COMP_TRANSFORM2D_H
 #define DR_COMP_TRANSFORM2D_H
 
+#include "3rd_party/boost/pfr.hpp"
 #include "core/geometry/Vec3.h"
 #include "engine/data/Meta.h"
 
@@ -28,9 +29,14 @@ struct Transform2D {
 //##    Register Meta Data
 //############################
 #ifdef REGISTER_META_DATA
-    RegisterComponentData<Transform2D> transform2d_component_data { 
+    RegisterMetaComponent<Transform2D> transform2d_ecs_component { 
 		"Transform 2D", 
-		"Describes the location of this object in 2D space." 
+		"Describes the location and positioning of this 2D object." 
+	};
+
+	RegisterMetaProperty<Transform2D> transform2d_property_position { 
+	 	"Position", 
+	 	"Location of this object in 2D space." 
 	};
 #endif
 

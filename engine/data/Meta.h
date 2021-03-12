@@ -10,6 +10,7 @@
 #define DR_META_H
 
 // Includes
+#include <map>
 #include <string>
 
 
@@ -19,6 +20,8 @@
 struct ComponentData {
     std::string     name;
     std::string     description;
+    // ##### Internal
+    int             property_count = 0;         // DO NOT SET! Automated increase during call to AddMetaProperty()
 };
 
 struct PropertyData {
@@ -30,18 +33,29 @@ struct PropertyData {
 //####################################################################################
 //##    Meta Data Funciton Declarations
 //############################
-void AddMetaComponent(const char* type_name, std::string comp_name, std::string description);
+void AddMetaComponent   (const char* type_name, std::string comp_name, std::string description);
+void AddMetaProperty    (const char* type_name, std::string prop_name, std::string description);
 
 
 //####################################################################################
-//##    Template Class, calls this funciton that registers the meta data at initialization
+//##    Template Classes
+//##        Define these classes to register Meta Data
 //############################
 template<typename T>
-class RegisterComponentData { 
+class RegisterMetaComponent { 
 public:
-    RegisterComponentData(std::string comp_name, std::string description) { 
+    RegisterMetaComponent(std::string comp_name, std::string description) { 
         const char* type_name = typeid(T).name();
 	    AddMetaComponent(type_name, comp_name, description); 
+    } 
+};
+
+template<typename T>
+class RegisterMetaProperty { 
+public:
+    RegisterMetaProperty(std::string prop_name, std::string description) { 
+        const char* type_name = typeid(T).name();
+	    AddMetaProperty(type_name, prop_name, description); 
     } 
 };
 

@@ -16,20 +16,19 @@
 //  Font, Image, Prefab, Shader, Sound, World, Etc... Scenes__________________Scenes
 //  |                                                     |         |
 //  |________________________Assets_______________________|       Entity
-//                              |                                   |
-//                         DrComponent----------|-------------ECS Component
-//                              |               |                   |
-//                         DrProperty           |              ECS Property
-//                              |_______________|___________________|
-//                                              |
-//                                          Meta Data
+//                              |                                   |                ____
+//                      Component Structs*-------|---------ECS Component Structs*        |
+//                                               |                                       |---- Meta Data
+//                                   Properties (Member Variables)                   ____|
 //
+//  *NOTE: For use with Boost.PFR, Asset and Entity Components MUST BE aggregates 
+//         (i.e. simple structs with no functions and public member variables)
 //####################################################################################
 #ifndef DR_PROJECT_H
 #define DR_PROJECT_H
 
 // Includes
-#include "../ecs/Types.h"
+#include "engine/data/Types.h"
 
 // Project Constants
 #define DEFAULT_PROJECT_WIDTH            800            // Default Width  for Game

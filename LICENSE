@@ -48,36 +48,37 @@
 
 ## System libraries:
 
-- Any-lite (Boost): https://github.com/martinmoene/any-lite                     
-- Cereal (BSD): https://github.com/USCiLab/cereal
-- Handmade-Math (CC0): https://github.com/StrangeZak/Handmade-Math
-- Stb (MIT): https://github.com/nothings/stb
-- Sokol (ZLIB): https://github.com/floooh/sokol
-- Whereami (MIT): https://github.com/gpakosz/whereami
+- Any-lite              (Boost)     C++11   https://github.com/martinmoene/any-lite       
+- Boost.PFR             (BSL)       C++14   https://github.com/boostorg/pfr              
+- Cereal                (BSD)       C++11   https://github.com/USCiLab/cereal
+- Handmade-Math         (CC0)       C99     https://github.com/StrangeZak/Handmade-Math
+- Stb                   (MIT):      C99     https://github.com/nothings/stb
+- Sokol                 (ZLIB):     C99     https://github.com/floooh/sokol
+- Whereami              (MIT):      C99     https://github.com/gpakosz/whereami
 
 
 ## Gui
 
-- Dear ImGui (MIT): https://github.com/ocornut/imgui
-- Fontstash (ZLIB): https://github.com/memononen/fontstash
-- IconFontCppHeaders (ZLIB): https://github.com/juliettef/IconFontCppHeaders
+- Dear ImGui            (MIT):      Flex    https://github.com/ocornut/imgui
+- Fontstash             (ZLIB):     C99     https://github.com/memononen/fontstash
+- IconFontCppHeaders    (ZLIB):     Flex    https://github.com/juliettef/IconFontCppHeaders
 
 
 ## Algorithim libraries:
 
-- Delaunator (MIT): https://github.com/soerendd/delaunator-cpp
-- Mesh Optimizer (MIT): https://github.com/zeux/meshoptimizer 
-- Poly Partition (MIT): https://github.com/ivanfratric/polypartition
-- Ramer-Douglas-Peucker (CC0): https://gist.github.com/TimSC/0813573d77734bcb6f2cd2cf6cc7aa51
+- Delaunator            (MIT):      C++11   https://github.com/soerendd/delaunator-cpp
+- Mesh Optimizer        (MIT):      C++11   https://github.com/zeux/meshoptimizer 
+- Poly Partition        (MIT):      C++11   https://github.com/ivanfratric/polypartition
+- Ramer-Douglas-Peucker (CC0):      C++11   https://gist.github.com/TimSC/0813573d77734bcb6f2cd2cf6cc7aa51
 
 
 ## Tools
 
-- Hex Embed (ZLIB): https://github.com/codeplea/hexembed
-- Sokol Shdc (MIT): https://github.com/floooh/sokol-tools
+- Hex Embed             (ZLIB)      https://github.com/codeplea/hexembed
+- Sokol Shdc            (MIT)       https://github.com/floooh/sokol-tools
 
 
 ## Fonts
 
-- Aileron (CC0): https://github.com/Nicholaiii/Aileron (source: http://dotcolon.net)
-- Font Awesome 5 (): https://github.com/FortAwesome/Font-Awesome
+- Aileron               (CC0)       https://github.com/Nicholaiii/Aileron (source: http://dotcolon.net)
+- Font Awesome 5        (OFL)       https://github.com/FortAwesome/Font-Awesome

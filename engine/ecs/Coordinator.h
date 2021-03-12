@@ -10,11 +10,11 @@
 #define DR_ECS_COORDINATOR_H
 
 // Includes
+#include "engine/data/Types.h"
 #include "ComponentManager.h"
 #include "EntityManager.h"
 #include "EventManager.h"
 #include "SystemManager.h"
-#include "Types.h"
 
 
 //####################################################################################

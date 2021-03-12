@@ -9,8 +9,8 @@
 #ifndef DR_ECS_COMPONENT_MANAGER_H
 #define DR_ECS_COMPONENT_MANAGER_H
 
+#include "engine/data/Types.h"
 #include "ComponentArray.h"
-#include "Types.h"
 
 
 //####################################################################################
