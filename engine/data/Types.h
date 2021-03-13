@@ -31,7 +31,8 @@ using DrArchetype =         std::bitset<MAX_COMPONENTS>;    // A bitset to repre
 //##    Meta Data Types
 //############################
 enum class Meta_Comp {
-    Name,                   // string   Display name of this Component
+    Name,                   // string   Member variable name
+    Title,                  // string   Display name of this Component
     About,                  // string   Description to show in Help Advisor
     Color,                  // uint     Color of Header ion Inspector
     Icon,                   // enum     Mini icon to show in Inspector
@@ -39,8 +40,10 @@ enum class Meta_Comp {
 };
 
 enum class Meta_Prop {
-    Name,                   // string   Display name of this Property
+    Name,                   // string   Member variable name
+    Title,                  // string   Display name of this Property
     About,                  // string   Description to show in Help Advisor
+    Index,                  // int      Location of this member variable within parent Component 
     Type,                   // enum     Tells how to display in Inspector, should be enum class Property_type from below
     Hidden,                 // bool     Should this Property appear in Inspector?
 };

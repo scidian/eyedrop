@@ -20,7 +20,7 @@
 //############################
 struct Transform2D {
 	std::vector<double>	position  	{ };
-	std::vector<double> rotation	{ };
+	DrVec3 				rotation	{ };
 	std::vector<double>	scale		{ };
 };
 
@@ -36,7 +36,13 @@ struct Transform2D {
 		);
 		RegisterMetaProperty<Transform2D>(
 			"Position", 
-			"Location of this object in 2D space." 
+			"Location of this object in 2D space.",
+			offsetof(Transform2D, position)
+		);
+		RegisterMetaProperty<Transform2D>(
+			"Rotation", 
+			"Rotation of this object in 2D space.",
+			offsetof(Transform2D, rotation)
 		);
 	}
 #endif

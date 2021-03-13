@@ -24,6 +24,7 @@ struct ComponentData {
 struct PropertyData {
     std::string     name            { "" };
     std::string     description     { "" };    
+    int             offset          { 0 };
     Property_Type   type            { Property_Type::Unknown };
 };
 
@@ -46,7 +47,7 @@ public:
 void            RegisterMetaData();
 
 void            AddMetaComponent   (const char* type_name, std::string comp_name, std::string comp_description);
-void            AddMetaProperty    (const char* type_name, std::string prop_name, std::string prop_description);
+void            AddMetaProperty    (const char* type_name, std::string prop_name, std::string prop_description, int offset);
 
 ComponentData   FetchMetaComponent (const char* type_name);
 PropertyData    FetchMetaProperty  (const char* type_name, int property_number);
@@ -78,9 +79,9 @@ void RegisterMetaComponent(std::string comp_name, std::string comp_description) 
 
 // Define this classes to register Meta Data
 template<typename T>
-void RegisterMetaProperty(std::string prop_name, std::string prop_description) { 
+void RegisterMetaProperty(std::string prop_name, std::string prop_description, int offset) { 
     const char* type_name = typeid(T).name();
-	AddMetaProperty(type_name, prop_name, prop_description); 
+	AddMetaProperty(type_name, prop_name, prop_description, offset); 
 } 
 
 #endif  // DR_META_H

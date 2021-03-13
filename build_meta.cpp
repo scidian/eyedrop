@@ -47,15 +47,17 @@ PropertyData FetchMetaProperty(const char* type_name, int property_number) {
 
 void AddMetaComponent(const char* type_name, std::string comp_name, std::string comp_description) {
     ComponentData comp_data { };
-        comp_data.name =             comp_name;
-        comp_data.description =      comp_description;
+        comp_data.name =            comp_name;
+        comp_data.description =     comp_description;
     l_components.insert(std::make_pair(type_name, comp_data));
 }
 
-void AddMetaProperty(const char* type_name, std::string prop_name, std::string prop_description) {
+void AddMetaProperty(const char* type_name, std::string prop_name, std::string prop_description, int offset) {
     PropertyData prop_data { };
-        prop_data.name =             prop_name;
-        prop_data.description =      prop_description;
+        prop_data.name =            prop_name;
+        prop_data.description =     prop_description;
+        prop_data.offset =          offset;
+        prop_data.type =            Property_Type::Unknown;
     assert(l_components.find(type_name) != l_components.end() && "Component never set with AddMetaComponent before calling AddMetaProperty!");
     l_properties[type_name][l_properties[type_name].size()] = prop_data;
 }

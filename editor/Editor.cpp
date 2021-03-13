@@ -61,7 +61,7 @@ void DrEditor::onCreate() {
     ecs()->RegisterComponent<Transform2D>();
     Transform2D et { };
         et.position = std::vector<double>({1.0, 2.0, 3.0});
-        et.rotation = std::vector<double>({4.0, 5.0, 6.0});
+        et.rotation = DrVec3(4.0, 5.0, 6.0);
         et.scale =    std::vector<double>({7.0, 8.0, 9.0});
     ecs()->AddComponent(entity, et);
 
@@ -69,12 +69,22 @@ void DrEditor::onCreate() {
     // Meta Data Test
     std::cout << GetMetaComponent<Transform2D>().name << std::endl;
     std::cout << GetMetaComponent<Transform2D>().description << std::endl;
-    std::cout << GetMetaProperty<Transform2D>(0).name << std::endl;
-    std::cout << GetMetaProperty<Transform2D>(0).description << std::endl;
+    
+    std::cout << "Prop Name:   " << GetMetaProperty<Transform2D>(0).name << std::endl;
+    std::cout << "Prop About:  " << GetMetaProperty<Transform2D>(0).description << std::endl;
+    std::cout << "Prop Offset: " << GetMetaProperty<Transform2D>(0).offset << std::endl;
+    
+    std::cout << "Prop Name:   " << GetMetaProperty<Transform2D>(1).name << std::endl;
+    std::cout << "Prop About:  " << GetMetaProperty<Transform2D>(1).description << std::endl;
+    std::cout << "Prop Offset: " << GetMetaProperty<Transform2D>(1).offset << std::endl;
 
-
-
-
+    // Cast Transform2D struct instance to char* to have actual address of first byte in memory
+    char* trans_ptr = (char*)(&et);
+    // Add offsetof() size of membner variable and cast back to known type
+    //std::vector<double> rotation = *(std::vector<double>*)(trans_ptr + GetMetaProperty<Transform2D>(1).offset);
+    DrVec3 rotation = *(DrVec3*)(trans_ptr + GetMetaProperty<Transform2D>(1).offset);
+    
+    std::cout << "Rotation X: " << rotation.x << ", Rotation Y: " << rotation.y << ", Rotation Z: " << rotation.z << std::endl;
 
 
 
