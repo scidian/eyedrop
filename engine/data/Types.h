@@ -9,6 +9,10 @@
 #ifndef DR_ENGINE_DATA_TYPES_H
 #define DR_ENGINE_DATA_TYPES_H
 
+#ifdef ENABLE_REFLECTION
+    #include "3rd_party/rttr/registration"
+#endif
+
 // STL Includes
 #include <array>
 #include <bitset>
@@ -36,6 +40,25 @@
 using DrEntity =            std::uint32_t;                  // Unique Entity ID Key
 using DrComponentType =     std::uint8_t;                   // Identifier for Components
 using DrArchetype =         std::bitset<MAX_COMPONENTS>;    // A bitset to represent a collection of Components (formerly Signature)
+
+
+//####################################################################################
+//##    Meta Data Types
+//############################
+enum class Meta_Comp {
+    Name,                   // string   Display name of this Component
+    About,                  // string   Description to show in Help Advisor
+    Color,                  // uint     Color of Header ion Inspector
+    Icon,                   // enum     Mini icon to show in Inspector
+    Hidden,                 // bool     Should this Component appear in Inspector?
+};
+
+enum class Meta_Prop {
+    Name,                   // string   Display name of this Property
+    About,                  // string   Description to show in Help Advisor
+    Type,                   // enum     Tells how to display in Inspector, should be enum class Property_type from below
+    Hidden,                 // bool     Should this Property appear in Inspector?
+};
 
 
 //####################################################################################
@@ -117,7 +140,7 @@ enum Archetype {
 
 
 // ################## Project Mapped Types ####################
-enum class SceneType {
+enum class Scene_Type {
     Physics_2D,
     Physics_3D,
     UI,

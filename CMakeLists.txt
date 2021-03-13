@@ -90,41 +90,32 @@ endif()
 
 
 ##### SELECT DESIRED EXECUTABLE (MAIN)
-if     (APP_TYPE MATCHES "player")
+if      (APP_TYPE MATCHES "player")
     add_compile_definitions(SOKOL_NO_ENTRY)         ##### STOP SOKOL HIJACK
-    file(GLOB MAIN_DIRECTORY_FILES
+    file(GLOB_RECURSE MAIN_DIRECTORY_FILES
         "player/*.c**"
     )
     project(player)                                 ##### Project Name for Engine Only
-else()
+elseif  (APP_TYPE MATCHES "editor")  
+    add_compile_definitions(ENABLE_REFLECTION)      ##### Turns on RTTR reflection of components / properties for object inspector
     add_compile_definitions(SOKOL_NO_ENTRY)         ##### STOP SOKOL HIJACK    
     add_compile_definitions(ENABLE_IMGUI)           ##### Signal we want ImGui available to application
-    file(GLOB MAIN_DIRECTORY_FILES
+    file(GLOB_RECURSE MAIN_DIRECTORY_FILES
         "editor/*.c**"
-        "editor/ui/*.c**"
-        "editor/widgets/*.c**"
     )
     project(drop)                                   ##### Project Name for Editor
 endif()
 
 ##### Glob the files, add the executable
-file(GLOB SOURCE_CODE_FILES 
+file(GLOB_RECURSE 3RD_PARTY_CODE_FILES      "3rd_party/*.c**")
+file(GLOB_RECURSE CORE_CODE_FILES           "core/*.c**")
+file(GLOB_RECURSE ENGINE_CODE_FILES         "engine/*.c**")
+file(GLOB SOURCE_CODE_FILES                 
     ${MAIN_DIRECTORY_FILES}
+    ${3RD_PARTY_CODE_FILES}
+    ${CORE_CODE_FILES}
+    ${ENGINE_CODE_FILES}
     "*.c**"
-    "3rd_party/*.c**"
-    "3rd_party/imgui/*.c**"
-    "3rd_party/mesh_optimizer/*.c**"
-    "3rd_party/sokol/*.c**"
-    "core/*.c**"
-    "core/geometry/*.c**"
-    "core/imaging/*.c**"
-    "engine/*.c**"
-    "engine/app/*.c**"
-    "engine/data/*.c**"
-    "engine/entity/*.c**"
-    "engine/scene2d/*.c**"
-    "engine/scene3d/*.c**"
-    "engine/sceneui/*.c**"
 )
 add_executable(${PROJECT_NAME} ${SOURCE_CODE_FILES})
 
@@ -161,8 +152,8 @@ add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E 
 ####################################################################################
 if (EXPORT_TARGET MATCHES "osx")
     # To optimze file size in order: -O0, -O1, -O2, -O3, 0s (size), -0fast (speed)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O1 -std=c99 -xobjective-c -fobjc-arc")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -std=c++14 -fobjc-arc")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os -std=c99 -xobjective-c -fobjc-arc")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -std=c++11 -fobjc-arc")
     set(CMAKE_C_COMPILER "gcc")
     set(CMAKE_CXX_COMPILER "g++")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa -framework OpenGL -framework IOKit -framework Foundation")
@@ -199,9 +190,9 @@ elseif (EXPORT_TARGET MATCHES "ios")
 elseif (EXPORT_TARGET MATCHES "web")
     # To optimze file size in order: -O1, -O2, -O3, -Os, -Oz 
     if (DEBUG_MODE MATCHES "true")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -std=c++14 --shell-file ../shell.html -Werror -Wno-error=unused-command-line-argument") 
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -std=c++11 --shell-file ../shell.html -Werror -Wno-error=unused-command-line-argument") 
     else()
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz -std=c++14 --shell-file ../shell.html") 
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz -std=c++11 --shell-file ../shell.html") 
     endif()
     set(CMAKE_C_COMPILER "emcc")
     set(CMAKE_CXX_COMPILER "emcc")
@@ -219,9 +210,9 @@ elseif (EXPORT_TARGET MATCHES "web")
     #   -s EMULATE_FUNCTION_POINTER_CASTS=1     required for c style function callbacks to play nice with emscripten
     #
     if (DEBUG_MODE MATCHES "true")
-        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s ALLOW_MEMORY_GROWTH=1 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++14 --bind -s ASSERTIONS=2")    
+        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s ALLOW_MEMORY_GROWTH=1 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind -s ASSERTIONS=2")    
     else()
-        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s ALLOW_MEMORY_GROWTH=1 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++14 --bind")
+        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s ALLOW_MEMORY_GROWTH=1 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind")
     endif()
 
     

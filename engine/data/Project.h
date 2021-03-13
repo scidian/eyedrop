@@ -18,11 +18,9 @@
 //  |________________________Assets_______________________|       Entity
 //                              |                                   |                ____
 //                      Component Structs*-------|---------ECS Component Structs*        |
-//                                               |                                       |---- Meta Data
+//                                               |                                       |---- Reflection / Meta Data
 //                                   Properties (Member Variables)                   ____|
 //
-//  *NOTE: For use with Boost.PFR, Asset and Entity Components MUST BE aggregates 
-//         (i.e. simple structs with no functions and public member variables)
 //####################################################################################
 #ifndef DR_PROJECT_H
 #define DR_PROJECT_H

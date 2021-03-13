@@ -117,12 +117,12 @@ private:
         sg_imgui_t          m_sg_imgui;                                             // Sokol_gfx_debug keeps track of data structures used by sokol_gfx for Debug View
     #endif
 
+protected:
     // Time Variables
     bool                    m_first_frame       { true };                           // Turns false after first frame, allows for some initialization (colors, themeing, etc)
     uint64_t                m_time_start        { 0 };                              // Sokol_time start time since App started running
     double                  m_frames_per_second { 0.0 };                            // Stores current calculated frames per second
 
-protected:
     // Fetch / Drag & Drop Buffers
     uint8_t                 m_file_buffer[MAX_FILE_SIZE];
     uint8_t                 m_file_buffer2[MAX_FILE_SIZE];

@@ -28,7 +28,14 @@
 
 
 // !!!!! #TEMP
-#include "engine/scene2d/components/Transform.h"
+#include "engine/scene2d/components/Transform2D.h"
+
+
+#include <iostream>
+
+
+
+
 
 
 
@@ -50,18 +57,33 @@ int main(int argc, char* argv[]) {
 void DrEditor::onCreate() { 
 
 
-
+    // ECS System Test
     int entity = ecs()->CreateEntity();
-
     ecs()->RegisterComponent<Transform2D>();
+    Transform2D et { };
+        et.position = DrVec3(2.3, 3.4, 4.5);//std::vector<double>({6.0, 6.0, 7.0});//DrVec3(1.f,2.f,3.f);
+        et.rotation = std::vector<double>({6.0, 6.0, 7.0});
+        et.scale =    std::vector<double>({7.0, 8.0, 9.0});
+    ecs()->AddComponent(entity, et);
 
-    ecs()->AddComponent(
-        entity,
-        Transform2D {
-            .position = std::vector<double>({1.0, 2.0, 3.0}),
-            .rotation = std::vector<double>({4.0, 5.0, 6.0}),
-            .scale =    std::vector<double>({7.0, 8.0, 9.0}),
-        });
+
+    // Reflection Test
+    Transform2D trans = ecs()->GetComponent<Transform2D>(entity);
+    rttr::type t = rttr::type::get<Transform2D>();
+    for (auto& prop : t.get_properties()) {
+        // To print each property
+        //property prop = type::get(trans).get_property(prop.get_name());
+        
+        // Get each property of our instance, print it out with the value and type
+        rttr::variant var_prop = prop.get_value(trans);
+        std::cout << "name: " << prop.get_name() << ", type: " << var_prop.get_type().get_name() << std::endl;
+
+        // Get meta data, print it out
+        rttr::variant   meta_value =    prop.get_metadata(Meta_Property::Name);
+        if (meta_value.is_valid()) {
+            std::cout << meta_value.get_value<std::string>() << std::endl;
+        }
+    }
 
 
 

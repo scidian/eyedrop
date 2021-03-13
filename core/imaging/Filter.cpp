@@ -46,7 +46,7 @@ DrBitmap DrFilter::applySinglePixelFilter(Image_Filter_Type filter, const DrBitm
                     color.setBlue(  table[color.blue()]  );
                     break;
                 case DROP_IMAGE_FILTER_SATURATION: {
-                    // !!!!! #NOTE: QColor returns -1 if image is grayscale
+                    // !!!!! #NOTE: Some color implementations (like QColor) return -1 if image is grayscale
                     //              If thats the case give it a default hue of 0 (red) to match shader
                     //                    int hue = (color.hue() == -1) ? 0 : color.hue();
                     //                    color.setHsv(hue, Dr::Clamp(color.saturation() + value, 0, 255), color.value(), color.alpha());

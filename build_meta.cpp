@@ -6,48 +6,23 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Thu Mar 11 2021
 //
 //
-#include "engine/data/Meta.h"
+#ifdef ENABLE_REFLECTION
 
 //####################################################################################
-//##    Register Components / Properties with Meta Data System
+//##    Tell headers to define (implement) register function
+#define REGISTER_REFLECTION         
+
 //####################################################################################
+//##    Register Components / Properties with RTTR Reflection / Meta Data
 //##
-#define REGISTER_META_DATA                  // Tell headers we want to register data
+//##            !!!! Include all Components below !!!!
 //##
-//##    !!!!! NOTE: Include all Components below
-//##
-#include "engine/scene2d/components/Transform.h"
-
-
-
-
 //####################################################################################
-//####################################################################################
-//####################################################################################
-//##    Local Static Variables
-//####################################################################################
-static std::unordered_map<const char*, ComponentData>   l_components    { };        // Holds data about DrComponent / ECS Component structs and its Properties
-
-
-//####################################################################################
-//##    Meta Data Functions
-//####################################################################################
-void AddMetaComponent(const char* type_name, std::string comp_name, std::string comp_description) {
-    ComponentData comp_data {
-        .name =             comp_name,
-        .description =      comp_description,
-    };
-    l_components.insert(std::make_pair(type_name, comp_data));
-}
-
-void AddMetaProperty(const char* type_name, std::string prop_name, std::string prop_description) {
-    PropertyData (prop_data) {
-        .name =             prop_name,
-        .description =      prop_description,
-    };
-    assert(l_components.find(type_name) != l_components.end() && "Component never set with AddMetaComponent before calling AddMetaProperty!");
-    l_components[type_name].properties.insert(std::make_pair(l_components[type_name].properties.size(), prop_data));
-}
+// ECS Components
+#include "engine/scene2d/components/Transform2D.h"
 
 
 
+
+
+#endif  // ENABLE_REFLECTION
