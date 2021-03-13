@@ -9,19 +9,8 @@
 #ifndef DR_ENGINE_DATA_TYPES_H
 #define DR_ENGINE_DATA_TYPES_H
 
-// STL Includes
-#include <array>
 #include <bitset>
-#include <cassert>
 #include <cstdint>
-#include <functional>
-#include <list>
-#include <map>
-#include <memory>
-#include <queue>
-#include <set>
-#include <string>
-#include <unordered_map>
 
 // Global Enum Constants
 #define DROP_VERSION        2000                            // Drop Creator version number, important for file loading / saving through Cereal

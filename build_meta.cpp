@@ -6,6 +6,8 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Thu Mar 11 2021
 //
 //
+#include <map>
+#include <unordered_map>
 #include "engine/data/Meta.h"
 
 //####################################################################################
@@ -26,6 +28,7 @@ void RegisterMetaData() {
 //####################################################################################
 //##    Local Static Variables
 //####################################################################################
+typedef std::map<int, PropertyData> PropertyMap;
 static std::unordered_map<const char*, ComponentData>   l_components    { };        // Holds data about DrComponent / ECS Component structs
 static std::unordered_map<const char*, PropertyMap>     l_properties    { };        // Holds data about Properies (of Components)
 

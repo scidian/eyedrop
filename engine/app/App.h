@@ -9,9 +9,6 @@
 #ifndef DR_APP_H
 #define DR_APP_H
 
-// ##### STL
-#include <fstream>      // For Cereal
-
 // ##### 3rd Party
 #include "3rd_party/sokol/sokol_app.h"
 #include "3rd_party/sokol/sokol_gfx.h"
@@ -27,11 +24,12 @@
 #include "3rd_party/sokol/sokol_fontstash.h"
 #include "3rd_party/stb/stb_image.h"
 #ifndef DROP_TARGET_HTML5
-    #include "3rd_party/cereal/types/map.hpp"
-    #include "3rd_party/cereal/types/memory.hpp"
-    #include "3rd_party/cereal/types/string.hpp"
-    #include "3rd_party/cereal/types/set.hpp"
-    #include "3rd_party/cereal/archives/binary.hpp"
+    // #include <fstream>      // For Cereal
+    // #include "3rd_party/cereal/types/map.hpp"
+    // #include "3rd_party/cereal/types/memory.hpp"
+    // #include "3rd_party/cereal/types/string.hpp"
+    // #include "3rd_party/cereal/types/set.hpp"
+    // #include "3rd_party/cereal/archives/binary.hpp"
     #include "3rd_party/whereami.h"
 #else
     #include <emscripten/emscripten.h>
@@ -191,19 +189,17 @@ public:
     bool                isFirstFrame()                                  { return m_first_frame; }
     double              framesPerSecond()                               { return m_frames_per_second; }
 
-    // Serialization
-    bool saveProjects() {
-        #ifndef DROP_TARGET_HTML5
-            std::ofstream os("out.cereal", std::ios::binary);
-            cereal::BinaryOutputArchive archive(os);
-
-            for (auto proj_pair : m_projects) {
-                archive( proj_pair.second );
-            }
-        #endif
-
-        return true;
-    };
+    // // Serialization
+    // bool saveProjects() {
+    //     #ifndef DROP_TARGET_HTML5
+    //         std::ofstream os("out.cereal", std::ios::binary);
+    //         cereal::BinaryOutputArchive archive(os);
+    //         for (auto proj_pair : m_projects) {
+    //             archive( proj_pair.second );
+    //         }
+    //     #endif
+    //     return true;
+    // };
 
 };
 

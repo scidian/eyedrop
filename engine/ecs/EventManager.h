@@ -9,6 +9,7 @@
 #ifndef DR_ECS_EVENT_MANAGER_H
 #define DR_ECS_EVENT_MANAGER_H
 
+#include <list>
 #include "engine/data/Types.h"
 #include "Event.h"
 

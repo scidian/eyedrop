@@ -83,17 +83,17 @@ public:
     void                setGeneratorKeyStartNumber(long initial_key)    { m_key_generator = initial_key; }
 
     // Serialization 
-    template<class Archive>
-    void serialize(Archive& ar, unsigned int version) {
-        ar( m_key_generator,
-            m_name, 
-            m_file_path_name, 
-            m_orientation, 
-            m_width, 
-            m_height,
-            m_current_scene
-        );
-    }
+    // template<class Archive>
+    // void serialize(Archive& ar, unsigned int version) {
+    //     ar( m_key_generator,
+    //         m_name, 
+    //         m_file_path_name, 
+    //         m_orientation, 
+    //         m_width, 
+    //         m_height,
+    //         m_current_scene
+    //     );
+    // }
 
 };
 

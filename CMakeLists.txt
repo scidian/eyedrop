@@ -151,8 +151,8 @@ add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E 
 ####################################################################################
 if (EXPORT_TARGET MATCHES "osx")
     # To optimze file size in order: -O0, -O1, -O2, -O3, 0s (size), -0fast (speed)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O1 -std=c99 -xobjective-c -fobjc-arc")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -std=c++11 -fobjc-arc")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os -std=c99 -xobjective-c -fobjc-arc")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -std=c++11 -fobjc-arc")
     set(CMAKE_C_COMPILER "gcc")
     set(CMAKE_CXX_COMPILER "g++")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa -framework OpenGL -framework IOKit -framework Foundation")
@@ -187,9 +187,9 @@ elseif (EXPORT_TARGET MATCHES "ios")
 
 ####################################################################################
 elseif (EXPORT_TARGET MATCHES "web")
-    # To optimze file size in order: -O1, -O2, -O3, -Os, -Oz 
+    # To optimze file size in order: -O1, -O2, -O3, -Os, -Oz (seems smallest)
     if (DEBUG_MODE MATCHES "true")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -std=c++11 --shell-file ../shell.html -Werror -Wno-error=unused-command-line-argument") 
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz -std=c++11 --shell-file ../shell.html -Werror -Wno-error=unused-command-line-argument") 
     else()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz -std=c++11 --shell-file ../shell.html") 
     endif()

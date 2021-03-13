@@ -9,6 +9,7 @@
 #ifndef DR_COMP_TRANSFORM2D_H
 #define DR_COMP_TRANSFORM2D_H
 
+#include <vector>
 #include "core/geometry/Vec3.h"
 #include "engine/data/Meta.h"
 

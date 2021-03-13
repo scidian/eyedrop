@@ -10,6 +10,8 @@
 #define DR_ECS_ENTITY_MANAGER_H
 
 // Includes
+#include <array>
+#include <queue>
 #include "engine/data/Types.h"
 
 

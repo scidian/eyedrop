@@ -26,7 +26,18 @@ struct PropertyData {
     std::string     description     { "" };    
     Property_Type   type            { Property_Type::Unknown };
 };
-typedef std::map<int, PropertyData>         PropertyMap;
+
+
+//####################################################################################
+//##    Meta Class
+//##        Designed to be a singleton to hold Component / Property meta data
+//############################
+class DrMeta 
+{
+public:
+
+
+};
 
 
 //####################################################################################

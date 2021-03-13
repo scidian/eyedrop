@@ -49,7 +49,6 @@
 ## System libraries:
 
 - Any-lite              (Boost)     C++11   https://github.com/martinmoene/any-lite       
-- Cereal                (BSD)       C++11   https://github.com/USCiLab/cereal
 - Handmade-Math         (CC0)       C99     https://github.com/StrangeZak/Handmade-Math
 - Stb                   (MIT):      C99     https://github.com/nothings/stb
 - Sokol                 (ZLIB):     C99     https://github.com/floooh/sokol
