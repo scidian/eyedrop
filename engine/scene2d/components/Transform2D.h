@@ -10,7 +10,7 @@
 #define DR_COMP_TRANSFORM2D_H
 
 #include "core/geometry/Vec3.h"
-#include "engine/data/Types.h"
+#include "engine/data/Meta.h"
 
 
 //####################################################################################
@@ -18,22 +18,25 @@
 //##        Used to descibe a location of a 2D object in space
 //############################
 struct Transform2D {
-	DrVec3		position  	{ };
-	DrVec3 		rotation	{ };
-	DrVec3		scale		{ };
+	std::vector<double>	position  	{ };
+	std::vector<double> rotation	{ };
+	std::vector<double>	scale		{ };
 };
 
 
 //####################################################################################
-//##    Reflection / Meta Data
+//##    Register Meta Data
 //############################
-#ifdef REGISTER_REFLECTION
-	using namespace rttr;
-	RTTR_REGISTRATION {
-		registration::class_<Transform2D>("Transform2D")	(metadata(Meta_Comp::Name, "Transform"))
-			.property("position",  &Transform2D::position) 	(metadata(Meta_Prop::Name, "Position"))
-			.property("rotation",  &Transform2D::rotation) 	(metadata(Meta_Prop::Name, "Rotation"))
-			.property("scale",     &Transform2D::scale) 	(metadata(Meta_Prop::Name, "Scale"));
+#ifdef REGISTER_META_DATA
+	void RegisterComponentTransform2D() {
+		RegisterMetaComponent<Transform2D>( 
+			"Transform 2D", 
+			"Describes the location and positioning of this 2D object." 
+		);
+		RegisterMetaProperty<Transform2D>(
+			"Position", 
+			"Location of this object in 2D space." 
+		);
 	}
 #endif
 

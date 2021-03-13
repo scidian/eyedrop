@@ -9,10 +9,6 @@
 #ifndef DR_ENGINE_DATA_TYPES_H
 #define DR_ENGINE_DATA_TYPES_H
 
-#ifdef ENABLE_REFLECTION
-    #include "3rd_party/rttr/registration"
-#endif
-
 // STL Includes
 #include <array>
 #include <bitset>

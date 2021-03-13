@@ -18,6 +18,7 @@
 #include "engine/app/App.h"
 #include "engine/app/Image.h"
 #include "engine/app/RenderContext.h"
+#include "engine/data/Meta.h"
 #include "engine/scene3d/Mesh.h"
 #include "ui/Dockspace.h"
 #include "ui/Menu.h"
@@ -36,14 +37,12 @@
 
 
 
-
-
-
-
 //####################################################################################
 //##    Program Start
 //####################################################################################
 int main(int argc, char* argv[]) {
+
+    RegisterMetaData();
 
     DrEditor* editor = new DrEditor("Test Editor", DrColor(28, 30, 29), 1750, 1000);
     editor->run();
@@ -57,33 +56,25 @@ int main(int argc, char* argv[]) {
 void DrEditor::onCreate() { 
 
 
-    // ECS System Test
+    // ECS Test
     int entity = ecs()->CreateEntity();
     ecs()->RegisterComponent<Transform2D>();
     Transform2D et { };
-        et.position = DrVec3(2.3, 3.4, 4.5);//std::vector<double>({6.0, 6.0, 7.0});//DrVec3(1.f,2.f,3.f);
-        et.rotation = std::vector<double>({6.0, 6.0, 7.0});
+        et.position = std::vector<double>({1.0, 2.0, 3.0});
+        et.rotation = std::vector<double>({4.0, 5.0, 6.0});
         et.scale =    std::vector<double>({7.0, 8.0, 9.0});
     ecs()->AddComponent(entity, et);
 
 
-    // Reflection Test
-    Transform2D trans = ecs()->GetComponent<Transform2D>(entity);
-    rttr::type t = rttr::type::get<Transform2D>();
-    for (auto& prop : t.get_properties()) {
-        // To print each property
-        //property prop = type::get(trans).get_property(prop.get_name());
-        
-        // Get each property of our instance, print it out with the value and type
-        rttr::variant var_prop = prop.get_value(trans);
-        std::cout << "name: " << prop.get_name() << ", type: " << var_prop.get_type().get_name() << std::endl;
+    // Meta Data Test
+    std::cout << GetMetaComponent<Transform2D>().name << std::endl;
+    std::cout << GetMetaComponent<Transform2D>().description << std::endl;
+    std::cout << GetMetaProperty<Transform2D>(0).name << std::endl;
+    std::cout << GetMetaProperty<Transform2D>(0).description << std::endl;
 
-        // Get meta data, print it out
-        rttr::variant   meta_value =    prop.get_metadata(Meta_Property::Name);
-        if (meta_value.is_valid()) {
-            std::cout << meta_value.get_value<std::string>() << std::endl;
-        }
-    }
+
+
+
 
 
 
@@ -93,7 +84,7 @@ void DrEditor::onCreate() {
         images[i] = nullptr;
     }
 
-    // Reference:
+    // For Reference:
     // (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
     // std::string image_file = m_app_directory + "assets/blob.png";
     

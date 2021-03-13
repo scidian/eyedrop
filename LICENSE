@@ -51,7 +51,6 @@
 - Any-lite              (Boost)     C++11   https://github.com/martinmoene/any-lite       
 - Cereal                (BSD)       C++11   https://github.com/USCiLab/cereal
 - Handmade-Math         (CC0)       C99     https://github.com/StrangeZak/Handmade-Math
-- Rttr                  (MIT)       C++11   https://github.com/rttrorg/rttr
 - Stb                   (MIT):      C99     https://github.com/nothings/stb
 - Sokol                 (ZLIB):     C99     https://github.com/floooh/sokol
 - Whereami              (MIT):      C99     https://github.com/gpakosz/whereami
