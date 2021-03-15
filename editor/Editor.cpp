@@ -79,13 +79,33 @@ void DrEditor::onCreate() {
     std::cout << "Prop Offset: " << GetMetaProperty<Transform2D>(1).offset << std::endl;
 
     // Cast Transform2D struct instance to char* to have actual address of first byte in memory
-    char* trans_ptr = (char*)(&et);
+    char* p = (char*)(&et);
+
     // Add offsetof() size of membner variable and cast back to known type
-    //std::vector<double> rotation = *(std::vector<double>*)(trans_ptr + GetMetaProperty<Transform2D>(1).offset);
-    DrVec3 rotation = *(DrVec3*)(trans_ptr + GetMetaProperty<Transform2D>(1).offset);
+    /// vector ex:  std::vector<double> rotation = *(std::vector<double>*)(p + GetMetaProperty<Transform2D>(1).offset);
+    /// DrVec  ex:  DrVec3 rotation = *(DrVec3*)(p + GetMetaProperty<Transform2D>(1).offset);
     
+    // ... or, with memcpy
+    DrVec3 rotation;
+    memcpy(&rotation, p +  GetMetaProperty<Transform2D>(1).offset, sizeof(rotation));
+
+    // C++ way
+    static constexpr auto off_rot = &Transform2D::rotation;
+    auto r = ((&et)->*off_rot);
+    rotation = r;
+
     std::cout << "Rotation X: " << rotation.x << ", Rotation Y: " << rotation.y << ", Rotation Z: " << rotation.z << std::endl;
 
+    // void set_int(void *block, size_t offset, int val) {
+    //     char *p = block;
+    //     memcpy(p + offset, &val, sizeof val);
+    // }
+    // int get_int(void *block, size_t offset) {
+    //     char *p = block;
+    //     int val;
+    //     memcpy(&val, p + offset, sizeof val);
+    //     return val;
+    // }
 
 
 
@@ -98,11 +118,11 @@ void DrEditor::onCreate() {
     // (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
     // std::string image_file = m_app_directory + "assets/blob.png";
     
-    sfetch_request_t (sokol_fetch_image) {
-        .path = (appDirectory() + "assets/toolbar_icons/toolbar_world_graph.png").c_str(),
-        .buffer_ptr = m_file_buffer2,
-        .buffer_size = sizeof(m_file_buffer2),
-        .callback = +[](const sfetch_response_t* response) {
+    sfetch_request_t sokol_fetch_image { };
+        sokol_fetch_image.path = (appDirectory() + "assets/toolbar_icons/toolbar_world_graph.png").c_str();
+        sokol_fetch_image.buffer_ptr = m_file_buffer2;
+        sokol_fetch_image.buffer_size = sizeof(m_file_buffer2);
+        sokol_fetch_image.callback = +[](const sfetch_response_t* response) {
             int png_width, png_height, num_channels;
             const int desired_channels = 4;
             stbi_uc* pixels = stbi_load_from_memory((stbi_uc *)response->buffer_ptr, (int)response->fetched_size,
@@ -110,8 +130,8 @@ void DrEditor::onCreate() {
             // Stb Load Succeeded
             if (pixels) {
                 sg_image_desc img_desc { };
-                    img_desc.width =    png_width;
-                    img_desc.height =   png_height;
+                    img_desc.width =        png_width;
+                    img_desc.height =       png_height;
                     img_desc.pixel_format = SG_PIXELFORMAT_RGBA8;
                     img_desc.wrap_u =       SG_WRAP_CLAMP_TO_EDGE;
                     img_desc.wrap_v =       SG_WRAP_CLAMP_TO_EDGE;
@@ -123,8 +143,7 @@ void DrEditor::onCreate() {
                 editor->images[EDITOR_IMAGE_WORLD_GRAPH] = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
                 free(pixels);
             }
-        },       
-    };
+        };
     sfetch_send(&sokol_fetch_image);    
 }
 
@@ -325,33 +344,31 @@ void DrEditor::onEvent(const sapp_event* event) {
     } else if (event->type == SAPP_EVENTTYPE_FILES_DROPPED) {
         #if defined(DROP_TARGET_HTML5)
             // on emscripten need to use the sokol-app helper function to load the file data
-            sapp_html5_fetch_request (sokol_fetch_request) {
-                .dropped_file_index = 0,
-                .buffer_ptr = m_file_buffer,
-                .buffer_size = sizeof(m_file_buffer),
-                .callback = +[](const sapp_html5_fetch_response* response) {
+            sapp_html5_fetch_request sokol_fetch_request { };
+                sokol_fetch_request.dropped_file_index = 0;
+                sokol_fetch_request.buffer_ptr = m_file_buffer;
+                sokol_fetch_request.buffer_size = sizeof(m_file_buffer);
+                sokol_fetch_request.callback = +[](const sapp_html5_fetch_response* response) {
                     if (response->succeeded) {
                         g_app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
                     } else {
                         // File too big if (response->error_code == SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
                     }
-                },
-            };
+                };
             sapp_html5_fetch_dropped_file(&sokol_fetch_request);
         #else
             // native platform: use sokol-fetch to load file content
-            sfetch_request_t (sokol_fetch_request) {
-                .path = sapp_get_dropped_file_path(0),
-                .buffer_ptr = m_file_buffer,
-                .buffer_size = sizeof(m_file_buffer),
-                .callback = +[](const sfetch_response_t* response) {
+            sfetch_request_t sokol_fetch_request { };
+                sokol_fetch_request.path = sapp_get_dropped_file_path(0);
+                sokol_fetch_request.buffer_ptr = m_file_buffer;
+                sokol_fetch_request.buffer_size = sizeof(m_file_buffer);
+                sokol_fetch_request.callback = +[](const sfetch_response_t* response) {
                     if (response->fetched) {
                         g_app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
                     } else {
                         // File too big if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
                     }                   
-                },       
-            };
+                };
             sfetch_send(&sokol_fetch_request);
         #endif
     }

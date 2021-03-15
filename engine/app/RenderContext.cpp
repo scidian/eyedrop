@@ -83,19 +83,17 @@ DrRenderContext::DrRenderContext(DrColor initial_color) {
         {  1.0f,  1.0f, -1.0f,  1.0f, 1.0f, 1.0f,      1,   1,      1.0f, 1.0f, 1.0f },      
         { -1.0f,  1.0f, -1.0f,  1.0f, 1.0f, 1.0f,      0,   1,      1.0f, 1.0f, 1.0f },      
     };
-    sg_buffer_desc (sokol_buffer_vertex) {
-        .data = SG_RANGE(vertices),
-        .label = "temp-vertices"
-    };
+    sg_buffer_desc sokol_buffer_vertex { };
+        sokol_buffer_vertex.data = SG_RANGE(vertices);
+        sokol_buffer_vertex.label = "temp-vertices";
     bindings.vertex_buffers[0] = sg_make_buffer(&sokol_buffer_vertex);
 
     // Index buffer
     const uint16_t indices[] = { 0, 1, 2, 0, 2, 3 };
-    sg_buffer_desc (sokol_buffer_index) {
-        .type = SG_BUFFERTYPE_INDEXBUFFER,
-        .data = SG_RANGE(indices),
-        .label = "temp-indices"
-    };
+    sg_buffer_desc sokol_buffer_index { };
+        sokol_buffer_index.type = SG_BUFFERTYPE_INDEXBUFFER;
+        sokol_buffer_index.data = SG_RANGE(indices);
+        sokol_buffer_index.label = "temp-indices";
     bindings.index_buffer = sg_make_buffer(&(sokol_buffer_index));
 }
 

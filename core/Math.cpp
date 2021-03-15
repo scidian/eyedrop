@@ -151,6 +151,20 @@ DrPointF RotatePointAroundOrigin(DrPointF point, DrPointF origin, double angle, 
 
 
 //####################################################################################
+//##    Velocity Magnitude, coode from: 
+//##            Flat Red Ball (MIT) 
+//##                Github:     https://github.com/vchelaru/FlatRedBall
+//##                Website:    https://flatredball.com/documentation/tutorials/math/math-calculus/
+//####################################################################################
+float CalculateRequiredStartingMagnitude(float relative_x, float relative_y, float desired_angle, float gravity) {
+    double top_of_inside_of_square_root = 2 * (relative_y * tan(desired_angle) - relative_y);
+    double square_root_part = sqrt(top_of_inside_of_square_root / abs(gravity));
+    double x_velocity = relative_y / square_root_part;
+    return (float)x_velocity / (float)cos(desired_angle);
+}
+
+
+//####################################################################################
 //##    Color Helper Functions
 //####################################################################################
 // Compares 2 colors, returns true if they are the same

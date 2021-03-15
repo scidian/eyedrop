@@ -174,7 +174,8 @@ DrBitmap DrFilter::floodFill(DrBitmap& bitmap, int at_x, int at_y, DrColor fill_
     do {
         // Go through each point and find new points to fill
         processed_some = false;
-        for (auto point : points) {
+        for (int p = 0; p < points.size(); ++p) {
+            DrPoint point = points[p];            
             if (processed.getPixel(point.x, point.y) == FLOOD_WAS_PROCESSED) continue;
             bitmap.setPixel(point.x, point.y, fill_color);
             flood.setPixel(point.x, point.y, fill_color);

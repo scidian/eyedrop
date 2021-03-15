@@ -196,8 +196,8 @@ void DrApp::init(void) {
         int font_width, font_height;
         imgui_io.Fonts->GetTexDataAsRGBA32(&font_pixels, &font_width, &font_height);
         sg_image_desc img_desc { };
-            img_desc.width =    font_width;
-            img_desc.height =   font_height;
+            img_desc.width =        font_width;
+            img_desc.height =       font_height;
             img_desc.pixel_format = SG_PIXELFORMAT_RGBA8;
             img_desc.wrap_u =       SG_WRAP_CLAMP_TO_EDGE;
             img_desc.wrap_v =       SG_WRAP_CLAMP_TO_EDGE;
@@ -369,11 +369,11 @@ void DrApp::cleanup(void) {
 //####################################################################################
 // Start a sokol fetch of desired image
 void DrApp::loadImage(std::string filename) {
-    sfetch_request_t (sokol_fetch_image) {
-        .path = filename.c_str(),
-        .buffer_ptr = m_file_buffer,
-        .buffer_size = sizeof(m_file_buffer),
-        .callback = +[](const sfetch_response_t* response) {
+    sfetch_request_t sokol_fetch_image { };
+        sokol_fetch_image.path = filename.c_str();
+        sokol_fetch_image.buffer_ptr = m_file_buffer;
+        sokol_fetch_image.buffer_size = sizeof(m_file_buffer);
+        sokol_fetch_image.callback = +[](const sfetch_response_t* response) {
             if (response->fetched) {
                 // File data has been fetched, since we provided a big-enough buffer we can be sure that all data has been loaded here
                 g_app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
@@ -381,8 +381,7 @@ void DrApp::loadImage(std::string filename) {
                 // If loading the file failed, set clear color to signal reason
                 if (response->failed) { /*response->error_code*/ }
             }
-        },       
-    };
+        };
     sfetch_send(&sokol_fetch_image);
 }
 
@@ -405,19 +404,16 @@ void DrApp::initImage(stbi_uc* buffer_ptr, int fetched_size) {
         calculateMesh(true);        
 
         // ********** Initialze the sokol-gfx texture
-        sg_image_desc (sokol_image) {
-            .width =        m_image->getBitmap().width,
-            .height =       m_image->getBitmap().height,
-            .pixel_format = SG_PIXELFORMAT_RGBA8,
-            .wrap_u =       SG_WRAP_MIRRORED_REPEAT,
-            .wrap_v =       SG_WRAP_MIRRORED_REPEAT,
-            .min_filter =   SG_FILTER_LINEAR,
-            .mag_filter =   SG_FILTER_LINEAR,
-            .data.subimage[0][0] = {
-                .ptr =  &(m_image->getBitmap().data[0]),
-                .size = (size_t)m_image->getBitmap().size(),
-            }
-        };
+        sg_image_desc sokol_image { };
+            sokol_image.width =        m_image->getBitmap().width;
+            sokol_image.height =       m_image->getBitmap().height;
+            sokol_image.pixel_format = SG_PIXELFORMAT_RGBA8;
+            sokol_image.wrap_u =       SG_WRAP_MIRRORED_REPEAT;
+            sokol_image.wrap_v =       SG_WRAP_MIRRORED_REPEAT;
+            sokol_image.min_filter =   SG_FILTER_LINEAR;
+            sokol_image.mag_filter =   SG_FILTER_LINEAR;
+            sokol_image.data.subimage[0][0].ptr =  &(m_image->getBitmap().data[0]);
+            sokol_image.data.subimage[0][0].size = (size_t)m_image->getBitmap().size();
         
         // To store an image onto the gpu:
         long image_id = sg_make_image(&sokol_image).id;
@@ -470,24 +466,22 @@ void DrApp::calculateMesh(bool reset_position) {
         // ***** Vertex Buffer
         unsigned int total_vertices = m_mesh->vertices.size();
 
-        Vertex vertices[total_vertices];
+        std::vector<Vertex> vertices(total_vertices);
         for (size_t i = 0; i < total_vertices; i++) vertices[i] = m_mesh->vertices[i];
-        sg_buffer_desc (sokol_buffer_vertex) {
-            .data = SG_RANGE(vertices),
-            .label = "extruded-vertices"
-        };
+        sg_buffer_desc sokol_buffer_vertex { };
+            sokol_buffer_vertex.data = sg_range{ &vertices[0], vertices.size() * sizeof(Vertex) };
+            sokol_buffer_vertex.label = "extruded-vertices";
         sg_destroy_buffer(m_context->bindings.vertex_buffers[0]);
         m_context->bindings.vertex_buffers[0] = sg_make_buffer(&sokol_buffer_vertex);
 
         // ***** Index Buffer
         unsigned int total_indices = m_mesh->indices.size();
-        uint16_t indices[total_indices];
+        std::vector<uint16_t> indices(total_indices);
         for (size_t i = 0; i < total_indices; i++) indices[i] = m_mesh->indices[i];
-        sg_buffer_desc (sokol_buffer_index) {
-            .type = SG_BUFFERTYPE_INDEXBUFFER,
-            .data = SG_RANGE(indices),
-            .label = "temp-indices"
-        };
+        sg_buffer_desc sokol_buffer_index { };
+            sokol_buffer_index.type = SG_BUFFERTYPE_INDEXBUFFER;
+            sokol_buffer_index.data = sg_range{ &indices[0], indices.size() * sizeof(uint16_t) };
+            sokol_buffer_index.label = "temp-indices";
         sg_destroy_buffer(m_context->bindings.index_buffer);
         m_context->bindings.index_buffer = sg_make_buffer(&(sokol_buffer_index));
 

@@ -142,6 +142,13 @@ DrPointF    RotatePointAroundOrigin(DrPointF point, DrPointF origin, double angl
 
 
 //####################################################################################
+//##    Physics
+//############################
+// Determines the required initial magnitude required for a fired object to pass through a point at relative_x, relative_y
+float       CalculateRequiredStartingMagnitude(float relative_x, float relative_y, float desired_angle, float gravity);
+
+
+//####################################################################################
 //##    Color Helper Functions
 //############################
 bool        IsSameColor(const DrColor &color1, const DrColor &color2, double tolerance);
