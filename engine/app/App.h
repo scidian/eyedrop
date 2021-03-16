@@ -53,19 +53,21 @@
 
 // Forward Declarations
 class DrApp;
+class DrMeta;
 class DrRenderContext;
 
 //####################################################################################
 //##    Constants 
 //############################
-#define MAX_FILE_SIZE   (1024 * 1024)                                               // Used for filebuffers with sokol_fetch
-#define INVALID_IMAGE   -1                                                          // Used to identify DrImages that have been initialized, but not loaded yet
+#define MAX_FILE_SIZE       (1024 * 1024)                                           // Used for filebuffers with sokol_fetch
+#define INVALID_IMAGE       -1                                                      // Used to identify DrImages that have been initialized, but not loaded yet
 
 
 //####################################################################################
-//##    Global Declarations, Defined in App.cpp
+//##    Global Declarations
 //####################################################################################
-extern DrApp*               g_app;                                                  // App singleton, assigned in App::App()
+extern DrApp*               g_app;                                                  // App singleton            Defined in App.cpp      Assigned in App.cpp::App()
+extern DrMeta*              g_meta;                                                 // Meta Data singleton      Defined in App.cpp      Assigned in Editor.cpp::main()
 
 
 //####################################################################################

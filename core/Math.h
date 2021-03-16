@@ -40,8 +40,6 @@ template<class T> bool  IsCloseTo(const T& number_desired, const T& number_to_ch
 bool                    RealDouble(double number_to_check);
 /// @brief: Checks to make sure double is NOT Nan and is NOT infinite
 bool                    RealFloat(float number_to_check);
-/// @brief: Checks to make sure integer is NOT Nan and is NOT infinite
-bool                    RealInteger(int number_to_check);
 
 
 //####################################################################################

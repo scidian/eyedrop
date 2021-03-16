@@ -11,6 +11,7 @@
 #include "core/imaging/Filter.h"
 #include "core/Math.h"
 #include "core/Strings.h"
+#include "engine/data/Meta.h"
 #include "engine/ecs/Coordinator.h"
 #include "engine/scene3d/Mesh.h"
 #include "App.h"
@@ -25,7 +26,8 @@
 //####################################################################################
 //##    Definition of Global Variables, Declared in App.h
 //####################################################################################
-DrApp*              g_app =         nullptr;                                        // App singleton, assigned in App:App()
+DrApp*              g_app       { nullptr };                                        // App singleton            Assigned in App:App()
+DrMeta*             g_meta      { nullptr };                                        // Meta Data singleton      Assigned in App:App()
 
 
 //####################################################################################
@@ -48,6 +50,12 @@ extern "C" void cleanupWrapper()                        { cleanupCallback(); }
 DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
     // Assign global pointer to the current App
     g_app = this;
+
+    // Assign / build Meta Data singleton
+    if (g_meta == nullptr) {
+        g_meta = new DrMeta();
+        g_meta->InitializeMetaData();
+    }
 
     // Initialize Entity Component System
     m_coordinator = new DrCoordinator();        
@@ -78,6 +86,7 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
 DrApp::~DrApp() {
     delete m_context;
     delete m_coordinator;
+    delete g_meta;
 }
 
 // Sets application name, updates title bar

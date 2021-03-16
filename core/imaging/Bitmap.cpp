@@ -32,7 +32,7 @@ DrBitmap::~DrBitmap() {
 }
 
 DrBitmap::DrBitmap(const DrBitmap& bitmap, Bitmap_Format desired_format) : DrBitmap(bitmap.width, bitmap.height, desired_format) {
-    if (bitmap.format == format) {
+    if (bitmap.format == format && data.size() > 0) {
         channels =  bitmap.channels;
         width =     bitmap.width;
         height =    bitmap.height;

@@ -18,14 +18,15 @@ class DrColor;
 //####################################################################################
 //##    Random Functions
 //############################
-/// @brief: Returns a number between lower (inclusive) and upper (exclusive)
+// Returns a number between lower (inclusive) and upper (exclusive)
 int         RandomInt(int lower, int upper);
-/// @brief: Returns a number between lower (inclusive) and upper (inclusive)
+// Returns a number between lower (inclusive) and upper (inclusive)
 double      RandomDouble(double lower, double upper);
-/// @brief: Returns a random boolean
+// Returns a random boolean
 bool        RandomBool();
-/// @brief: Returns a random DrColor, fully opaque
+// Returns a random DrColor, fully opaque
 DrColor     RandomColor();
+
 
 #endif // DR_RANDOM_H
 

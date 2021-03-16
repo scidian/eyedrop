@@ -42,8 +42,6 @@
 //####################################################################################
 int main(int argc, char* argv[]) {
 
-    RegisterMetaData();
-
     DrEditor* editor = new DrEditor("Test Editor", DrColor(28, 30, 29), 1750, 1000);
     editor->run();
 
@@ -87,12 +85,12 @@ void DrEditor::onCreate() {
     
     // ... or, with memcpy
     DrVec3 rotation;
-    memcpy(&rotation, p +  GetMetaProperty<Transform2D>(1).offset, sizeof(rotation));
+    memcpy(&rotation, p + GetMetaProperty<Transform2D>(1).offset, sizeof(rotation));
 
     // C++ way
-    static constexpr auto off_rot = &Transform2D::rotation;
-    auto r = ((&et)->*off_rot);
-    rotation = r;
+//    static constexpr auto off_rot = &Transform2D::rotation;
+//    auto r = ((&et)->*off_rot);
+//    rotation = r;
 
     std::cout << "Rotation X: " << rotation.x << ", Rotation Y: " << rotation.y << ", Rotation Z: " << rotation.z << std::endl;
 

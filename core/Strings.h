@@ -9,7 +9,6 @@
 #ifndef DR_STRINGS_H
 #define DR_STRINGS_H
 
-#include <algorithm>
 #include <sstream>
 #include <string>
 

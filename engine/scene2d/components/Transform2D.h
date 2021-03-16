@@ -29,7 +29,8 @@ struct Transform2D {
 //##    Register Meta Data
 //############################
 #ifdef REGISTER_META_DATA
-	void RegisterComponentTransform2D() {
+	template <> 
+	void RegisterMetaData<Transform2D>() {
 		RegisterMetaComponent<Transform2D>( 
 			"Transform 2D", 
 			"Describes the location and positioning of this 2D object." 

@@ -28,28 +28,6 @@ using DrArchetype =         std::bitset<MAX_COMPONENTS>;    // A bitset to repre
 
 
 //####################################################################################
-//##    Meta Data Types
-//############################
-enum class Meta_Comp {
-    Name,                   // string   Member variable name
-    Title,                  // string   Display name of this Component
-    About,                  // string   Description to show in Help Advisor
-    Color,                  // uint     Color of Header ion Inspector
-    Icon,                   // enum     Mini icon to show in Inspector
-    Hidden,                 // bool     Should this Component appear in Inspector?
-};
-
-enum class Meta_Prop {
-    Name,                   // string   Member variable name
-    Title,                  // string   Display name of this Property
-    About,                  // string   Description to show in Help Advisor
-    Index,                  // int      Location of this member variable within parent Component 
-    Type,                   // enum     Tells how to display in Inspector, should be enum class Property_type from below
-    Hidden,                 // bool     Should this Property appear in Inspector?
-};
-
-
-//####################################################################################
 //##    Used to track what types Properties of Components are, stored in Meta Data
 //##    !!!!! Numbers are SAVE FILE CRITICAL and CANNOT BE CHANGED once set
 //##
@@ -132,6 +110,12 @@ enum class Scene_Type {
     Physics_2D,
     Physics_3D,
     UI,
+};
+
+
+enum Component_Icon {
+    None,
+    Toolbar_World_Graph,
 };
 
 

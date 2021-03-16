@@ -23,7 +23,7 @@
 //
 //  #NOTE: Component structs / classes MUST be aggregate (std::is_standard_layout)
 //         for reflection system. Identifier offsetof() is only guaranteed to work
-//         with standard layout classes...
+//         with standard layout classes and POD types...
 //####################################################################################
 #ifndef DR_PROJECT_H
 #define DR_PROJECT_H
