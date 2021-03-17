@@ -35,6 +35,17 @@ private:
 
 
 public:
+	// Working on grabbing Component by type for Object Inspector
+	std::shared_ptr<IComponentArray> GetComponentArrayByType(DrComponentType type) {
+		for (auto pair : m_component_types) {
+			if (pair.second == type) return m_component_arrays[pair.first];
+		}
+		return nullptr;
+	}
+
+	
+
+
 	template<typename T>
 	void RegisterComponent() {
 		const char* type_name = typeid(T).name();

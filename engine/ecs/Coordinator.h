@@ -46,7 +46,7 @@ public:
 	}
 
 
-	// Entity methods
+	// #################### Entity Methods ####################
 	DrEntity CreateEntity() {
 		return mEntityManager->CreateEntity();
 	}
@@ -58,7 +58,7 @@ public:
 	}
 
 
-	// Component methods
+	// #################### Component Methods ####################
 	template<typename T>
 	void RegisterComponent() {
 		mComponentManager->RegisterComponent<T>();
@@ -95,7 +95,7 @@ public:
 	}
 
 
-	// System methods
+	// #################### System Methods ####################
 	template<typename T>
 	std::shared_ptr<T> RegisterSystem() {
 		return mSystemManager->RegisterSystem<T>();
@@ -107,7 +107,7 @@ public:
 	}
 
 
-	// Event methods
+	// #################### Event Methods ####################
 	void AddEventListener(EventId eventId, std::function<void(DrEvent&)> const& listener) {
 		mEventManager->AddListener(eventId, listener);
 	}

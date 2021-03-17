@@ -11,7 +11,8 @@
 
 #include <vector>
 #include "core/geometry/Vec3.h"
-#include "engine/data/Meta.h"
+#include "core/imaging/Color.h"
+#include "engine/data/Reflect.h"
 
 
 //####################################################################################
@@ -26,25 +27,26 @@ struct Transform2D {
 
 
 //####################################################################################
-//##    Register Meta Data
+//##    Register Reflection / Meta Data
 //############################
-#ifdef REGISTER_META_DATA
+#ifdef REGISTER_REFLECTION
 	template <> 
-	void RegisterMetaData<Transform2D>() {
-		RegisterMetaComponent<Transform2D>( 
-			"Transform 2D", 
-			"Describes the location and positioning of this 2D object." 
-		);
-		RegisterMetaProperty<Transform2D>(
-			"Position", 
+	void RegisterClass<Transform2D>() {
+		RegisterComponent<Transform2D>(ComponentData{ 
+			"Transform2D", "Transform 2D", 
+			"Describes the location and positioning of this 2D object.",
+			DROP_COLOR_WHITE, Component_Icon::None, false  
+		});
+		RegisterProperty<Transform2D>(PropertyData{
+			"position", "Position", 
 			"Location of this object in 2D space.",
-			offsetof(Transform2D, position)
-		);
-		RegisterMetaProperty<Transform2D>(
-			"Rotation", 
+			Property_Type::Point3D, offsetof(Transform2D, position), sizeof(Transform2D::position), false
+		});
+		RegisterProperty<Transform2D>(PropertyData{
+			"rotation", "Rotation", 
 			"Rotation of this object in 2D space.",
-			offsetof(Transform2D, rotation)
-		);
+			Property_Type::Point3D, offsetof(Transform2D, rotation), sizeof(Transform2D::rotation), false
+		});
 	}
 #endif
 

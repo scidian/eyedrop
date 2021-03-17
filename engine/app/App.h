@@ -53,7 +53,6 @@
 
 // Forward Declarations
 class DrApp;
-class DrMeta;
 class DrRenderContext;
 
 //####################################################################################
@@ -64,10 +63,9 @@ class DrRenderContext;
 
 
 //####################################################################################
-//##    Global Declarations
+//##    Global Variable Declarations
 //####################################################################################
 extern DrApp*               g_app;                                                  // App singleton            Defined in App.cpp      Assigned in App.cpp::App()
-extern DrMeta*              g_meta;                                                 // Meta Data singleton      Defined in App.cpp      Assigned in Editor.cpp::main()
 
 
 //####################################################################################

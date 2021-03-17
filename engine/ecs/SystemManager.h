@@ -45,7 +45,6 @@ public:
 	void SetArchetype(DrArchetype archetype) {
 		const char* type_name = typeid(T).name();
 		assert(m_systems.find(type_name) != m_systems.end() && "System used before being registered!");
-
 		m_archetypes.insert({type_name, archetype});
 	}
 

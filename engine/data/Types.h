@@ -28,7 +28,7 @@ using DrArchetype =         std::bitset<MAX_COMPONENTS>;    // A bitset to repre
 
 
 //####################################################################################
-//##    Used to track what types Properties of Components are, stored in Meta Data
+//##    Used to track what types Properties of Components are, stored in DrReflect meta data
 //##    !!!!! Numbers are SAVE FILE CRITICAL and CANNOT BE CHANGED once set
 //##
 //##    !!!!! NEXT AVAILABLE NUMBER:    35

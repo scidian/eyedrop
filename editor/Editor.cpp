@@ -18,7 +18,7 @@
 #include "engine/app/App.h"
 #include "engine/app/Image.h"
 #include "engine/app/RenderContext.h"
-#include "engine/data/Meta.h"
+#include "engine/data/Reflect.h"
 #include "engine/scene3d/Mesh.h"
 #include "ui/Dockspace.h"
 #include "ui/Menu.h"
@@ -42,6 +42,8 @@
 //####################################################################################
 int main(int argc, char* argv[]) {
 
+    InitializeReflection();
+
     DrEditor* editor = new DrEditor("Test Editor", DrColor(28, 30, 29), 1750, 1000);
     editor->run();
 
@@ -64,33 +66,27 @@ void DrEditor::onCreate() {
     ecs()->AddComponent(entity, et);
 
 
+    // Component grab test
+    
+
+
     // Meta Data Test
-    std::cout << GetMetaComponent<Transform2D>().name << std::endl;
-    std::cout << GetMetaComponent<Transform2D>().description << std::endl;
+    std::cout << GetComponentData<Transform2D>().name << std::endl;
+    std::cout << GetComponentData<Transform2D>().description << std::endl;
     
-    std::cout << "Prop Name:   " << GetMetaProperty<Transform2D>(0).name << std::endl;
-    std::cout << "Prop About:  " << GetMetaProperty<Transform2D>(0).description << std::endl;
-    std::cout << "Prop Offset: " << GetMetaProperty<Transform2D>(0).offset << std::endl;
+    std::cout << "Prop Name:   " << GetPropertyData<Transform2D>(0).name << std::endl;
+    std::cout << "Prop About:  " << GetPropertyData<Transform2D>(0).description << std::endl;
+    std::cout << "Prop Offset: " << GetPropertyData<Transform2D>(0).offset << std::endl;
     
-    std::cout << "Prop Name:   " << GetMetaProperty<Transform2D>(1).name << std::endl;
-    std::cout << "Prop About:  " << GetMetaProperty<Transform2D>(1).description << std::endl;
-    std::cout << "Prop Offset: " << GetMetaProperty<Transform2D>(1).offset << std::endl;
+    std::cout << "Prop Name:   " << GetPropertyData<Transform2D>(1).name << std::endl;
+    std::cout << "Prop About:  " << GetPropertyData<Transform2D>(1).description << std::endl;
+    std::cout << "Prop Offset: " << GetPropertyData<Transform2D>(1).offset << std::endl;
 
-    // Cast Transform2D struct instance to char* to have actual address of first byte in memory
-    char* p = (char*)(&et);
 
-    // Add offsetof() size of membner variable and cast back to known type
-    /// vector ex:  std::vector<double> rotation = *(std::vector<double>*)(p + GetMetaProperty<Transform2D>(1).offset);
-    /// DrVec  ex:  DrVec3 rotation = *(DrVec3*)(p + GetMetaProperty<Transform2D>(1).offset);
-    
-    // ... or, with memcpy
+    // Test GetProperty
     DrVec3 rotation;
-    memcpy(&rotation, p + GetMetaProperty<Transform2D>(1).offset, sizeof(rotation));
+    GetProperty<Transform2D>(&et, &rotation, 1);
 
-    // C++ way
-//    static constexpr auto off_rot = &Transform2D::rotation;
-//    auto r = ((&et)->*off_rot);
-//    rotation = r;
 
     std::cout << "Rotation X: " << rotation.x << ", Rotation Y: " << rotation.y << ", Rotation Z: " << rotation.z << std::endl;
 

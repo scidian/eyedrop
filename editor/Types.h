@@ -41,7 +41,7 @@ enum class Editor_Mode {
 //##    Different widgets in an Editor window, used for cross updating widgets
 //############################
 enum Editor_Widgets {
-    // Global Widgets
+    // Main Widgets
     EDITOR_WIDGET_MAIN_WINDOW,
     EDITOR_WIDGET_TOOLBAR,
     EDITOR_WIDGET_STATUS,
