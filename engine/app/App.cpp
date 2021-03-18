@@ -52,8 +52,7 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
 
     // Initialize Entity Component System
     m_coordinator = new DrCoordinator();        
-    m_coordinator->Init();
-
+    
     // Set locals
     m_app_name = title;
     m_bg_color = bg_color;

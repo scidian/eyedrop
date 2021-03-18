@@ -30,7 +30,7 @@ private:
 public:
 	// Adds a System to the System Manager
 	template<typename T>
-	std::shared_ptr<T> RegisterSystem() {
+	std::shared_ptr<T> registerSystem() {
 		HashID hash = typeid(T).hash_code();
 		assert(m_systems.find(hash) == m_systems.end() && "Registering system more than once!");
 		
@@ -42,14 +42,14 @@ public:
 
 	// Sets Archetype (a bitset based on desired Components) of a System
 	template<typename T>
-	void SetArchetype(Archetype archetype) {
+	void setArchetype(Archetype archetype) {
 		HashID hash = typeid(T).hash_code();
 		assert(m_systems.find(hash) != m_systems.end() && "System used before being registered!");
 		m_archetypes.insert({hash, archetype});
 	}
 
 	// Entity has been destroyed, remove from all Systems
-	void EntityDestroyed(EntityID entity) {
+	void entityDestroyed(EntityID entity) {
 		for (auto const& system_pair : m_systems) {
 			auto const& system = system_pair.second;
 			system->m_entities.erase(entity);
@@ -59,7 +59,7 @@ public:
 	// Check all Systems for Entity
 	//		If Entity has necessay components of System (shares Archetype), make sure that Entity is included in that System
 	//		Otherwise remove the Entity from that System
-	void EntityArchetypeChanged(EntityID entity, Archetype entity_archetype) {
+	void entityArchetypeChanged(EntityID entity, Archetype entity_archetype) {
 		for (auto const& system_pair : m_systems) {
 			auto const& type =   system_pair.first;
 			auto const& system = system_pair.second;

@@ -55,27 +55,27 @@ class DrEvent
 {
 	// #################### VARIABLES ####################
 private:
-	EventId 									mType	{ };
-	std::unordered_map<EventId, nonstd::any> 	mData	{ };
+	EventId 									m_type	{ };
+	std::unordered_map<EventId, nonstd::any> 	m_data	{ };
 	
 	
 	// #################### INTERNAL FUNCTIONS ####################
 public:
 	DrEvent() = delete;
-	explicit DrEvent(EventId type) : mType(type) { }
+	explicit DrEvent(EventId type) : m_type(type) { }
 
 	template<typename T>
-	void SetParam(EventId id, T value) {
-		mData[id] = value;
+	void setParam(EventId id, T value) {
+		m_data[id] = value;
 	}
 
 	template<typename T>
-	T GetParam(EventId id) {
-		return nonstd::any_cast<T>(mData[id]);
+	T getParam(EventId id) {
+		return nonstd::any_cast<T>(m_data[id]);
 	}
 
-	EventId GetType() const {
-		return mType;
+	EventId getType() const {
+		return m_type;
 	}
 };
 

@@ -27,7 +27,7 @@ private:
 
 	// Getters
 	template<typename T>
-	std::shared_ptr<DrComponentArray<T>> GetComponentArray() {
+	std::shared_ptr<DrComponentArray<T>> getComponentArray() {
 		HashID hash = typeid(T).hash_code();
 		assert(m_component_ids.find(hash) != m_component_ids.end() && "Component not registered before use!");
 		return std::static_pointer_cast<DrComponentArray<T>>(m_component_arrays[hash]);
@@ -36,7 +36,7 @@ private:
 
 public:
 	// Working on grabbing Component by type for Object Inspector
-	std::shared_ptr<IComponentArray> GetComponentArrayByType(ComponentID type) {
+	std::shared_ptr<IComponentArray> getComponentArrayByType(ComponentID type) {
 		for (auto pair : m_component_ids) {
 			if (pair.second == type) return m_component_arrays[pair.first];
 		}
@@ -47,7 +47,7 @@ public:
 
 
 	template<typename T>
-	void RegisterComponent() {
+	void registerComponent() {
 		HashID hash = typeid(T).hash_code();
 		assert(m_component_ids.find(hash) == m_component_ids.end() && "Registering component type more than once!");
 
@@ -57,31 +57,31 @@ public:
 	}
 
 	template<typename T>
-	ComponentID GetComponentID() {
+	ComponentID getComponentID() {
 		HashID hash = typeid(T).hash_code();
 		assert(m_component_ids.find(hash) != m_component_ids.end() && "Component not registered before use!");
 		return m_component_ids[hash];
 	}
 
 	template<typename T>
-	void AddComponent(EntityID entity, T component) {
-		GetComponentArray<T>()->InsertData(entity, component);
+	void addComponent(EntityID entity, T component) {
+		getComponentArray<T>()->insertData(entity, component);
 	}
 
 	template<typename T>
-	void RemoveComponent(EntityID entity) {
-		GetComponentArray<T>()->RemoveData(entity);
+	void removeComponent(EntityID entity) {
+		getComponentArray<T>()->removeData(entity);
 	}
 
 	template<typename T>
-	T& GetComponent(EntityID entity) {
-		return GetComponentArray<T>()->GetData(entity);
+	T& getComponent(EntityID entity) {
+		return getComponentArray<T>()->getData(entity);
 	}
 
-	void EntityDestroyed(EntityID entity) {
+	void entityDestroyed(EntityID entity) {
 		for (auto const& pair : m_component_arrays) {
 			auto const& component = pair.second;
-			component->EntityDestroyed(entity);
+			component->entityDestroyed(entity);
 		}
 	}
 

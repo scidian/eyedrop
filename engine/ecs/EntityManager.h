@@ -39,7 +39,7 @@ public:
 	}
 
 	// Return a valid, unused ID Key
-	EntityID CreateEntity() {
+	EntityID createEntity() {
 		assert(m_living_entity_count < MAX_ENTITIES && "Too many entities in existence!");
 		EntityID id = m_available_entities.front();
 		m_available_entities.pop();
@@ -48,7 +48,7 @@ public:
 	}
 
 	// Reclaims Entity ID
-	void DestroyEntity(EntityID entity) {
+	void destroyEntity(EntityID entity) {
 		assert(entity < MAX_ENTITIES && "Entity out of range!");
 		m_archetypes[entity].reset();
 		m_available_entities.push(entity);
@@ -56,13 +56,13 @@ public:
 	}
 
 	// Stores Archetype of Entity for fast lookup
-	void SetArchetype(EntityID entity, Archetype archetype) {
+	void setArchetype(EntityID entity, Archetype archetype) {
 		assert((entity >= KEY_START && entity < MAX_ENTITIES) && "Entity out of range!");
 		m_archetypes[entity] = archetype;
 	}
 
 	// Retrieve Entity Archetype
-	Archetype GetArchetype(EntityID entity) {
+	Archetype getArchetype(EntityID entity) {
 		assert((entity >= KEY_START && entity < MAX_ENTITIES) && "Entity out of range!");
 		return m_archetypes[entity];
 	}

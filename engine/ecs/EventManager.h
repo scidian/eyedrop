@@ -27,19 +27,19 @@ private:
 
 	// #################### INTERNAL FUNCTIONS ####################
 public:
-	void AddListener(EventId eventId, std::function<void(DrEvent&)> const& listener) {
+	void addListener(EventId eventId, std::function<void(DrEvent&)> const& listener) {
 		listeners[eventId].push_back(listener);
 	}
 
-	void SendEvent(DrEvent& event) {
-		uint32_t type = event.GetType();
+	void sendEvent(DrEvent& event) {
+		uint32_t type = event.getType();
 
 		for (auto const& listener : listeners[type]) {
 			listener(event);
 		}
 	}
 
-	void SendEvent(EventId eventId) {
+	void sendEvent(EventId eventId) {
 		DrEvent event(eventId);
 
 		for (auto const& listener : listeners[eventId]) {

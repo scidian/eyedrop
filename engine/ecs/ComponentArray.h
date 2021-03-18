@@ -21,7 +21,7 @@ class IComponentArray
 {
 public:
 	virtual ~IComponentArray() = default;
-	virtual void EntityDestroyed(EntityID entity) = 0;
+	virtual void entityDestroyed(EntityID entity) = 0;
 };
 
 
@@ -42,20 +42,20 @@ private:
 
 	// #################### INTERNAL FUNCTIONS ####################
 public:
-	void EntityDestroyed(EntityID entity) override {
+	void entityDestroyed(EntityID entity) override {
 		if (m_entity_to_index.find(entity) != m_entity_to_index.end()) {
-			RemoveData(entity);
+			removeData(entity);
 		}
 	}
 
-	T& GetData(EntityID entity) {
+	T& getData(EntityID entity) {
 		//assert(m_entity_to_index.find(entity) != m_entity_to_index.end() && "Retrieving non-existent component!");
 		assert((entity >= KEY_START && entity < MAX_ENTITIES) && "Entity out of range!");
 		return m_component_array[m_entity_to_index[entity]];
 	}
 
 	// Adds a Component to the ComponentArray for an Entity
-	void InsertData(EntityID entity, T component) {
+	void insertData(EntityID entity, T component) {
 		assert(m_entity_to_index.find(entity) == m_entity_to_index.end() && "Component added to same entity more than once!");
 
 		// Put new entry at end
@@ -66,7 +66,7 @@ public:
 		++m_size;
 	}
 
-	void RemoveData(EntityID entity) {
+	void removeData(EntityID entity) {
 		assert(m_entity_to_index.find(entity) != m_entity_to_index.end() && "Removing non-existent component!");
 
 		// Copy element at end into deleted element's place to maintain density

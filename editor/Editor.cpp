@@ -57,17 +57,17 @@ void DrEditor::onCreate() {
 
     // #################### TESTING ####################
     // ECS Test
-    int entity = ecs()->CreateEntity();
-    ecs()->RegisterComponent<Transform2D>();
+    int entity = ecs()->createEntity();
+    ecs()->registerComponent<Transform2D>();
     Transform2D et { };
         et.position = std::vector<double>({1.0, 2.0, 3.0});
         et.rotation = DrVec3(4.0, 5.0, 6.0);
         et.scale =    std::vector<double>({7.0, 8.0, 9.0});
-    ecs()->AddComponent(entity, et);
+    ecs()->addComponent(entity, et);
 
 
     // Component grab test
-    //Archetype entity_type = ecs()->
+    //Archetype entity_type = ecs()->getEntityType
 
 
     // Meta Data Test

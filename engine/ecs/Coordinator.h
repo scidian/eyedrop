@@ -31,6 +31,13 @@ private:
 	DrSystemManager*        m_system_manager;
 
 public:
+	// Constructor / Destructor
+	DrCoordinator() {
+		m_component_manager = new DrComponentManager();
+		m_entity_manager =    new DrEntityManager();
+		m_event_manager =     new DrEventManager();
+		m_system_manager =    new DrSystemManager();
+	}
     ~DrCoordinator() {
         delete m_component_manager;
         delete m_entity_manager;
@@ -38,90 +45,83 @@ public:
         delete m_system_manager;
     }
 
-	void Init() {
-		m_component_manager = new DrComponentManager();
-		m_entity_manager =    new DrEntityManager();
-		m_event_manager =     new DrEventManager();
-		m_system_manager =    new DrSystemManager();
-	}
-
 
 	// #################### Entity Methods ####################
-	EntityID CreateEntity() {
-		return m_entity_manager->CreateEntity();
+	EntityID createEntity() {
+		return m_entity_manager->createEntity();
 	}
 
-	void DestroyEntity(EntityID entity) {
-		m_entity_manager->DestroyEntity(entity);
-		m_component_manager->EntityDestroyed(entity);
-		m_system_manager->EntityDestroyed(entity);
+	void destroyEntity(EntityID entity) {
+		m_entity_manager->destroyEntity(entity);
+		m_component_manager->entityDestroyed(entity);
+		m_system_manager->entityDestroyed(entity);
 	}
 
-	Archetype GetEntityType(EntityID entity) {
-		return m_entity_manager->GetArchetype(entity);
+	Archetype getEntityType(EntityID entity) {
+		return m_entity_manager->getArchetype(entity);
 	}
 
 
 	// #################### Component Methods ####################
 	template<typename T>
-	void RegisterComponent() {
-		m_component_manager->RegisterComponent<T>();
+	void registerComponent() {
+		m_component_manager->registerComponent<T>();
 	}
 
 	template<typename T>
-	void AddComponent(EntityID entity, T component) {
-		m_component_manager->AddComponent<T>(entity, component);
+	void addComponent(EntityID entity, T component) {
+		m_component_manager->addComponent<T>(entity, component);
 
-		auto archetype = m_entity_manager->GetArchetype(entity);
-		archetype.set(m_component_manager->GetComponentID<T>(), true);
-		m_entity_manager->SetArchetype(entity, archetype);
-		m_system_manager->EntityArchetypeChanged(entity, archetype);
+		auto archetype = m_entity_manager->getArchetype(entity);
+		archetype.set(m_component_manager->getComponentID<T>(), true);
+		m_entity_manager->setArchetype(entity, archetype);
+		m_system_manager->entityArchetypeChanged(entity, archetype);
 	}
 
 	template<typename T>
-	void RemoveComponent(EntityID entity) {
-		m_component_manager->RemoveComponent<T>(entity);
+	void removeComponent(EntityID entity) {
+		m_component_manager->removeComponent<T>(entity);
 
-		auto archetype = m_entity_manager->GetArchetype(entity);
-		archetype.set(m_component_manager->GetComponentID<T>(), false);
-		m_entity_manager->SetArchetype(entity, archetype);
-		m_system_manager->EntityArchetypeChanged(entity, archetype);
+		auto archetype = m_entity_manager->getArchetype(entity);
+		archetype.set(m_component_manager->getComponentID<T>(), false);
+		m_entity_manager->setArchetype(entity, archetype);
+		m_system_manager->entityArchetypeChanged(entity, archetype);
 	}
 
 	template<typename T>
-	T& GetComponent(EntityID entity) {
-		return m_component_manager->GetComponent<T>(entity);
+	T& getComponent(EntityID entity) {
+		return m_component_manager->getComponent<T>(entity);
 	}
 
 	template<typename T>
-	ComponentID GetComponentID() {
-		return m_component_manager->GetComponentID<T>();
+	ComponentID getComponentID() {
+		return m_component_manager->getComponentID<T>();
 	}
 
 
 	// #################### System Methods ####################
 	template<typename T>
-	std::shared_ptr<T> RegisterSystem() {
-		return m_system_manager->RegisterSystem<T>();
+	std::shared_ptr<T> registerSystem() {
+		return m_system_manager->registerSystem<T>();
 	}
 
 	template<typename T>
-	void SetSystemArchetype(Archetype archetype) {
-		m_system_manager->SetArchetype<T>(archetype);
+	void setSystemArchetype(Archetype archetype) {
+		m_system_manager->setArchetype<T>(archetype);
 	}
 
 
 	// #################### Event Methods ####################
-	void AddEventListener(EventId eventId, std::function<void(DrEvent&)> const& listener) {
-		m_event_manager->AddListener(eventId, listener);
+	void addEventListener(EventId eventId, std::function<void(DrEvent&)> const& listener) {
+		m_event_manager->addListener(eventId, listener);
 	}
 
-	void SendEvent(DrEvent& event) {
-		m_event_manager->SendEvent(event);
+	void sendEvent(DrEvent& event) {
+		m_event_manager->sendEvent(event);
 	}
 
-	void SendEvent(EventId eventId) {
-		m_event_manager->SendEvent(eventId);
+	void sendEvent(EventId eventId) {
+		m_event_manager->sendEvent(eventId);
 	}
 
 };
