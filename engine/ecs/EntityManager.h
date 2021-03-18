@@ -23,10 +23,9 @@ class DrEntityManager
 {
 	// #################### VARIABLES ####################
 private:
-	std::queue<DrEntity> 					m_available_entities	{ };			// Current Entities in Entity Manager
-	std::array<DrArchetype, MAX_ENTITIES> 	m_archetypes			{ };			// Archetypes of Entities
-
-	uint32_t 								m_living_entity_count 	{ 0 };
+	std::queue<EntityID> 					m_available_entities	{ };			// Current Entities in Entity Manager
+	std::array<Archetype, MAX_ENTITIES> 	m_archetypes			{ };			// Archetypes of Entities
+	EntityID 								m_living_entity_count 	{ 0 };			// Tracks number of active Entities
 
 
 	// #################### INTERNAL FUNCTIONS ####################
@@ -34,22 +33,22 @@ public:
 	// Constructor
 	DrEntityManager() {
 		// Fill a Queue with available ID Keys
-		for (DrEntity entity = KEY_START; entity < MAX_ENTITIES; ++entity) {
+		for (EntityID entity = KEY_START; entity < MAX_ENTITIES; ++entity) {
 			m_available_entities.push(entity);
 		}
 	}
 
 	// Return a valid, unused ID Key
-	DrEntity CreateEntity() {
+	EntityID CreateEntity() {
 		assert(m_living_entity_count < MAX_ENTITIES && "Too many entities in existence!");
-		DrEntity id = m_available_entities.front();
+		EntityID id = m_available_entities.front();
 		m_available_entities.pop();
 		++m_living_entity_count;
 		return id;
 	}
 
 	// Reclaims Entity ID
-	void DestroyEntity(DrEntity entity) {
+	void DestroyEntity(EntityID entity) {
 		assert(entity < MAX_ENTITIES && "Entity out of range!");
 		m_archetypes[entity].reset();
 		m_available_entities.push(entity);
@@ -57,13 +56,13 @@ public:
 	}
 
 	// Stores Archetype of Entity for fast lookup
-	void SetArchetype(DrEntity entity, DrArchetype archetype) {
+	void SetArchetype(EntityID entity, Archetype archetype) {
 		assert((entity >= KEY_START && entity < MAX_ENTITIES) && "Entity out of range!");
 		m_archetypes[entity] = archetype;
 	}
 
 	// Retrieve Entity Archetype
-	DrArchetype GetArchetype(DrEntity entity) {
+	Archetype GetArchetype(EntityID entity) {
 		assert((entity >= KEY_START && entity < MAX_ENTITIES) && "Entity out of range!");
 		return m_archetypes[entity];
 	}

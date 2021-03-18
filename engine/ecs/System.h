@@ -21,7 +21,7 @@ class DrSystem
 {
     // #################### VARIABLES ####################
 public:
-	std::set<DrEntity>      m_entities;
+	std::set<EntityID>      m_entities;
 
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################

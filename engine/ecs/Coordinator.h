@@ -47,17 +47,17 @@ public:
 
 
 	// #################### Entity Methods ####################
-	DrEntity CreateEntity() {
+	EntityID CreateEntity() {
 		return m_entity_manager->CreateEntity();
 	}
 
-	void DestroyEntity(DrEntity entity) {
+	void DestroyEntity(EntityID entity) {
 		m_entity_manager->DestroyEntity(entity);
 		m_component_manager->EntityDestroyed(entity);
 		m_system_manager->EntityDestroyed(entity);
 	}
 
-	DrArchetype GetEntityType(DrEntity entity) {
+	Archetype GetEntityType(EntityID entity) {
 		return m_entity_manager->GetArchetype(entity);
 	}
 
@@ -69,33 +69,33 @@ public:
 	}
 
 	template<typename T>
-	void AddComponent(DrEntity entity, T component) {
+	void AddComponent(EntityID entity, T component) {
 		m_component_manager->AddComponent<T>(entity, component);
 
 		auto archetype = m_entity_manager->GetArchetype(entity);
-		archetype.set(m_component_manager->GetComponentType<T>(), true);
+		archetype.set(m_component_manager->GetComponentID<T>(), true);
 		m_entity_manager->SetArchetype(entity, archetype);
 		m_system_manager->EntityArchetypeChanged(entity, archetype);
 	}
 
 	template<typename T>
-	void RemoveComponent(DrEntity entity) {
+	void RemoveComponent(EntityID entity) {
 		m_component_manager->RemoveComponent<T>(entity);
 
 		auto archetype = m_entity_manager->GetArchetype(entity);
-		archetype.set(m_component_manager->GetComponentType<T>(), false);
+		archetype.set(m_component_manager->GetComponentID<T>(), false);
 		m_entity_manager->SetArchetype(entity, archetype);
 		m_system_manager->EntityArchetypeChanged(entity, archetype);
 	}
 
 	template<typename T>
-	T& GetComponent(DrEntity entity) {
+	T& GetComponent(EntityID entity) {
 		return m_component_manager->GetComponent<T>(entity);
 	}
 
 	template<typename T>
-	DrComponentType GetComponentType() {
-		return m_component_manager->GetComponentType<T>();
+	ComponentID GetComponentID() {
+		return m_component_manager->GetComponentID<T>();
 	}
 
 
@@ -106,7 +106,7 @@ public:
 	}
 
 	template<typename T>
-	void SetSystemArchetype(DrArchetype archetype) {
+	void SetSystemArchetype(Archetype archetype) {
 		m_system_manager->SetArchetype<T>(archetype);
 	}
 

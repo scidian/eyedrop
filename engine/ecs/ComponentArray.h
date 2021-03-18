@@ -13,7 +13,6 @@
 #include <unordered_map>
 #include "engine/data/Types.h"
 
-
 //####################################################################################
 //##    IComponentArray
 //##        
@@ -22,7 +21,7 @@ class IComponentArray
 {
 public:
 	virtual ~IComponentArray() = default;
-	virtual void EntityDestroyed(DrEntity entity) = 0;
+	virtual void EntityDestroyed(EntityID entity) = 0;
 };
 
 
@@ -35,48 +34,48 @@ class DrComponentArray : public IComponentArray
 {
 	// #################### VARIABLES ####################
 private:
-	std::array<T, MAX_ENTITIES> 			m_component_array	{ };
-	std::unordered_map<DrEntity, size_t> 	m_entity_to_index	{ };
-	std::unordered_map<size_t, DrEntity> 	m_index_to_entity	{ };
-	size_t 									m_size				{ };
+	std::array<T, MAX_ENTITIES> 				m_component_array	{ };
+	std::unordered_map<EntityID, ArrayIndex> 	m_entity_to_index	{ };
+	std::unordered_map<ArrayIndex, EntityID> 	m_index_to_entity	{ };
+	ArrayIndex   								m_size				{ 0 };
 
 
 	// #################### INTERNAL FUNCTIONS ####################
 public:
-	void EntityDestroyed(DrEntity entity) override {
+	void EntityDestroyed(EntityID entity) override {
 		if (m_entity_to_index.find(entity) != m_entity_to_index.end()) {
 			RemoveData(entity);
 		}
 	}
 
-	T& GetData(DrEntity entity) {
+	T& GetData(EntityID entity) {
 		//assert(m_entity_to_index.find(entity) != m_entity_to_index.end() && "Retrieving non-existent component!");
 		assert((entity >= KEY_START && entity < MAX_ENTITIES) && "Entity out of range!");
 		return m_component_array[m_entity_to_index[entity]];
 	}
 
 	// Adds a Component to the ComponentArray for an Entity
-	void InsertData(DrEntity entity, T component) {
+	void InsertData(EntityID entity, T component) {
 		assert(m_entity_to_index.find(entity) == m_entity_to_index.end() && "Component added to same entity more than once!");
 
 		// Put new entry at end
-		size_t new_index = m_size;
+		ArrayIndex new_index = m_size;
 		m_entity_to_index[entity] = new_index;
 		m_index_to_entity[new_index] = entity;
 		m_component_array[new_index] = component;
 		++m_size;
 	}
 
-	void RemoveData(DrEntity entity) {
+	void RemoveData(EntityID entity) {
 		assert(m_entity_to_index.find(entity) != m_entity_to_index.end() && "Removing non-existent component!");
 
 		// Copy element at end into deleted element's place to maintain density
-		size_t index_of_removed_entity = m_entity_to_index[entity];
-		size_t index_of_last_element = m_size - 1;
+		ArrayIndex index_of_removed_entity = m_entity_to_index[entity];
+		ArrayIndex index_of_last_element = m_size - 1;
 		m_component_array[index_of_removed_entity] = m_component_array[index_of_last_element];
 
 		// Update map to point to moved spot
-		DrEntity entity_of_last_element = m_index_to_entity[index_of_last_element];
+		EntityID entity_of_last_element = m_index_to_entity[index_of_last_element];
 		m_entity_to_index[entity_of_last_element] = index_of_removed_entity;
 		m_index_to_entity[index_of_removed_entity] = entity_of_last_element;
 

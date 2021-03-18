@@ -22,9 +22,8 @@ class DrSystemManager
 {
 	// #################### VARIABLES ####################
 private:
-	// Index size_t in maps comes from typeid().hash_code() 
-	std::unordered_map<size_t, std::shared_ptr<DrSystem>> 	m_systems 		{ };	// Current Systems in System Manager
-	std::unordered_map<size_t, DrArchetype>     			m_archetypes 	{ };	// Archetypes of Systems
+	std::unordered_map<HashID, std::shared_ptr<DrSystem>> 	m_systems 		{ };	// Current Systems in System Manager
+	std::unordered_map<HashID, Archetype>     				m_archetypes 	{ };	// Archetypes of Systems
 	
 
 	// #################### INTERNAL FUNCTIONS ####################
@@ -32,7 +31,7 @@ public:
 	// Adds a System to the System Manager
 	template<typename T>
 	std::shared_ptr<T> RegisterSystem() {
-		size_t hash = typeid(T).hash_code();
+		HashID hash = typeid(T).hash_code();
 		assert(m_systems.find(hash) == m_systems.end() && "Registering system more than once!");
 		
 		// Otherwise, add system to manager
@@ -43,14 +42,14 @@ public:
 
 	// Sets Archetype (a bitset based on desired Components) of a System
 	template<typename T>
-	void SetArchetype(DrArchetype archetype) {
-		size_t hash = typeid(T).hash_code();
+	void SetArchetype(Archetype archetype) {
+		HashID hash = typeid(T).hash_code();
 		assert(m_systems.find(hash) != m_systems.end() && "System used before being registered!");
 		m_archetypes.insert({hash, archetype});
 	}
 
 	// Entity has been destroyed, remove from all Systems
-	void EntityDestroyed(DrEntity entity) {
+	void EntityDestroyed(EntityID entity) {
 		for (auto const& system_pair : m_systems) {
 			auto const& system = system_pair.second;
 			system->m_entities.erase(entity);
@@ -60,7 +59,7 @@ public:
 	// Check all Systems for Entity
 	//		If Entity has necessay components of System (shares Archetype), make sure that Entity is included in that System
 	//		Otherwise remove the Entity from that System
-	void EntityArchetypeChanged(DrEntity entity, DrArchetype entity_archetype) {
+	void EntityArchetypeChanged(EntityID entity, Archetype entity_archetype) {
 		for (auto const& system_pair : m_systems) {
 			auto const& type =   system_pair.first;
 			auto const& system = system_pair.second;

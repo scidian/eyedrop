@@ -21,10 +21,13 @@
 #define MAX_ENTITIES       10000                            // Total of number of entities allowed for now
 #define MAX_COMPONENTS        32                            // Current maximum number of compoenents (uint_8), used for sizing Signature
 
+
 // ECS System
-using DrEntity =            std::uint32_t;                  // Unique Entity ID Key
-using DrComponentType =     std::uint8_t;                   // Identifier for Components
-using DrArchetype =         std::bitset<MAX_COMPONENTS>;    // A bitset to represent a collection of Components (formerly Signature)
+using EntityID =            std::uint32_t;                  // Unique Entity ID Key
+using ComponentID =         std::uint8_t;                   // Identifier for Components
+using Archetype =           std::bitset<MAX_COMPONENTS>;    // A bitset to represent a collection of Components (formerly Signature)
+using ArrayIndex = 		    size_t;                         // For referencing Array subscript values
+using HashID =              size_t;                         // This comes from typeid(OBJECT).hash_code()
 
 
 //####################################################################################
@@ -89,7 +92,7 @@ enum class Property_Type {
 //##        - All Entities inherit DrEntity which contain DrComponents, which are displayed in the Inspector
 //##
 //############################
-enum Archetype {    
+enum Asset_Type {    
     // Misc Types
     NotFound = 0,                   // For passing a value in functions that represents No Type Selected / Found, !!!!! #NOTE: Keep as zero
 
@@ -100,8 +103,6 @@ enum Archetype {
     // Game Types
     World,                          // Describes a World (physics, lighting, etc), also holds a colleciton of Scenes
     Scene,                          // Holds a collection of Objects
-    Object,                         // Objects contained within Scene
-
 };
 
 

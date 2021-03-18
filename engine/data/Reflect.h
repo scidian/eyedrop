@@ -42,13 +42,13 @@ struct ComponentData {
 
 struct PropertyData {
     PropertyData() { }
-    PropertyData(std::string prop_name, std::string prop_title, std::string about, Property_Type prop_type, size_t hash, int off, size_t size_of, bool hide) : 
+    PropertyData(std::string prop_name, std::string prop_title, std::string about, Property_Type prop_type, HashID hash, int off, size_t size_of, bool hide) : 
         name(prop_name), title(prop_title), description(about), type(prop_type), hash_code(hash), offset(off), size(size_of), hidden(hide) { }
     std::string         name            { "unknown" };                              // Actual member variable name 
     std::string         title           { "Not Found" };                            // Display name of this Property
     std::string         description     { "Could not find property." };             // Description to show in Help Advisor
     Property_Type       type            { Property_Type::Unknown };                 // Type info for how to display in Inspector
-    size_t              hash_code       { 0 };                                      // typeid().hash_code of actual underlying type of member variable
+    HashID              hash_code       { 0 };                                      // typeid().hash_code of actual underlying type of member variable
     int                 offset          { 0 };                                      // char* offset of member variable within parent component struct
     size_t              size            { 0 };                                      // size of actual type of Property
     bool                hidden          { false };                                  // Should this Property appear in Inspector?
@@ -68,15 +68,14 @@ typedef std::map<int, PropertyData> PropertyMap;                                
 class DrReflect 
 {
 public:
-    // Index size_t in maps comes from typeid().hash_code()
-    std::unordered_map<size_t, ComponentData>      components      { };        // Holds data about DrComponent / ECS Component structs
-    std::unordered_map<size_t, PropertyMap>        properties      { };        // Holds data about Properies (of Components)
+    std::unordered_map<HashID, ComponentData>      components      { };        // Holds data about DrComponent / ECS Component structs
+    std::unordered_map<HashID, PropertyMap>        properties      { };        // Holds data about Properies (of Components)
 
 public:    
-    void AddMetaComponent(size_t hash_code, ComponentData comp_data) {
+    void AddMetaComponent(HashID hash_code, ComponentData comp_data) {
         components.insert(std::make_pair(hash_code, comp_data));
     }
-    void AddMetaProperty(size_t hash_code, PropertyData prop_data) {
+    void AddMetaProperty(HashID hash_code, PropertyData prop_data) {
         assert(components.find(hash_code) != components.end() && "Component never set with AddMetaComponent before calling AddMetaProperty!");
         properties[hash_code][prop_data.offset] = prop_data;
     }
@@ -96,7 +95,7 @@ void                InitializeReflection();                                     
 // Meta Data component fetching by component Class Name
 template<typename T>
 ComponentData GetComponentData() {
-    size_t hash = typeid(T).hash_code();
+    HashID hash = typeid(T).hash_code();
     if (g_reflect->components.find(hash) != g_reflect->components.end()) {
         return g_reflect->components[hash];
     } else { 
@@ -113,7 +112,7 @@ ComponentData GetComponentData(T& component) {
 // Meta Data property fetching by member variable Index and component Class Name
 template<typename T>
 PropertyData GetPropertyData(int property_number) {
-    size_t hash = typeid(T).hash_code();
+    HashID hash = typeid(T).hash_code();
     int count = 0;
     for (auto prop : g_reflect->properties[hash]) {
         if (count == property_number) return prop.second;
@@ -130,7 +129,7 @@ PropertyData GetPropertyData(T& component, int property_number) {
 // Meta Data property fetching by member variable Name and component Class Name
 template<typename T>
 PropertyData GetPropertyData(std::string property_name) {
-    size_t hash = typeid(T).hash_code();
+    HashID hash = typeid(T).hash_code();
     for (auto prop : g_reflect->properties[hash]) {
         if (prop.second.name == property_name) return prop.second;
     }
@@ -189,14 +188,14 @@ void RegisterClass() {};
 // Call this to register class / struct type with reflection / meta data system
 template<typename T>
 void RegisterComponent(ComponentData comp_data) { 
-    size_t hash = typeid(T).hash_code();
+    HashID hash = typeid(T).hash_code();
 	g_reflect->AddMetaComponent(hash, comp_data); 
 }
 
 // Call this to register member variable with reflection / meta data system
 template<typename T>
 void RegisterProperty(PropertyData prop_data) {
-    size_t hash = typeid(T).hash_code();
+    HashID hash = typeid(T).hash_code();
 	g_reflect->AddMetaProperty(hash, prop_data); 
 } 
 
