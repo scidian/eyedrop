@@ -78,6 +78,16 @@ public:
 		return getComponentArray<T>()->getData(entity);
 	}
 
+	HashID getComponentHashID(ComponentID component_id) {
+		for (auto pair : m_component_ids) {
+			if (pair.second == component_id) {
+				HashID hash = pair.first;
+				return hash;
+			}
+		}
+		assert(false && "Component ID not found!");
+	}
+
 	void entityDestroyed(EntityID entity) {
 		for (auto const& pair : m_component_arrays) {
 			auto const& component = pair.second;

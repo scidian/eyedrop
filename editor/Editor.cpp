@@ -29,6 +29,7 @@
 
 
 // !!!!! #TEMP
+#include "engine/scene2d/components/Test1.h"
 #include "engine/scene2d/components/Transform2D.h"
 
 
@@ -56,8 +57,9 @@ int main(int argc, char* argv[]) {
 void DrEditor::onCreate() { 
 
     // #################### TESTING ####################
-    // ECS Test
+    // ECS Construction
     int entity = ecs()->createEntity();
+    ecs()->registerComponent<Test1>();
     ecs()->registerComponent<Transform2D>();
     Transform2D et { };
         et.position = std::vector<double>({1.0, 2.0, 3.0});
@@ -65,12 +67,22 @@ void DrEditor::onCreate() {
         et.scale =    std::vector<double>({7.0, 8.0, 9.0});
     ecs()->addComponent(entity, et);
 
+    // Component Iterate
+    Archetype entity_type = ecs()->getEntityType(entity);
+    std::cout << "Entity #" << entity << " has the following components:" << std::endl;
+    for (ComponentID id = 0; id < MAX_COMPONENTS; ++id) {
+        std::cout << "Component #" << std::to_string(id) << "? ";
+        if (entity_type.test(id)) {
+            std::cout << "YES" << ", Component Name: " << GetComponentData(ecs()->getComponentHashID(id)).name << std::endl;
+            std::cout << "     First Variable: " << GetPropertyData(ecs()->getComponentHashID(id), 0).name;
+            //std::cout << ", Vale: " << GetProperty<std::vector<double>>(ecs()->getComponentHashID(id), "position");
+            std::cout << std::endl;
+        } else {
+            std::cout << "---" << std::endl;
+        }
+    }
 
-    // Component grab test
-    //Archetype entity_type = ecs()->getEntityType
-
-
-    // Meta Data Test
+    // Meta Data
     std::cout << GetComponentData<Transform2D>().name << std::endl;
     std::cout << GetComponentData<Transform2D>().description << std::endl;
     std::cout << GetComponentData(et).name << std::endl;

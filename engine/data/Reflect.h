@@ -30,28 +30,29 @@ extern DrReflect*       g_reflect;                                              
 //############################
 struct ComponentData {
     ComponentData() { }
-    ComponentData(std::string comp_name, std::string comp_title, std::string about, unsigned int show_color, Component_Icon show_icon, bool hide) : 
-        name(comp_name), title(comp_title), description(about), color(show_color), icon(show_icon), hidden(hide) { }
+    ComponentData(std::string comp_name, std::string comp_title, std::string about, bool hide, unsigned int show_color, Component_Icon show_icon, HashID hash) : 
+        name(comp_name), title(comp_title), description(about), hidden(hide), color(show_color), icon(show_icon), hash_code(hash) { }
     std::string         name            { "Unknown" };                              // Actual struct / class name 
     std::string         title           { "Not Found" };                            // Display name of this Component
     std::string         description     { "Could not find component." };            // Description to show in Help Advisor
+    bool                hidden          { false };                                  // Should this Component appear in Inspector?
     unsigned int        color           { 0xFFFFFFFF };                             // Color of Header in Inspector
     Component_Icon      icon            { Component_Icon::None };                   // enum     Mini icon to show in Inspector
-    bool                hidden          { false };                                  // Should this Component appear in Inspector?
+    HashID              hash_code       { 0 };                                      // typeid().hash_code of actual underlying type of member variable
 };
 
 struct PropertyData {
     PropertyData() { }
-    PropertyData(std::string prop_name, std::string prop_title, std::string about, Property_Type prop_type, HashID hash, int off, size_t size_of, bool hide) : 
-        name(prop_name), title(prop_title), description(about), type(prop_type), hash_code(hash), offset(off), size(size_of), hidden(hide) { }
+    PropertyData(std::string prop_name, std::string prop_title, std::string about, bool hide, Property_Type prop_type, HashID hash, int off, size_t size_of) : 
+        name(prop_name), title(prop_title), description(about), hidden(hide), type(prop_type), hash_code(hash), offset(off), size(size_of) { }
     std::string         name            { "unknown" };                              // Actual member variable name 
     std::string         title           { "Not Found" };                            // Display name of this Property
     std::string         description     { "Could not find property." };             // Description to show in Help Advisor
+    bool                hidden          { false };                                  // Should this Property appear in Inspector?
     Property_Type       type            { Property_Type::Unknown };                 // Type info for how to display in Inspector
     HashID              hash_code       { 0 };                                      // typeid().hash_code of actual underlying type of member variable
     int                 offset          { 0 };                                      // char* offset of member variable within parent component struct
     size_t              size            { 0 };                                      // size of actual type of Property
-    bool                hidden          { false };                                  // Should this Property appear in Inspector?
 };
 
 
@@ -83,7 +84,7 @@ public:
 
 
 //####################################################################################
-//##    Reflection Declarations
+//##    General Functions
 //############################
 void                InitializeReflection();                                         // Creates DrReflect class and registers classes and member variables
 
@@ -107,18 +108,19 @@ template<typename T>
 ComponentData GetComponentData(T& component) {
     return GetComponentData<T>();
 }
+// Meta Data component fetching from passed in component typeid().hash_code()
+ComponentData GetComponentData(HashID hash_id);
+
 
 // ------------------------- Property Data Fetching -------------------------
+//              ---------------    By Index  ---------------
+// Meta Data property fetching by member variable Index and component typeid().hash_code()
+PropertyData GetPropertyData(HashID component_hash_id, int property_number);
 // Meta Data property fetching by member variable Index and component Class Name
 template<typename T>
 PropertyData GetPropertyData(int property_number) {
-    HashID hash = typeid(T).hash_code();
-    int count = 0;
-    for (auto prop : g_reflect->properties[hash]) {
-        if (count == property_number) return prop.second;
-        ++count;
-    }
-    return PropertyData();
+    HashID component_hash_id = typeid(T).hash_code();
+    return GetPropertyData(component_hash_id, property_number);   
 }
 // Meta Data property fetching by member variable Index and component Instance
 template<typename T>
@@ -126,20 +128,21 @@ PropertyData GetPropertyData(T& component, int property_number) {
     return GetPropertyData<T>(property_number);   
 }
 
+//              ---------------    By Name  ---------------
+// Meta Data property fetching by member variable Name and component typeid().hash_code()
+PropertyData GetPropertyData(HashID component_hash_id, std::string property_name);
 // Meta Data property fetching by member variable Name and component Class Name
 template<typename T>
 PropertyData GetPropertyData(std::string property_name) {
-    HashID hash = typeid(T).hash_code();
-    for (auto prop : g_reflect->properties[hash]) {
-        if (prop.second.name == property_name) return prop.second;
-    }
-    return PropertyData();
+    HashID component_hash_id = typeid(T).hash_code();
+    return GetPropertyData(component_hash_id, property_name); 
 }
 // Meta Data property fetching by member variable Name and component Instance
 template<typename T>
 PropertyData GetPropertyData(T& component, std::string property_name) {
     return GetPropertyData<T>(property_name); 
 }
+
 
 // ------------------------- Property Value Fetching -------------------------
 // Get member variable value by Index, using memcpy and offsetof
@@ -171,12 +174,12 @@ ReturnType GetProperty(ComponentType& component, std::string property_name) {
 }
 
 
-
 // SetProperty
 // void set_int(void *block, size_t offset, int val) {
 //     char *p = block;
 //     memcpy(p + offset, &val, sizeof val);
 // }
+
 
 //####################################################################################
 //##    Reflection Registration

@@ -98,6 +98,9 @@ public:
 		return m_component_manager->getComponentID<T>();
 	}
 
+	HashID getComponentHashID(ComponentID component_id) {
+		return m_component_manager->getComponentHashID(component_id);
+	}
 
 	// #################### System Methods ####################
 	template<typename T>
