@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
 //####################################################################################
 void DrEditor::onCreate() { 
 
-
+    // #################### TESTING ####################
     // ECS Test
     int entity = ecs()->CreateEntity();
     ecs()->RegisterComponent<Transform2D>();
@@ -73,36 +73,28 @@ void DrEditor::onCreate() {
     // Meta Data Test
     std::cout << GetComponentData<Transform2D>().name << std::endl;
     std::cout << GetComponentData<Transform2D>().description << std::endl;
-    
+    std::cout << GetComponentData(et).name << std::endl;
+    std::cout << GetComponentData(et).description << std::endl;
+
     std::cout << "Prop Name:   " << GetPropertyData<Transform2D>(0).name << std::endl;
     std::cout << "Prop About:  " << GetPropertyData<Transform2D>(0).description << std::endl;
-    std::cout << "Prop Offset: " << GetPropertyData<Transform2D>(0).offset << std::endl;
+    std::cout << "Prop Offset: " << GetPropertyData(et, 0).offset << std::endl;
     
-    std::cout << "Prop Name:   " << GetPropertyData<Transform2D>(1).name << std::endl;
+    std::cout << "Prop Name:   " << GetPropertyData<Transform2D>("rotation").name << std::endl;
     std::cout << "Prop About:  " << GetPropertyData<Transform2D>(1).description << std::endl;
-    std::cout << "Prop Offset: " << GetPropertyData<Transform2D>(1).offset << std::endl;
+    std::cout << "Prop Offset: " << GetPropertyData(et, "rotation").offset << std::endl;
 
-
-    // Test GetProperty
-    DrVec3 rotation;
-    GetProperty<Transform2D>(&et, &rotation, 1);
-
-
+    // Test GetProperty by Index
+    DrVec3 rotation = GetProperty<DrVec3>(et, 1);
     std::cout << "Rotation X: " << rotation.x << ", Rotation Y: " << rotation.y << ", Rotation Z: " << rotation.z << std::endl;
-
-    // void set_int(void *block, size_t offset, int val) {
-    //     char *p = block;
-    //     memcpy(p + offset, &val, sizeof val);
-    // }
-    // int get_int(void *block, size_t offset) {
-    //     char *p = block;
-    //     int val;
-    //     memcpy(&val, p + offset, sizeof val);
-    //     return val;
-    // }
+    
+    // Test GetProperty by Name
+    std::vector<double> position = GetProperty<std::vector<double>>(et, "position");
+    std::cout << "Position X: " << position[0] << ", Position Y: " << position[1] << ", Position Z: " << position[2] << std::endl;
 
 
 
+    // #############################################
 
     for (int i = 0; i < EDITOR_IMAGE_TOTAL; i++) {
         images[i] = nullptr;

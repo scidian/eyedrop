@@ -33,19 +33,16 @@ struct Transform2D {
 	template <> 
 	void RegisterClass<Transform2D>() {
 		RegisterComponent<Transform2D>(ComponentData{ 
-			"Transform2D", "Transform 2D", 
-			"Describes the location and positioning of this 2D object.",
+			"Transform2D", "Transform 2D", "Describes the location and positioning of this 2D object.",
 			DROP_COLOR_WHITE, Component_Icon::None, false  
 		});
 		RegisterProperty<Transform2D>(PropertyData{
-			"position", "Position", 
-			"Location of this object in 2D space.",
-			Property_Type::Point3D, offsetof(Transform2D, position), sizeof(Transform2D::position), false
+			"position", "Position", "Location of this object in 2D space.",
+			Property_Type::Point3D, typeid(Transform2D::position).hash_code(), offsetof(Transform2D, position), sizeof(Transform2D::position), false
 		});
 		RegisterProperty<Transform2D>(PropertyData{
-			"rotation", "Rotation", 
-			"Rotation of this object in 2D space.",
-			Property_Type::Point3D, offsetof(Transform2D, rotation), sizeof(Transform2D::rotation), false
+			"rotation", "Rotation", "Rotation of this object in 2D space.",
+			Property_Type::Point3D, typeid(Transform2D::rotation).hash_code(), offsetof(Transform2D, rotation), sizeof(Transform2D::rotation), false
 		});
 	}
 #endif

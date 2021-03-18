@@ -42,12 +42,13 @@ struct ComponentData {
 
 struct PropertyData {
     PropertyData() { }
-    PropertyData(std::string prop_name, std::string prop_title, std::string about, Property_Type prop_type, int off, size_t size_of, bool hide) : 
-        name(prop_name), title(prop_title), description(about), type(prop_type), offset(off), size(size_of), hidden(hide) { }
+    PropertyData(std::string prop_name, std::string prop_title, std::string about, Property_Type prop_type, size_t hash, int off, size_t size_of, bool hide) : 
+        name(prop_name), title(prop_title), description(about), type(prop_type), hash_code(hash), offset(off), size(size_of), hidden(hide) { }
     std::string         name            { "unknown" };                              // Actual member variable name 
     std::string         title           { "Not Found" };                            // Display name of this Property
     std::string         description     { "Could not find property." };             // Description to show in Help Advisor
     Property_Type       type            { Property_Type::Unknown };                 // Type info for how to display in Inspector
+    size_t              hash_code       { 0 };                                      // typeid().hash_code of actual underlying type of member variable
     int                 offset          { 0 };                                      // char* offset of member variable within parent component struct
     size_t              size            { 0 };                                      // size of actual type of Property
     bool                hidden          { false };                                  // Should this Property appear in Inspector?
@@ -90,18 +91,23 @@ void                InitializeReflection();                                     
 //####################################################################################
 //##    Reflection Data Fetching
 //############################
-// Meta Data component fetching
+// ------------------------- Component Data Fetching -------------------------
+// Meta Data component fetching by component Class Name
 template<typename T>
 ComponentData GetComponentData() {
     const char* type_name = typeid(T).name();
     if (g_reflect->components.find(type_name) != g_reflect->components.end()) {
         return g_reflect->components[type_name];
-    } else {
-        return ComponentData();
-    }
+    } else { return ComponentData(); }
+}
+// Meta Data component fetching from passed in component Instance
+template<typename T>
+ComponentData GetComponentData(T& component) {
+    return GetComponentData<T>();
 }
 
-// Meta Data property fetching by Index
+// ------------------------- Property Data Fetching -------------------------
+// Meta Data property fetching by member variable Index and component Class Name
 template<typename T>
 PropertyData GetPropertyData(int property_number) {
     const char* type_name = typeid(T).name();
@@ -112,24 +118,63 @@ PropertyData GetPropertyData(int property_number) {
     }
     return PropertyData();
 }
-
-// Get member variable by name using memcpy and offsetof
+// Meta Data property fetching by member variable Index and component Instance
 template<typename T>
-void GetProperty(void* component, void* value, int property_number) {
-    // Casting from void*, not fully standardized across compilers
-    //      vector ex:  std::vector<double> rotation = *(std::vector<double>*)(component_ptr + GetPropertyData<Transform2D>(property_number).offset);
-    //      DrVec  ex:  DrVec3 rotation = *(DrVec3*)(p + GetPropertyData<Transform2D>(1).offset);
+PropertyData GetPropertyData(T& component, int property_number) {
+    return GetPropertyData<T>(property_number);   
+}
+
+// Meta Data property fetching by member variable Name and component Class Name
+template<typename T>
+PropertyData GetPropertyData(std::string property_name) {
+    const char* type_name = typeid(T).name();
+    for (auto prop : g_reflect->properties[type_name]) {
+        if (prop.second.name == property_name) return prop.second;
+    }
+    return PropertyData();
+}
+// Meta Data property fetching by member variable Name and component Instance
+template<typename T>
+PropertyData GetPropertyData(T& component, std::string property_name) {
+    return GetPropertyData<T>(property_name); 
+}
+
+// ------------------------- Property Value Fetching -------------------------
+// Get member variable value by Index, using memcpy and offsetof
+template<typename ReturnType, typename ComponentType>
+ReturnType GetProperty(ComponentType& component, int property_number) {
+    // Casting from void*, not fully standardized across compilers?
+    //      DrVec3 rotation = *(DrVec3*)(component_ptr + prop_data.offset);
+    // Memcpy
+    //      DrVec3 value;
+    //      memcpy(&value, component_ptr + prop_data.offset, prop_data.size);
     // C++ way
-    //      DrVec3 rotation;
     //      static constexpr auto offset_rotation = &Transform2D::rotation;
-    //      auto r = ((&et)->*off_rot);
-    //      rotation = r;
-    PropertyData prop_data = GetPropertyData<T>(property_number);
-    char* component_ptr = (char*)(component);
-    memcpy(value, component_ptr + prop_data.offset, prop_data.size);
+    //      DrVec3 rotation = ((&et)->*off_rot);
+    PropertyData prop_data = GetPropertyData<ComponentType>(property_number);
+    assert(prop_data.name != "unknown" && "Could not find property by index!");
+    assert(prop_data.hash_code == typeid(ReturnType).hash_code() && "Did not request proper return type!");
+    char* component_ptr = (char*)(&component);
+    return *(reinterpret_cast<ReturnType*>(component_ptr + prop_data.offset));
+}
+
+// Get member variable value by Name, using memcpy and offsetof
+template<typename ReturnType, typename ComponentType>
+ReturnType GetProperty(ComponentType& component, std::string property_name) {
+    PropertyData prop_data = GetPropertyData<ComponentType>(property_name);
+    assert(prop_data.name != "unknown" && "Could not find property by name!");
+    assert(prop_data.hash_code == typeid(ReturnType).hash_code() && "Did not request proper return type!");
+    char* component_ptr = (char*)(&component);
+    return *(reinterpret_cast<ReturnType*>(component_ptr + prop_data.offset));
 }
 
 
+
+// SetProperty
+// void set_int(void *block, size_t offset, int val) {
+//     char *p = block;
+//     memcpy(p + offset, &val, sizeof val);
+// }
 
 //####################################################################################
 //##    Reflection Registration
@@ -141,13 +186,15 @@ void RegisterClass() {};
 // Call this to register class / struct type with reflection / meta data system
 template<typename T>
 void RegisterComponent(ComponentData comp_data) { 
-	g_reflect->AddMetaComponent(typeid(T).name(), comp_data); 
+    const char* type_name = typeid(T).name();
+	g_reflect->AddMetaComponent(type_name, comp_data); 
 }
 
 // Call this to register member variable with reflection / meta data system
 template<typename T>
 void RegisterProperty(PropertyData prop_data) {
-	g_reflect->AddMetaProperty(typeid(T).name(), prop_data); 
+    const char* type_name = typeid(T).name();
+	g_reflect->AddMetaProperty(type_name, prop_data); 
 } 
 
 
