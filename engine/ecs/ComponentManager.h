@@ -21,16 +21,17 @@ class DrComponentManager
 {
 	// #################### VARIABLES ####################
 private:
-	std::unordered_map<const char*, DrComponentType> 					m_component_types		{ };
-	std::unordered_map<const char*, std::shared_ptr<IComponentArray>> 	m_component_arrays		{ };
-	DrComponentType 													m_next_component_type	{ };
+	// Index size_t in maps comes from typeid().hash_code()
+	std::unordered_map<size_t, DrComponentType> 					m_component_types		{ };
+	std::unordered_map<size_t, std::shared_ptr<IComponentArray>>	m_component_arrays		{ };
+	DrComponentType 												m_next_component_type	{ };
 
 
 	template<typename T>
 	std::shared_ptr<DrComponentArray<T>> GetComponentArray() {
-		const char* type_name = typeid(T).name();
-		assert(m_component_types.find(type_name) != m_component_types.end() && "Component not registered before use!");
-		return std::static_pointer_cast<DrComponentArray<T>>(m_component_arrays[type_name]);
+		size_t hash = typeid(T).hash_code();
+		assert(m_component_types.find(hash) != m_component_types.end() && "Component not registered before use!");
+		return std::static_pointer_cast<DrComponentArray<T>>(m_component_arrays[hash]);
 	}
 
 
@@ -48,19 +49,19 @@ public:
 
 	template<typename T>
 	void RegisterComponent() {
-		const char* type_name = typeid(T).name();
-		assert(m_component_types.find(type_name) == m_component_types.end() && "Registering component type more than once!");
+		size_t hash = typeid(T).hash_code();
+		assert(m_component_types.find(hash) == m_component_types.end() && "Registering component type more than once!");
 
-		m_component_types.insert({type_name, m_next_component_type});
-		m_component_arrays.insert({type_name, std::make_shared<DrComponentArray<T>>()});
+		m_component_types.insert({hash, m_next_component_type});
+		m_component_arrays.insert({hash, std::make_shared<DrComponentArray<T>>()});
 		++m_next_component_type;
 	}
 
 	template<typename T>
 	DrComponentType GetComponentType() {
-		const char* type_name = typeid(T).name();
-		assert(m_component_types.find(type_name) != m_component_types.end() && "Component not registered before use!");
-		return m_component_types[type_name];
+		size_t hash = typeid(T).hash_code();
+		assert(m_component_types.find(hash) != m_component_types.end() && "Component not registered before use!");
+		return m_component_types[hash];
 	}
 
 	template<typename T>

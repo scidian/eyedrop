@@ -67,7 +67,7 @@ void DrEditor::onCreate() {
 
 
     // Component grab test
-    
+    DrArchetype entity_type = ecs()->
 
 
     // Meta Data Test

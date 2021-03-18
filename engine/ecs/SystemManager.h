@@ -22,8 +22,9 @@ class DrSystemManager
 {
 	// #################### VARIABLES ####################
 private:
-	std::unordered_map<const char*, std::shared_ptr<DrSystem>> 	m_systems 		{ };	// Current Systems in System Manager
-	std::unordered_map<const char*, DrArchetype>     			m_archetypes 	{ };	// Archetypes of Systems
+	// Index size_t in maps comes from typeid().hash_code() 
+	std::unordered_map<size_t, std::shared_ptr<DrSystem>> 	m_systems 		{ };	// Current Systems in System Manager
+	std::unordered_map<size_t, DrArchetype>     			m_archetypes 	{ };	// Archetypes of Systems
 	
 
 	// #################### INTERNAL FUNCTIONS ####################
@@ -31,21 +32,21 @@ public:
 	// Adds a System to the System Manager
 	template<typename T>
 	std::shared_ptr<T> RegisterSystem() {
-		const char* type_name = typeid(T).name();
-		assert(m_systems.find(type_name) == m_systems.end() && "Registering system more than once!");
+		size_t hash = typeid(T).hash_code();
+		assert(m_systems.find(hash) == m_systems.end() && "Registering system more than once!");
 		
 		// Otherwise, add system to manager
 		auto system = std::make_shared<T>();
-		m_systems.insert({type_name, system});
+		m_systems.insert({hash, system});
 		return system;
 	}
 
 	// Sets Archetype (a bitset based on desired Components) of a System
 	template<typename T>
 	void SetArchetype(DrArchetype archetype) {
-		const char* type_name = typeid(T).name();
-		assert(m_systems.find(type_name) != m_systems.end() && "System used before being registered!");
-		m_archetypes.insert({type_name, archetype});
+		size_t hash = typeid(T).hash_code();
+		assert(m_systems.find(hash) != m_systems.end() && "System used before being registered!");
+		m_archetypes.insert({hash, archetype});
 	}
 
 	// Entity has been destroyed, remove from all Systems

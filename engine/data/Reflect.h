@@ -68,16 +68,17 @@ typedef std::map<int, PropertyData> PropertyMap;                                
 class DrReflect 
 {
 public:
-    std::unordered_map<const char*, ComponentData>      components      { };        // Holds data about DrComponent / ECS Component structs
-    std::unordered_map<const char*, PropertyMap>        properties      { };        // Holds data about Properies (of Components)
+    // Index size_t in maps comes from typeid().hash_code()
+    std::unordered_map<size_t, ComponentData>      components      { };        // Holds data about DrComponent / ECS Component structs
+    std::unordered_map<size_t, PropertyMap>        properties      { };        // Holds data about Properies (of Components)
 
 public:    
-    void AddMetaComponent(const char* type_name, ComponentData comp_data) {
-        components.insert(std::make_pair(type_name, comp_data));
+    void AddMetaComponent(size_t hash_code, ComponentData comp_data) {
+        components.insert(std::make_pair(hash_code, comp_data));
     }
-    void AddMetaProperty(const char* type_name, PropertyData prop_data) {
-        assert(components.find(type_name) != components.end() && "Component never set with AddMetaComponent before calling AddMetaProperty!");
-        properties[type_name][prop_data.offset] = prop_data;
+    void AddMetaProperty(size_t hash_code, PropertyData prop_data) {
+        assert(components.find(hash_code) != components.end() && "Component never set with AddMetaComponent before calling AddMetaProperty!");
+        properties[hash_code][prop_data.offset] = prop_data;
     }
 };
 
@@ -95,10 +96,12 @@ void                InitializeReflection();                                     
 // Meta Data component fetching by component Class Name
 template<typename T>
 ComponentData GetComponentData() {
-    const char* type_name = typeid(T).name();
-    if (g_reflect->components.find(type_name) != g_reflect->components.end()) {
-        return g_reflect->components[type_name];
-    } else { return ComponentData(); }
+    size_t hash = typeid(T).hash_code();
+    if (g_reflect->components.find(hash) != g_reflect->components.end()) {
+        return g_reflect->components[hash];
+    } else { 
+        return ComponentData(); 
+    }
 }
 // Meta Data component fetching from passed in component Instance
 template<typename T>
@@ -110,9 +113,9 @@ ComponentData GetComponentData(T& component) {
 // Meta Data property fetching by member variable Index and component Class Name
 template<typename T>
 PropertyData GetPropertyData(int property_number) {
-    const char* type_name = typeid(T).name();
+    size_t hash = typeid(T).hash_code();
     int count = 0;
-    for (auto prop : g_reflect->properties[type_name]) {
+    for (auto prop : g_reflect->properties[hash]) {
         if (count == property_number) return prop.second;
         ++count;
     }
@@ -127,8 +130,8 @@ PropertyData GetPropertyData(T& component, int property_number) {
 // Meta Data property fetching by member variable Name and component Class Name
 template<typename T>
 PropertyData GetPropertyData(std::string property_name) {
-    const char* type_name = typeid(T).name();
-    for (auto prop : g_reflect->properties[type_name]) {
+    size_t hash = typeid(T).hash_code();
+    for (auto prop : g_reflect->properties[hash]) {
         if (prop.second.name == property_name) return prop.second;
     }
     return PropertyData();
@@ -186,15 +189,15 @@ void RegisterClass() {};
 // Call this to register class / struct type with reflection / meta data system
 template<typename T>
 void RegisterComponent(ComponentData comp_data) { 
-    const char* type_name = typeid(T).name();
-	g_reflect->AddMetaComponent(type_name, comp_data); 
+    size_t hash = typeid(T).hash_code();
+	g_reflect->AddMetaComponent(hash, comp_data); 
 }
 
 // Call this to register member variable with reflection / meta data system
 template<typename T>
 void RegisterProperty(PropertyData prop_data) {
-    const char* type_name = typeid(T).name();
-	g_reflect->AddMetaProperty(type_name, prop_data); 
+    size_t hash = typeid(T).hash_code();
+	g_reflect->AddMetaProperty(hash, prop_data); 
 } 
 
 
