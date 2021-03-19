@@ -43,8 +43,10 @@
 //####################################################################################
 int main(int argc, char* argv[]) {
 
+    // Turn on reflection
     InitializeReflection();
 
+    // Create app and run
     DrEditor* editor = new DrEditor("Test Editor", DrColor(28, 30, 29), 1750, 1000);
     editor->run();
 
