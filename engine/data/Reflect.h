@@ -29,37 +29,34 @@ extern DrReflect*       g_reflect;                                              
 //##    Component / Property data structs
 //############################
 struct ComponentData {
-    ComponentData() { }
-    ComponentData(std::string comp_name, std::string comp_title, std::string about, bool hide, unsigned int show_color, Component_Icon show_icon, HashID hash) : 
-        name(comp_name), title(comp_title), description(about), hidden(hide), color(show_color), icon(show_icon), hash_code(hash) { }
-    std::string         name            { "Unknown" };                              // Actual struct / class name 
-    std::string         title           { "Not Found" };                            // Display name of this Component
-    std::string         description     { "Could not find component." };            // Description to show in Help Advisor
+    std::string         name            { "unknown" };                              // Actual struct / class name 
+    HashID              hash_code       { 0 };                                      // typeid().hash_code of actual underlying type of Component
+    // v---- Can be set ----v
+    std::string         title           { "unknown" };                              // Display name of this Component
+    std::string         description     { "No component description." };            // Description to show in Help Advisor
     bool                hidden          { false };                                  // Should this Component appear in Inspector?
     unsigned int        color           { 0xFFFFFFFF };                             // Color of Header in Inspector
-    Component_Icon      icon            { Component_Icon::None };                   // enum     Mini icon to show in Inspector
-    HashID              hash_code       { 0 };                                      // typeid().hash_code of actual underlying type of member variable
+    unsigned int        icon            { Component_Icon::None };                   // enum Component_Icon, mini icon to show in Inspector
 };
 
 struct PropertyData {
-    PropertyData() { }
-    PropertyData(std::string prop_name, std::string prop_title, std::string about, bool hide, Property_Type prop_type, HashID hash, int off, size_t size_of) : 
-        name(prop_name), title(prop_title), description(about), hidden(hide), type(prop_type), hash_code(hash), offset(off), size(size_of) { }
     std::string         name            { "unknown" };                              // Actual member variable name 
-    std::string         title           { "Not Found" };                            // Display name of this Property
-    std::string         description     { "Could not find property." };             // Description to show in Help Advisor
-    bool                hidden          { false };                                  // Should this Property appear in Inspector?
-    Property_Type       type            { Property_Type::Unknown };                 // Type info for how to display in Inspector
     HashID              hash_code       { 0 };                                      // typeid().hash_code of actual underlying type of member variable
     int                 offset          { 0 };                                      // char* offset of member variable within parent component struct
     size_t              size            { 0 };                                      // size of actual type of Property
+    // v---- Can be set ----v
+    std::string         title           { "unknown" };                              // Display name of this Property
+    std::string         description     { "No property description." };             // Description to show in Help Advisor
+    bool                hidden          { false };                                  // Should this Property appear in Inspector?
+    Property_Type       type            { Property_Type::Unknown };                 // Type info for how to display in Inspector (and what type to use to retrieve value)
 };
 
 
 //####################################################################################
 //##    Type Definitions
 //############################
-typedef std::map<int, PropertyData> PropertyMap;                                    // Holds a collection of PropertyData, sorted by offset
+typedef std::map<int, PropertyData> PropertyMap;                                    // Holds a collection of PropertyData, sorted by offsetof() value
+
 
 //####################################################################################
 //##    DrReflect
@@ -69,16 +66,18 @@ typedef std::map<int, PropertyData> PropertyMap;                                
 class DrReflect 
 {
 public:
-    std::unordered_map<HashID, ComponentData>      components      { };        // Holds data about DrComponent / ECS Component structs
-    std::unordered_map<HashID, PropertyMap>        properties      { };        // Holds data about Properies (of Components)
+    std::unordered_map<HashID, ComponentData>      components      { };             // Holds data about DrComponent / ECS Component structs
+    std::unordered_map<HashID, PropertyMap>        properties      { };             // Holds data about Properies (of Components)
 
 public:    
-    void AddMetaComponent(HashID hash_code, ComponentData comp_data) {
-        components.insert(std::make_pair(hash_code, comp_data));
+    void AddMetaComponent(ComponentData comp_data) {
+        assert(comp_data.hash_code != 0 && "Component hash code is 0, error in registration?");
+        components[comp_data.hash_code] = comp_data;
     }
-    void AddMetaProperty(HashID hash_code, PropertyData prop_data) {
-        assert(components.find(hash_code) != components.end() && "Component never set with AddMetaComponent before calling AddMetaProperty!");
-        properties[hash_code][prop_data.offset] = prop_data;
+    void AddMetaProperty(ComponentData comp_data, PropertyData prop_data) {
+        assert(comp_data.hash_code != 0 && "Component hash code is 0, error in registration?");
+        assert(components.find(comp_data.hash_code) != components.end() && "Component never set with AddMetaComponent before calling AddMetaProperty!");
+        properties[comp_data.hash_code][prop_data.offset] = prop_data;
     }
 };
 
@@ -86,7 +85,13 @@ public:
 //####################################################################################
 //##    General Functions
 //############################
-void                InitializeReflection();                                         // Creates DrReflect class and registers classes and member variables
+void            InitializeReflection();                                             // Creates DrReflect class and registers classes and member variables
+void            CreateTitle(std::string& name);                                     // Create nice display name from class / member variable names
+void            RegisterComponent(ComponentData comp_data);                         // Call this to register class / struct type with reflection / meta data system
+void            RegisterProperty(ComponentData comp_data, PropertyData prop_data);  // Call this to register member variable with reflection / meta data system
+
+template <typename T> 
+void            RegisterClass() { };                                                // Template wrapper to register type with DrReflect from header files
 
 
 //####################################################################################
@@ -183,7 +188,6 @@ ReturnType GetProperty(void* component, HashID component_hash_id, std::string pr
     return *(reinterpret_cast<ReturnType*>(component_ptr + prop_data.offset));
 }
 
-
 // SetProperty
 // void set_int(void *block, size_t offset, int val) {
 //     char *p = block;
@@ -192,25 +196,43 @@ ReturnType GetProperty(void* component, HashID component_hash_id, std::string pr
 
 
 //####################################################################################
-//##    Reflection Registration
-//############################
-// Template wrapper to register type with DrReflect from header files
-template <typename T>
-void RegisterClass() {};
+//##    Macros for Reflection Registration
+//####################################################################################
+#define REFLECT_STRUCT(TYPE) \
+	template <> void RegisterClass<TYPE>() { \
+        using T = TYPE; \
+        ComponentData comp {}; \
+			comp.name = #TYPE; \
+			comp.hash_code = typeid(TYPE).hash_code(); \
+			comp.title = #TYPE; \
+            CreateTitle(comp.title); \
+		RegisterComponent(comp); \
+		int property_number = 0; \
+		std::unordered_map<int, PropertyData> props { };
 
-// Call this to register class / struct type with reflection / meta data system
-template<typename T>
-void RegisterComponent(ComponentData comp_data) { 
-    HashID hash = typeid(T).hash_code();
-	g_reflect->AddMetaComponent(hash, comp_data); 
-}
+#define STRUCT_META_TITLE(STRING) 		comp.title = 		#STRING;	RegisterComponent(comp);
+#define STRUCT_META_DESCRIPTION(STRING) comp.description = 	#STRING; 	RegisterComponent(comp);
+#define STRUCT_META_HIDDEN(BOOL)     	comp.hidden = 		BOOL; 		RegisterComponent(comp);
+#define STRUCT_META_COLOR(UINT) 		comp.color = 		UINT; 		RegisterComponent(comp);
+#define STRUCT_META_ICON(INT) 			comp.icon = 		INT; 		RegisterComponent(comp);
 
-// Call this to register member variable with reflection / meta data system
-template<typename T>
-void RegisterProperty(PropertyData prop_data) {
-    HashID hash = typeid(T).hash_code();
-	g_reflect->AddMetaProperty(hash, prop_data); 
-} 
+#define REFLECT_MEMBER(MEMBER) \
+		property_number++; \
+		props[property_number] = PropertyData(); \
+		props[property_number].name = #MEMBER; \
+		props[property_number].hash_code = typeid(T::MEMBER).hash_code(); \
+		props[property_number].offset = offsetof(T, MEMBER); \
+		props[property_number].size = sizeof(T::MEMBER); \
+		props[property_number].title = #MEMBER; \
+        CreateTitle(props[property_number].title); \
+		RegisterProperty(comp, props[property_number]); 
+
+#define MEMBER_META_TITLE(STRING) 		props[property_number].title = 			#STRING;	RegisterProperty(comp, props[property_number]); 
+#define MEMBER_META_DESCRIPTION(STRING) props[property_number].description = 	#STRING; 	RegisterProperty(comp, props[property_number]); 
+#define MEMBER_META_HIDDEN(BOOL)     	props[property_number].hidden = 		BOOL; 		RegisterProperty(comp, props[property_number]); 
+#define MEMBER_META_TYPE(INT) 			props[property_number].type = 			INT; 		RegisterProperty(comp, props[property_number]); 
+
+#define REFLECT_END() }
 
 
 #endif  // DR_META_H

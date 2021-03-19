@@ -22,11 +22,12 @@ DrReflect*          g_reflect   { nullptr };                                    
 #include "engine/scene2d/components/Test1.h"
 #include "engine/scene2d/components/Transform2D.h"
 
+
 void InitializeReflection() {
     // Create Singleton
     g_reflect = new DrReflect();
 
-    // Register Structs / Classes
+    // ********** Register Structs / Classes **********
     RegisterClass<Test1>();
     RegisterClass<Transform2D>();
 }
@@ -39,6 +40,26 @@ void InitializeReflection() {
 //####################################################################################
 //##    Non-template Reflection Functions
 //####################################################################################
+// Used in registration macros to automatically create nice display name from class / member variable names
+void CreateTitle(std::string& name) {
+    std::replace(name.begin(), name.end(), '_', ' '); \
+    name[0] = toupper(name[0]);
+    for (int c = 1; c < name.length(); c++) {
+        if (name[c - 1] == ' ') name[c] = toupper(name[c]);
+    }
+}
+
+// #################### Class / Member Registration ####################
+// Call this to register class / struct type with reflection / meta data system
+void RegisterComponent(ComponentData comp_data) { 
+	g_reflect->AddMetaComponent(comp_data); 
+}
+// Call this to register member variable with reflection / meta data system
+void RegisterProperty(ComponentData comp_data, PropertyData prop_data) {                     
+	g_reflect->AddMetaProperty(comp_data, prop_data); 
+} 
+
+// #################### Data Fetching ####################
 // Meta Data component fetching from passed in component typeid().hash_code()
 ComponentData GetComponentData(HashID hash_id) {
     for (auto& pair : g_reflect->components) {

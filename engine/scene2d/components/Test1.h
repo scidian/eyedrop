@@ -27,21 +27,10 @@ struct Test1 {
 //##    Register Reflection / Meta Data
 //############################
 #ifdef REGISTER_REFLECTION
-	template <> 
-	void RegisterClass<Test1>() {
-		RegisterComponent<Test1>(ComponentData{ 
-			"Test1", "Test Number 1", "Component used to test ecs.",
-			false, DROP_COLOR_WHITE, Component_Icon::None, typeid(Test1).hash_code()
-		});
-		RegisterProperty<Test1>(PropertyData{
-			"test1", "Test Variable 1", "First variable used to test ecs.",
-			false, Property_Type::Int, typeid(Test1::test1).hash_code(), offsetof(Test1, test1), sizeof(Test1::test1)
-		});
-		RegisterProperty<Test1>(PropertyData{
-			"test2", "Test Variable 2", "Second variable used to test ecs.",
-			false, Property_Type::Bool, typeid(Test1::test2).hash_code(), offsetof(Test1, test2), sizeof(Test1::test2)
-		});
-	}
+	REFLECT_STRUCT(Test1)
+	REFLECT_MEMBER(test1)
+	REFLECT_MEMBER(test2)
+	REFLECT_END()
 #endif
 
 #endif	// DR_COMP_TEST1_H

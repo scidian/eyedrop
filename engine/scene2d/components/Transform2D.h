@@ -22,7 +22,7 @@
 struct Transform2D {
 	std::vector<double>	position  	{ };
 	DrVec3 				rotation	{ };
-	std::vector<double>	scale		{ };
+	std::vector<double>	scale_xyz	{ };
 };
 
 
@@ -30,21 +30,20 @@ struct Transform2D {
 //##    Register Reflection / Meta Data
 //############################
 #ifdef REGISTER_REFLECTION
-	template <> 
-	void RegisterClass<Transform2D>() {
-		RegisterComponent<Transform2D>(ComponentData{ 
-			"Transform2D", "Transform 2D", "Describes the location and positioning of this 2D object.",
-			false, DROP_COLOR_WHITE, Component_Icon::None, typeid(Transform2D).hash_code()
-		});
-		RegisterProperty<Transform2D>(PropertyData{
-			"position", "Position", "Location of this object in 2D space.",
-			false, Property_Type::Point3D, typeid(Transform2D::position).hash_code(), offsetof(Transform2D, position), sizeof(Transform2D::position)
-		});
-		RegisterProperty<Transform2D>(PropertyData{
-			"rotation", "Rotation", "Rotation of this object in 2D space.",
-			false, Property_Type::Point3D, typeid(Transform2D::rotation).hash_code(), offsetof(Transform2D, rotation), sizeof(Transform2D::rotation)
-		});
-	}
+	REFLECT_STRUCT(Transform2D)
+		STRUCT_META_TITLE("Transform 2D")
+		STRUCT_META_DESCRIPTION("Describes the location and positioning of this 2D object.")
+		STRUCT_META_COLOR(DROP_COLOR_WHITE)
+	REFLECT_MEMBER(position)
+		MEMBER_META_DESCRIPTION("Location of this object in 2D space.")
+		MEMBER_META_TYPE(Property_Type::Point3D)
+	REFLECT_MEMBER(rotation)
+		MEMBER_META_DESCRIPTION("Rotation of this object in 2D space.")
+		MEMBER_META_TYPE(Property_Type::Point3D)
+	REFLECT_MEMBER(scale_xyz)
+		MEMBER_META_DESCRIPTION("Scaling of this object.")
+		MEMBER_META_TYPE(Property_Type::Point3D)
+	REFLECT_END()
 #endif
 
 #endif	// DR_COMP_TRANSFORM2D_H

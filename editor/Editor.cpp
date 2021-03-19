@@ -62,9 +62,9 @@ void DrEditor::onCreate() {
     ecs()->registerComponent<Test1>();
     ecs()->registerComponent<Transform2D>();
     Transform2D et { };
-        et.position = std::vector<double>({1.0, 2.0, 3.0});
-        et.rotation = DrVec3(4.0, 5.0, 6.0);
-        et.scale =    std::vector<double>({7.0, 8.0, 9.0});
+        et.position =   std::vector<double>({1.0, 2.0, 3.0});
+        et.rotation =   DrVec3(4.0, 5.0, 6.0);
+        et.scale_xyz =  std::vector<double>({7.0, 8.0, 9.0});
     ecs()->addComponent(entity, et);
 
     // Component Iterate
@@ -93,12 +93,19 @@ void DrEditor::onCreate() {
     std::cout << GetComponentData(et).description << std::endl;
 
     std::cout << "Prop Name:   " << GetPropertyData<Transform2D>(0).name << std::endl;
+    std::cout << "Prop Title:  " << GetPropertyData<Transform2D>(0).title << std::endl;
     std::cout << "Prop About:  " << GetPropertyData<Transform2D>(0).description << std::endl;
     std::cout << "Prop Offset: " << GetPropertyData(et, 0).offset << std::endl;
     
     std::cout << "Prop Name:   " << GetPropertyData<Transform2D>("rotation").name << std::endl;
+    std::cout << "Prop Title:  " << GetPropertyData<Transform2D>(1).title << std::endl;
     std::cout << "Prop About:  " << GetPropertyData<Transform2D>(1).description << std::endl;
     std::cout << "Prop Offset: " << GetPropertyData(et, "rotation").offset << std::endl;
+
+    std::cout << "Prop Name:   " << GetPropertyData<Transform2D>("scale_xyz").name << std::endl;
+    std::cout << "Prop Title:  " << GetPropertyData<Transform2D>(2).title << std::endl;
+    std::cout << "Prop About:  " << GetPropertyData(et, 2).description << std::endl;
+    std::cout << "Prop Offset: " << GetPropertyData(et, "scale_xyz").offset << std::endl;
 
     // Test GetProperty by Index
     DrVec3 rotation = GetProperty<DrVec3>(et, 1);
