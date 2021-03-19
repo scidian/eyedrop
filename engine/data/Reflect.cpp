@@ -10,7 +10,6 @@
 #include <vector>
 #include "engine/data/Reflect.h"
 
-
 //####################################################################################
 //##    Global Variable Definitions
 //####################################################################################
@@ -21,11 +20,14 @@ std::vector< std::function<void()> >    l_fn_list           { };                
 //####################################################################################
 //####################################################################################
 //##    Register Components / Properties with Meta Data System
-//##            !!!! Include all Components below !!!!
 //####################################################################################
-#define REGISTER_REFLECTION         // Signal to headers to define register function
+// Signal to headers to define register function
+#define REGISTER_REFLECTION         
+
+// ############### INCLUDE ALL REFLECTED CLASSES BELOW ###############
 #include "engine/scene2d/components/Test1.h"
 #include "engine/scene2d/components/Transform2D.h"
+
 
 
 
@@ -55,7 +57,6 @@ void CreateTitle(std::string& name) {
     }
 }
 
-
 //####################################################################################
 //##    Class / Member Registration
 //####################################################################################
@@ -68,7 +69,6 @@ void RegisterComponent(ComponentData comp_data) {
 void RegisterProperty(ComponentData comp_data, PropertyData prop_data) {                     
 	g_reflect->AddMetaProperty(comp_data, prop_data); 
 } 
-
 
 //####################################################################################
 //##    Data Fetching
@@ -98,4 +98,3 @@ PropertyData GetPropertyData(HashID component_hash_id, std::string property_name
     }
     return PropertyData();
 }
-
