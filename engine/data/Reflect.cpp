@@ -35,10 +35,15 @@ std::vector< std::function<void()> >    l_fn_list           { };                
 //####################################################################################
 //##    General Registration
 //####################################################################################
-// Initializes global 
+// Initializes global reflection object, registers classes with Reflection System
 void InitializeReflection() {
-    g_reflect = new DrReflect();                                                    // Create Singleton
-    for (int func = 0; func < l_fn_list.size(); ++func) l_fn_list[func]();          // Register Structs / Classes
+    // Create Singleton
+    g_reflect = new DrReflect();                                                    
+    
+    // Register Structs / Classes
+    for (int func = 0; func < l_fn_list.size(); ++func) {
+        l_fn_list[func]();       
+    }   
 }
 
 // Used in registration macros to automatically create nice display name from class / member variable names
@@ -50,17 +55,20 @@ void CreateTitle(std::string& name) {
     }
 }
 
+
 //####################################################################################
 //##    Class / Member Registration
 //####################################################################################
-// Call this to register class / struct type with reflection / meta data system
+// Update Component data
 void RegisterComponent(ComponentData comp_data) { 
 	g_reflect->AddMetaComponent(comp_data); 
 }
-// Call this to register member variable with reflection / meta data system
+
+// Update Property data
 void RegisterProperty(ComponentData comp_data, PropertyData prop_data) {                     
 	g_reflect->AddMetaProperty(comp_data, prop_data); 
 } 
+
 
 //####################################################################################
 //##    Data Fetching

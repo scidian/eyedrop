@@ -31,7 +31,7 @@ extern DrReflect*       g_reflect;                                              
 struct ComponentData {
     std::string         name            { "unknown" };                              // Actual struct / class name 
     HashID              hash_code       { 0 };                                      // typeid().hash_code of actual underlying type of Component
-    // v---- Can be set ----v
+    // ----- Following Meta Data Can Be User Set -----
     std::string         title           { "unknown" };                              // Display name of this Component
     std::string         description     { "No component description." };            // Description to show in Help Advisor
     bool                hidden          { false };                                  // Should this Component appear in Inspector?
@@ -44,7 +44,7 @@ struct PropertyData {
     HashID              hash_code       { 0 };                                      // typeid().hash_code of actual underlying type of member variable
     int                 offset          { 0 };                                      // char* offset of member variable within parent component struct
     size_t              size            { 0 };                                      // size of actual type of Property
-    // v---- Can be set ----v
+    // ----- Following Meta Data Can Be User Set -----
     std::string         title           { "unknown" };                              // Display name of this Property
     std::string         description     { "No property description." };             // Description to show in Help Advisor
     bool                hidden          { false };                                  // Should this Property appear in Inspector?
@@ -87,11 +87,30 @@ public:
 //############################
 void            InitializeReflection();                                             // Creates DrReflect class and registers classes and member variables
 void            CreateTitle(std::string& name);                                     // Create nice display name from class / member variable names
-void            RegisterComponent(ComponentData comp_data);                         // Call this to register class / struct type with reflection / meta data system
-void            RegisterProperty(ComponentData comp_data, PropertyData prop_data);  // Call this to register member variable with reflection / meta data system
+void            RegisterComponent(ComponentData comp_data);                         // Update Component data
+void            RegisterProperty(ComponentData comp_data, PropertyData prop_data);  // Update Property data                
+	
 
-template <typename T> 
-void            RegisterClass() { };                                                // Template wrapper to register type with DrReflect from header files
+//####################################################################################
+//##    Class / Member Registration
+//####################################################################################
+// Template wrapper to register type with DrReflect from header files
+template <typename T> void RegisterClass() { };                                                
+
+// Call this to register class / struct type with reflection / meta data system, typename CT is Component Type
+template <typename CT>
+void RegisterComponent(ComponentData comp_data) { 
+    assert(std::is_standard_layout<CT>() && "Component is not standard layout!!");
+	g_reflect->AddMetaComponent(comp_data); 
+}
+
+// Call this to register member variable with reflection / meta data system, typename PT is Property Type
+template <typename PT>
+void RegisterProperty(ComponentData comp_data, PropertyData prop_data) {        
+    assert(typeid(PT).hash_code() != typeid(std::string).hash_code() && "Std::String not supported for property type!!");             
+	g_reflect->AddMetaProperty(comp_data, prop_data); 
+} 
+
 
 
 //####################################################################################
@@ -212,7 +231,7 @@ ReturnType GetProperty(void* component, HashID component_hash_id, std::string pr
 			comp.hash_code = typeid(TYPE).hash_code(); \
 			comp.title = #TYPE; \
             CreateTitle(comp.title); \
-		RegisterComponent(comp); \
+		RegisterComponent<T>(comp); \
 		int property_number = 0; \
 		std::unordered_map<int, PropertyData> props { };
 
@@ -233,7 +252,7 @@ ReturnType GetProperty(void* component, HashID component_hash_id, std::string pr
 		props[property_number].size = sizeof(T::MEMBER); \
 		props[property_number].title = #MEMBER; \
         CreateTitle(props[property_number].title); \
-		RegisterProperty(comp, props[property_number]); 
+		RegisterProperty<decltype(T::MEMBER)>(comp, props[property_number]); 
 
 // Meta data functions
 #define MEMBER_META_TITLE(STRING) 		props[property_number].title = 			#STRING;	RegisterProperty(comp, props[property_number]); 
