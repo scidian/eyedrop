@@ -20,6 +20,8 @@
 struct Test1 {
 	int  test1   { };
     bool test2   { };
+
+	REFLECT()
 };
 
 
@@ -30,7 +32,7 @@ struct Test1 {
 	REFLECT_STRUCT(Test1)
 	REFLECT_MEMBER(test1)
 	REFLECT_MEMBER(test2)
-	REFLECT_END()
+	REFLECT_END(Test1)
 #endif
 
 #endif	// DR_COMP_TEST1_H

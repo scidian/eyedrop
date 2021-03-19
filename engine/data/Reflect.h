@@ -198,8 +198,14 @@ ReturnType GetProperty(void* component, HashID component_hash_id, std::string pr
 //####################################################################################
 //##    Macros for Reflection Registration
 //####################################################################################
+// Static variable added to class allows Registration Function to be added to list of Components to be registered
+#define REFLECT() \
+    static bool reflection; \
+    static bool initReflection();
+
+// Define Registration Function
 #define REFLECT_STRUCT(TYPE) \
-	template <> void RegisterClass<TYPE>() { \
+    template <> void RegisterClass<TYPE>() { \
         using T = TYPE; \
         ComponentData comp {}; \
 			comp.name = #TYPE; \
@@ -210,12 +216,14 @@ ReturnType GetProperty(void* component, HashID component_hash_id, std::string pr
 		int property_number = 0; \
 		std::unordered_map<int, PropertyData> props { };
 
+// Meta data functions
 #define STRUCT_META_TITLE(STRING) 		comp.title = 		#STRING;	RegisterComponent(comp);
 #define STRUCT_META_DESCRIPTION(STRING) comp.description = 	#STRING; 	RegisterComponent(comp);
 #define STRUCT_META_HIDDEN(BOOL)     	comp.hidden = 		BOOL; 		RegisterComponent(comp);
 #define STRUCT_META_COLOR(UINT) 		comp.color = 		UINT; 		RegisterComponent(comp);
 #define STRUCT_META_ICON(INT) 			comp.icon = 		INT; 		RegisterComponent(comp);
 
+// Property Registration
 #define REFLECT_MEMBER(MEMBER) \
 		property_number++; \
 		props[property_number] = PropertyData(); \
@@ -227,13 +235,20 @@ ReturnType GetProperty(void* component, HashID component_hash_id, std::string pr
         CreateTitle(props[property_number].title); \
 		RegisterProperty(comp, props[property_number]); 
 
+// Meta data functions
 #define MEMBER_META_TITLE(STRING) 		props[property_number].title = 			#STRING;	RegisterProperty(comp, props[property_number]); 
 #define MEMBER_META_DESCRIPTION(STRING) props[property_number].description = 	#STRING; 	RegisterProperty(comp, props[property_number]); 
 #define MEMBER_META_HIDDEN(BOOL)     	props[property_number].hidden = 		BOOL; 		RegisterProperty(comp, props[property_number]); 
 #define MEMBER_META_TYPE(INT) 			props[property_number].type = 			INT; 		RegisterProperty(comp, props[property_number]); 
 
-#define REFLECT_END() }
-
+// Static definitions add Registration Function to list of Components to be registered
+#define REFLECT_END(TYPE) \
+    } \
+    bool TYPE::reflection { initReflection() }; \
+    bool TYPE::initReflection() { \
+        l_fn_list.push_back(std::bind(&RegisterClass<TYPE>)); \
+        return true; \
+    }
 
 #endif  // DR_META_H
 

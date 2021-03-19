@@ -23,6 +23,8 @@ struct Transform2D {
 	std::vector<double>	position  	{ };
 	DrVec3 				rotation	{ };
 	std::vector<double>	scale_xyz	{ };
+
+	REFLECT();
 };
 
 
@@ -43,8 +45,9 @@ struct Transform2D {
 	REFLECT_MEMBER(scale_xyz)
 		MEMBER_META_DESCRIPTION("Scaling of this object.")
 		MEMBER_META_TYPE(Property_Type::Point3D)
-	REFLECT_END()
+	REFLECT_END(Transform2D)
 #endif
+
 
 #endif	// DR_COMP_TRANSFORM2D_H
 

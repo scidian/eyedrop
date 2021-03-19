@@ -58,9 +58,11 @@ void DrEditor::onCreate() {
 
     // #################### TESTING ####################
     // ECS Construction
-    int entity = ecs()->createEntity();
     ecs()->registerComponent<Test1>();
     ecs()->registerComponent<Transform2D>();
+
+    // Create entity
+    int entity = ecs()->createEntity();
     Transform2D et { };
         et.position =   std::vector<double>({1.0, 2.0, 3.0});
         et.rotation =   DrVec3(4.0, 5.0, 6.0);

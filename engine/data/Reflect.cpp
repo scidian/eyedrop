@@ -6,14 +6,19 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Thu Mar 11 2021
 //
 //
+#include <functional>
+#include <vector>
 #include "engine/data/Reflect.h"
+
 
 //####################################################################################
 //##    Global Variable Definitions
 //####################################################################################
-DrReflect*          g_reflect   { nullptr };                                        // Meta Data singleton      Declared in Reflect.h       Assigned in InitializeReflection()
+DrReflect*                              g_reflect           { nullptr };            // Meta Data singleton      Declared in Reflect.h       Assigned in InitializeReflection()
+std::vector< std::function<void()> >    l_fn_list           { };                    // Keeps list of registration functions added by header defines below
 
-
+//####################################################################################
+//####################################################################################
 //####################################################################################
 //##    Register Components / Properties with Meta Data System
 //##            !!!! Include all Components below !!!!
@@ -23,23 +28,19 @@ DrReflect*          g_reflect   { nullptr };                                    
 #include "engine/scene2d/components/Transform2D.h"
 
 
-void InitializeReflection() {
-    // Create Singleton
-    g_reflect = new DrReflect();
 
-    // ********** Register Structs / Classes **********
-    RegisterClass<Test1>();
-    RegisterClass<Transform2D>();
+
+//####################################################################################
+//####################################################################################
+//####################################################################################
+//##    General Registration
+//####################################################################################
+// Initializes global 
+void InitializeReflection() {
+    g_reflect = new DrReflect();                                                    // Create Singleton
+    for (int func = 0; func < l_fn_list.size(); ++func) l_fn_list[func]();          // Register Structs / Classes
 }
 
-
-//####################################################################################
-//####################################################################################
-//####################################################################################
-
-//####################################################################################
-//##    Non-template Reflection Functions
-//####################################################################################
 // Used in registration macros to automatically create nice display name from class / member variable names
 void CreateTitle(std::string& name) {
     std::replace(name.begin(), name.end(), '_', ' '); \
@@ -49,7 +50,9 @@ void CreateTitle(std::string& name) {
     }
 }
 
-// #################### Class / Member Registration ####################
+//####################################################################################
+//##    Class / Member Registration
+//####################################################################################
 // Call this to register class / struct type with reflection / meta data system
 void RegisterComponent(ComponentData comp_data) { 
 	g_reflect->AddMetaComponent(comp_data); 
@@ -59,7 +62,9 @@ void RegisterProperty(ComponentData comp_data, PropertyData prop_data) {
 	g_reflect->AddMetaProperty(comp_data, prop_data); 
 } 
 
-// #################### Data Fetching ####################
+//####################################################################################
+//##    Data Fetching
+//####################################################################################
 // Meta Data component fetching from passed in component typeid().hash_code()
 ComponentData GetComponentData(HashID hash_id) {
     for (auto& pair : g_reflect->components) {
