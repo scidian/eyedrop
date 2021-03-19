@@ -107,7 +107,7 @@ void RegisterComponent(ComponentData comp_data) {
 // Call this to register member variable with reflection / meta data system, typename PT is Property Type
 template <typename PT>
 void RegisterProperty(ComponentData comp_data, PropertyData prop_data) {        
-    assert(typeid(PT).hash_code() != typeid(std::string).hash_code() && "Std::String not supported for property type!!");             
+    assert(typeid(PT).hash_code() != typeid(std::string).hash_code() && "Type std::string not supported for property type!!");             
 	g_reflect->AddMetaProperty(comp_data, prop_data); 
 } 
 
@@ -169,49 +169,76 @@ PropertyData GetPropertyData(T& component, std::string property_name) {
 
 
 // #################### Property Value Fetching ####################
-// Get member variable value by Index, using memcpy and offsetof
+// Casting from void*, not fully standardized across compilers?
+//      DrVec3 rotation = *(DrVec3*)(component_ptr + prop_data.offset);
+// Memcpy
+//      DrVec3 value;
+//      memcpy(&value, component_ptr + prop_data.offset, prop_data.size);
+// C++ way
+//      static constexpr auto offset_rotation = &Transform2D::rotation;
+//      DrVec3 rotation = ((&et)->*off_rot);
+// ##### Internal casting function
+template<typename ReturnType>
+ReturnType InternalGetProperty(char* component_ptr, PropertyData prop_data) {
+    assert(prop_data.name != "unknown" && "Could not find property by name!");
+    assert(prop_data.hash_code == typeid(ReturnType).hash_code() && "Did not request proper return type!");
+    return *(reinterpret_cast<ReturnType*>(component_ptr + prop_data.offset));
+}
+// Get member variable value from Component by Index
 template<typename ReturnType, typename ComponentType>
 ReturnType GetProperty(ComponentType& component, int property_number) {
-    // Casting from void*, not fully standardized across compilers?
-    //      DrVec3 rotation = *(DrVec3*)(component_ptr + prop_data.offset);
-    // Memcpy
-    //      DrVec3 value;
-    //      memcpy(&value, component_ptr + prop_data.offset, prop_data.size);
-    // C++ way
-    //      static constexpr auto offset_rotation = &Transform2D::rotation;
-    //      DrVec3 rotation = ((&et)->*off_rot);
     PropertyData prop_data = GetPropertyData<ComponentType>(property_number);
-    assert(prop_data.name != "unknown" && "Could not find property by index!");
-    assert(prop_data.hash_code == typeid(ReturnType).hash_code() && "Did not request proper return type!");
-    char* component_ptr = (char*)(&component);
-    return *(reinterpret_cast<ReturnType*>(component_ptr + prop_data.offset));
+    return InternalGetProperty<ReturnType>((char*)(&component), GetPropertyData<ComponentType>(property_number));
 }
-
-// Get member variable value by Name, using memcpy and offsetof
+// Get member variable value from Component by Name
 template<typename ReturnType, typename ComponentType>
 ReturnType GetProperty(ComponentType& component, std::string property_name) {
-    PropertyData prop_data = GetPropertyData<ComponentType>(property_name);
-    assert(prop_data.name != "unknown" && "Could not find property by name!");
-    assert(prop_data.hash_code == typeid(ReturnType).hash_code() && "Did not request proper return type!");
-    char* component_ptr = (char*)(&component);
-    return *(reinterpret_cast<ReturnType*>(component_ptr + prop_data.offset));
+    return InternalGetProperty<ReturnType>((char*)(&component), GetPropertyData<ComponentType>(property_name));
 }
-
-// Get member variable value by Name, using memcpy and offsetof
+// Get member variable value using Component HashID by Index
+template<typename ReturnType>
+ReturnType GetProperty(void* component, HashID component_hash_id, int property_number) {
+    return InternalGetProperty<ReturnType>((char*)(component), GetPropertyData(component_hash_id, property_number));
+}
+// Get member variable value using Component HashID by Name
 template<typename ReturnType>
 ReturnType GetProperty(void* component, HashID component_hash_id, std::string property_name) {
-    PropertyData prop_data = GetPropertyData(component_hash_id, property_name);
-    assert(prop_data.name != "unknown" && "Could not find property by name!");
-    assert(prop_data.hash_code == typeid(ReturnType).hash_code() && "Did not request proper return type!");
-    char* component_ptr = (char*)(component);
-    return *(reinterpret_cast<ReturnType*>(component_ptr + prop_data.offset));
+    return InternalGetProperty<ReturnType>((char*)(component), GetPropertyData(component_hash_id, property_name));
 }
 
-// SetProperty
-// void set_int(void *block, size_t offset, int val) {
+
+// #################### Property Value Setting ####################
+// Memcpy
 //     char *p = block;
-//     memcpy(p + offset, &val, sizeof val);
-// }
+//     memcpy(p + offset, &val, sizeof(val));
+// ##### Internal casting function
+template<typename PropertyType>
+void InternalSetProperty(char* component_ptr, PropertyData prop_data, PropertyType value) {
+    assert(prop_data.name != "unknown" && "Could not find property by name!");
+    assert(prop_data.hash_code == typeid(PropertyType).hash_code() && "Did not request proper value type!");
+    PropertyType& existing = *(reinterpret_cast<PropertyType*>(component_ptr + prop_data.offset));
+    existing = value;
+}
+// Set member variable of component by Index
+template<typename PropertyType, typename ComponentType>
+void SetProperty(ComponentType& component, int property_number, PropertyType value) {
+    InternalSetProperty<PropertyType>((char*)(&component), GetPropertyData<ComponentType>(property_number), value);
+}
+// Set member variable of component by Name
+template<typename PropertyType, typename ComponentType>
+void SetProperty(ComponentType& component, std::string property_name, PropertyType value) {
+    InternalSetProperty<PropertyType>((char*)(&component), GetPropertyData<ComponentType>(property_name), value);
+}
+// Set member variable value using Component HashID by Index
+template<typename PropertyType>
+void SetProperty(void* component, HashID component_hash_id, int property_number, PropertyType value) {
+    InternalSetProperty<PropertyType>((char*)(component), GetPropertyData(component_hash_id, property_number), value);
+}
+// Set member variable value using Component HashID by Name
+template<typename PropertyType>
+void SetProperty(void* component, HashID component_hash_id, std::string property_name, PropertyType value) {
+    InternalSetProperty<PropertyType>((char*)(component), GetPropertyData(component_hash_id, property_name), value);
+}
 
 
 //####################################################################################

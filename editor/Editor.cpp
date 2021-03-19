@@ -75,6 +75,7 @@ void DrEditor::onCreate() {
     for (ComponentID id = 0; id < MAX_COMPONENTS; ++id) {
         std::cout << "Component #" << std::to_string(id) << "? ";
         if (entity_type.test(id)) {
+            // Get Test
             HashID component_hash_id = ecs()->getComponentHashID(id);
             void*  component = ecs()->getData(id, entity);
             std::vector<double> pos = GetProperty<std::vector<double>>(component, component_hash_id, "position");
@@ -83,6 +84,14 @@ void DrEditor::onCreate() {
             std::cout << "     First Variable: " << GetPropertyData(ecs()->getComponentHashID(id), 0).name;
             std::cout << ", Value - X: " << pos[0] << ", Y: " << pos[1] << ", Z: " << pos[2];
             std::cout << std::endl;
+
+            // Set Test
+            pos = { 23.0, 43.2, 99.0 };
+            SetProperty(component, component_hash_id, "position", pos);
+
+            // Check Set
+            pos = GetProperty<std::vector<double>>(component, component_hash_id, 0);
+            std::cout << "After setting - X: " << pos[0] << ", Y: " << pos[1] << ", Z: " << pos[2] << std::endl;
         } else {
             std::cout << "---" << std::endl;
         }
@@ -117,6 +126,18 @@ void DrEditor::onCreate() {
     std::vector<double> position = GetProperty<std::vector<double>>(et, "position");
     std::cout << "Position X: " << position[0] << ", Position Y: " << position[1] << ", Position Z: " << position[2] << std::endl;
 
+    // Test SetProperty by Index
+    Test1 t{};
+        t.test1 = 5;
+    std::cout << "Test1 variable test1 is currently: " << t.test1 << std::endl;
+    std::cout << "Setting Now..." << std::endl;
+    SetProperty(t, 0, int(189));
+    std::cout << "Test1 variable test1 is now: " << t.test1 << std::endl;
+
+    // Test SetProperty by Name
+    position = { 56.0, 58.5, 60.2 };
+    SetProperty(et, "position", position);
+    std::cout << "Transform2D instance - Position X: " << et.position[0] << ", Position Y: " << et.position[1] << ", Position Z: " << et.position[2] << std::endl;
 
 
     // #############################################
