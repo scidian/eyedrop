@@ -73,9 +73,13 @@ void DrEditor::onCreate() {
     for (ComponentID id = 0; id < MAX_COMPONENTS; ++id) {
         std::cout << "Component #" << std::to_string(id) << "? ";
         if (entity_type.test(id)) {
+            HashID component_hash_id = ecs()->getComponentHashID(id);
+            void*  component = ecs()->getData(id, entity);
+            std::vector<double> pos = GetProperty<std::vector<double>>(component, component_hash_id, "position");
+
             std::cout << "YES" << ", Component Name: " << GetComponentData(ecs()->getComponentHashID(id)).name << std::endl;
             std::cout << "     First Variable: " << GetPropertyData(ecs()->getComponentHashID(id), 0).name;
-            //std::cout << ", Vale: " << GetProperty<std::vector<double>>(ecs()->getComponentHashID(id), "position");
+            std::cout << ", Value - X: " << pos[0] << ", Y: " << pos[1] << ", Z: " << pos[2];
             std::cout << std::endl;
         } else {
             std::cout << "---" << std::endl;

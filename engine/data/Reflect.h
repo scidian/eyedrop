@@ -92,7 +92,7 @@ void                InitializeReflection();                                     
 //####################################################################################
 //##    Reflection Data Fetching
 //############################
-// ------------------------- Component Data Fetching -------------------------
+// #################### Component Data Fetching ####################
 // Meta Data component fetching by component Class Name
 template<typename T>
 ComponentData GetComponentData() {
@@ -112,8 +112,8 @@ ComponentData GetComponentData(T& component) {
 ComponentData GetComponentData(HashID hash_id);
 
 
-// ------------------------- Property Data Fetching -------------------------
-//              ---------------    By Index  ---------------
+// #################### Property Data Fetching ####################
+// -------------------------    By Index  -------------------------
 // Meta Data property fetching by member variable Index and component typeid().hash_code()
 PropertyData GetPropertyData(HashID component_hash_id, int property_number);
 // Meta Data property fetching by member variable Index and component Class Name
@@ -128,7 +128,7 @@ PropertyData GetPropertyData(T& component, int property_number) {
     return GetPropertyData<T>(property_number);   
 }
 
-//              ---------------    By Name  ---------------
+// -------------------------    By Name  -------------------------
 // Meta Data property fetching by member variable Name and component typeid().hash_code()
 PropertyData GetPropertyData(HashID component_hash_id, std::string property_name);
 // Meta Data property fetching by member variable Name and component Class Name
@@ -144,7 +144,7 @@ PropertyData GetPropertyData(T& component, std::string property_name) {
 }
 
 
-// ------------------------- Property Value Fetching -------------------------
+// #################### Property Value Fetching ####################
 // Get member variable value by Index, using memcpy and offsetof
 template<typename ReturnType, typename ComponentType>
 ReturnType GetProperty(ComponentType& component, int property_number) {
@@ -170,6 +170,16 @@ ReturnType GetProperty(ComponentType& component, std::string property_name) {
     assert(prop_data.name != "unknown" && "Could not find property by name!");
     assert(prop_data.hash_code == typeid(ReturnType).hash_code() && "Did not request proper return type!");
     char* component_ptr = (char*)(&component);
+    return *(reinterpret_cast<ReturnType*>(component_ptr + prop_data.offset));
+}
+
+// Get member variable value by Name, using memcpy and offsetof
+template<typename ReturnType>
+ReturnType GetProperty(void* component, HashID component_hash_id, std::string property_name) {
+    PropertyData prop_data = GetPropertyData(component_hash_id, property_name);
+    assert(prop_data.name != "unknown" && "Could not find property by name!");
+    assert(prop_data.hash_code == typeid(ReturnType).hash_code() && "Did not request proper return type!");
+    char* component_ptr = (char*)(component);
     return *(reinterpret_cast<ReturnType*>(component_ptr + prop_data.offset));
 }
 

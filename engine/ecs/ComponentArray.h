@@ -22,6 +22,7 @@ class IComponentArray
 public:
 	virtual ~IComponentArray() = default;
 	virtual void entityDestroyed(EntityID entity) = 0;
+	virtual void* getDataPointer(EntityID entity) = 0;
 };
 
 
@@ -42,16 +43,23 @@ private:
 
 	// #################### INTERNAL FUNCTIONS ####################
 public:
+	// Called from coordinator when Entity is being removed from Entity Component System
 	void entityDestroyed(EntityID entity) override {
 		if (m_entity_to_index.find(entity) != m_entity_to_index.end()) {
 			removeData(entity);
 		}
 	}
 
+	// Gets instance of a Component for Entity
 	T& getData(EntityID entity) {
 		//assert(m_entity_to_index.find(entity) != m_entity_to_index.end() && "Retrieving non-existent component!");
 		assert((entity >= KEY_START && entity < MAX_ENTITIES) && "Entity out of range!");
 		return m_component_array[m_entity_to_index[entity]];
+	}
+
+	// Returns instance of a Component as void* for Entity
+	void* getDataPointer(EntityID entity) override {
+		return ((void*)(&getData(entity)));
 	}
 
 	// Adds a Component to the ComponentArray for an Entity
@@ -66,6 +74,7 @@ public:
 		++m_size;
 	}
 
+	// Removes Component for Entity
 	void removeData(EntityID entity) {
 		assert(m_entity_to_index.find(entity) != m_entity_to_index.end() && "Removing non-existent component!");
 

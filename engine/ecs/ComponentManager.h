@@ -25,27 +25,9 @@ private:
 	std::unordered_map<HashID, std::shared_ptr<IComponentArray>>	m_component_arrays		{ };
 	ComponentID 													m_next_component_id		{ 0 };
 
-	// Getters
-	template<typename T>
-	std::shared_ptr<DrComponentArray<T>> getComponentArray() {
-		HashID hash = typeid(T).hash_code();
-		assert(m_component_ids.find(hash) != m_component_ids.end() && "Component not registered before use!");
-		return std::static_pointer_cast<DrComponentArray<T>>(m_component_arrays[hash]);
-	}
-
 
 public:
-	// Working on grabbing Component by type for Object Inspector
-	std::shared_ptr<IComponentArray> getComponentArrayByType(ComponentID type) {
-		for (auto pair : m_component_ids) {
-			if (pair.second == type) return m_component_arrays[pair.first];
-		}
-		return nullptr;
-	}
-
-	
-
-
+	// Registers a Component Type with Entity Component System, ex: registerComponent<Transform>();
 	template<typename T>
 	void registerComponent() {
 		HashID hash = typeid(T).hash_code();
@@ -56,6 +38,43 @@ public:
 		++m_next_component_id;
 	}
 
+	// Adds a Component of Type T to Entity
+	template<typename T>
+	void addComponent(EntityID entity, T component) {
+		getComponentArray<T>()->insertData(entity, component);
+	}
+
+	// Removes a Component of Type T from Entity
+	template<typename T>
+	void removeComponent(EntityID entity) {
+		getComponentArray<T>()->removeData(entity);
+	}
+
+	// Returns a Component of Type T from Entity
+	template<typename T>
+	T& getComponent(EntityID entity) {
+		return getComponentArray<T>()->getData(entity);
+	}
+
+	// Gets ComponentArray of Type T
+	template<typename T>
+	std::shared_ptr<DrComponentArray<T>> getComponentArray() {
+		HashID hash = typeid(T).hash_code();
+		assert(m_component_ids.find(hash) != m_component_ids.end() && "Component not registered before use!");
+		return std::static_pointer_cast<DrComponentArray<T>>(m_component_arrays[hash]);
+	}
+
+	// For grabbing Component by type (for Object Inspector)
+	IComponentArray* getComponentArray(ComponentID component_id) {
+		for (auto& pair : m_component_ids) {
+			if (pair.second == component_id) {
+				return m_component_arrays[pair.first].get();
+			}
+		}
+		assert(false && "Component Array not found!");
+	}
+
+	// Gets component id (bitset) of a Component with Type T
 	template<typename T>
 	ComponentID getComponentID() {
 		HashID hash = typeid(T).hash_code();
@@ -63,23 +82,9 @@ public:
 		return m_component_ids[hash];
 	}
 
-	template<typename T>
-	void addComponent(EntityID entity, T component) {
-		getComponentArray<T>()->insertData(entity, component);
-	}
-
-	template<typename T>
-	void removeComponent(EntityID entity) {
-		getComponentArray<T>()->removeData(entity);
-	}
-
-	template<typename T>
-	T& getComponent(EntityID entity) {
-		return getComponentArray<T>()->getData(entity);
-	}
-
+	// Returns typeid().hash_code() of Component Type
 	HashID getComponentHashID(ComponentID component_id) {
-		for (auto pair : m_component_ids) {
+		for (auto& pair : m_component_ids) {
 			if (pair.second == component_id) {
 				HashID hash = pair.first;
 				return hash;
@@ -88,6 +93,7 @@ public:
 		assert(false && "Component ID not found!");
 	}
 
+	// Called from Coordinator.destroyEntity()
 	void entityDestroyed(EntityID entity) {
 		for (auto const& pair : m_component_arrays) {
 			auto const& component = pair.second;
