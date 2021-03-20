@@ -47,12 +47,13 @@ public:
     double          right();
     double          top();
     double          bottom();
-
+    
     DrPointF        topLeft();
     DrPointF        topRight();
     DrPointF        bottomLeft();
     DrPointF        bottomRight();
 
+    DrPointF        mid();
 };
 
 

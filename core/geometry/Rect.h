@@ -60,6 +60,7 @@ public:
     DrPoint         bottomLeft();
     DrPoint         bottomRight();
 
+    DrPoint         mid();
 };
 
 

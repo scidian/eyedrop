@@ -80,6 +80,17 @@ ComponentData GetComponentData(HashID hash_id) {
     }
     return ComponentData();
 }
+// Meta Data component fetching from passed in component name
+ComponentData GetComponentData(std::string component_name) {
+    for (auto& pair : g_reflect->components) {
+        if (pair.second.name == component_name) return pair.second;
+    }
+    return ComponentData();
+}
+// Meta Data component fetching from passed in component name
+ComponentData GetComponentData(const char* component_name) {
+    return GetComponentData(std::string(component_name));
+}
 
 // Meta Data property fetching by member variable Index and component typeid().hash_code()
 PropertyData GetPropertyData(HashID component_hash_id, int property_number) {
@@ -90,7 +101,6 @@ PropertyData GetPropertyData(HashID component_hash_id, int property_number) {
     }
     return PropertyData();    
 }
-
 // Meta Data property fetching by member variable Name and component typeid().hash_code()
 PropertyData GetPropertyData(HashID component_hash_id, std::string property_name) {
     for (auto& prop : g_reflect->properties[component_hash_id]) {

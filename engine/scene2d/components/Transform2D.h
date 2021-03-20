@@ -10,7 +10,6 @@
 #define DR_COMP_TRANSFORM2D_H
 
 #include <vector>
-#include "core/geometry/Vec3.h"
 #include "core/imaging/Color.h"
 #include "engine/data/Reflect.h"
 
@@ -20,9 +19,9 @@
 //##        Used to descibe a location of a 2D object in space
 //############################
 struct Transform2D {
-	std::vector<double>		position  		{ };
-	DrVec3 					rotation		{ };
-	std::vector<double>		scale_xyz		{ };
+	std::vector<double>		position;
+	std::vector<double> 	rotation;
+	std::vector<double>		scale_xyz;
 
 	REFLECT();
 };

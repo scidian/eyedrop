@@ -118,6 +118,7 @@ public:
 		return m_component_manager->getComponentHashID(component_id);
 	}
 
+
 	// #################### System Methods ####################
 	template<typename T>
 	std::shared_ptr<T> registerSystem() {

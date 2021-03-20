@@ -16,7 +16,6 @@
 #include "engine/data/Types.h"
 
 // Forward Declarations
-class DrApp;
 class DrReflect;
 
 //####################################################################################
@@ -31,6 +30,7 @@ extern DrReflect*       g_reflect;                                              
 struct ComponentData {
     std::string         name            { "unknown" };                              // Actual struct / class name 
     HashID              hash_code       { 0 };                                      // typeid().hash_code of actual underlying type of Component
+    int                 property_count  { 0 };                                      // Number of registered properties of class
     // ----- Following Meta Data Can Be User Set -----
     std::string         title           { "unknown" };                              // Display name of this Component
     std::string         description     { "No component description." };            // Description to show in Help Advisor
@@ -78,6 +78,7 @@ public:
         assert(comp_data.hash_code != 0 && "Component hash code is 0, error in registration?");
         assert(components.find(comp_data.hash_code) != components.end() && "Component never set with AddMetaComponent before calling AddMetaProperty!");
         properties[comp_data.hash_code][prop_data.offset] = prop_data;
+        components[comp_data.hash_code].property_count = properties[comp_data.hash_code].size();
     }
 };
 
@@ -106,11 +107,9 @@ void RegisterComponent(ComponentData comp_data) {
 
 // Call this to register member variable with reflection / meta data system, typename PT is Property Type
 template <typename PT>
-void RegisterProperty(ComponentData comp_data, PropertyData prop_data) {        
-    assert(typeid(PT).hash_code() != typeid(std::string).hash_code() && "Type std::string not supported for property type!!");             
+void RegisterProperty(ComponentData comp_data, PropertyData prop_data) {                
 	g_reflect->AddMetaProperty(comp_data, prop_data); 
 } 
-
 
 
 //####################################################################################
@@ -134,6 +133,9 @@ ComponentData GetComponentData(T& component) {
 }
 // Meta Data component fetching from passed in component typeid().hash_code()
 ComponentData GetComponentData(HashID hash_id);
+// Meta Data component fetching from passed in component name
+ComponentData GetComponentData(std::string component_name);
+ComponentData GetComponentData(const char* component_name);
 
 
 // #################### Property Data Fetching ####################

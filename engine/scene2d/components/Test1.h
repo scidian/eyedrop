@@ -18,8 +18,8 @@
 //##        Used to test ecs
 //############################
 struct Test1 {
-	int  					test1   		{ 0 };
-    bool 					test2   		{ false };
+	int  					test1;
+    bool 					test2;
 
 	REFLECT()
 };

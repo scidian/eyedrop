@@ -67,7 +67,7 @@ void DrEditor::onCreate() {
     int entity = ecs()->createEntity();
     Transform2D et { };
         et.position =   std::vector<double>({1.0, 2.0, 3.0});
-        et.rotation =   DrVec3(4.0, 5.0, 6.0);
+        et.rotation =   std::vector<double>({4.0, 5.0, 6.0});
         et.scale_xyz =  std::vector<double>({7.0, 8.0, 9.0});
     ecs()->addComponent(entity, et);
 
@@ -120,17 +120,24 @@ void DrEditor::onCreate() {
     std::cout << "Prop About:  " << GetPropertyData(et, 2).description << std::endl;
     std::cout << "Prop Offset: " << GetPropertyData(et, "scale_xyz").offset << std::endl;
 
+    // EXAMPLE: Iterating Properties
+    std::cout << "Iterating Properties: " << std::endl;
+    for (int p = 0; p < GetComponentData("Transform2D").property_count; ++p) {
+        std::cout << "  Property Number: " << p << ", Name: " << GetPropertyData(et, p).name << std::endl;
+    }
+
     // Test GetProperty by Index
-    DrVec3 rotation = GetProperty<DrVec3>(et, 1);
-    std::cout << "Rotation X: " << rotation.x << ", Rotation Y: " << rotation.y << ", Rotation Z: " << rotation.z << std::endl;
+    std::vector<double> rotation = GetProperty<std::vector<double>>(et, 1);
+    std::cout << "Rotation X: " << rotation[0] << ", Rotation Y: " << rotation[1] << ", Rotation Z: " << rotation[2] << std::endl;
     
     // Test GetProperty by Name
     std::vector<double> position = GetProperty<std::vector<double>>(et, "position");
     std::cout << "Position X: " << position[0] << ", Position Y: " << position[1] << ", Position Z: " << position[2] << std::endl;
 
     // Test SetProperty by Index
-    Test1 t{};
+    Test1 t { };
         t.test1 = 5;
+        t.test2 = false;
     std::cout << "Test1 variable test1 is currently: " << t.test1 << std::endl;
     std::cout << "Setting Now..." << std::endl;
     SetProperty(t, 0, int(189));

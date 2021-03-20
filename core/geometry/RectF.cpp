@@ -81,6 +81,7 @@ DrPointF DrRectF::topRight()            { return DrPointF(right(),   top()); }
 DrPointF DrRectF::bottomLeft()          { return DrPointF(left(),    bottom()); }
 DrPointF DrRectF::bottomRight()         { return DrPointF(right(),   bottom()); }
 
+DrPointF DrRectF::mid()                 { return DrPointF(left() + (width * 0.5), top() + (height * 0.5)); }
 
 
 

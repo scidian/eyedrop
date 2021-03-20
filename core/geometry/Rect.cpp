@@ -95,6 +95,7 @@ DrPoint DrRect::topRight()              { return DrPoint(right(),   top()); }
 DrPoint DrRect::bottomLeft()            { return DrPoint(left(),    bottom()); }
 DrPoint DrRect::bottomRight()           { return DrPoint(right(),   bottom()); }
 
+DrPoint DrRect::mid()                   { return DrPoint(left() + (width * 0.5), top() + (height * 0.5)); }
 
 
 
