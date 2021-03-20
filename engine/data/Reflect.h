@@ -294,7 +294,7 @@ void SetProperty(void* component, HashID component_hash_id, std::string property
     } \
     bool TYPE::reflection { initReflection() }; \
     bool TYPE::initReflection() { \
-        l_fn_list.push_back(std::bind(&RegisterClass<TYPE>)); \
+        g_register_list.push_back(std::bind(&RegisterClass<TYPE>)); \
         return true; \
     }
 

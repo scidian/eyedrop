@@ -101,7 +101,7 @@ void DrEditor::onCreate() {
 
     // Meta Data
     std::cout << GetComponentData<Transform2D>().name << std::endl;
-    std::cout << GetComponentData<Transform2D>().description << std::endl;
+    std::cout << GetComponentData("Transform2D").description << std::endl;
     std::cout << GetComponentData(et).name << std::endl;
     std::cout << GetComponentData(et).description << std::endl;
 

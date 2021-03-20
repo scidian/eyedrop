@@ -14,7 +14,7 @@
 //##    Global Variable Definitions
 //####################################################################################
 DrReflect*                              g_reflect           { nullptr };            // Meta Data singleton      Declared in Reflect.h       Assigned in InitializeReflection()
-std::vector<std::function<void()>>      l_fn_list           { };                    // Keeps list of registration functions added by header defines below
+std::vector<std::function<void()>>      g_register_list     { };                    // Keeps list of registration functions added by header defines below
 
 //####################################################################################
 //####################################################################################
@@ -43,8 +43,8 @@ void InitializeReflection() {
     g_reflect = new DrReflect();                                                    
     
     // Register Structs / Classes
-    for (int func = 0; func < l_fn_list.size(); ++func) {
-        l_fn_list[func]();       
+    for (int func = 0; func < g_register_list.size(); ++func) {
+        g_register_list[func]();       
     }   
 }
 
