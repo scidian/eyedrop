@@ -21,8 +21,7 @@ class DrReflect;
 //####################################################################################
 //##    Global Variable Declarations
 //####################################################################################
-extern DrReflect*       g_reflect;                                                  // Meta Data singleton      Defined in Reflect.cpp      Assigned in InitializeReflection()
-
+extern std::shared_ptr<DrReflect>       g_reflect;                                  // Meta data singleton      Defined in Reflect.cpp      Assigned in InitializeReflection()
 
 //####################################################################################
 //##    Component / Property data structs

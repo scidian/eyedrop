@@ -13,7 +13,7 @@
 //####################################################################################
 //##    Global Variable Definitions
 //####################################################################################
-DrReflect*                              g_reflect           { nullptr };            // Meta Data singleton      Declared in Reflect.h       Assigned in InitializeReflection()
+std::shared_ptr<DrReflect>              g_reflect           { nullptr };            // Meta Data singleton      Declared in Reflect.h       Assigned in InitializeReflection()
 std::vector<std::function<void()>>      g_register_list     { };                    // Keeps list of registration functions added by header defines below
 
 //####################################################################################
@@ -40,7 +40,7 @@ std::vector<std::function<void()>>      g_register_list     { };                
 // Initializes global reflection object, registers classes with Reflection System
 void InitializeReflection() {
     // Create Singleton
-    g_reflect = new DrReflect();                                                    
+    g_reflect = std::make_shared<DrReflect>();
     
     // Register Structs / Classes
     for (int func = 0; func < g_register_list.size(); ++func) {
