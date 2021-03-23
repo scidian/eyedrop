@@ -9,9 +9,9 @@
 #ifndef DR_COMP_TRANSFORM2D_H
 #define DR_COMP_TRANSFORM2D_H
 
-#include <vector>
 #include "core/imaging/Color.h"
-#include "engine/data/Reflect.h"
+#include "core/Reflect.h"
+#include "engine/data/Types.h"
 
 
 //####################################################################################
@@ -31,19 +31,18 @@ struct Transform2D {
 //##    Register Reflection / Meta Data
 //############################
 #ifdef REGISTER_REFLECTION
-	REFLECT_STRUCT(Transform2D)
-		STRUCT_META_TITLE("Transform 2D")
-		STRUCT_META_DESCRIPTION("Describes the location and positioning of this 2D object.")
-		STRUCT_META_COLOR(DROP_COLOR_WHITE)
+	REFLECT_CLASS(Transform2D)
+		CLASS_META_DATA(META_DATA_DESCRIPTION, "Describes the location and positioning of this 2D object.")
+		CLASS_META_DATA(META_DATA_COLOR, DrColor(DROP_COLOR_WHITE).name())
 	REFLECT_MEMBER(position)
-		MEMBER_META_DESCRIPTION("Location of this object in 2D space.")
-		MEMBER_META_TYPE(Property_Type::Point3D)
+		MEMBER_META_DATA(META_DATA_DESCRIPTION, "Location of this object in 2D space.")
+		MEMBER_META_DATA(META_DATA_TYPE, std::to_string(static_cast<int>(Property_Type::Point3D)))
 	REFLECT_MEMBER(rotation)
-		MEMBER_META_DESCRIPTION("Rotation of this object in 2D space.")
-		MEMBER_META_TYPE(Property_Type::Point3D)
+		MEMBER_META_DATA(META_DATA_DESCRIPTION, "Rotation of this object in 2D space.")
+		MEMBER_META_DATA(META_DATA_TYPE, std::to_string(static_cast<int>(Property_Type::Point3D)))
 	REFLECT_MEMBER(scale_xyz)
-		MEMBER_META_DESCRIPTION("Scaling of this object.")
-		MEMBER_META_TYPE(Property_Type::Point3D)
+		MEMBER_META_DATA(META_DATA_DESCRIPTION, "Scaling of this object.")
+		MEMBER_META_DATA(META_DATA_TYPE, std::to_string(static_cast<int>(Property_Type::Point3D)))
 	REFLECT_END(Transform2D)
 #endif
 

@@ -43,7 +43,7 @@ bool IsInteger(const std::string& source) {
     return !source.empty() && std::find_if(source.begin(), source.end(), [](char c) { return !std::isdigit(c); }) == source.end();
 }
 
-// Returns interger as hex string
+// Returns integer as hex string
 std::string HexString(const int integer) {
     std::stringstream ss;
     ss << std::hex << static_cast<int>(integer);

@@ -10,7 +10,7 @@
 #define DR_COMP_TEST1_H
 
 #include "core/imaging/Color.h"
-#include "engine/data/Reflect.h"
+#include "core/Reflect.h"
 
 
 //####################################################################################
@@ -29,7 +29,7 @@ struct Test1 {
 //##    Register Reflection / Meta Data
 //############################
 #ifdef REGISTER_REFLECTION
-	REFLECT_STRUCT(Test1)
+	REFLECT_CLASS(Test1)
 	REFLECT_MEMBER(test1)
 	REFLECT_MEMBER(test2)
 	REFLECT_END(Test1)

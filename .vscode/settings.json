@@ -84,7 +84,6 @@
         "exception": "cpp",
         "functional": "cpp",
         "initializer_list": "cpp",
-        "iomanip": "cpp",
         "ios": "cpp",
         "istream": "cpp",
         "iterator": "cpp",
