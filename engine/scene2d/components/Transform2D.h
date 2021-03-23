@@ -36,13 +36,13 @@ struct Transform2D {
 		CLASS_META_DATA(META_DATA_COLOR, DrColor(DROP_COLOR_WHITE).name())
 	REFLECT_MEMBER(position)
 		MEMBER_META_DATA(META_DATA_DESCRIPTION, "Location of this object in 2D space.")
-		MEMBER_META_DATA(META_DATA_TYPE, std::to_string(static_cast<int>(Property_Type::Point3D)))
+		MEMBER_META_DATA(META_DATA_TYPE, std::to_string(PROPERTY_TYPE_POINT3D))
 	REFLECT_MEMBER(rotation)
 		MEMBER_META_DATA(META_DATA_DESCRIPTION, "Rotation of this object in 2D space.")
-		MEMBER_META_DATA(META_DATA_TYPE, std::to_string(static_cast<int>(Property_Type::Point3D)))
+		MEMBER_META_DATA(META_DATA_TYPE, std::to_string(PROPERTY_TYPE_POINT3D))
 	REFLECT_MEMBER(scale_xyz)
 		MEMBER_META_DATA(META_DATA_DESCRIPTION, "Scaling of this object.")
-		MEMBER_META_DATA(META_DATA_TYPE, std::to_string(static_cast<int>(Property_Type::Point3D)))
+		MEMBER_META_DATA(META_DATA_TYPE, std::to_string(PROPERTY_TYPE_POINT3D))
 	REFLECT_END(Transform2D)
 #endif
 

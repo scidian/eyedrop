@@ -15,7 +15,7 @@
 class DrPlayer : public DrApp 
 {
 public:
-    using DrApp::DrApp;                                                 // Inherits base constructor, requires C++ 11
+    using DrApp::DrApp;                                                             // Inherits base constructor, requires C++ 11
 
     virtual void onUpdateGUI() override { 
 
@@ -28,7 +28,6 @@ public:
         uint64_t elapsed =  stm_since(m_time_start);
         double seconds =    stm_sec(elapsed);
         setAppName("Frame count: " + std::to_string(sapp_frame_count()));
-        
     }
 
     virtual void onEvent(const sapp_event* event) override {

@@ -52,7 +52,29 @@ DrColor::DrColor(unsigned int ui) {
     g = (ui & 0x0000FF00) >> 8;
     b = (ui & 0x000000FF) >> 0;
 }
+DrColor::DrColor(std::string hex_string) {
+    // Remove hash if it has it
+    if (hex_string.at(0) == '#') hex_string = hex_string.substr(1, hex_string.length() - 1);
+    
+    // Set initial values
+    std::string sr, sg, sb, sa;
+    r = 0; g = 0; b = 0; a = 255;
 
+    // At least r,g,b
+    if (hex_string.length() >= 6) {
+        sr = hex_string.substr(0, 2);
+        sg = hex_string.substr(2, 2);
+        sb = hex_string.substr(4, 2);
+        r  = std::stoi(sr, 0, 16);
+        g  = std::stoi(sg, 0, 16);
+        b  = std::stoi(sb, 0, 16);
+    }
+    // Has alpha
+    if (hex_string.length() == 8) {
+        sa = hex_string.substr(6, 2);
+        a  = std::stoi(sa, 0, 16);
+    }
+}
 
 //####################################################################################
 //##    Unsigned Int
@@ -74,11 +96,13 @@ std::string DrColor::name() {
     std::string hex_r = HexString(static_cast<int>(r));
     std::string hex_g = HexString(static_cast<int>(g));
     std::string hex_b = HexString(static_cast<int>(b));
+    std::string hex_a = HexString(static_cast<int>(a));
 
     if (hex_r.length() == 1) hex_r = std::string("0") + hex_r;
     if (hex_g.length() == 1) hex_g = std::string("0") + hex_g;
     if (hex_b.length() == 1) hex_b = std::string("0") + hex_b;
-    return std::string("#" + hex_r + hex_g + hex_b);
+    if (hex_a.length() == 1) hex_a = std::string("0") + hex_a;
+    return std::string("#" + hex_r + hex_g + hex_b + hex_a);
 }
 
 

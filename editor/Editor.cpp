@@ -103,6 +103,7 @@ void DrEditor::onCreate() {
     std::cout << "Class Name:  " << GetClassData<Transform2D>().name << std::endl;
     std::cout << "Class Title: " << GetClassData(et).title << std::endl;
     std::cout << "Class Desc:  " << GetClassMeta(GetClassData("Transform2D"), META_DATA_DESCRIPTION) << std::endl;
+    std::cout << "Class Color: " << GetClassMeta(GetClassData("Transform2D"), META_DATA_COLOR) << std::endl;
 
     std::cout << "Prop Name:   " << GetMemberData<Transform2D>(0).name << std::endl;
     std::cout << "Prop Title:  " << GetMemberData<Transform2D>(0).title << std::endl;

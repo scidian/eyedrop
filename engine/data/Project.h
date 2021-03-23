@@ -32,8 +32,8 @@
 #include "engine/ecs/Coordinator.h"
 
 // Project Constants
-#define DEFAULT_PROJECT_WIDTH            800            // Default Width  for Game
-#define DEFAULT_PROJECT_HEIGHT          1600            // Default Height for Game
+#define DEFAULT_PROJECT_WIDTH            800                                        // Default Width  for Game
+#define DEFAULT_PROJECT_HEIGHT          1600                                        // Default Height for Game
 
 enum Orientation {
     ORIENTATION_PORTAIT =       0,

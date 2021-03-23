@@ -73,6 +73,7 @@ public:
     DrColor(float r_, float g_, float b_, float a_ = 1.0f);
     DrColor(double r_, double g_, double b_, double a_ = 1.0);
     DrColor(unsigned int ui);
+    DrColor(std::string hex_string);
 
     // Conversions
     unsigned int    rgb();
