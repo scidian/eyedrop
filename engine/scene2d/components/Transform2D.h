@@ -33,7 +33,7 @@ struct Transform2D {
 #ifdef REGISTER_REFLECTION
 	REFLECT_CLASS(Transform2D)
 		CLASS_META_DATA(META_DATA_DESCRIPTION, "Describes the location and positioning of this 2D object.")
-		CLASS_META_DATA(META_DATA_COLOR, DrColor(DROP_COLOR_WHITE).name())
+		CLASS_META_DATA(META_DATA_COLOR, DrColor(DROP_COLOR_BLUE).name())
 	REFLECT_MEMBER(position)
 		MEMBER_META_DATA(META_DATA_DESCRIPTION, "Location of this object in 2D space.")
 		MEMBER_META_DATA(META_DATA_TYPE, std::to_string(PROPERTY_TYPE_POINT3D))

@@ -105,6 +105,13 @@ void DrEditor::onCreate() {
     std::cout << "Class Desc:  " << GetClassMeta(GetClassData("Transform2D"), META_DATA_DESCRIPTION) << std::endl;
     std::cout << "Class Color: " << GetClassMeta(GetClassData("Transform2D"), META_DATA_COLOR) << std::endl;
 
+    DrColor clr(GetClassMeta(GetClassData("Transform2D"), META_DATA_COLOR));
+    std::cout << "Color Convert Back - R: " << std::to_string(clr.red())
+                                 << ", G: " << std::to_string(clr.green())
+                                 << ", B: " << std::to_string(clr.blue())
+                                 << ", A: " << std::to_string(clr.alpha())
+                                 << std::endl;
+
     std::cout << "Prop Name:   " << GetMemberData<Transform2D>(0).name << std::endl;
     std::cout << "Prop Title:  " << GetMemberData<Transform2D>(0).title << std::endl;
     std::cout << "Prop Offset: " << GetMemberData(et, 0).offset << std::endl;
