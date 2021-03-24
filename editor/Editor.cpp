@@ -80,62 +80,63 @@ void DrEditor::onCreate() {
             // Get Test
             HashID component_hash_id = ecs()->getComponentHashID(id);
             void*  component = ecs()->getData(id, entity);
-            std::vector<double> pos = GetValue<std::vector<double>>(component, component_hash_id, "position");
+            std::cout << "YES" << std::endl; 
+            std::cout << "  Component Name: " << ClassData(ecs()->getComponentHashID(id)).name << std::endl;
+            std::cout << "    First Variable: " << MemberData(ecs()->getComponentHashID(id), 0).name << std::endl;
 
-            std::cout << "YES" << ", Component Name: " << GetClassData(ecs()->getComponentHashID(id)).name << std::endl;
-            std::cout << "     First Variable: " << GetMemberData(ecs()->getComponentHashID(id), 0).name;
-            std::cout << ", Value - X: " << pos[0] << ", Y: " << pos[1] << ", Z: " << pos[2];
-            std::cout << std::endl;
+            // Get Position
+            TypeData& member_data = MemberData(component_hash_id, "position");
+            std::vector<double>& pos = ClassMember<std::vector<double>>(component, member_data);
+            std::cout << "    " << member_data.title << " - X: " << pos[0] << ", Y: " << pos[1] << ", Z: " << pos[2] << std::endl;
 
             // Set Test
             pos = { 23.0, 43.2, 99.0 };
-            SetValue(component, component_hash_id, "position", pos);
 
             // Check Set
-            pos = GetValue<std::vector<double>>(component, component_hash_id, 0);
-            std::cout << "After setting - X: " << pos[0] << ", Y: " << pos[1] << ", Z: " << pos[2] << std::endl;
+            std::vector<double> check_pos = ClassMember<std::vector<double>>(component, member_data);
+            std::cout << "  After setting - X: " << check_pos[0] << ", Y: " << check_pos[1] << ", Z: " << check_pos[2] << std::endl;
         } else {
             std::cout << "---" << std::endl;
         }
     }
 
     // Meta Data
-    std::cout << "Class Name:  " << GetClassData<Transform2D>().name << std::endl;
-    std::cout << "Class Title: " << GetClassData(et).title << std::endl;
-    std::cout << "Class Desc:  " << GetClassMeta(GetClassData("Transform2D"), META_DATA_DESCRIPTION) << std::endl;
-    std::cout << "Class Color: " << GetClassMeta(GetClassData("Transform2D"), META_DATA_COLOR) << std::endl;
+    std::cout << "Class Name:  " << ClassData<Transform2D>().name << std::endl;
+    std::cout << "Class Title: " << ClassData(et).title << std::endl;
+    std::cout << "Class Desc:  " << GetMetaData(ClassData("Transform2D"), META_DATA_DESCRIPTION) << std::endl;
+    std::cout << "Class Color: " << GetMetaData(ClassData("Transform2D"), META_DATA_COLOR) << std::endl;
 
-    DrColor clr(GetClassMeta(GetClassData("Transform2D"), META_DATA_COLOR));
+    DrColor clr(GetMetaData(ClassData("Transform2D"), META_DATA_COLOR));
     std::cout << "Color Convert Back - R: " << std::to_string(clr.red())
                                  << ", G: " << std::to_string(clr.green())
                                  << ", B: " << std::to_string(clr.blue())
                                  << ", A: " << std::to_string(clr.alpha())
                                  << std::endl;
 
-    std::cout << "Prop Name:   " << GetMemberData<Transform2D>(0).name << std::endl;
-    std::cout << "Prop Title:  " << GetMemberData<Transform2D>(0).title << std::endl;
-    std::cout << "Prop Offset: " << GetMemberData(et, 0).offset << std::endl;
+    std::cout << "Prop Name:   " << MemberData<Transform2D>(0).name << std::endl;
+    std::cout << "Prop Title:  " << MemberData<Transform2D>(0).title << std::endl;
+    std::cout << "Prop Offset: " << MemberData(et, 0).offset << std::endl;
     
-    std::cout << "Prop Name:   " << GetMemberData<Transform2D>("rotation").name << std::endl;
-    std::cout << "Prop Title:  " << GetMemberData<Transform2D>(1).title << std::endl;
-    std::cout << "Prop Offset: " << GetMemberData(et, "rotation").offset << std::endl;
+    std::cout << "Prop Name:   " << MemberData<Transform2D>("rotation").name << std::endl;
+    std::cout << "Prop Title:  " << MemberData<Transform2D>(1).title << std::endl;
+    std::cout << "Prop Offset: " << MemberData(et, "rotation").offset << std::endl;
 
-    std::cout << "Prop Name:   " << GetMemberData<Transform2D>("scale_xyz").name << std::endl;
-    std::cout << "Prop Title:  " << GetMemberData<Transform2D>(2).title << std::endl;
-    std::cout << "Prop Offset: " << GetMemberData(et, "scale_xyz").offset << std::endl;
+    std::cout << "Prop Name:   " << MemberData<Transform2D>("scale_xyz").name << std::endl;
+    std::cout << "Prop Title:  " << MemberData<Transform2D>(2).title << std::endl;
+    std::cout << "Prop Offset: " << MemberData(et, "scale_xyz").offset << std::endl;
 
     // EXAMPLE: Iterating Properties
     std::cout << "Iterating Properties: " << std::endl;
-    for (int p = 0; p < GetClassData("Transform2D").member_count; ++p) {
-        std::cout << "  Property Number: " << p << ", Name: " << GetMemberData(et, p).name << std::endl;
+    for (int p = 0; p < ClassData("Transform2D").member_count; ++p) {
+        std::cout << "  Property Number: " << p << ", Name: " << MemberData(et, p).name << std::endl;
     }
 
     // Test GetProperty by Index
-    std::vector<double> rotation = GetValue<std::vector<double>>(et, 1);
+    std::vector<double> rotation = ClassMember<std::vector<double>>(&et, MemberData(et, 1));
     std::cout << "Rotation X: " << rotation[0] << ", Rotation Y: " << rotation[1] << ", Rotation Z: " << rotation[2] << std::endl;
     
     // Test GetProperty by Name
-    std::vector<double> position = GetValue<std::vector<double>>(et, "position");
+    std::vector<double> position = ClassMember<std::vector<double>>(&et, MemberData(et, "position"));
     std::cout << "Position X: " << position[0] << ", Position Y: " << position[1] << ", Position Z: " << position[2] << std::endl;
 
     // Test SetProperty by Index
@@ -143,13 +144,12 @@ void DrEditor::onCreate() {
         t.test1 = 5;
         t.test2 = false;
     std::cout << "Test1 variable test1 is currently: " << t.test1 << std::endl;
-    std::cout << "Setting Now..." << std::endl;
-    SetValue(t, 0, int(189));
-    std::cout << "Test1 variable test1 is now: " << t.test1 << std::endl;
+    std::cout << "  Setting Now..." << std::endl;
+    ClassMember<int>(&t, MemberData(t, 0)) = 189;
+    std::cout << "  Test1 variable test1 is now: " << t.test1 << std::endl;
 
     // Test SetProperty by Name
-    position = { 56.0, 58.5, 60.2 };
-    SetValue(et, "position", position);
+    ClassMember<std::vector<double>>(&et, MemberData(et, "position")) = { 56.0, 58.5, 60.2 };
     std::cout << "Transform2D instance - Position X: " << et.position[0] << ", Position Y: " << et.position[1] << ", Position Z: " << et.position[2] << std::endl;
 
 
