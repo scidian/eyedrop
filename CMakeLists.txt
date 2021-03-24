@@ -34,9 +34,9 @@ set(APP_TYPE        "editor")
 set(DEBUG_MODE      "true")
 
 # For testing no-gui html5 build:
-# set(EXPORT_TARGET   "web")
-# set(APP_TYPE        "player")
-# set(DEBUG_MODE      "false")  
+#set(EXPORT_TARGET   "web")
+#set(APP_TYPE        "player")
+#set(DEBUG_MODE      "false")  
 
 ####################################################################################
 ####################################################################################
@@ -218,9 +218,10 @@ elseif (EXPORT_TARGET MATCHES "web")
     #   -s EMULATE_FUNCTION_POINTER_CASTS=1     required for c style function callbacks to play nice with emscripten
     #
     if (DEBUG_MODE MATCHES "true")
-        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s ALLOW_MEMORY_GROWTH=1 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind -s ASSERTIONS=2")    
+        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s ALLOW_MEMORY_GROWTH=1 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind -s ASSERTIONS=2")
     else()
-        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s ALLOW_MEMORY_GROWTH=1 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind")
+       #set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s ALLOW_MEMORY_GROWTH=1 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind")
+        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s TOTAL_MEMORY=33554432 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind")
     endif()
 
     
