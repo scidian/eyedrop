@@ -7,6 +7,7 @@
 //
 //
 #include <chrono>
+#include <random>
 #include "core/imaging/Color.h"
 #include "core/Random.h"
 

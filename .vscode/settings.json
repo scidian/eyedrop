@@ -20,7 +20,7 @@
                 "settings": {
                     "foreground": "#524b48",
                 }
-            }
+            },
 
             {   "scope": "variable.other.enummember",   "settings": {   "foreground": "#00836d" }   },
             {   "scope": "variable.other.constant",     "settings": {   "foreground": "#450194" },  },
@@ -100,7 +100,6 @@
         "random": "cpp",
         "ratio": "cpp",
         "set": "cpp",
-        "sstream": "cpp",
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "string": "cpp",

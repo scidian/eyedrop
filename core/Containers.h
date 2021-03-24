@@ -38,7 +38,7 @@ template<class T> bool ListContains(const std::list<T>& my_list, T variable_to_c
 //####################################################################################
 //##    Map Functions
 //############################
-template<class T, class T2> bool MapHasKey(const std::map<T, T2>& my_map, T key_to_find) {
+template<class T, class U> bool MapHasKey(const std::map<T, U>& my_map, T key_to_find) {
     auto it = my_map.find(key_to_find);
     return (it != my_map.end());
 }

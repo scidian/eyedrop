@@ -9,41 +9,39 @@
 #ifndef DR_STRINGS_H
 #define DR_STRINGS_H
 
-#include <sstream>
+#include <math.h>
 #include <string>
 
 
 //####################################################################################
 //##    Decimal Strings
 //############################
-/// @brief: Returns number as string with decimal_places precision
+// Returns number as string with decimal_places precision
 template<typename T> std::string RoundToDecimalPlace(const T& number, const int decimal_places) {
     double num_as_double = static_cast<double>(number);
-    std::stringstream ss;
-    ss << std::fixed;
-    ss.precision(decimal_places);
-    ss << num_as_double;
-    return ss.str();
+    if (decimal_places <= 0) {
+        std::string s = std::to_string(num_as_double);
+        return s.substr(0, s.find('.'));
+    } else {
+        num_as_double = round(num_as_double * pow(10.0, decimal_places)) / pow(10.0, decimal_places);
+        std::string s = std::to_string(num_as_double);
+        return s.substr(0, s.find('.') + 1 + decimal_places);
+    }
 }
 
-/// @brief: Removes trailing zeros from a number, returns as string
-std::string RemoveTrailingZeros(const std::string& source);
+std::string RemoveTrailingZeros(const std::string& source);                         // Removes trailing zeros from a number, returns as string
 
 
 //####################################################################################
 //##    String Functions
 //############################
-/// @brief: Returns (length) number of characters from the left side of a string
-std::string Left(const std::string& source, const size_t length);
+std::string Left(const std::string& source, const size_t length);                   // Returns (length) number of characters from the left side of a string
+std::string Right(const std::string& source, const size_t length);                  // Returns (length) number of characters from the right side of a string
 
-/// @brief: Returns (length) number of characters from the right side of a string
-std::string Right(const std::string& source, const size_t length);
+bool        IsInteger(const std::string& source);                                   // Returns true if string is a positive integer, otherwise false
 
-/// @brief: Returns true if string is a positive integer, otherwise false
-bool        IsInteger(const std::string& source);
-
-/// @brief: Returns integer as hex string
-std::string HexString(const int integer);
+std::string HexDigit(const int integer);                                            // Returns integer <=  15 as hex string
+std::string HexString(const int integer);                                           // Returns integer <= 255 as hex string
 
 
 #endif // DR_STRINGS_H
