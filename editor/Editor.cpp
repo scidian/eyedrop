@@ -85,7 +85,7 @@ void DrEditor::onCreate() {
             std::cout << "    First Variable: " << MemberData(ecs()->getComponentHashID(id), 0).name << std::endl;
 
             // Get Position
-            TypeData& member_data = MemberData(component_hash_id, "position");
+            TypeData member_data = MemberData(component_hash_id, "position");
             std::vector<double>& pos = ClassMember<std::vector<double>>(component, member_data);
             std::cout << "    " << member_data.title << " - X: " << pos[0] << ", Y: " << pos[1] << ", Z: " << pos[2] << std::endl;
 

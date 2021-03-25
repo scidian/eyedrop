@@ -34,9 +34,9 @@ set(APP_TYPE        "editor")
 set(DEBUG_MODE      "true")
 
 # For testing no-gui html5 build:
-#set(EXPORT_TARGET   "web")
-#set(APP_TYPE        "player")
-#set(DEBUG_MODE      "false")  
+# set(EXPORT_TARGET   "web")
+# set(APP_TYPE        "player")
+# set(DEBUG_MODE      "false")  
 
 ####################################################################################
 ####################################################################################
@@ -159,9 +159,14 @@ add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E 
 # - Android:                OpenSLES (link with OpenSLES)
 ####################################################################################
 if (EXPORT_TARGET MATCHES "osx")
-    # To optimze file size in order: -O0, -O1, -O2, -O3, 0s (size), -0fast (speed)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os -std=c99 -xobjective-c -fobjc-arc")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -std=c++11 -fobjc-arc")
+    #    
+    # -O#                   Optimze file size in order: -O0, -O1, -O2, -O3, 0s (size), -0fast (speed)
+    # -s                    Strip debug info from binary, saves ~1mb
+    # -fno-exceptions       Turns off "try {} catch {}" blocks, and std::except(), saves ~500kb
+    # -fobjc-arc            MacOS ARC object counting, needed for Sokol
+    #
+    set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -s -Os -std=c99   -fno-exceptions -fobjc-arc -xobjective-c")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s -Os -std=c++11 -fno-exceptions -fobjc-arc")
     set(CMAKE_C_COMPILER "gcc")
     set(CMAKE_CXX_COMPILER "g++")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa -framework OpenGL -framework IOKit -framework Foundation")
@@ -196,35 +201,32 @@ elseif (EXPORT_TARGET MATCHES "ios")
 
 ####################################################################################
 elseif (EXPORT_TARGET MATCHES "web")
-    # To optimze file size in order: -O1, -O2, -O3, -Os, -Oz (seems smallest)
-    if (DEBUG_MODE MATCHES "true")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz -std=c++11 --shell-file ../shell.html -Werror -Wno-error=unused-command-line-argument") 
-    else()
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz -std=c++11 --shell-file ../shell.html") 
-    endif()
+    # Flags
+    #   -O#                                     Optimization, file size in order: -O1, -O2, -O3, -Os, -Oz (seems smallest)
+    #   --shell-file <path>                     Create a html file without emscripten logo and debug shell
+    #   -fno-exceptions                         Turns off "try {} catch {}" blocks, and std::except(), saves ~500kb
+    #
+    set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -std=c99   -Oz -fno-exceptions")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Oz -fno-exceptions --shell-file ../shell.html") # -Werror -Wno-error=unused-command-line-argument") 
     set(CMAKE_C_COMPILER "emcc")
     set(CMAKE_CXX_COMPILER "emcc")
     SET(CMAKE_EXECUTABLE_SUFFIX ".html")
 
-    #   --preload-file assets/shapes.png        allow access to local filesystem
-    #   --embed-file assets/shapes.png          embed in js file, not compatible yet with sokol_app
+    #   -s WASM=0                               Force javascript (no web assembly, more compatiable, but bigger file size) or
+    #   -s WASM=1                               Use web assembly (!!!!! #NOTE: MUST RUN ON WEB SERVER FOR IT TO WORK!!!!!) ('.wast' file is human readable, don't need it!)
+    #   -s ASSERTIONS=1|2                       Show errors in javascript console
+    #   -s ALLOW_MEMORY_GROWTH=1                Allow for dynamic memory access
+    #   -s DEMANGLE_SUPPORT=1                   Demangle stack traces, that is, emit human-readable C++ function names instead of _ZN.. ones
+    #   -s TOTAL_MEMORY=x                       Embed larger memory up front (default is 16777216... 33554432, 67108864, 134217728, 268435456
     #
-    #   --shell-file <path>                     create a html file without emscripten logo and debug shell
-    #   -s WASM=0                               force javascript or
-    #   -s WASM=1                               use webassembly
-    #   -s ASSERTIONS=1                         show errors in javascript console
-    #   -s ALLOW_MEMORY_GROWTH=1                allow for dynamic memory access
-    #   -s TOTAL_MEMORY=x                       embed larger memory up front (default is 16777216... 33554432, 67108864, 134217728, 268435456
-    #   -s EMULATE_FUNCTION_POINTER_CASTS=1     required for c style function callbacks to play nice with emscripten
+    #   --bind                                  Allows javascript code to call c++ functions
+    #   --closure 1                             Turn on Googles closure compiler, reduces code size and improves javascript code
+    #   --memory-init-file 0                    Embed the usually external .mem file generated along side .js file
+    #   --preload-file assets/shapes.png        Include file in compiled code, allows access to files in simulated local filesystem
+    #   --embed-file assets/shapes.png          Embed file in compiled code, also allows access through simulated filesystem (not compatible yet with sokol_app)
     #
-    if (DEBUG_MODE MATCHES "true")
-        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s ALLOW_MEMORY_GROWTH=1 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind -s ASSERTIONS=2")
-    else()
-       #set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s ALLOW_MEMORY_GROWTH=1 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind")
-        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s TOTAL_MEMORY=33554432 -s DEMANGLE_SUPPORT=1 -s WASM=0 -std=c++11 --bind")
-    endif()
+    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-fno-exceptions -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s TOTAL_MEMORY=33554432 -s WASM=1 -std=c++11 --bind")# -s ASSERTIONS=1")
 
-    
 
 ####################################################################################    
 elseif (EXPORT_TARGET MATCHES "android")

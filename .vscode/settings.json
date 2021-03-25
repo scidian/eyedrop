@@ -120,7 +120,6 @@
         "typeindex": "cpp",
         "unordered_set": "cpp",
         "valarray": "cpp",
-        "variant": "cpp",
         "iostream": "cpp",
         "clocale": "cpp",
         "filesystem": "cpp",

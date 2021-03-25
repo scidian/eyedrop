@@ -6,8 +6,8 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#ifndef DR_STRINGS_H
-#define DR_STRINGS_H
+#ifndef SCID_STRINGS_H
+#define SCID_STRINGS_H
 
 #include <math.h>
 #include <string>
@@ -44,5 +44,5 @@ std::string HexDigit(const int integer);                                        
 std::string HexString(const int integer);                                           // Returns integer <= 255 as hex string
 
 
-#endif // DR_STRINGS_H
+#endif // SCID_STRINGS_H
 

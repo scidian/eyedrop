@@ -9,7 +9,6 @@
 //
 //
 #include <cmath>
-#include <stdexcept>
 #include <utility>
 
 #include "core/geometry/PointF.h"
@@ -49,7 +48,7 @@ std::vector<DrPointF> PolylineSimplification::ramerDouglasPeucker(const std::vec
     std::vector<DrPointF> simplified;
 
     if (point_list.size() < 2) {
-        throw std::invalid_argument("Not enough points to simplify");
+        assert(false && "Not enough points to simplify");
         return point_list;
     }
 
@@ -77,7 +76,7 @@ std::vector<DrPointF> PolylineSimplification::ramerDouglasPeucker(const std::vec
         simplified.assign(recursive_results1.begin(), recursive_results1.end() - 1);
         simplified.insert(simplified.end(), recursive_results2.begin(), recursive_results2.end());
         if (simplified.size() < 2) {
-            throw std::runtime_error("Problem assembling output for Polyline Simplification...");
+            assert(false && "Problem assembling output for Polyline Simplification...");
             return point_list;
         }
 

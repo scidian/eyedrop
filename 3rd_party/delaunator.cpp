@@ -115,7 +115,7 @@ Delaunator::Delaunator(std::vector<double> const& in_coords)
     }
 
     if (!(min_radius < std::numeric_limits<double>::max())) {
-        throw std::runtime_error("not triangulation");
+        assert(false && "not triangulation");
         return;
     }
 
@@ -404,7 +404,7 @@ void Delaunator::link(const std::size_t a, const std::size_t b) {
     } else if (a < s) {
         halfedges[a] = b;
     } else {
-        throw std::runtime_error("Cannot link edge");
+        assert(false && "Cannot link edge");
     }
     if (b != INVALID_INDEX) {
         std::size_t s2 = halfedges.size();
@@ -413,7 +413,7 @@ void Delaunator::link(const std::size_t a, const std::size_t b) {
         } else if (b < s2) {
             halfedges[b] = a;
         } else {
-            throw std::runtime_error("Cannot link edge");
+            assert(false && "Cannot link edge");
         }
     }
 }

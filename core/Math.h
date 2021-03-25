@@ -13,6 +13,9 @@
 #include <stdint.h>
 #include "3rd_party/handmade_math.h"
 
+
+class SnColor;
+
 // Forward Declarations
 class DrColor;
 class DrPoint;
