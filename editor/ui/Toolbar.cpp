@@ -36,6 +36,17 @@ void ToolbarUI(bool* widgets, ImTextureID* images, int menu_height) {
 		if (images[EDITOR_IMAGE_WORLD_GRAPH] != nullptr) {
 	    	ImGui::ImageButton(images[EDITOR_IMAGE_WORLD_GRAPH], ImVec2(EDITOR_TOOLBAR_SIZE - 10, EDITOR_TOOLBAR_SIZE - 14));
 		}
+
+		ImGui::SameLine();
+		if (images[EDITOR_IMAGE_WORLD_CREATOR] != nullptr) {
+	    	ImGui::ImageButton(images[EDITOR_IMAGE_WORLD_CREATOR], ImVec2(EDITOR_TOOLBAR_SIZE - 10, EDITOR_TOOLBAR_SIZE - 14));
+		}
+		
+		ImGui::SameLine();
+		if (images[EDITOR_IMAGE_UI_CREATOR] != nullptr) {
+	    	ImGui::ImageButton(images[EDITOR_IMAGE_UI_CREATOR], ImVec2(EDITOR_TOOLBAR_SIZE - 10, EDITOR_TOOLBAR_SIZE - 14));
+		}
+
 		ImGui::SameLine();
 		ImGui::Button("Button 1", ImVec2(0, EDITOR_TOOLBAR_SIZE - 6));
 		ImGui::SameLine();

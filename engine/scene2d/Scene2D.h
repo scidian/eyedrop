@@ -3,29 +3,31 @@
 //
 // Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
 // Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Mar 01 2021
+// Written by Stephens Nunnally <stevinz@gmail.com> - Fri Mar 26 2021
 //
 //
-#ifndef DR_BLANK_H
-#define DR_BLANK_H
+#ifndef DR_SCENE_2D_H
+#define DR_SCENE_2D_H
+
+#include "engine/data/assets/Scene.h"
 
 
 //####################################################################################
-//##    Dr
-//##        Blank template header
+//##    DrScene2D
+//##        A 2D scene containing entities within an entity component system
 //############################
-class DrBlank
+class DrScene2D : public IScene
 {
 public:
     // Constructor / Destructor
-    DrBlank();
-    ~DrBlank();
+    DrScene2D();
+    ~DrScene2D();
 
     // #################### VARIABLES ####################
 private:
     // Local Variables
-    int                 m_variable              { 0 };                          // Description
-        
+    
+            
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################
 public:
@@ -34,11 +36,10 @@ public:
     // #################### INTERNAL FUNCTIONS ####################
 public:
     // Local Variable Functions
-    int                 getVariable() { return m_variable; }
-    void                setVariable(int variable) { m_variable = variable; }
+    
 
 };
 
-#endif  // DR_BLANK_H
+#endif  // DR_SCENE_2D_H
 
 

@@ -12,10 +12,10 @@
 #include "core/Math.h"
 #include "core/Reflect.h"
 #include "core/Strings.h"
+#include "engine/data/assets/Image.h"
 #include "engine/ecs/Coordinator.h"
 #include "engine/scene3d/Mesh.h"
 #include "App.h"
-#include "Image.h"
 #include "RenderContext.h"
 
 
@@ -50,9 +50,6 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
     // Assign global pointer to the current App
     g_app = this;
 
-    // Initialize Entity Component System
-    m_coordinator = new DrCoordinator();        
-    
     // Set locals
     m_app_name = title;
     m_bg_color = bg_color;
@@ -77,7 +74,6 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
 // Destructor
 DrApp::~DrApp() {
     delete m_context;
-    delete m_coordinator;
 }
 
 // Sets application name, updates title bar
@@ -111,7 +107,7 @@ void DrApp::init(void) {
     // #################### Sokol Fetch ####################
     // Used for loading files with the minimal "resource limits"
     sfetch_desc_t sokol_fetch { };
-        sokol_fetch.max_requests = 1024;
+        sokol_fetch.max_requests = 128;
         sokol_fetch.num_channels = 4;
         sokol_fetch.num_lanes =    2;
     sfetch_setup(&sokol_fetch); 
@@ -399,7 +395,7 @@ void DrApp::initImage(stbi_uc* buffer_ptr, int fetched_size) {
         // ********** Copy data into our custom bitmap class, create image and trace outline
         DrBitmap bitmap(pixels, static_cast<int>(png_width * png_height * 4), false, png_width, png_height);
         //bitmap = Dr::ApplySinglePixelFilter(DROP_IMAGE_FILTER_HUE, bitmap, Dr::RandomInt(-100, 100));
-        m_image = std::make_shared<DrImage>("shapes", bitmap, 0.25f);
+        m_image = std::make_shared<DrImage>("shapes", bitmap, true);
 
         calculateMesh(true);        
 
@@ -418,12 +414,9 @@ void DrApp::initImage(stbi_uc* buffer_ptr, int fetched_size) {
         // To store an image onto the gpu:
         long image_id = sg_make_image(&sokol_image).id;
 
-        // If we already have an image in the state buffer, uninit before initializing new image
-        if (m_initialized_image == true) { sg_uninit_image(m_context->bindings.fs_images[SLOT_tex]); }
-
         // Initialize new image into state buffer
+        sg_uninit_image(m_context->bindings.fs_images[SLOT_tex]);
         sg_init_image(m_context->bindings.fs_images[SLOT_tex], &sokol_image);
-        m_initialized_image = true;
         stbi_image_free(pixels);
     }
 }

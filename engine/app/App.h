@@ -85,7 +85,6 @@ private:
     // Modules
     sapp_desc               m_sokol_app;                                            // Sokol_app descriptor for this Window
     DrRenderContext*        m_context               { nullptr };                    // Rendering context for this App (currently built on Sokol_Gfx)
-    DrCoordinator*          m_coordinator           { nullptr };                    // Entity Component System
 
     // Data
     GameMap                 m_game                  { };                            // Collection of open Game instances
@@ -117,16 +116,13 @@ protected:
 
     // Fetch / Drag & Drop Buffers
     uint8_t                 m_file_buffer[MAX_FILE_SIZE];
-    uint8_t                 m_file_buffer2[MAX_FILE_SIZE];
-
-
+    
     // !!!!! #TEMP: Variables, used for demo
     std::shared_ptr<DrMesh>     m_mesh = std::make_shared<DrMesh>();
     std::shared_ptr<DrImage>    m_image = nullptr;                              
     int                         m_mesh_quality = 5;
 
     // Image Variables
-    bool                        m_initialized_image = false;
     int                         m_before_keys = m_mesh_quality;
 
     // Model Rotation
@@ -162,8 +158,7 @@ public:
 
     // Singletons
     DrRenderContext*    renderContext()                                 { return m_context; }
-    DrCoordinator*      ecs()                                           { return m_coordinator; }
-
+    
     // Local Variable Getters
     std::string         appName()                                       { return m_app_name; }
     std::string         appDirectory()                                  { return m_app_directory; }

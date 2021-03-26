@@ -6,7 +6,6 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Thu Mar 04 2021
 //
 //
-//
 //####################################################################################
 //                                                      App Hierarchy
 //                                           _________________|_________________
@@ -14,22 +13,22 @@
 //                                       Project                              Game
 //                                          |                                   |
 //  Font, Image, Prefab, Shader, Sound, World, Etc... Scenes__________________Scenes
-//  |                                                     |         |
-//  |________________________Assets_______________________|       Entity
+//  |                                                    |          |
+//  |________________________Assets______________________|       Entities
 //                              |                                   |                ____
 //                      Component Structs*-------|---------ECS Component Structs*        |
 //                                               |                                       |---- Reflection / Meta Data
 //                                   Properties (Member Variables)                   ____|
 //
 //
-//  #NOTE: Component structs / classes MUST be aggregate (std::is_standard_layout) for reflection system. 
-//         Identifier offsetof() is only guaranteed to work with standard layout classes...
+//  #NOTE: *Component structs / classes MUST be aggregate (std::is_standard_layout) for reflection system. 
+//          Identifier offsetof() is only guaranteed to work with standard layout classes...
 //####################################################################################
 #ifndef DR_PROJECT_H
 #define DR_PROJECT_H
 
-// Includes
-#include "engine/ecs/Coordinator.h"
+// Forward Declarations
+class DrAsset;
 
 // Project Constants
 #define DEFAULT_PROJECT_WIDTH            800                                        // Default Width  for Game
@@ -39,7 +38,6 @@ enum Orientation {
     ORIENTATION_PORTAIT =       0,
     ORIENTATION_LANDSCAPE =     1,
 };
-
 
 //####################################################################################
 //##    DrProject
@@ -69,9 +67,8 @@ private:
     long            m_current_scene         { KEY_NONE };                           // Scene currently displayed in Editor_Mode::World_Creator
 
     // Project Items
-    //Entities        m_entities;                                                     // Holds all the Project's Entities
-    //EntityLists     m_lists;                                                        // Holds lists of Archetypes of available Entities in the Project
-
+    std::unordered_map<int, std::shared_ptr<DrAsset>>       m_assets        { };    // Holds Project things (Scenes, Images, Sounds, etc)
+    
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################
 public:
@@ -84,19 +81,6 @@ public:
     long                checkCurrentGeneratorKey()                      { return m_key_generator; }
     long                getNextKey()                                    { return m_key_generator++; }
     void                setGeneratorKeyStartNumber(long initial_key)    { m_key_generator = initial_key; }
-
-    // Serialization 
-    // template<class Archive>
-    // void serialize(Archive& ar, unsigned int version) {
-    //     ar( m_key_generator,
-    //         m_name, 
-    //         m_file_path_name, 
-    //         m_orientation, 
-    //         m_width, 
-    //         m_height,
-    //         m_current_scene
-    //     );
-    // }
 
 };
 

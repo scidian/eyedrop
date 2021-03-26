@@ -10,15 +10,11 @@
 #define DR_EDITOR_H
 
 #include "engine/app/App.h"
+#include "ui/Images.h"
 
 // Constants
 #define DOCKSPACE_NAME          "EditorDockspace"
 #define EDITOR_TOOLBAR_SIZE     40
-
-enum Editor_Images {
-    EDITOR_IMAGE_WORLD_GRAPH,
-    EDITOR_IMAGE_TOTAL,
-};
 
 
 //####################################################################################
@@ -27,14 +23,13 @@ enum Editor_Images {
 class DrEditor : public DrApp 
 {
 public:
-    // Inherits base ctor, requires C++ 11
-    using DrApp::DrApp;                                                 
+    using DrApp::DrApp;                                                             // Inherit base ctor, requires C++ 11
     virtual ~DrEditor() { }
 
 
     // #################### VARIABLES ####################
 public:
-    ImTextureID images[EDITOR_IMAGE_TOTAL];
+    ImTextureID gui_images[EDITOR_IMAGE_TOTAL];
 
 
     // #################### INTERNAL FUNCTIONS ####################

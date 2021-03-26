@@ -15,7 +15,7 @@
 #include "core/imaging/Color.h"
 #include "core/imaging/Filter.h"
 #include "core/Math.h"
-#include "engine/app/Image.h"
+#include "engine/data/assets/Image.h"
 #include "engine/scene3d/Mesh.h"
 
 // Local Constants
@@ -25,7 +25,7 @@ const int c_neighbors =             5;                  // Number of neighbors t
 //####################################################################################
 //##    Constructors
 //####################################################################################
-DrImage::DrImage(std::string image_name, DrBitmap& bitmap, float lod, bool outline) {
+DrImage::DrImage(std::string image_name, DrBitmap& bitmap, bool outline, float lod) {
     this->m_simple_name = image_name;
     this->m_bitmap = bitmap;
 

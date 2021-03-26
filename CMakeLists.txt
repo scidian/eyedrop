@@ -165,8 +165,8 @@ if (EXPORT_TARGET MATCHES "osx")
     # -fno-exceptions       Turns off "try {} catch {}" blocks, and std::except(), saves ~500kb
     # -fobjc-arc            MacOS ARC object counting, needed for Sokol
     #
-    set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -s -Os -std=c99   -fno-exceptions -fobjc-arc -xobjective-c")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s -Os -std=c++11 -fno-exceptions -fobjc-arc")
+    set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Os -std=c99   -fno-exceptions -fobjc-arc -xobjective-c")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -std=c++11 -fno-exceptions -fobjc-arc")
     set(CMAKE_C_COMPILER "gcc")
     set(CMAKE_CXX_COMPILER "g++")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa -framework OpenGL -framework IOKit -framework Foundation")

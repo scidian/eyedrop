@@ -14,26 +14,27 @@
 //##        These modes interface with some combination of the
 //##        Asset Tree, Advisor, Object Inspector, Toolbar, etc
 //############################
-enum class Editor_Mode {
-    Clear                       = 0,
-    Program_Loading             = 1,
+enum Editor_Mode {
+    EDITOR_MODE_CLEAR = 0,
+    EDITOR_MODE_LOADING,
 
-    World_Graph                 = 2,                        // World Node Graph
-    World_Creator_2D            = 3,                        // 2D Physics World Editor
-    World_Creator_3D            = 4,
-    UI_Creator                  = 5,                        // UI Editor
-    Sound_Creator               = 6,                        // Sound Mixer
+    EDITOR_MODE_WORLD_GRAPH,                        // World Node Graph
+    EDITOR_MODE_WORLD_CREATOR_2D,                   // 2D Physics World Editor
+    EDITOR_MODE_WORLD_CREATOR_3D,
+    EDITOR_MODE_UI_CREATOR,                         // UI Editor
+    EDITOR_MODE_SOUND_CREATOR,                      // Sound Mixer
 
-    Animation_Creator           = 7,                        // Animation Editor
-    Image_Creator               = 8,                        // Pixel Editor
-    Component_Graph             = 9,                        // Visual Scripting
+    EDITOR_MODE_ANIMATION_CREATOR,                  // Animation Editor
+    EDITOR_MODE_IMAGE_CREATOR,                      // Pixel Editor
+    EDITOR_MODE_VISUAL_SCRIPTING,                   // Visual Scripting
 
-    // Stage_Graph              = ,
+    // ----- FUTURE -----
+    EDITOR_MODE_STAGE_GRAPH,
 
-    // App_Creator              = ,
-    // Puzzle_World_Creator     = ,
-    // Tower_Defense_Creator    = ,
-    // Card_Game_Creator        = ,
+    EDITOR_MODE_APP_CREATOR,
+    EDITOR_MODE_PUZZLE_CREATOR,
+    EDITOR_MODE_TOWER_DEFENSE_CREATOR,
+    EDITOR_MODE_CARD_GAME_CREATOR,
 };
 
 

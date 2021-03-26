@@ -6,8 +6,8 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Sat Mar 06 2021
 //
 //
-#ifndef DR_TOOLBAR_H
-#define DR_TOOLBAR_H
+#ifndef DR_EDITOR_TOOLBAR_H
+#define DR_EDITOR_TOOLBAR_H
 
      
 //####################################################################################
@@ -16,5 +16,5 @@
 void    ToolbarUI(bool* widgets, ImTextureID* images, int menu_height);
 
 
-#endif // DR_TOOLBAR_H
+#endif // DR_EDITOR_TOOLBAR_H
 

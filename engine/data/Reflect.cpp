@@ -14,7 +14,6 @@
 #include "core/Reflect.h"
 
 // ############### INCLUDE ALL REFLECTED CLASSES BELOW ###############
-#include "engine/scene2d/components/Test1.h"
 #include "engine/scene2d/components/Transform2D.h"
 
 

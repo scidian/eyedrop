@@ -6,8 +6,8 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Sat Mar 06 2021
 //
 //
-#ifndef DR_DOCKSPACE_H
-#define DR_DOCKSPACE_H
+#ifndef DR_EDITOR_DOCKSPACE_H
+#define DR_EDITOR_DOCKSPACE_H
 
      
 //####################################################################################
@@ -16,5 +16,5 @@
 void    DockspaceUI(bool* widgets, int& menu_height);
 
 
-#endif // DR_DOCKSPACE_H
+#endif // DR_EDITOR_DOCKSPACE_H
 

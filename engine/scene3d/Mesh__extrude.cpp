@@ -21,7 +21,7 @@
 #include "core/imaging/Color.h"
 #include "core/imaging/Filter.h"
 #include "core/Math.h"
-#include "engine/app/Image.h"
+#include "engine/data/assets/Image.h"
 #include "Mesh.h"
 
 

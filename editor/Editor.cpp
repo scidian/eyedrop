@@ -17,8 +17,8 @@
 #include "core/Reflect.h"
 #include "engine/app/sokol/Event__strings.h"
 #include "engine/app/App.h"
-#include "engine/app/Image.h"
 #include "engine/app/RenderContext.h"
+#include "engine/data/assets/Image.h"
 #include "engine/scene3d/Mesh.h"
 #include "ui/Dockspace.h"
 #include "ui/Menu.h"
@@ -26,16 +26,6 @@
 #include "widgets/ThemeSelector.h"
 #include "Editor.h"
 #include "Types.h"
-
-
-// !!!!! #TEMP
-#include "engine/scene2d/components/Test1.h"
-#include "engine/scene2d/components/Transform2D.h"
-
-
-#include <iostream>
-
-
 
 
 //####################################################################################
@@ -58,138 +48,110 @@ int main(int argc, char* argv[]) {
 //####################################################################################
 void DrEditor::onCreate() { 
 
-    // #################### TESTING ####################
-    // ECS Construction
-    ecs()->registerComponent<Test1>();
-    ecs()->registerComponent<Transform2D>();
+    // // #################### TESTING ####################
+    // // ECS Construction
+    // ecs()->registerComponent<Transform2D>();
 
-    // Create entity
-    int entity = ecs()->createEntity();
-    Transform2D et { };
-        et.position =   std::vector<double>({1.0, 2.0, 3.0});
-        et.rotation =   std::vector<double>({4.0, 5.0, 6.0});
-        et.scale_xyz =  std::vector<double>({7.0, 8.0, 9.0});
-    ecs()->addComponent(entity, et);
+    // // Create entity
+    // int entity = ecs()->createEntity();
+    // Transform2D et { };
+    //     et.position =   std::vector<double>({1.0, 2.0, 3.0});
+    //     et.rotation =   std::vector<double>({4.0, 5.0, 6.0});
+    //     et.scale_xyz =  std::vector<double>({7.0, 8.0, 9.0});
+    // ecs()->addComponent(entity, et);
 
-    // Component Iterate
-    Archetype entity_type = ecs()->getEntityType(entity);
-    std::cout << "Entity #" << entity << " has the following components:" << std::endl;
-    for (ComponentID id = 0; id < MAX_COMPONENTS; ++id) {
-        std::cout << "Component #" << std::to_string(id) << "? ";
-        if (entity_type.test(id)) {
-            // Get Test
-            HashID component_hash_id = ecs()->getComponentHashID(id);
-            void*  component = ecs()->getData(id, entity);
-            std::cout << "YES" << std::endl; 
-            std::cout << "  Component Name: " << ClassData(ecs()->getComponentHashID(id)).name << std::endl;
-            std::cout << "    First Variable: " << MemberData(ecs()->getComponentHashID(id), 0).name << std::endl;
+    // // Component Iterate
+    // Archetype entity_type = ecs()->getEntityType(entity);
+    // std::cout << "Entity #" << entity << " has the following components:" << std::endl;
+    // for (ComponentID id = 0; id < MAX_COMPONENTS; ++id) {
+    //     std::cout << "Component #" << std::to_string(id) << "? ";
+    //     if (entity_type.test(id)) {
+    //         // Get Test
+    //         HashID component_hash_id = ecs()->getComponentHashID(id);
+    //         void*  component = ecs()->getData(id, entity);
+    //         std::cout << "YES" << std::endl; 
+    //         std::cout << "  Component Name: " << ClassData(ecs()->getComponentHashID(id)).name << std::endl;
+    //         std::cout << "    First Variable: " << MemberData(ecs()->getComponentHashID(id), 0).name << std::endl;
 
-            // Get Position
-            TypeData member_data = MemberData(component_hash_id, "position");
-            std::vector<double>& pos = ClassMember<std::vector<double>>(component, member_data);
-            std::cout << "    " << member_data.title << " - X: " << pos[0] << ", Y: " << pos[1] << ", Z: " << pos[2] << std::endl;
+    //         // Get Position
+    //         TypeData member_data = MemberData(component_hash_id, "position");
+    //         std::vector<double>& pos = ClassMember<std::vector<double>>(component, member_data);
+    //         std::cout << "    " << member_data.title << " - X: " << pos[0] << ", Y: " << pos[1] << ", Z: " << pos[2] << std::endl;
 
-            // Set Test
-            pos = { 23.0, 43.2, 99.0 };
+    //         // Set Test
+    //         pos = { 23.0, 43.2, 99.0 };
 
-            // Check Set
-            std::vector<double> check_pos = ClassMember<std::vector<double>>(component, member_data);
-            std::cout << "  After setting - X: " << check_pos[0] << ", Y: " << check_pos[1] << ", Z: " << check_pos[2] << std::endl;
-        } else {
-            std::cout << "---" << std::endl;
-        }
-    }
+    //         // Check Set
+    //         std::vector<double> check_pos = ClassMember<std::vector<double>>(component, member_data);
+    //         std::cout << "  After setting - X: " << check_pos[0] << ", Y: " << check_pos[1] << ", Z: " << check_pos[2] << std::endl;
+    //     } else {
+    //         std::cout << "---" << std::endl;
+    //     }
+    // }
 
-    // Meta Data
-    std::cout << "Class Name:  " << ClassData<Transform2D>().name << std::endl;
-    std::cout << "Class Title: " << ClassData(et).title << std::endl;
-    std::cout << "Class Desc:  " << GetMetaData(ClassData("Transform2D"), META_DATA_DESCRIPTION) << std::endl;
-    std::cout << "Class Color: " << GetMetaData(ClassData("Transform2D"), META_DATA_COLOR) << std::endl;
+    // // Meta Data
+    // std::cout << "Class Name:  " << ClassData<Transform2D>().name << std::endl;
+    // std::cout << "Class Title: " << ClassData(et).title << std::endl;
+    // std::cout << "Class Desc:  " << GetMetaData(ClassData("Transform2D"), META_DATA_DESCRIPTION) << std::endl;
+    // std::cout << "Class Color: " << GetMetaData(ClassData("Transform2D"), META_DATA_COLOR) << std::endl;
 
-    DrColor clr(GetMetaData(ClassData("Transform2D"), META_DATA_COLOR));
-    std::cout << "Color Convert Back - R: " << std::to_string(clr.red())
-                                 << ", G: " << std::to_string(clr.green())
-                                 << ", B: " << std::to_string(clr.blue())
-                                 << ", A: " << std::to_string(clr.alpha())
-                                 << std::endl;
+    // DrColor clr(GetMetaData(ClassData("Transform2D"), META_DATA_COLOR));
+    // std::cout << "Color Convert Back - R: " << std::to_string(clr.red())
+    //                              << ", G: " << std::to_string(clr.green())
+    //                              << ", B: " << std::to_string(clr.blue())
+    //                              << ", A: " << std::to_string(clr.alpha())
+    //                              << std::endl;
 
-    std::cout << "Prop Name:   " << MemberData<Transform2D>(0).name << std::endl;
-    std::cout << "Prop Title:  " << MemberData<Transform2D>(0).title << std::endl;
-    std::cout << "Prop Offset: " << MemberData(et, 0).offset << std::endl;
+    // std::cout << "Prop Name:   " << MemberData<Transform2D>(0).name << std::endl;
+    // std::cout << "Prop Title:  " << MemberData<Transform2D>(0).title << std::endl;
+    // std::cout << "Prop Offset: " << MemberData(et, 0).offset << std::endl;
     
-    std::cout << "Prop Name:   " << MemberData<Transform2D>("rotation").name << std::endl;
-    std::cout << "Prop Title:  " << MemberData<Transform2D>(1).title << std::endl;
-    std::cout << "Prop Offset: " << MemberData(et, "rotation").offset << std::endl;
+    // std::cout << "Prop Name:   " << MemberData<Transform2D>("rotation").name << std::endl;
+    // std::cout << "Prop Title:  " << MemberData<Transform2D>(1).title << std::endl;
+    // std::cout << "Prop Offset: " << MemberData(et, "rotation").offset << std::endl;
 
-    std::cout << "Prop Name:   " << MemberData<Transform2D>("scale_xyz").name << std::endl;
-    std::cout << "Prop Title:  " << MemberData<Transform2D>(2).title << std::endl;
-    std::cout << "Prop Offset: " << MemberData(et, "scale_xyz").offset << std::endl;
+    // std::cout << "Prop Name:   " << MemberData<Transform2D>("scale_xyz").name << std::endl;
+    // std::cout << "Prop Title:  " << MemberData<Transform2D>(2).title << std::endl;
+    // std::cout << "Prop Offset: " << MemberData(et, "scale_xyz").offset << std::endl;
 
-    // EXAMPLE: Iterating Properties
-    std::cout << "Iterating Properties: " << std::endl;
-    for (int p = 0; p < ClassData("Transform2D").member_count; ++p) {
-        std::cout << "  Property Number: " << p << ", Name: " << MemberData(et, p).name << std::endl;
-    }
+    // // EXAMPLE: Iterating Properties
+    // std::cout << "Iterating Properties: " << std::endl;
+    // for (int p = 0; p < ClassData("Transform2D").member_count; ++p) {
+    //     std::cout << "  Property Number: " << p << ", Name: " << MemberData(et, p).name << std::endl;
+    // }
 
-    // Test GetProperty by Index
-    std::vector<double> rotation = ClassMember<std::vector<double>>(&et, MemberData(et, 1));
-    std::cout << "Rotation X: " << rotation[0] << ", Rotation Y: " << rotation[1] << ", Rotation Z: " << rotation[2] << std::endl;
+    // // Test GetProperty by Index
+    // std::vector<double> rotation = ClassMember<std::vector<double>>(&et, MemberData(et, 1));
+    // std::cout << "Rotation X: " << rotation[0] << ", Rotation Y: " << rotation[1] << ", Rotation Z: " << rotation[2] << std::endl;
     
-    // Test GetProperty by Name
-    std::vector<double> position = ClassMember<std::vector<double>>(&et, MemberData(et, "position"));
-    std::cout << "Position X: " << position[0] << ", Position Y: " << position[1] << ", Position Z: " << position[2] << std::endl;
+    // // Test GetProperty by Name
+    // std::vector<double> position = ClassMember<std::vector<double>>(&et, MemberData(et, "position"));
+    // std::cout << "Position X: " << position[0] << ", Position Y: " << position[1] << ", Position Z: " << position[2] << std::endl;
 
-    // Test SetProperty by Index
-    Test1 t { };
-        t.test1 = 5;
-        t.test2 = false;
-    std::cout << "Test1 variable test1 is currently: " << t.test1 << std::endl;
-    std::cout << "  Setting Now..." << std::endl;
-    ClassMember<int>(&t, MemberData(t, 0)) = 189;
-    std::cout << "  Test1 variable test1 is now: " << t.test1 << std::endl;
+    // // Test SetProperty by Index
+    // std::cout << "Transform 't' variable 'rotation.y' is currently: " << et.rotation[1] << std::endl;
+    // std::cout << "  Setting Now..." << std::endl;
+    // ClassMember<std::vector<double>>(&et, MemberData(et, "rotation"))[1] = 189;
+    // std::cout << "  'rotation.y' is now: " << et.rotation[1] << std::endl;
 
-    // Test SetProperty by Name
-    ClassMember<std::vector<double>>(&et, MemberData(et, "position")) = { 56.0, 58.5, 60.2 };
-    std::cout << "Transform2D instance - Position X: " << et.position[0] << ", Position Y: " << et.position[1] << ", Position Z: " << et.position[2] << std::endl;
+    // // Test SetProperty by Name
+    // ClassMember<std::vector<double>>(&et, MemberData(et, "position")) = { 56.0, 58.5, 60.2 };
+    // std::cout << "Transform2D instance - Position X: " << et.position[0] << ", Position Y: " << et.position[1] << ", Position Z: " << et.position[2] << std::endl;
 
 
     // #############################################
 
-    for (int i = 0; i < EDITOR_IMAGE_TOTAL; i++) {
-        images[i] = nullptr;
+    for (int i = 0; i < EDITOR_IMAGE_TOTAL; ++i) {
+        gui_images[i] = nullptr;
     }
 
     // For Reference:
     // (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
     // std::string image_file = m_app_directory + "assets/blob.png";
     
-    sfetch_request_t sokol_fetch_image { };
-        sokol_fetch_image.path = (appDirectory() + "assets/toolbar_icons/toolbar_world_graph.png").c_str();
-        sokol_fetch_image.buffer_ptr = m_file_buffer2;
-        sokol_fetch_image.buffer_size = sizeof(m_file_buffer2);
-        sokol_fetch_image.callback = +[](const sfetch_response_t* response) {
-            int png_width, png_height, num_channels;
-            const int desired_channels = 4;
-            stbi_uc* pixels = stbi_load_from_memory((stbi_uc *)response->buffer_ptr, (int)response->fetched_size,
-                                                    &png_width, &png_height, &num_channels, desired_channels);
-            // Stb Load Succeeded
-            if (pixels) {
-                sg_image_desc img_desc { };
-                    img_desc.width =        png_width;
-                    img_desc.height =       png_height;
-                    img_desc.pixel_format = SG_PIXELFORMAT_RGBA8;
-                    img_desc.wrap_u =       SG_WRAP_CLAMP_TO_EDGE;
-                    img_desc.wrap_v =       SG_WRAP_CLAMP_TO_EDGE;
-                    img_desc.min_filter =   SG_FILTER_LINEAR;
-                    img_desc.mag_filter =   SG_FILTER_LINEAR;
-                    img_desc.data.subimage[0][0].ptr = pixels;
-                    img_desc.data.subimage[0][0].size = static_cast<size_t>(png_width * png_height * num_channels);
-                DrEditor* editor = dynamic_cast<DrEditor*>(g_app);
-                editor->images[EDITOR_IMAGE_WORLD_GRAPH] = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
-                free(pixels);
-            }
-        };
-    sfetch_send(&sokol_fetch_image);    
+    AddImageToLoad(EDITOR_IMAGE_WORLD_GRAPH,    (appDirectory() + "assets/toolbar_icons/world_graph.png"));
+    AddImageToLoad(EDITOR_IMAGE_WORLD_CREATOR,  (appDirectory() + "assets/toolbar_icons/world_creator.png"));
+    AddImageToLoad(EDITOR_IMAGE_UI_CREATOR,     (appDirectory() + "assets/toolbar_icons/ui_creator.png"));
 }
 
 
@@ -238,6 +200,9 @@ void DrEditor::onUpdateScene() {
 //##    Gui Update
 //####################################################################################
 void DrEditor::onUpdateGUI() { 
+    // Check for images to load
+    FetchNextImage();
+
     // Keep track of open windows / widgets
     static bool widgets[EDITOR_WIDGET_TOTAL_NUMBER];
     if (isFirstFrame()) {
@@ -255,7 +220,7 @@ void DrEditor::onUpdateGUI() {
     DockspaceUI(widgets, menu_height);
 
     // Handle Toolbar
-    ToolbarUI(widgets, images, menu_height);
+    ToolbarUI(widgets, gui_images, menu_height);
 
 
     // ##### Widget Windows

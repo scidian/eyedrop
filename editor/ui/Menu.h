@@ -6,8 +6,8 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Sat Mar 06 2021
 //
 //
-#ifndef DR_MENU_H
-#define DR_MENU_H
+#ifndef DR_EDITOR_MENU_H
+#define DR_EDITOR_MENU_H
 
      
 //####################################################################################
@@ -16,5 +16,5 @@
 void    MainMenuUI(bool* widgets);
 
 
-#endif // DR_MENU_H
+#endif // DR_EDITOR_MENU_H
 

@@ -27,7 +27,7 @@ using EntityID =            std::uint32_t;                          // Unique En
 using ComponentID =         std::uint8_t;                           // Identifier for Components
 using Archetype =           std::bitset<MAX_COMPONENTS>;            // A bitset to represent a collection of Components (formerly Signature)
 using ArrayIndex = 		    size_t;                                 // For referencing Array subscript values
-using HashID =              size_t;                                 // This comes from typeid(OBJECT).hash_code()
+using HashID =              size_t;                                 // This comes from typeid(OBJECT).hash_code() ... identical to Reflect.h's 'TypeHash'
 
 
 //####################################################################################
