@@ -15,10 +15,10 @@
 #include "core/Math.h"
 #include "core/Random.h"
 #include "core/Reflect.h"
+#include "engine/app/imaging/Image.h"
 #include "engine/app/sokol/Event__strings.h"
 #include "engine/app/App.h"
 #include "engine/app/RenderContext.h"
-#include "engine/data/assets/Image.h"
 #include "engine/scene3d/Mesh.h"
 #include "ui/Dockspace.h"
 #include "ui/Menu.h"
@@ -138,20 +138,18 @@ void DrEditor::onCreate() {
     // ClassMember<std::vector<double>>(&et, MemberData(et, "position")) = { 56.0, 58.5, 60.2 };
     // std::cout << "Transform2D instance - Position X: " << et.position[0] << ", Position Y: " << et.position[1] << ", Position Z: " << et.position[2] << std::endl;
 
-
     // #############################################
-
-    for (int i = 0; i < EDITOR_IMAGE_TOTAL; ++i) {
-        gui_images[i] = nullptr;
-    }
-
-    // For Reference:
-    // (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
-    // std::string image_file = m_app_directory + "assets/blob.png";
     
+    // Load Images
+    for (int i = 0; i < EDITOR_IMAGE_TOTAL; ++i) gui_images[i] = nullptr;
     AddImageToLoad(EDITOR_IMAGE_WORLD_GRAPH,    (appDirectory() + "assets/toolbar_icons/world_graph.png"));
     AddImageToLoad(EDITOR_IMAGE_WORLD_CREATOR,  (appDirectory() + "assets/toolbar_icons/world_creator.png"));
     AddImageToLoad(EDITOR_IMAGE_UI_CREATOR,     (appDirectory() + "assets/toolbar_icons/ui_creator.png"));
+
+
+    // Initiate Blob Fetch
+    //AddImageToLoad(appDirectory() + "assets/images/blob.png");
+    //AddImageToLoad("http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true");
 }
 
 
@@ -159,7 +157,8 @@ void DrEditor::onCreate() {
 //##    Render Update
 //####################################################################################
 void DrEditor::onUpdateScene() { 
-        // ***** Compute model-view-projection matrix for vertex shader
+
+    // Compute model-view-projection matrix for vertex shader
     hmm_mat4 proj = HMM_Perspective(52.5f, (float)sapp_width()/(float)sapp_height(), 5.f, 20000.0f);
     hmm_mat4 view = HMM_LookAt(HMM_Vec3(0.0f, 1.5f, m_mesh->image_size * m_zoom), HMM_Vec3(0.0f, 0.0f, 0.0f), HMM_Vec3(0.0f, 1.0f, 0.0f));
     hmm_mat4 view_proj = HMM_MultiplyMat4(proj, view);
@@ -284,6 +283,44 @@ void DrEditor::onUpdateGUI() {
 }
 
 
+void DrEditor::initImage(stbi_uc* buffer_ptr, int fetched_size) {
+    int png_width, png_height, num_channels;
+    const int desired_channels = 4;
+    stbi_uc* pixels = stbi_load_from_memory(buffer_ptr, fetched_size, &png_width, &png_height, &num_channels, desired_channels);
+
+    // Stb Load Succeeded
+    if (pixels) {
+        // ********** Copy data into our custom bitmap class, create image and trace outline
+        DrBitmap bitmap(pixels, static_cast<int>(png_width * png_height * 4), false, png_width, png_height);
+        //bitmap = Dr::ApplySinglePixelFilter(DROP_IMAGE_FILTER_HUE, bitmap, Dr::RandomInt(-100, 100));
+        m_image = std::make_shared<DrImage>("shapes", bitmap, true);
+
+        // ********** Initialze the sokol-gfx texture
+        sg_image_desc sokol_image { };
+            sokol_image.width =        m_image->getBitmap().width;
+            sokol_image.height =       m_image->getBitmap().height;
+            sokol_image.pixel_format = SG_PIXELFORMAT_RGBA8;
+            sokol_image.wrap_u =       SG_WRAP_MIRRORED_REPEAT;
+            sokol_image.wrap_v =       SG_WRAP_MIRRORED_REPEAT;
+            sokol_image.min_filter =   SG_FILTER_LINEAR;
+            sokol_image.mag_filter =   SG_FILTER_LINEAR;
+            sokol_image.data.subimage[0][0].ptr =  &(m_image->getBitmap().data[0]);
+            sokol_image.data.subimage[0][0].size = (size_t)m_image->getBitmap().size();
+        
+        // To store an image onto the gpu:
+        long image_id = sg_make_image(&sokol_image).id;
+
+        // Initialize new image into shader bindings
+        if (sg_query_image_info(renderContext()->bindings.fs_images[SLOT_tex]).slot.state == SG_RESOURCESTATE_VALID) {
+            sg_uninit_image(renderContext()->bindings.fs_images[SLOT_tex]);
+        }
+        sg_init_image(renderContext()->bindings.fs_images[SLOT_tex], &sokol_image);
+
+        stbi_image_free(pixels);
+    }
+}
+
+
 //####################################################################################
 //##    Event Update
 //####################################################################################
@@ -356,11 +393,12 @@ void DrEditor::onEvent(const sapp_event* event) {
             // on emscripten need to use the sokol-app helper function to load the file data
             sapp_html5_fetch_request sokol_fetch_request { };
                 sokol_fetch_request.dropped_file_index = 0;
-                sokol_fetch_request.buffer_ptr = m_file_buffer;
-                sokol_fetch_request.buffer_size = sizeof(m_file_buffer);
+                sokol_fetch_request.buffer_ptr = m_drag_drop_file_buffer;
+                sokol_fetch_request.buffer_size = sizeof(m_drag_drop_file_buffer);
                 sokol_fetch_request.callback = +[](const sapp_html5_fetch_response* response) {
                     if (response->succeeded) {
-                        g_app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+                        DrEditor* editor = dynamic_cast<DrEditor*>(g_app);
+                        editor->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
                     } else {
                         // File too big if (response->error_code == SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
                     }
@@ -370,11 +408,12 @@ void DrEditor::onEvent(const sapp_event* event) {
             // native platform: use sokol-fetch to load file content
             sfetch_request_t sokol_fetch_request { };
                 sokol_fetch_request.path = sapp_get_dropped_file_path(0);
-                sokol_fetch_request.buffer_ptr = m_file_buffer;
-                sokol_fetch_request.buffer_size = sizeof(m_file_buffer);
+                sokol_fetch_request.buffer_ptr = m_drag_drop_file_buffer;
+                sokol_fetch_request.buffer_size = sizeof(m_drag_drop_file_buffer);
                 sokol_fetch_request.callback = +[](const sfetch_response_t* response) {
                     if (response->fetched) {
-                        g_app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+                        DrEditor* editor = dynamic_cast<DrEditor*>(g_app);
+                        editor->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
                     } else {
                         // File too big if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
                     }                   
@@ -383,3 +422,71 @@ void DrEditor::onEvent(const sapp_event* event) {
         #endif
     }
 }
+
+
+
+//####################################################################################
+//##    Create 3D extrusion
+//####################################################################################
+void DrEditor::calculateMesh(bool reset_position) {
+    //##    Level of Detail:
+    //##        0.075 = Detailed
+    //##        0.250 = Nice
+    //##        1.000 = Low poly
+    //##       10.000 = Really low poly
+    float level_of_detail = 0.6f;
+    switch (m_mesh_quality) {
+        case 0: level_of_detail = 19.200f;  break;
+        case 1: level_of_detail =  9.600f;  break;
+        case 2: level_of_detail =  4.800f;  break;
+        case 3: level_of_detail =  2.400f;  break;
+        case 4: level_of_detail =  1.200f;  break;
+        case 5: level_of_detail =  0.600f;  break;
+        case 6: level_of_detail =  0.300f;  break;
+        case 7: level_of_detail =  0.150f;  break;
+        case 8: level_of_detail =  0.075f;  break;
+    }
+
+    // ***** Initialize Mesh
+    m_image->outlinePoints(level_of_detail);
+    m_mesh = std::make_shared<DrMesh>();
+    m_mesh->image_size = Max(m_image->getBitmap().width, m_image->getBitmap().height);      
+    m_mesh->wireframe = m_wireframe;
+    m_mesh->initializeExtrudedImage(m_image.get(), m_mesh_quality);
+    //mesh->initializeTextureQuad();
+    //mesh->initializeTextureCube();
+    //mesh->initializeTextureCone();
+            
+    // ***** Copy vertex data and set into state buffer
+    if (m_mesh->vertexCount() > 0) {
+        // ***** Vertex Buffer
+        unsigned int total_vertices = m_mesh->vertices.size();
+
+        std::vector<Vertex> vertices(total_vertices);
+        for (size_t i = 0; i < total_vertices; i++) vertices[i] = m_mesh->vertices[i];
+        sg_buffer_desc sokol_buffer_vertex { };
+            sokol_buffer_vertex.data = sg_range{ &vertices[0], vertices.size() * sizeof(Vertex) };
+            sokol_buffer_vertex.label = "extruded-vertices";
+        sg_destroy_buffer(renderContext()->bindings.vertex_buffers[0]);
+        renderContext()->bindings.vertex_buffers[0] = sg_make_buffer(&sokol_buffer_vertex);
+
+        // ***** Index Buffer
+        unsigned int total_indices = m_mesh->indices.size();
+        std::vector<uint16_t> indices(total_indices);
+        for (size_t i = 0; i < total_indices; i++) indices[i] = m_mesh->indices[i];
+        sg_buffer_desc sokol_buffer_index { };
+            sokol_buffer_index.type = SG_BUFFERTYPE_INDEXBUFFER;
+            sokol_buffer_index.data = sg_range{ &indices[0], indices.size() * sizeof(uint16_t) };
+            sokol_buffer_index.label = "temp-indices";
+        sg_destroy_buffer(renderContext()->bindings.index_buffer);
+        renderContext()->bindings.index_buffer = sg_make_buffer(&(sokol_buffer_index));
+
+        // ***** Reset rotation
+        if (reset_position) {
+            m_total_rotation.set(0.f, 0.f);
+            m_add_rotation.set(25.f, 25.f);
+            m_model = DrMatrix::identityMatrix();
+        }
+    }
+}
+

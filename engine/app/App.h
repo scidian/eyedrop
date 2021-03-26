@@ -9,6 +9,9 @@
 #ifndef DR_APP_H
 #define DR_APP_H
 
+// STL Includes
+#include <map>
+
 // ##### 3rd Party
 #include "3rd_party/sokol/sokol_app.h"
 #include "3rd_party/sokol/sokol_gfx.h"
@@ -41,6 +44,7 @@
 #include "core/geometry/Matrix.h"
 #include "core/geometry/Vec2.h"
 #include "core/imaging/Color.h"
+#include "engine/app/App.h"
 #include "engine/data/Game.h"
 #include "engine/data/Project.h"
 #include "engine/scene3d/Mesh.h"
@@ -52,8 +56,8 @@ class DrRenderContext;
 //####################################################################################
 //##    Constants 
 //############################
-#define MAX_FILE_SIZE       (1024 * 1024)                                           // Used for filebuffers with sokol_fetch
-#define INVALID_IMAGE       -1                                                      // Used to identify DrImages that have been initialized, but not loaded yet
+#define MAX_FILE_SIZE       (512 * 512)                                             // Used for filebuffers with sokol_fetch
+#define INVALID_IMAGE       -1                                                      // Used to identify images that have been initialized, but not loaded yet
 
 
 //####################################################################################
@@ -86,10 +90,11 @@ private:
     sapp_desc               m_sokol_app;                                            // Sokol_app descriptor for this Window
     DrRenderContext*        m_context               { nullptr };                    // Rendering context for this App (currently built on Sokol_Gfx)
 
-    // Data
+    // ----- User Data -----
     GameMap                 m_game                  { };                            // Collection of open Game instances
     ProjectMap              m_projects              { };                            // Collection of open Projects
-    
+    // ---------------------
+
     // App Variables
     std::string             m_app_name              { "" };                         // Name of Application   
     std::string             m_app_directory         { "" };                         // Root OS directory of application
@@ -101,7 +106,6 @@ private:
     // Fonts
     FONScontext*            m_fontstash;
     int                     m_font_normal = INVALID_IMAGE;
-    uint8_t                 m_font_normal_data[MAX_FILE_SIZE];
 
     // ImGui, disabled by default
     #if defined (ENABLE_DEBUG)
@@ -115,27 +119,7 @@ protected:
     double                  m_frames_per_second { 0.0 };                            // Stores current calculated frames per second
 
     // Fetch / Drag & Drop Buffers
-    uint8_t                 m_file_buffer[MAX_FILE_SIZE];
-    
-    // !!!!! #TEMP: Variables, used for demo
-    std::shared_ptr<DrMesh>     m_mesh = std::make_shared<DrMesh>();
-    std::shared_ptr<DrImage>    m_image = nullptr;                              
-    int                         m_mesh_quality = 5;
-
-    // Image Variables
-    int                         m_before_keys = m_mesh_quality;
-
-    // Model Rotation
-    DrVec2                      m_total_rotation {  0.f,  0.f };
-    DrVec2                      m_add_rotation   { 25.f, 25.f };
-    hmm_mat4                    m_model =         DrMatrix::identityMatrix();
-    DrVec2                      m_mouse_down =    { 0, 0 };
-    float                       m_rotate_speed =  1.f;
-    bool                        m_is_mouse_down = false;
-    float                       m_zoom = 1.5f;
-    bool                        m_wireframe = true;
-    // !!!!! End temp variables
-
+    uint8_t                 m_drag_drop_file_buffer[MAX_FILE_SIZE]; 
 
     
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################
@@ -150,11 +134,11 @@ public:
     // #################### INTERNAL FUNCTIONS ####################
 public:
     // Sokol Related
-    void            run() { sapp_run(m_sokol_app); }                                // Starts Sokol App
-    void            init(void);                                                     // Linked to internal sokol callbacks
-    void            frame(void);                                                    // Linked to internal sokol callbacks
-    void            event(const sapp_event* event);                                 // Linked to internal sokol callbacks
-    void            cleanup(void);                                                  // Linked to internal sokol callbacks
+    void    run() { sapp_run(m_sokol_app); }                                        // Starts Sokol App
+    void    init(void);                                                             // Linked to internal sokol callbacks
+    void    frame(void);                                                            // Linked to internal sokol callbacks
+    void    event(const sapp_event* event);                                         // Linked to internal sokol callbacks
+    void    cleanup(void);                                                          // Linked to internal sokol callbacks
 
     // Singletons
     DrRenderContext*    renderContext()                                 { return m_context; }
@@ -168,11 +152,6 @@ public:
 
     // Local Variable Setters
     void                setAppName(std::string name);
-
-    // Mesh
-    void                calculateMesh(bool reset_position);
-    void                loadImage(std::string filename);
-    void                initImage(stbi_uc* buffer_ptr, int fetched_size);
 
     // Timer Functions
     bool                isFirstFrame()                                  { return m_first_frame; }

@@ -66,6 +66,8 @@ void FetchNextImage() {
                 if (l_image_load_stack[0].image_number != EDITOR_IMAGE_NONE) {
                     DrEditor* editor = dynamic_cast<DrEditor*>(g_app);
                     editor->gui_images[l_image_load_stack[0].image_number] = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
+
+                    
                 }
             }
 

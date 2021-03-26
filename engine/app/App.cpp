@@ -12,7 +12,7 @@
 #include "core/Math.h"
 #include "core/Reflect.h"
 #include "core/Strings.h"
-#include "engine/data/assets/Image.h"
+#include "engine/app/imaging/Image.h"
 #include "engine/ecs/Coordinator.h"
 #include "engine/scene3d/Mesh.h"
 #include "App.h"
@@ -203,6 +203,7 @@ void DrApp::init(void) {
             img_desc.data.subimage[0][0].size = static_cast<size_t>(font_width * font_height * 4);
         imgui_io.Fonts->TexID = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
     #endif
+
   
     //####################################################################################
     //##    Set Up Render Context
@@ -210,15 +211,6 @@ void DrApp::init(void) {
     //####################################################################################
     m_context = new DrRenderContext(m_bg_color);
     
-    //####################################################################################    
-    //##    Load Images
-    //##        NOTE: About loading images with Emscripten, when running html on local machine, must disable CORS in broswer.
-    //##              On Safari, with 'Develop' menu enabled select "Disable Cross-Origin Restrictions"
-    std::string image_file = m_app_directory + "assets/images/blob.png";
-    //image_file = "http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true";
-
-    // Initiate Fetch
-    loadImage(image_file);
 
     // #################### Virtual onCreate() ####################
     this->onCreate();
@@ -317,6 +309,8 @@ void DrApp::frame(void) {
         lap_time =  0.0;
     }
 
+    // First frame has been processed
+    // This variable allows for some preprocessing before rendering for the first time (like ImGui colors, sizes)
     m_first_frame = false;
 }
 
@@ -355,136 +349,5 @@ void DrApp::cleanup(void) {
     sg_shutdown();
 }
 
-
-//####################################################################################
-//####################################################################################
-//####################################################################################
-//##    Image Stuff
-//####################################################################################
-//####################################################################################
-//####################################################################################
-// Start a sokol fetch of desired image
-void DrApp::loadImage(std::string filename) {
-    sfetch_request_t sokol_fetch_image { };
-        sokol_fetch_image.path = filename.c_str();
-        sokol_fetch_image.buffer_ptr = m_file_buffer;
-        sokol_fetch_image.buffer_size = sizeof(m_file_buffer);
-        sokol_fetch_image.callback = +[](const sfetch_response_t* response) {
-            if (response->fetched) {
-                // File data has been fetched, since we provided a big-enough buffer we can be sure that all data has been loaded here
-                g_app->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
-            } else if (response->finished) {
-                // If loading the file failed, set clear color to signal reason
-                if (response->failed) { /*response->error_code*/ }
-            }
-        };
-    sfetch_send(&sokol_fetch_image);
-}
-
-
-//####################################################################################
-//##    Load Image
-//####################################################################################
-void DrApp::initImage(stbi_uc* buffer_ptr, int fetched_size) {
-    int png_width, png_height, num_channels;
-    const int desired_channels = 4;
-    stbi_uc* pixels = stbi_load_from_memory(buffer_ptr, fetched_size, &png_width, &png_height, &num_channels, desired_channels);
-
-    // Stb Load Succeeded
-    if (pixels) {
-        // ********** Copy data into our custom bitmap class, create image and trace outline
-        DrBitmap bitmap(pixels, static_cast<int>(png_width * png_height * 4), false, png_width, png_height);
-        //bitmap = Dr::ApplySinglePixelFilter(DROP_IMAGE_FILTER_HUE, bitmap, Dr::RandomInt(-100, 100));
-        m_image = std::make_shared<DrImage>("shapes", bitmap, true);
-
-        calculateMesh(true);        
-
-        // ********** Initialze the sokol-gfx texture
-        sg_image_desc sokol_image { };
-            sokol_image.width =        m_image->getBitmap().width;
-            sokol_image.height =       m_image->getBitmap().height;
-            sokol_image.pixel_format = SG_PIXELFORMAT_RGBA8;
-            sokol_image.wrap_u =       SG_WRAP_MIRRORED_REPEAT;
-            sokol_image.wrap_v =       SG_WRAP_MIRRORED_REPEAT;
-            sokol_image.min_filter =   SG_FILTER_LINEAR;
-            sokol_image.mag_filter =   SG_FILTER_LINEAR;
-            sokol_image.data.subimage[0][0].ptr =  &(m_image->getBitmap().data[0]);
-            sokol_image.data.subimage[0][0].size = (size_t)m_image->getBitmap().size();
-        
-        // To store an image onto the gpu:
-        long image_id = sg_make_image(&sokol_image).id;
-
-        // Initialize new image into state buffer
-        sg_uninit_image(m_context->bindings.fs_images[SLOT_tex]);
-        sg_init_image(m_context->bindings.fs_images[SLOT_tex], &sokol_image);
-        stbi_image_free(pixels);
-    }
-}
-
-
-//####################################################################################
-//##    Create 3D extrusion
-//####################################################################################
-void DrApp::calculateMesh(bool reset_position) {
-    //##    Level of Detail:
-    //##        0.075 = Detailed
-    //##        0.250 = Nice
-    //##        1.000 = Low poly
-    //##       10.000 = Really low poly
-    float level_of_detail = 0.6f;
-    switch (m_mesh_quality) {
-        case 0: level_of_detail = 19.200f;  break;
-        case 1: level_of_detail =  9.600f;  break;
-        case 2: level_of_detail =  4.800f;  break;
-        case 3: level_of_detail =  2.400f;  break;
-        case 4: level_of_detail =  1.200f;  break;
-        case 5: level_of_detail =  0.600f;  break;
-        case 6: level_of_detail =  0.300f;  break;
-        case 7: level_of_detail =  0.150f;  break;
-        case 8: level_of_detail =  0.075f;  break;
-    }
-
-    // ***** Initialize Mesh
-    m_image->outlinePoints(level_of_detail);
-    m_mesh = std::make_shared<DrMesh>();
-    m_mesh->image_size = Max(m_image->getBitmap().width, m_image->getBitmap().height);      
-    m_mesh->wireframe = m_wireframe;
-    m_mesh->initializeExtrudedImage(m_image.get(), m_mesh_quality);
-    //mesh->initializeTextureQuad();
-    //mesh->initializeTextureCube();
-    //mesh->initializeTextureCone();
-            
-    // ***** Copy vertex data and set into state buffer
-    if (m_mesh->vertexCount() > 0) {
-        // ***** Vertex Buffer
-        unsigned int total_vertices = m_mesh->vertices.size();
-
-        std::vector<Vertex> vertices(total_vertices);
-        for (size_t i = 0; i < total_vertices; i++) vertices[i] = m_mesh->vertices[i];
-        sg_buffer_desc sokol_buffer_vertex { };
-            sokol_buffer_vertex.data = sg_range{ &vertices[0], vertices.size() * sizeof(Vertex) };
-            sokol_buffer_vertex.label = "extruded-vertices";
-        sg_destroy_buffer(m_context->bindings.vertex_buffers[0]);
-        m_context->bindings.vertex_buffers[0] = sg_make_buffer(&sokol_buffer_vertex);
-
-        // ***** Index Buffer
-        unsigned int total_indices = m_mesh->indices.size();
-        std::vector<uint16_t> indices(total_indices);
-        for (size_t i = 0; i < total_indices; i++) indices[i] = m_mesh->indices[i];
-        sg_buffer_desc sokol_buffer_index { };
-            sokol_buffer_index.type = SG_BUFFERTYPE_INDEXBUFFER;
-            sokol_buffer_index.data = sg_range{ &indices[0], indices.size() * sizeof(uint16_t) };
-            sokol_buffer_index.label = "temp-indices";
-        sg_destroy_buffer(m_context->bindings.index_buffer);
-        m_context->bindings.index_buffer = sg_make_buffer(&(sokol_buffer_index));
-
-        // ***** Reset rotation
-        if (reset_position) {
-            m_total_rotation.set(0.f, 0.f);
-            m_add_rotation.set(25.f, 25.f);
-            m_model = DrMatrix::identityMatrix();
-        }
-    }
-}
 
 
