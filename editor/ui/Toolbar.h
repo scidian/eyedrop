@@ -9,11 +9,14 @@
 #ifndef DR_EDITOR_TOOLBAR_H
 #define DR_EDITOR_TOOLBAR_H
 
+// Forward Declarations
+class DrImage;
+
      
 //####################################################################################
 //##    Toolbar
 //############################
-void    ToolbarUI(bool* widgets, ImTextureID* images, int menu_height);
+void    ToolbarUI(bool* widgets, std::vector<std::shared_ptr<DrImage>>& images, int menu_height);
 
 
 #endif // DR_EDITOR_TOOLBAR_H

@@ -21,7 +21,7 @@
 #include "core/imaging/Color.h"
 #include "core/imaging/Filter.h"
 #include "core/Math.h"
-#include "engine/app/imaging/Image.h"
+#include "engine/app/Image.h"
 #include "Mesh.h"
 
 
@@ -29,8 +29,8 @@
 //##    Builds an Extruded DrImage Model
 //####################################################################################
 void DrMesh::initializeExtrudedImage(DrImage* image, int quality) {
-    int w = image->getBitmap().width;
-    int h = image->getBitmap().height;
+    int w = image->bitmap().width;
+    int h = image->bitmap().height;
 
     for (int poly_number = 0; poly_number < static_cast<int>(image->m_poly_list.size()); poly_number++) {
         if (w < 1 || h < 1) continue;
@@ -41,10 +41,10 @@ void DrMesh::initializeExtrudedImage(DrImage* image, int quality) {
 
         // ***** Pick ONE of the following three
         double alpha_tolerance = (image->m_outline_processed) ? c_alpha_tolerance : 0.0;
-        triangulateFace(points, hole_list, image->getBitmap(), wireframe, TRIANGULATION_TRIANGULATE_OPT, alpha_tolerance);
-        //triangulateFace(points, hole_list, image->getBitmap(), wireframe, TRIANGULATION_EAR_CLIPPING, alpha_tolerance)
-        //triangulateFace(points, hole_list, image->getBitmap(), wireframe, TRIANGULATION_MONOTONE, alpha_tolerance);
-        //triangulateFace(points, hole_list, image->getBitmap(), wireframe, TRIANGULATION_DELAUNAY, alpha_tolerance);
+        triangulateFace(points, hole_list, image->bitmap(), wireframe, TRIANGULATION_TRIANGULATE_OPT, alpha_tolerance);
+        //triangulateFace(points, hole_list, image->bitmap(), wireframe, TRIANGULATION_EAR_CLIPPING, alpha_tolerance)
+        //triangulateFace(points, hole_list, image->bitmap(), wireframe, TRIANGULATION_MONOTONE, alpha_tolerance);
+        //triangulateFace(points, hole_list, image->bitmap(), wireframe, TRIANGULATION_DELAUNAY, alpha_tolerance);
 
         // !!!!! #TODO: For greatly improved TRIANGULATION_DELAUNAY, break polygon into convex polygons before running algorithm
 

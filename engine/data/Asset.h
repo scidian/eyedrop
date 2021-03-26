@@ -6,20 +6,20 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Mar 22 2021
 //
 //
-#ifndef DR_ASSET_H
-#define DR_ASSET_H
+#ifndef GA_ASSET_H
+#define GA_ASSET_H
 
 
 //####################################################################################
-//##    DrAsset
-//##        Base class of every non-ECS object within data structure
+//##    GaAsset
+//##        Base class of every non-ECS object within App Hierarchy
 //############################
-class DrAsset
+class GaAsset
 {
 public:
     // Constructor / Destructor
-    DrAsset();
-    ~DrAsset();
+    GaAsset();
+    ~GaAsset();
 
     // #################### VARIABLES ####################
 private:

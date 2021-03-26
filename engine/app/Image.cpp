@@ -15,11 +15,11 @@
 #include "core/imaging/Color.h"
 #include "core/imaging/Filter.h"
 #include "core/Math.h"
-#include "engine/app/imaging/Image.h"
+#include "engine/app/Image.h"
 #include "engine/scene3d/Mesh.h"
 
 // Local Constants
-const int c_neighbors =             5;                  // Number of neighbors to smooth points with
+const int c_neighbors =             5;                                              // Number of neighbors to smooth points with
 
 
 //####################################################################################

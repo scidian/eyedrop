@@ -13,13 +13,16 @@
 #include <cstdint>
 
 // Global Enum Constants
-#define DROP_VERSION        2000                                    // Drop Creator version number, important for file loading / saving
+#define DROP_VERSION         2000                                   // Drop Creator version number, important for file loading / saving
 
-#define KEY_NONE              -1                                    // Value that represents no item selected
-#define KEY_START              1                                    // Starting value for key generators
+#define MAX_FILE_SIZE      (512 * 512)                              // Used for filebuffers with sokol_fetch
+#define INVALID_IMAGE          -1                                   // Used to identify images that have been initialized, but not loaded yet
 
-#define MAX_ENTITIES       10000                                    // Total of number of entities allowed for now
-#define MAX_COMPONENTS        32                                    // Current maximum number of compoenents (uint_8), used for sizing Signature
+#define KEY_NONE               -1                                   // Value that represents no item selected
+#define KEY_START               1                                   // Starting value for key generators
+
+#define MAX_ENTITIES        10000                                   // Total of number of entities allowed for now
+#define MAX_COMPONENTS         32                                   // Current maximum number of compoenents (uint_8), used for sizing Signature
 
 
 // ECS System

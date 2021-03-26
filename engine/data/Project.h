@@ -7,19 +7,19 @@
 //
 //
 //####################################################################################
-//                                                      App Hierarchy
+//                                                      App Hierarchy                   --------- "Dr" prefix (Drop)
 //                                           _________________|_________________
 //                                          |                                   |
 //                                       Project                              Game
 //                                          |                                   |
-//  Font, Image, Prefab, Shader, Sound, World, Etc... Scenes__________________Scenes
+//  Font, Image, Prefab, Shader, Sound, World, Etc... Scenes__________________Scenes    --------- "Ga" prefix (Game)
 //  |                                                    |          |
 //  |________________________Assets______________________|       Entities
-//                              |                                   |                ____
-//                      Component Structs*-------|---------ECS Component Structs*        |
-//                                               |                                       |---- Reflection / Meta Data
-//                                   Properties (Member Variables)                   ____|
-//
+//                              |                                   |                   ____
+//                      Component Structs*-------|---------ECS Component Structs*           |
+//                                               |                                          |---- Reflection / Meta Data
+//                                   Properties (Member Variables)                      ____|
+//  
 //
 //  #NOTE: *Component structs / classes MUST be aggregate (std::is_standard_layout) for reflection system. 
 //          Identifier offsetof() is only guaranteed to work with standard layout classes...
@@ -28,7 +28,7 @@
 #define DR_PROJECT_H
 
 // Forward Declarations
-class DrAsset;
+class GaAsset;
 
 // Project Constants
 #define DEFAULT_PROJECT_WIDTH            800                                        // Default Width  for Game
@@ -67,7 +67,7 @@ private:
     long            m_current_scene         { KEY_NONE };                           // Scene currently displayed in Editor_Mode::World_Creator
 
     // Project Items
-    std::unordered_map<int, std::shared_ptr<DrAsset>>       m_assets        { };    // Holds Project things (Scenes, Images, Sounds, etc)
+    std::unordered_map<int, std::shared_ptr<GaAsset>>       m_assets        { };    // Holds Project things (Scenes, Images, Sounds, etc)
     
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################

@@ -13,6 +13,7 @@
 
 #include "core/geometry/PointF.h"
 #include "core/imaging/Bitmap.h"
+#include "engine/data/Types.h"
 
 // Local Constants
 #define         vtr                     std::vector
@@ -27,8 +28,9 @@ class DrImage
 {
 private:
     // Local Variables
-    std::string                 m_simple_name;                                      // Simple name, i.e. "pretty tree 1"
+    std::string                 m_simple_name           { "" };                     // Simple name, i.e. "pretty tree 1"
     DrBitmap                    m_bitmap;                                           // Stored image as Bitmap
+    uint32_t                    m_gpu_id                { 0 };                      // Gpu texture ID if image is also stored on gpu
 
 public:
     vtr<vtr<DrPointF>>          m_poly_list;                                        // Stores list of image outline points
@@ -41,20 +43,22 @@ private:
 
 public:
     // Constructors
-    DrImage(std::string image_name, DrBitmap& bitmap, bool outline, float lod = 0.25);
+    DrImage(std::string image_name, DrBitmap& bitmap, bool outline = false, float lod = 0.25);
 
     // Settings
-    std::string         getName()   { return m_simple_name; }
+    std::string         name() { return m_simple_name; }
+    const DrBitmap&     bitmap() const { return m_bitmap; }
+    uint32_t            id() { return m_gpu_id; }
+    void*               imguiID() { return ((void*)(uintptr_t)m_gpu_id); }          // Returns ImGui compatible texture ID
+    
+    // Setters
+    void                setID(uint32_t id) { m_gpu_id = id; }
 
     // Image Helper Functions
     void                outlinePoints(float lod);
-    bool                outlineCanceled()                   { return m_outline_canceled; }
-    bool                outlineProcessed()                  { return m_outline_processed; }
-    void                setSimpleBox();
-
-    // Getters / Setters
-    std::string         getSimplifiedName()                 { return m_simple_name; }
-    const DrBitmap&     getBitmap() const                   { return m_bitmap; }
+    bool                outlineCanceled()   { return m_outline_canceled; }
+    bool                outlineProcessed()  { return m_outline_processed; }
+    void                setSimpleBox();   
 
 };
 

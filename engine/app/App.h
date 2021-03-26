@@ -44,7 +44,6 @@
 #include "core/geometry/Matrix.h"
 #include "core/geometry/Vec2.h"
 #include "core/imaging/Color.h"
-#include "engine/app/App.h"
 #include "engine/data/Game.h"
 #include "engine/data/Project.h"
 #include "engine/scene3d/Mesh.h"
@@ -54,17 +53,9 @@ class DrApp;
 class DrRenderContext;
 
 //####################################################################################
-//##    Constants 
-//############################
-#define MAX_FILE_SIZE       (512 * 512)                                             // Used for filebuffers with sokol_fetch
-#define INVALID_IMAGE       -1                                                      // Used to identify images that have been initialized, but not loaded yet
-
-
-//####################################################################################
 //##    Global Variable Declarations
 //####################################################################################
 extern DrApp*               g_app;                                                  // App singleton            Defined in App.cpp      Assigned in App.cpp::App()
-
 
 //####################################################################################
 //##    Local Structs / Defines

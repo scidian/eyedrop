@@ -123,6 +123,10 @@
         "iostream": "cpp",
         "clocale": "cpp",
         "filesystem": "cpp",
-        "whereami.c": "cpp"
+        "whereami.c": "cpp",
+        "iomanip": "cpp",
+        "sstream": "cpp",
+        "thread": "cpp",
+        "variant": "cpp"
     },
 }

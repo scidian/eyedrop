@@ -8,13 +8,14 @@
 //
 #include "editor/Editor.h"
 #include "editor/Types.h"
+#include "engine/app/Image.h"
 #include "Toolbar.h"
 
 
 //####################################################################################
 //##    Toolbar
 //####################################################################################
-void ToolbarUI(bool* widgets, ImTextureID* images, int menu_height) {
+void ToolbarUI(bool* widgets, std::vector<std::shared_ptr<DrImage>>& images, int menu_height) {
     ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + menu_height));
 	ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, EDITOR_TOOLBAR_SIZE));
@@ -34,17 +35,17 @@ void ToolbarUI(bool* widgets, ImTextureID* images, int menu_height) {
 	ImGui::PopStyleVar();
   
 		if (images[EDITOR_IMAGE_WORLD_GRAPH] != nullptr) {
-	    	ImGui::ImageButton(images[EDITOR_IMAGE_WORLD_GRAPH], ImVec2(EDITOR_TOOLBAR_SIZE - 10, EDITOR_TOOLBAR_SIZE - 14));
+	    	ImGui::ImageButton(images[EDITOR_IMAGE_WORLD_GRAPH]->imguiID(), ImVec2(EDITOR_TOOLBAR_SIZE - 10, EDITOR_TOOLBAR_SIZE - 14));
 		}
 
 		ImGui::SameLine();
 		if (images[EDITOR_IMAGE_WORLD_CREATOR] != nullptr) {
-	    	ImGui::ImageButton(images[EDITOR_IMAGE_WORLD_CREATOR], ImVec2(EDITOR_TOOLBAR_SIZE - 10, EDITOR_TOOLBAR_SIZE - 14));
+	    	ImGui::ImageButton(images[EDITOR_IMAGE_WORLD_CREATOR]->imguiID(), ImVec2(EDITOR_TOOLBAR_SIZE - 10, EDITOR_TOOLBAR_SIZE - 14));
 		}
 		
 		ImGui::SameLine();
 		if (images[EDITOR_IMAGE_UI_CREATOR] != nullptr) {
-	    	ImGui::ImageButton(images[EDITOR_IMAGE_UI_CREATOR], ImVec2(EDITOR_TOOLBAR_SIZE - 10, EDITOR_TOOLBAR_SIZE - 14));
+	    	ImGui::ImageButton(images[EDITOR_IMAGE_UI_CREATOR]->imguiID(), ImVec2(EDITOR_TOOLBAR_SIZE - 10, EDITOR_TOOLBAR_SIZE - 14));
 		}
 
 		ImGui::SameLine();

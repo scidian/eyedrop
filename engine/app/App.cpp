@@ -12,12 +12,11 @@
 #include "core/Math.h"
 #include "core/Reflect.h"
 #include "core/Strings.h"
-#include "engine/app/imaging/Image.h"
+#include "engine/app/Image.h"
 #include "engine/ecs/Coordinator.h"
 #include "engine/scene3d/Mesh.h"
 #include "App.h"
 #include "RenderContext.h"
-
 
 // ##### Embed Files
 #include "assets/embed/fonts/font_aileron_regular.h"
