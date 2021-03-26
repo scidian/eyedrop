@@ -15,6 +15,7 @@
 #include "core/Math.h"
 #include "core/Random.h"
 #include "core/Reflect.h"
+#include "engine/app/file_system/LoadImage.h"
 #include "engine/app/sokol/Event__strings.h"
 #include "engine/app/App.h"
 #include "engine/app/Image.h"
@@ -40,6 +41,15 @@ int main(int argc, char* argv[]) {
     DrEditor* editor = new DrEditor("Test Editor", DrColor(28, 30, 29), 1750, 1000);
     editor->run();
 
+}
+
+
+//####################################################################################
+//##    Destructor
+//####################################################################################
+DrEditor::~DrEditor() { 
+    for (auto& image : gui_images) { delete image; }
+    gui_images.clear();
 }
 
 
@@ -142,13 +152,13 @@ void DrEditor::onCreate() {
     
     // Load Images
     for (int i = 0; i < EDITOR_IMAGE_TOTAL; ++i) gui_images.push_back(nullptr);
-    AddImageToLoad(EDITOR_IMAGE_WORLD_GRAPH,    (appDirectory() + "assets/toolbar_icons/world_graph.png"));
-    AddImageToLoad(EDITOR_IMAGE_WORLD_CREATOR,  (appDirectory() + "assets/toolbar_icons/world_creator.png"));
-    AddImageToLoad(EDITOR_IMAGE_UI_CREATOR,     (appDirectory() + "assets/toolbar_icons/ui_creator.png"));
+    AddImageToLoad(&gui_images[EDITOR_IMAGE_WORLD_GRAPH],    (appDirectory() + "assets/toolbar_icons/world_graph.png"));
+    AddImageToLoad(&gui_images[EDITOR_IMAGE_WORLD_CREATOR],  (appDirectory() + "assets/toolbar_icons/world_creator.png"));
+    AddImageToLoad(&gui_images[EDITOR_IMAGE_UI_CREATOR],     (appDirectory() + "assets/toolbar_icons/ui_creator.png"));
 
 
     // Initiate Blob Fetch
-    //AddImageToLoad(appDirectory() + "assets/images/blob.png");
+    AddImageToLoad(&m_image, appDirectory() + "assets/images/blob.png", true);
     //AddImageToLoad("http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true");
 }
 
@@ -181,8 +191,8 @@ void DrEditor::onUpdateScene() {
         fs_params.u_wireframe = (m_mesh->wireframe) ? 1.0f : 0.0f;
 
     // Check if user requested new model quality, if so recalculate
-    if (m_mesh_quality != m_before_keys) {
-        calculateMesh(false);
+    if ((m_mesh_quality != m_before_keys) && (m_image != nullptr)) {
+        calculateMesh(true);
         m_before_keys = m_mesh_quality;
     }
 
@@ -193,6 +203,8 @@ void DrEditor::onUpdateScene() {
     sg_draw(0, m_mesh->indices.size(), 1);
 }
 
+
+// Playing with column alignment
 #define HZ_CORE_IMGUI_COMPONENT_VAR(func, label, code) ImGui::TextUnformatted(label); ImGui::NextColumn(); ImGui::SetNextItemWidth(-1); if(func) { code } ImGui::NextColumn();
 
 //####################################################################################
@@ -279,44 +291,6 @@ void DrEditor::onUpdateGUI() {
         //ImGui::SetNextWindowPos(ImVec2(100, 200));
         ImGui::SetNextWindowContentSize(ImVec2(250, 250));
         ThemeSelectorUI(widgets[EDITOR_WIDGET_THEME], child_flags, isFirstFrame());
-    }
-}
-
-
-void DrEditor::initImage(stbi_uc* buffer_ptr, int fetched_size) {
-    int png_width, png_height, num_channels;
-    const int desired_channels = 4;
-    stbi_uc* pixels = stbi_load_from_memory(buffer_ptr, fetched_size, &png_width, &png_height, &num_channels, desired_channels);
-
-    // Stb Load Succeeded
-    if (pixels) {
-        // ********** Copy data into our custom bitmap class, create image and trace outline
-        DrBitmap bitmap(pixels, static_cast<int>(png_width * png_height * 4), false, png_width, png_height);
-        //bitmap = Dr::ApplySinglePixelFilter(DROP_IMAGE_FILTER_HUE, bitmap, Dr::RandomInt(-100, 100));
-        m_image = std::make_shared<DrImage>("shapes", bitmap, true);
-
-        // ********** Initialze the sokol-gfx texture
-        sg_image_desc sokol_image { };
-            sokol_image.width =        m_image->bitmap().width;
-            sokol_image.height =       m_image->bitmap().height;
-            sokol_image.pixel_format = SG_PIXELFORMAT_RGBA8;
-            sokol_image.wrap_u =       SG_WRAP_MIRRORED_REPEAT;
-            sokol_image.wrap_v =       SG_WRAP_MIRRORED_REPEAT;
-            sokol_image.min_filter =   SG_FILTER_LINEAR;
-            sokol_image.mag_filter =   SG_FILTER_LINEAR;
-            sokol_image.data.subimage[0][0].ptr =  &(m_image->bitmap().data[0]);
-            sokol_image.data.subimage[0][0].size = (size_t)m_image->bitmap().size();
-        
-        // To store an image onto the gpu:
-        long image_id = sg_make_image(&sokol_image).id;
-
-        // Initialize new image into shader bindings
-        if (sg_query_image_info(renderContext()->bindings.fs_images[SLOT_tex]).slot.state == SG_RESOURCESTATE_VALID) {
-            sg_uninit_image(renderContext()->bindings.fs_images[SLOT_tex]);
-        }
-        sg_init_image(renderContext()->bindings.fs_images[SLOT_tex], &sokol_image);
-
-        stbi_image_free(pixels);
     }
 }
 
@@ -452,7 +426,7 @@ void DrEditor::calculateMesh(bool reset_position) {
     m_mesh = std::make_shared<DrMesh>();
     m_mesh->image_size = Max(m_image->bitmap().width, m_image->bitmap().height);      
     m_mesh->wireframe = m_wireframe;
-    m_mesh->initializeExtrudedImage(m_image.get(), m_mesh_quality);
+    m_mesh->initializeExtrudedImage(m_image, m_mesh_quality);
     //mesh->initializeTextureQuad();
     //mesh->initializeTextureCube();
     //mesh->initializeTextureCone();
@@ -491,83 +465,44 @@ void DrEditor::calculateMesh(bool reset_position) {
 }
 
 
+void DrEditor::initImage(stbi_uc* buffer_ptr, int fetched_size) {
+    int png_width, png_height, num_channels;
+    const int desired_channels = 4;
+    stbi_uc* pixels = stbi_load_from_memory(buffer_ptr, fetched_size, &png_width, &png_height, &num_channels, desired_channels);
 
+    // Stb Load Succeeded
+    if (pixels) {
+        // ********** Copy data into our custom bitmap class, create image and trace outline
+        DrBitmap bitmap(pixels, static_cast<int>(png_width * png_height * 4), false, png_width, png_height);
+        //bitmap = Dr::ApplySinglePixelFilter(DROP_IMAGE_FILTER_HUE, bitmap, Dr::RandomInt(-100, 100));
+        if (m_image != nullptr) delete m_image;
+        m_image = new DrImage("shapes", bitmap, true);
 
+        calculateMesh(true);
 
+        // ********** Initialze the sokol-gfx texture
+        sg_image_desc sokol_image { };
+            sokol_image.width =        m_image->bitmap().width;
+            sokol_image.height =       m_image->bitmap().height;
+            sokol_image.pixel_format = SG_PIXELFORMAT_RGBA8;
+            sokol_image.wrap_u =       SG_WRAP_MIRRORED_REPEAT;
+            sokol_image.wrap_v =       SG_WRAP_MIRRORED_REPEAT;
+            sokol_image.min_filter =   SG_FILTER_LINEAR;
+            sokol_image.mag_filter =   SG_FILTER_LINEAR;
+            sokol_image.data.subimage[0][0].ptr =  &(m_image->bitmap().data[0]);
+            sokol_image.data.subimage[0][0].size = (size_t)m_image->bitmap().size();
+        
+        // To store an image onto the gpu:
+        long image_id = sg_make_image(&sokol_image).id;
 
+        // Initialize new image into shader bindings
+        if (sg_query_image_info(renderContext()->bindings.fs_images[SLOT_tex]).slot.state == SG_RESOURCESTATE_VALID) {
+            sg_uninit_image(renderContext()->bindings.fs_images[SLOT_tex]);
+        }
+        sg_init_image(renderContext()->bindings.fs_images[SLOT_tex], &sokol_image);
 
-
-
-// Image to be Loaded
-struct ImageData {
-    Editor_Images   image_number = EDITOR_IMAGE_NONE;
-    std::string     image_file = "";
-};
-
-//####################################################################################
-//##    Local Variables
-//####################################################################################
-uint8_t                     l_editor_image_buffer[MAX_FILE_SIZE];                   // Buffer to use to load images
-std::deque<ImageData>       l_image_load_stack      { };                            // Stack of images to fetch
-bool                        l_loading_image         { false };                      // True when waiting for fetch to complete
-
-
-//####################################################################################
-//##    Image Fetching
-//####################################################################################
-// Adds image to stack of images to be loaded
-void AddImageToLoad(Editor_Images image_number, std::string image_file) {
-    ImageData img_data { };
-        img_data.image_number = image_number;
-        img_data.image_file = image_file;
-    l_image_load_stack.push_back(img_data);
+        stbi_image_free(pixels);
+    }
 }
 
 
-// Initiates fetch of next image on the load stack, calls until all images are loaded
-void FetchNextImage() {
-    if (l_loading_image || l_image_load_stack.size() < 1) return;
-    l_loading_image = true;
-
-    sfetch_request_t sokol_fetch_image { };
-        sokol_fetch_image.path = l_image_load_stack[0].image_file.c_str();
-        sokol_fetch_image.buffer_ptr = l_editor_image_buffer;
-        sokol_fetch_image.buffer_size = sizeof(l_editor_image_buffer);
-        sokol_fetch_image.callback = +[](const sfetch_response_t* response) {
-            // Load Data from response
-            DrBitmap bmp((unsigned char*)response->buffer_ptr, (int)response->fetched_size);
-
-            // If valid, create image on gpu
-            if (response->error_code == SFETCH_ERROR_FILE_NOT_FOUND /* (1) */) { }
-            if (bmp.isValid()) {
-
-                sg_image_desc img_desc { };
-                    img_desc.width =        bmp.width;
-                    img_desc.height =       bmp.height;
-                    img_desc.pixel_format = SG_PIXELFORMAT_RGBA8;
-                    img_desc.wrap_u =       SG_WRAP_CLAMP_TO_EDGE;
-                    img_desc.wrap_v =       SG_WRAP_CLAMP_TO_EDGE;
-                    img_desc.min_filter =   SG_FILTER_LINEAR;
-                    img_desc.mag_filter =   SG_FILTER_LINEAR;
-                    img_desc.data.subimage[0][0].ptr = &bmp.data[0];
-                    img_desc.data.subimage[0][0].size = static_cast<size_t>(bmp.width * bmp.height * bmp.channels);
-
-                if (l_image_load_stack[0].image_number != EDITOR_IMAGE_NONE) {
-                    DrEditor* editor = dynamic_cast<DrEditor*>(g_app);
-                    
-                    int image_index = l_image_load_stack[0].image_number;
-                    editor->gui_images[image_index] = std::make_shared<DrImage>(l_image_load_stack[0].image_file, bmp);
-                    
-                    sg_image sokol_img(sg_make_image(&img_desc));
-                    editor->gui_images[image_index]->setID(sokol_img.id);
-                    
-                    //editor->gui_images[l_image_load_stack[0].image_number] = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
-                }
-            }
-
-            // Remove image of list to be fetched
-            l_image_load_stack.pop_front();
-            l_loading_image = false;
-        };
-    sfetch_send(&sokol_fetch_image);    
-}

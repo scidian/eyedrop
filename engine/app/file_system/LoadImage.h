@@ -3,21 +3,24 @@
 //
 // Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
 // Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Sat Mar 06 2021
+// Written by Stephens Nunnally <stevinz@gmail.com> - Fri Mar 26 2021
 //
 //
-#ifndef DR_EDITOR_TOOLBAR_H
-#define DR_EDITOR_TOOLBAR_H
+#ifndef DR_APP_LOAD_IMAGE_H
+#define DR_APP_LOAD_IMAGE_H
+
+// Include
+#include <string>
 
 // Forward Declarations
 class DrImage;
 
-     
+
 //####################################################################################
-//##    Toolbar
+//##    Image Fetching
 //############################
-void    ToolbarUI(bool* widgets, std::vector<DrImage*> images, int menu_height);
+void        AddImageToLoad(DrImage** load_to, std::string image_file, bool outline = false);
+void        FetchNextImage();
 
 
-#endif // DR_EDITOR_TOOLBAR_H
-
+#endif  // DR_APP_LOAD_IMAGE_H

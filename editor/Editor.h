@@ -29,36 +29,28 @@ enum Editor_Images {
 
 
 //####################################################################################
-//##    Editor Image Handling
-//############################
-void        AddImageToLoad(Editor_Images image_number, std::string image_file);
-void        FetchNextImage();
-
-
-
-//####################################################################################
 //##    Editor
 //####################################################################################
 class DrEditor : public DrApp 
 {
 public:
     using DrApp::DrApp;                                                             // Inherit base ctor, requires C++ 11
-    virtual ~DrEditor() { }
+    virtual ~DrEditor();
 
 
     // #################### VARIABLES ####################
 public:
-    std::vector<std::shared_ptr<DrImage>>           gui_images;     
+    std::vector<DrImage*>       gui_images;                                         // Images used with user interface
 
 
 
     // !!!!! #TEMP: Variables, used for demo
     std::shared_ptr<DrMesh>     m_mesh              { std::make_shared<DrMesh>() };
-    std::shared_ptr<DrImage>    m_image             { nullptr };  
+    DrImage*                    m_image             { nullptr };  
     int                         m_mesh_quality      { 5 };
 
     // Image Variables
-    int                         m_before_keys       { m_mesh_quality };
+    int                         m_before_keys       { 0 };
 
     // Model Rotation
     DrVec2                      m_total_rotation    {  0.f,  0.f };

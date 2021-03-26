@@ -15,7 +15,7 @@
 //####################################################################################
 //##    Toolbar
 //####################################################################################
-void ToolbarUI(bool* widgets, std::vector<std::shared_ptr<DrImage>>& images, int menu_height) {
+void ToolbarUI(bool* widgets, std::vector<DrImage*> images, int menu_height) {
     ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + menu_height));
 	ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, EDITOR_TOOLBAR_SIZE));
