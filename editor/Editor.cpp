@@ -421,6 +421,21 @@ void DrEditor::calculateMesh(bool reset_position) {
         case 8: level_of_detail =  0.075f;  break;
     }
 
+    // During debug, To force init
+    //
+    // sg_image_desc sokol_image { };
+    //         sokol_image.width =        m_image->bitmap().width;
+    //         sokol_image.height =       m_image->bitmap().height;
+    //         sokol_image.pixel_format = SG_PIXELFORMAT_RGBA8;
+    //         sokol_image.wrap_u =       SG_WRAP_MIRRORED_REPEAT;
+    //         sokol_image.wrap_v =       SG_WRAP_MIRRORED_REPEAT;
+    //         sokol_image.min_filter =   SG_FILTER_LINEAR;
+    //         sokol_image.mag_filter =   SG_FILTER_LINEAR;
+    //         sokol_image.data.subimage[0][0].ptr =  &(m_image->bitmap().data[0]);
+    //         sokol_image.data.subimage[0][0].size = (size_t)m_image->bitmap().size();
+    // sg_init_image(renderContext()->bindings.fs_images[SLOT_tex], &sokol_image);
+
+
     // ***** Initialize Mesh
     m_image->outlinePoints(level_of_detail);
     m_mesh = std::make_shared<DrMesh>();
