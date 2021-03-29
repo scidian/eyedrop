@@ -6,7 +6,7 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "../Math.h"
+#include "../core/Math.h"
 #include "Vec2.h"
 
 

@@ -16,7 +16,7 @@ class DrImage;
 //####################################################################################
 //##    Toolbar
 //############################
-void    ToolbarUI(bool* widgets, std::vector<DrImage*> images, int menu_height);
+void    ToolbarUI(bool* widgets, std::vector<std::shared_ptr<DrImage>>& images, int menu_height);
 
 
 #endif // DR_EDITOR_TOOLBAR_H

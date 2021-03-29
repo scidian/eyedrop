@@ -6,9 +6,9 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "geometry/Point.h"
-#include "geometry/PointF.h"
-#include "imaging/Color.h"
+#include "engine/app/geometry/Point.h"
+#include "engine/app/geometry/PointF.h"
+#include "engine/app/image/Color.h"
 #include "Math.h"
 
 

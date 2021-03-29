@@ -40,13 +40,13 @@ public:
 
     // #################### VARIABLES ####################
 public:
-    std::vector<DrImage*>       gui_images;                                         // Images used with user interface
+    std::vector<std::shared_ptr<DrImage>>           gui_images;                     // Images used with user interface
 
 
 
     // !!!!! #TEMP: Variables, used for demo
     std::shared_ptr<DrMesh>     m_mesh              { std::make_shared<DrMesh>() };
-    DrImage*                    m_image             { nullptr };  
+    std::shared_ptr<DrImage>    m_image             { nullptr };  
     int                         m_mesh_quality      { 5 };
 
     // Image Variables

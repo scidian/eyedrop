@@ -11,7 +11,7 @@
 
 #include <map>
 #include <vector>
-#include "engine/core/geometry/Vec3.h"
+#include "engine/app/geometry/Vec3.h"
 
 // Forward Declarations
 class DrBitmap;

@@ -11,7 +11,7 @@
 //####################################################################################
 // Signal to headers to define register function
 #define REGISTER_REFLECTION         
-#include "engine/core/Reflect.h"
+#include "engine/app/core/Reflect.h"
 
 // ############### INCLUDE ALL REFLECTED CLASSES BELOW ###############
 #include "engine/scene2d/components/Transform2D.h"

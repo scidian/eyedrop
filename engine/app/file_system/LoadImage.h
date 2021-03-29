@@ -19,7 +19,7 @@ class DrImage;
 //####################################################################################
 //##    Image Fetching
 //############################
-void        AddImageToLoad(DrImage** load_to, std::string image_file, bool outline = false);
+void        AddImageToFetch(std::shared_ptr<DrImage>& load_to, std::string image_file, bool outline = false);
 void        FetchNextImage();
 
 

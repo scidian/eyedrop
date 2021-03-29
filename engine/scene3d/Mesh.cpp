@@ -6,10 +6,10 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "engine/core/geometry/Matrix.h"
-#include "engine/core/geometry/Vec2.h"
-#include "engine/core/geometry/Vec3.h"
-#include "engine/core/Math.h"
+#include "engine/app/core/Math.h"
+#include "engine/app/geometry/Matrix.h"
+#include "engine/app/geometry/Vec2.h"
+#include "engine/app/geometry/Vec3.h"
 #include "Mesh.h"
 
 

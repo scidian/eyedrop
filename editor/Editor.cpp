@@ -6,20 +6,20 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
+#include "engine/app/core/Math.h"
+#include "engine/app/core/Random.h"
+#include "engine/app/core/Reflect.h"
 #include "engine/app/file_system/LoadImage.h"
+#include "engine/app/geometry/Matrix.h"
+#include "engine/app/geometry/Rect.h"
+#include "engine/app/geometry/Vec2.h"
+#include "engine/app/image/Bitmap.h"
+#include "engine/app/image/Color.h"
+#include "engine/app/image/Filter.h"
+#include "engine/app/image/Image.h"
 #include "engine/app/sokol/Event__strings.h"
 #include "engine/app/App.h"
-#include "engine/app/Image.h"
 #include "engine/app/RenderContext.h"
-#include "engine/core/geometry/Matrix.h"
-#include "engine/core/geometry/Rect.h"
-#include "engine/core/geometry/Vec2.h"
-#include "engine/core/imaging/Bitmap.h"
-#include "engine/core/imaging/Color.h"
-#include "engine/core/imaging/Filter.h"
-#include "engine/core/Math.h"
-#include "engine/core/Random.h"
-#include "engine/core/Reflect.h"
 #include "engine/scene3d/Mesh.h"
 #include "ui/Dockspace.h"
 #include "ui/Menu.h"
@@ -47,10 +47,7 @@ int main(int argc, char* argv[]) {
 //####################################################################################
 //##    Destructor
 //####################################################################################
-DrEditor::~DrEditor() { 
-    for (auto& image : gui_images) { delete image; }
-    gui_images.clear();
-}
+DrEditor::~DrEditor() { }
 
 
 //####################################################################################
@@ -152,14 +149,14 @@ void DrEditor::onCreate() {
     
     // Load Images
     for (int i = 0; i < EDITOR_IMAGE_TOTAL; ++i) gui_images.push_back(nullptr);
-    AddImageToLoad(&gui_images[EDITOR_IMAGE_WORLD_GRAPH],    (appDirectory() + "assets/toolbar_icons/world_graph.png"));
-    AddImageToLoad(&gui_images[EDITOR_IMAGE_WORLD_CREATOR],  (appDirectory() + "assets/toolbar_icons/world_creator.png"));
-    AddImageToLoad(&gui_images[EDITOR_IMAGE_UI_CREATOR],     (appDirectory() + "assets/toolbar_icons/ui_creator.png"));
+    AddImageToFetch(gui_images[EDITOR_IMAGE_WORLD_GRAPH],   (appDirectory() + "assets/toolbar_icons/world_graph.png"));
+    AddImageToFetch(gui_images[EDITOR_IMAGE_WORLD_CREATOR], (appDirectory() + "assets/toolbar_icons/world_creator.png"));
+    AddImageToFetch(gui_images[EDITOR_IMAGE_UI_CREATOR],    (appDirectory() + "assets/toolbar_icons/ui_creator.png"));
 
 
     // Initiate Blob Fetch
-    AddImageToLoad(&m_image, appDirectory() + "assets/images/blob.png", true);
-    //AddImageToLoad("http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true");
+    //AddImageToFetch(m_image, appDirectory() + "assets/images/blob.png", true);
+    //AddImageToFetch("http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true");
 }
 
 
@@ -441,7 +438,7 @@ void DrEditor::calculateMesh(bool reset_position) {
     m_mesh = std::make_shared<DrMesh>();
     m_mesh->image_size = Max(m_image->bitmap().width, m_image->bitmap().height);      
     m_mesh->wireframe = m_wireframe;
-    m_mesh->initializeExtrudedImage(m_image, m_mesh_quality);
+    m_mesh->initializeExtrudedImage(m_image.get(), m_mesh_quality);
     //mesh->initializeTextureQuad();
     //mesh->initializeTextureCube();
     //mesh->initializeTextureCone();
@@ -490,8 +487,7 @@ void DrEditor::initImage(stbi_uc* buffer_ptr, int fetched_size) {
         // ********** Copy data into our custom bitmap class, create image and trace outline
         DrBitmap bitmap(pixels, static_cast<int>(png_width * png_height * 4), false, png_width, png_height);
         //bitmap = Dr::ApplySinglePixelFilter(DROP_IMAGE_FILTER_HUE, bitmap, Dr::RandomInt(-100, 100));
-        if (m_image != nullptr) delete m_image;
-        m_image = new DrImage("shapes", bitmap, true);
+        m_image = std::make_shared<DrImage>("shapes", bitmap, true);
 
         calculateMesh(true);
 

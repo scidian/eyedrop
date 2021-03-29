@@ -11,8 +11,8 @@
 
 #include <vector>
 
-#include "engine/core/geometry/PointF.h"
-#include "engine/core/imaging/Bitmap.h"
+#include "engine/app/geometry/PointF.h"
+#include "engine/app/image/Bitmap.h"
 #include "engine/data/Types.h"
 
 // Local Constants
@@ -33,8 +33,8 @@ private:
     uint32_t                    m_gpu_id                { 0 };                      // Gpu texture ID if image is also stored on gpu
 
 public:
-    vtr<vtr<DrPointF>>          m_poly_list;                                        // Stores list of image outline points
-    vtr<vtr<vtr<DrPointF>>>     m_hole_list;                                        // Stores list of hole  outline points
+    vtr<vtr<DrPointF>>          m_poly_list;                                        // Stores list of image outline points (polygons)
+    vtr<vtr<vtr<DrPointF>>>     m_hole_list;                                        // Stores list of hole  outline points (list of polygons for each polygon above)
     bool                        m_outline_canceled      { false };                  // True when Image Outline has been canceled, when true extrudes in 3D as simple square
     bool                        m_outline_processed     { false };                  // Turns true when autoOutlinePoints() has completed successfully
 

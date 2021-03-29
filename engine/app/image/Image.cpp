@@ -7,15 +7,15 @@
 //
 //
 #include "3rd_party/polyline_simplification.h"
-#include "engine/app/Image.h"
-#include "engine/core/geometry/Point.h"
-#include "engine/core/geometry/PointF.h"
-#include "engine/core/geometry/PolygonF.h"
-#include "engine/core/geometry/Rect.h"
-#include "engine/core/geometry/RectF.h"
-#include "engine/core/imaging/Color.h"
-#include "engine/core/imaging/Filter.h"
-#include "engine/core/Math.h"
+#include "engine/app/core/Math.h"
+#include "engine/app/geometry/Point.h"
+#include "engine/app/geometry/PointF.h"
+#include "engine/app/geometry/PolygonF.h"
+#include "engine/app/geometry/Rect.h"
+#include "engine/app/geometry/RectF.h"
+#include "engine/app/image/Color.h"
+#include "engine/app/image/Filter.h"
+#include "engine/app/image/Image.h"
 #include "engine/scene3d/Mesh.h"
 
 // Local Constants

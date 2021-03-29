@@ -6,8 +6,8 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "../Math.h"
-#include "../Strings.h"
+#include "../core/Math.h"
+#include "../core/Strings.h"
 #include "Color.h"
 
 
