@@ -81,7 +81,7 @@ public:
 private:
     // Modules
     sapp_desc               m_sokol_app;                                            // Sokol_app descriptor for this Window
-    DrFileLoader*           m_file_loader           { nullptr };                    // File Loader helper
+    DrFileLoader*           m_file_loader           { nullptr };                    // File loading (image loading / atlas creation) helper
     DrRenderContext*        m_context               { nullptr };                    // Rendering context for this App (currently built on Sokol_Gfx)
     
     // ----- User Data -----

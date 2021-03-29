@@ -193,7 +193,7 @@ void DrApp::init(void) {
         int font_width, font_height;
         imgui_io.Fonts->GetTexDataAsRGBA32(&font_pixels, &font_width, &font_height);
         sg_image_desc img_desc { };
-            DrFileLoader::initializeSgImage(font_width, font_height, img_desc);
+            DrFileLoader::initializeSgImageDesc(font_width, font_height, img_desc);
             img_desc.data.subimage[0][0].ptr = font_pixels;
             img_desc.data.subimage[0][0].size = static_cast<size_t>(font_width * font_height * 4);
         imgui_io.Fonts->TexID = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
@@ -203,7 +203,7 @@ void DrApp::init(void) {
     //####################################################################################
     //##    App Singletons
     //####################################################################################
-    m_file_loader = new DrFileLoader();                                                 // File Loader: Helps with multi threaded fetching / file loading
+    m_file_loader = new DrFileLoader();                                                 // Image Loader: Helps with image loading / fetching, atlas creation
     m_context = new DrRenderContext(m_bg_color);                                        // Render Context: Handles initial pipeline / bindings
     
 

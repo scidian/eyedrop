@@ -33,7 +33,7 @@ private:
     DrBitmap                    m_bitmap;                                           // Stored image as Bitmap
     
     // Gpu Info
-    uint32_t                    m_gpu_id                { 0 };                      // Gpu texture ID if image is also stored on gpu
+    uint32_t                    m_gpu_id                { INVALID_IMAGE };          // Gpu texture ID if image is also stored on gpu
     DrVec2                      m_uv0                   { 0, 0 };                   // Top left corner of image in gpu texture
     DrVec2                      m_uv1                   { 1, 1 };                   // Bottom right corner of image in gpu texture
 

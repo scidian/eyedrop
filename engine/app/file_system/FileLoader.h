@@ -11,6 +11,7 @@
 
 // Include
 #include <deque>
+#include <functional>
 #include <string>
 #include <vector>
 #include "engine/data/Types.h"
@@ -23,13 +24,16 @@ class DrImage;
 struct sg_image_desc;
 struct stbrp_context;
 
+using ImageFunction = std::function<void(std::shared_ptr<DrImage>&)>;
+
 //####################################################################################
 //##    Image Loading Struct
 //############################
 struct ImageData {
-    std::shared_ptr<DrImage>&   image;
-    std::string                 image_file;
-    bool                        outline;
+    std::shared_ptr<DrImage>&       image;                                          // DrImage pointer to load new DrImage into after loading
+    std::string                     image_file;                                     // File name and path on disk
+    ImageFunction                   callback;                                       // Function to call after loading
+    bool                            outline;                                        // Should we run outline function on Image?
 };
     
 //####################################################################################
@@ -51,13 +55,15 @@ private:
     
     std::vector<std::shared_ptr<stbrp_context>> m_rect_packs;                       // Stb Rect Pack Contexts
     std::vector<std::shared_ptr<DrBitmap>>      m_atlases;                          // Holds packed atlases of loaded DrImages
+    std::vector<uint32_t>                       m_atlas_ids;                        // GPU Texture IDs for atlases  
 
 public:
     // #################### HELPERS ####################
-    static void initializeSgImage(const int& width, const int& height, sg_image_desc& image_desc);
+    static void initializeSgImageDesc(const int& width, const int& height, sg_image_desc& image_desc);
 
     // #################### IMAGE ####################
-    void        addImageToFetch(std::shared_ptr<DrImage>& load_to, std::string image_file, bool outline = false);
+    void        addAtlas();
+    void        addImageToFetch(std::shared_ptr<DrImage>& load_to, std::string image_file, ImageFunction callback, bool outline = false);
     void        createImage(DrBitmap& bmp);
     void        fetchNextImage();
 

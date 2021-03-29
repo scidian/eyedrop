@@ -70,9 +70,19 @@ DrRenderContext::DrRenderContext(DrColor initial_color) {
     pipeline = sg_make_pipeline(&sokol_pipleine);
 
     // ***** Allocate an image handle, 
-    //  but don't actually initialize the image yet, this happens later when the asynchronous file load has finished.
-    //  Any draw calls containing such an "incomplete" image handle will be silently dropped.
+    //  But don't actually initialize the image yet, this happens later when the asynchronous file load has finished.
+    //  Any draw calls containing such an "incomplete" image handle will be silently dropped.        
     bindings.fs_images[SLOT_tex] = sg_alloc_image();
+    //  When ready to load an image into allocated image, call:
+    /*  
+        uint32_t image_id = bindings.fs_images[SLOT_tex].id;
+        sg_init_image(sg_image(image_id), &sokol_image);     
+    */
+    //  To check if an id has been loaded into already and needs to be uninitialized, do:
+    /*
+        if (sg_query_image_info(sg_image(image_id)).slot.state == SG_RESOURCESTATE_VALID)
+            sg_uninit_image(sg_image(image_id));
+    */
 
     // ***** Starter triangle
     // Vertex buffer

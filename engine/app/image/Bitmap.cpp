@@ -9,6 +9,8 @@
 #include "3rd_party/stb/stb_image.h"
 #include "3rd_party/stb/stb_image_resize.h"
 #include "3rd_party/stb/stb_image_write.h"
+#include "../core/Math.h"
+#include "../geometry/Point.h"
 #include "../geometry/PointF.h"
 #include "../geometry/PolygonF.h"
 #include "../geometry/Rect.h"
@@ -61,6 +63,34 @@ DrBitmap::DrBitmap(std::string filename, Bitmap_Format desired_format) {
 
 DrBitmap::DrBitmap(const unsigned char* from_data, const int& number_of_bytes, bool compressed, int width_, int height_) {
     loadFromMemory(from_data, number_of_bytes, compressed, width_, height_);
+}
+
+
+//####################################################################################
+//##    Blit / Copy
+//####################################################################################
+// Standard blit, does not stretch. Draws source bitmap from src_rect starting at dst_point in destination
+// !! For this current implementation, use only positive source rect widths and heights !!
+void DrBitmap::Blit(DrBitmap& source, DrRect& src_rect, DrBitmap& dest, DrPoint& dst_point) {
+    int srcx1 = Max(src_rect.left(),    0);
+    int srcx2 = Min(src_rect.right(),   source.rect().right());
+    int srcy1 = Max(src_rect.top(),     0);
+    int srcy2 = Min(src_rect.bottom(),  source.rect().bottom());
+    
+    int at_y = dst_point.y;
+    for (int x = srcx1; x <= srcx2; ++x) {
+        int at_x = dst_point.x;
+        for (int y = srcy1; y <= srcy2; ++y) {
+            DrColor pixel = source.getPixel(x, y);
+            if (at_x >= 0 && at_x <= dest.rect().right()) {
+                if (at_y >= 0 && at_y <= dest.rect().bottom()) {
+                    dest.setPixel(at_x, at_y, pixel);
+                }
+            }
+            ++at_x;
+        }
+        ++at_y;
+    }
 }
 
 
@@ -125,7 +155,7 @@ DrColor DrBitmap::getPixel(int x, int y) const {
     }
 }
 
-// DrBitmap data is in the format (Format_ARGB32)
+// !!!!! #WARNING: No out of bounds checks are done here for speed!!
 void DrBitmap::setPixel(int x, int y, DrColor color) {
     size_t index = (y * this->width * channels) + (x * channels);
     switch (format) {

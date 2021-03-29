@@ -17,15 +17,14 @@
 //##    Constructor / Destructor
 //####################################################################################
 DrFileLoader::DrFileLoader() {
-    m_rect_packs.push_back(std::make_shared<stbrp_context>());
-    m_atlases.push_back(std::make_shared<DrBitmap>(MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, DROP_BITMAP_FORMAT_ARGB));
+    addAtlas();
 }
 
 
 //####################################################################################
 //##    Sokol Helper
 //####################################################################################
-void DrFileLoader::initializeSgImage(const int& width, const int& height, sg_image_desc& image_desc) {
+void DrFileLoader::initializeSgImageDesc(const int& width, const int& height, sg_image_desc& image_desc) {
     image_desc.width =        width;
     image_desc.height =       height;
     image_desc.pixel_format = SG_PIXELFORMAT_RGBA8;
@@ -39,9 +38,16 @@ void DrFileLoader::initializeSgImage(const int& width, const int& height, sg_ima
 //####################################################################################
 //##    Image Fetching
 //####################################################################################
+// Adds a new atlas into the App, inits onto GPU
+void DrFileLoader::addAtlas() {
+    m_rect_packs.push_back(std::make_shared<stbrp_context>());
+    m_atlases.push_back(std::make_shared<DrBitmap>(MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, DROP_BITMAP_FORMAT_ARGB));
+
+}
+
 // Adds image to stack of images to be loaded
-void DrFileLoader::addImageToFetch(std::shared_ptr<DrImage>& load_to, std::string image_file, bool outline) {
-    ImageData img_data = { load_to, image_file, outline };
+void DrFileLoader::addImageToFetch(std::shared_ptr<DrImage>& load_to, std::string image_file, ImageFunction callback, bool outline) {
+    ImageData img_data = { load_to, image_file, callback, outline };
     m_load_image_stack.push_back(img_data);
 }
 
@@ -60,7 +66,8 @@ void DrFileLoader::fetchNextImage() {
             assert((bmp.width <= MAX_TEXTURE_SIZE && bmp.height <= MAX_TEXTURE_SIZE) && "Image dimensions too large! Max width and height are MAX_TEXTURE_SIZE!");
 
             // If valid, create image on gpu
-            if (response->error_code == SFETCH_ERROR_FILE_NOT_FOUND /* '1' */) { }
+            if (response->error_code == SFETCH_ERROR_FILE_NOT_FOUND     /* '1' */) { }
+            if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL   /* '3' */) { }
 
             // Attempt to create image
             g_app->fileLoader()->createImage(bmp);
@@ -72,11 +79,16 @@ void DrFileLoader::fetchNextImage() {
 void DrFileLoader::createImage(DrBitmap& bmp) {
     if (bmp.isValid()) {
         sg_image_desc img_desc { };
-            initializeSgImage(bmp.width, bmp.height, img_desc);
+            initializeSgImageDesc(bmp.width, bmp.height, img_desc);
             img_desc.data.subimage[0][0].ptr = &bmp.data[0];
             img_desc.data.subimage[0][0].size = static_cast<size_t>(bmp.width * bmp.height * bmp.channels);
         m_load_image_stack[0].image = std::make_shared<DrImage>(m_load_image_stack[0].image_file, bmp, m_load_image_stack[0].outline);
         m_load_image_stack[0].image->setID(sg_make_image(&img_desc).id);
+
+        // Call callback function
+        if (m_load_image_stack[0].callback != NULL) {
+            m_load_image_stack[0].callback(m_load_image_stack[0].image);
+        }
     }
 
     // Remove image of list to be fetched

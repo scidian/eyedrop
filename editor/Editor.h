@@ -50,7 +50,7 @@ public:
     int                         m_mesh_quality      { 5 };
 
     // Image Variables
-    int                         m_before_keys       { 0 };
+    int                         m_before_keys       { 5 };
 
     // Model Rotation
     DrVec2                      m_total_rotation    {  0.f,  0.f };
@@ -75,7 +75,6 @@ public:
 
     // Temp Demo Functions
     void        calculateMesh(bool reset_position);
-    void        initImage(stbi_uc* buffer_ptr, int fetched_size);
 
 };
 

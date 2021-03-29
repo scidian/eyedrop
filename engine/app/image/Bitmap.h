@@ -47,11 +47,14 @@ public:
     DrBitmap(const DrBitmap& bitmap, Bitmap_Format desired_format = DROP_BITMAP_FORMAT_ARGB);
     DrBitmap(int width_, int height_, Bitmap_Format desired_format = DROP_BITMAP_FORMAT_ARGB);
     DrBitmap(std::string filename, Bitmap_Format desired_format = DROP_BITMAP_FORMAT_ARGB);
-    DrBitmap(const unsigned char* from_data, const int& number_of_bytes,
+    DrBitmap(const unsigned char* from_data, const int& number_of_bytes, 
              bool compressed = true, int width_ = 0, int height_ = 0);
 
     // Info
     int         size() const { return (width * height * channels); }
+
+    // Blit
+    static void Blit(DrBitmap& source, DrRect& src_rect, DrBitmap& dest, DrPoint& dst_point);
 
     // Manipulation
     DrBitmap    makeCopy();

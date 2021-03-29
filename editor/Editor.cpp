@@ -50,6 +50,17 @@ DrEditor::~DrEditor() { }
 
 
 //####################################################################################
+//##    Callbacks
+//####################################################################################
+// Sets shader texture to passed in image texture
+void setMeshTexture(std::shared_ptr<DrImage>& image) {
+    g_app->renderContext()->bindings.fs_images[SLOT_tex].id = image->id();
+    DrEditor* editor = dynamic_cast<DrEditor*>(g_app);
+    editor->calculateMesh(true);
+}
+
+
+//####################################################################################
 //##    On Create
 //####################################################################################
 void DrEditor::onCreate() { 
@@ -148,14 +159,14 @@ void DrEditor::onCreate() {
     
     // Load Images
     for (int i = 0; i < EDITOR_IMAGE_TOTAL; ++i) gui_images.push_back(nullptr);
-    fileLoader()->addImageToFetch(gui_images[EDITOR_IMAGE_WORLD_GRAPH],   (appDirectory() + "assets/toolbar_icons/world_graph.png"));
-    fileLoader()->addImageToFetch(gui_images[EDITOR_IMAGE_WORLD_CREATOR], (appDirectory() + "assets/toolbar_icons/world_creator.png"));
-    fileLoader()->addImageToFetch(gui_images[EDITOR_IMAGE_UI_CREATOR],    (appDirectory() + "assets/toolbar_icons/ui_creator.png"));
+    fileLoader()->addImageToFetch(gui_images[EDITOR_IMAGE_WORLD_GRAPH],   (appDirectory() + "assets/toolbar_icons/world_graph.png"), NULL);
+    fileLoader()->addImageToFetch(gui_images[EDITOR_IMAGE_WORLD_CREATOR], (appDirectory() + "assets/toolbar_icons/world_creator.png"), NULL);
+    fileLoader()->addImageToFetch(gui_images[EDITOR_IMAGE_UI_CREATOR],    (appDirectory() + "assets/toolbar_icons/ui_creator.png"), NULL);
 
 
     // Initiate Blob Fetch
-    fileLoader()->addImageToFetch(m_image, appDirectory() + "assets/images/blob.png", true);
-    //fileLoader()->addImageToFetch("http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true");
+    fileLoader()->addImageToFetch(m_image, appDirectory() + "assets/images/blob.png", setMeshTexture, true);
+    //fileLoader()->addImageToFetch(m_image, "http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true", setMeshTexture, true);
 }
 
 
@@ -358,34 +369,21 @@ void DrEditor::onEvent(const sapp_event* event) {
     } else if (event->type == SAPP_EVENTTYPE_FILES_DROPPED) {
         #if defined(DROP_TARGET_HTML5)
             // on emscripten need to use the sokol-app helper function to load the file data
-            sapp_html5_fetch_request sokol_fetch_request { };
-                sokol_fetch_request.dropped_file_index = 0;
-                sokol_fetch_request.buffer_ptr = m_drag_drop_file_buffer;
-                sokol_fetch_request.buffer_size = sizeof(m_drag_drop_file_buffer);
-                sokol_fetch_request.callback = +[](const sapp_html5_fetch_response* response) {
-                    if (response->succeeded) {
-                        DrEditor* editor = dynamic_cast<DrEditor*>(g_app);
-                        editor->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
-                    } else {
-                        // File too big if (response->error_code == SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
-                    }
-                };
-            sapp_html5_fetch_dropped_file(&sokol_fetch_request);
+            // sapp_html5_fetch_request sokol_fetch_request { };
+            //     sokol_fetch_request.dropped_file_index = 0;
+            //     sokol_fetch_request.buffer_ptr = m_drag_drop_file_buffer;
+            //     sokol_fetch_request.buffer_size = sizeof(m_drag_drop_file_buffer);
+            //     sokol_fetch_request.callback = +[](const sapp_html5_fetch_response* response) {
+            //         if (response->succeeded) {
+            //             DrEditor* editor = dynamic_cast<DrEditor*>(g_app);
+            //             editor->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
+            //         } else {
+            //             // File too big if (response->error_code == SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
+            //         }
+            //     };
+            // sapp_html5_fetch_dropped_file(&sokol_fetch_request);
         #else
-            // native platform: use sokol-fetch to load file content
-            sfetch_request_t sokol_fetch_request { };
-                sokol_fetch_request.path = sapp_get_dropped_file_path(0);
-                sokol_fetch_request.buffer_ptr = m_drag_drop_file_buffer;
-                sokol_fetch_request.buffer_size = sizeof(m_drag_drop_file_buffer);
-                sokol_fetch_request.callback = +[](const sfetch_response_t* response) {
-                    if (response->fetched) {
-                        DrEditor* editor = dynamic_cast<DrEditor*>(g_app);
-                        editor->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
-                    } else {
-                        // File too big if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
-                    }                   
-                };
-            sfetch_send(&sokol_fetch_request);
+            fileLoader()->addImageToFetch(m_image, sapp_get_dropped_file_path(0), setMeshTexture, true);
         #endif
     }
 }
@@ -413,21 +411,6 @@ void DrEditor::calculateMesh(bool reset_position) {
         case 7: level_of_detail =  0.150f;  break;
         case 8: level_of_detail =  0.075f;  break;
     }
-
-    // During debug, To force init
-    //
-    // sg_image_desc sokol_image { };
-    //         sokol_image.width =        m_image->bitmap().width;
-    //         sokol_image.height =       m_image->bitmap().height;
-    //         sokol_image.pixel_format = SG_PIXELFORMAT_RGBA8;
-    //         sokol_image.wrap_u =       SG_WRAP_MIRRORED_REPEAT;
-    //         sokol_image.wrap_v =       SG_WRAP_MIRRORED_REPEAT;
-    //         sokol_image.min_filter =   SG_FILTER_LINEAR;
-    //         sokol_image.mag_filter =   SG_FILTER_LINEAR;
-    //         sokol_image.data.subimage[0][0].ptr =  &(m_image->bitmap().data[0]);
-    //         sokol_image.data.subimage[0][0].size = (size_t)m_image->bitmap().size();
-    // sg_init_image(renderContext()->bindings.fs_images[SLOT_tex], &sokol_image);
-
 
     // ***** Initialize Mesh
     m_image->outlinePoints(level_of_detail);
@@ -471,45 +454,3 @@ void DrEditor::calculateMesh(bool reset_position) {
         }
     }
 }
-
-
-void DrEditor::initImage(stbi_uc* buffer_ptr, int fetched_size) {
-    int png_width, png_height, num_channels;
-    const int desired_channels = 4;
-    stbi_uc* pixels = stbi_load_from_memory(buffer_ptr, fetched_size, &png_width, &png_height, &num_channels, desired_channels);
-
-    // Stb Load Succeeded
-    if (pixels) {
-        // ********** Copy data into our custom bitmap class, create image and trace outline
-        DrBitmap bitmap(pixels, static_cast<int>(png_width * png_height * 4), false, png_width, png_height);
-        //bitmap = Dr::ApplySinglePixelFilter(DROP_IMAGE_FILTER_HUE, bitmap, Dr::RandomInt(-100, 100));
-        m_image = std::make_shared<DrImage>("shapes", bitmap, true);
-
-        calculateMesh(true);
-
-        // ********** Initialze the sokol-gfx texture
-        sg_image_desc sokol_image { };
-            sokol_image.width =        m_image->bitmap().width;
-            sokol_image.height =       m_image->bitmap().height;
-            sokol_image.pixel_format = SG_PIXELFORMAT_RGBA8;
-            sokol_image.wrap_u =       SG_WRAP_MIRRORED_REPEAT;
-            sokol_image.wrap_v =       SG_WRAP_MIRRORED_REPEAT;
-            sokol_image.min_filter =   SG_FILTER_LINEAR;
-            sokol_image.mag_filter =   SG_FILTER_LINEAR;
-            sokol_image.data.subimage[0][0].ptr =  &(m_image->bitmap().data[0]);
-            sokol_image.data.subimage[0][0].size = (size_t)m_image->bitmap().size();
-        
-        // To store an image onto the gpu:
-        long image_id = sg_make_image(&sokol_image).id;
-
-        // Initialize new image into shader bindings
-        if (sg_query_image_info(renderContext()->bindings.fs_images[SLOT_tex]).slot.state == SG_RESOURCESTATE_VALID) {
-            sg_uninit_image(renderContext()->bindings.fs_images[SLOT_tex]);
-        }
-        sg_init_image(renderContext()->bindings.fs_images[SLOT_tex], &sokol_image);
-
-        stbi_image_free(pixels);
-    }
-}
-
-
