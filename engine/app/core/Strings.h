@@ -33,7 +33,7 @@ std::string RemoveTrailingZeros(const std::string& source);                     
 
 
 //####################################################################################
-//##    String Functions
+//##    Basic Functions
 //############################
 std::string Left(const std::string& source, const size_t length);                   // Returns (length) number of characters from the left side of a string
 std::string Right(const std::string& source, const size_t length);                  // Returns (length) number of characters from the right side of a string
@@ -42,6 +42,15 @@ bool        IsInteger(const std::string& source);                               
 
 std::string HexDigit(const int integer);                                            // Returns integer <=  15 as hex string
 std::string HexString(const int integer);                                           // Returns integer <= 255 as hex string
+
+
+//####################################################################################
+//##    String Formatting
+//############################
+void        CreateNiceTitle(std::string& name);                                     // Creates nice title from filename (spaces, words capitalized)
+void        FileNameOnly(std::string& filename);                                    // Gets 'filename' from "/usr/local/filename.png"
+void        LowerCase(std::string& str);                                            // Makes all characters lowercase
+void        RemoveUnderscores(std::string& str);                                    // Removes underscores from string
 
 
 #endif // SCID_STRINGS_H

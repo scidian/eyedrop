@@ -8,6 +8,7 @@
 //
 #include "3rd_party/polyline_simplification.h"
 #include "engine/app/core/Math.h"
+#include "engine/app/core/Strings.h"
 #include "engine/app/geometry/Point.h"
 #include "engine/app/geometry/PointF.h"
 #include "engine/app/geometry/PolygonF.h"
@@ -26,6 +27,11 @@ const int c_neighbors =             5;                                          
 //##    Constructors
 //####################################################################################
 DrImage::DrImage(std::string image_name, DrBitmap& bitmap, bool outline, float lod) {
+    // Clean image_name
+    FileNameOnly(image_name);
+    CreateNiceTitle(image_name);
+
+    // Set member variables
     this->m_simple_name = image_name;
     this->m_bitmap = bitmap;
 
@@ -36,7 +42,6 @@ DrImage::DrImage(std::string image_name, DrBitmap& bitmap, bool outline, float l
         m_hole_list.push_back({});
     }
 }
-
 
 
 //####################################################################################

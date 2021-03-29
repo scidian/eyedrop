@@ -49,15 +49,20 @@ public:
     ~DrFileLoader() { }
 
 private:
-    // #################### VARIABLES ####################
-    uint8_t                         m_load_image_buffer[MAX_FILE_SIZE];             // Buffer to use to load images
-    std::deque<ImageData>           m_load_image_stack      { };                    // Stack of images to fetch
-    bool                            m_loading_image         { false };              // True when waiting for fetch to complete
-    
+    // #################### IMAGES ####################
+    // Atlas Variables
     std::vector<std::shared_ptr<stbrp_context>> m_rect_packs;                       // Stb Rect Pack Contexts
     std::vector<std::shared_ptr<DrBitmap>>      m_atlases;                          // Holds packed atlases of loaded DrImages
     std::vector<uint32_t>                       m_atlas_ids;                        // GPU Texture IDs for atlases  
 
+    // Image Tracking
+    std::vector<std::shared_ptr<DrImage>>       m_loaded_images;                    // Keeps list of loaded images
+
+    // Fetching Variables
+    uint8_t                         m_load_image_buffer[MAX_FILE_SIZE];             // Buffer to use to load images
+    std::deque<ImageData>           m_load_image_stack      { };                    // Stack of images to fetch
+    bool                            m_loading_image         { false };              // True when waiting for fetch to complete
+    
 public:
     // #################### HELPERS ####################
     static void initializeSgImageDesc(const int& width, const int& height, sg_image_desc& image_desc);
