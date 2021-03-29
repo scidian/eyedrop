@@ -12,12 +12,16 @@
 // Include
 #include <deque>
 #include <string>
+#include <vector>
 #include "engine/data/Types.h"
 
 // Forward Declarations
 class DrBitmap;
 class DrImage;
+
+// 3rd Party Forward Declarations
 struct sg_image_desc;
+struct stbrp_context;
 
 //####################################################################################
 //##    Image Loading Struct
@@ -27,7 +31,6 @@ struct ImageData {
     std::string                 image_file;
     bool                        outline;
 };
-
     
 //####################################################################################
 //##    DrFileLoader
@@ -37,7 +40,7 @@ class DrFileLoader
 {
 public:
     // Constructor / Destructor
-    DrFileLoader() { }
+    DrFileLoader();
     ~DrFileLoader() { }
 
 private:
@@ -45,6 +48,9 @@ private:
     uint8_t                         m_load_image_buffer[MAX_FILE_SIZE];             // Buffer to use to load images
     std::deque<ImageData>           m_load_image_stack      { };                    // Stack of images to fetch
     bool                            m_loading_image         { false };              // True when waiting for fetch to complete
+    
+    std::vector<std::shared_ptr<stbrp_context>> m_rect_packs;                       // Stb Rect Pack Contexts
+    std::vector<std::shared_ptr<DrBitmap>>      m_atlases;                          // Holds packed atlases of loaded DrImages
 
 public:
     // #################### HELPERS ####################

@@ -67,32 +67,32 @@ DrBitmap::DrBitmap(const unsigned char* from_data, const int& number_of_bytes, b
 //####################################################################################
 //##    Manipulation
 //####################################################################################
-DrBitmap DrBitmap::copy() { return (*this); }
+DrBitmap DrBitmap::makeCopy() { return (*this); }
 
-DrBitmap DrBitmap::copy(DrRect& copy_rect) {
+DrBitmap DrBitmap::makeCopy(DrRect& from_rect) {
     // Bounds checking
-    int check_left = copy_rect.left();
-    int check_top  = copy_rect.top();
+    int check_left = from_rect.left();
+    int check_top  = from_rect.top();
     if (check_left < 0) {
-        copy_rect.width -= abs(check_left);
-        copy_rect.x     += abs(check_left);
+        from_rect.width -= abs(check_left);
+        from_rect.x     += abs(check_left);
     }
     if (check_top < 0) {
-        copy_rect.height -= abs(check_top);
-        copy_rect.y      += abs(check_top);
+        from_rect.height -= abs(check_top);
+        from_rect.y      += abs(check_top);
     }
-    if (copy_rect.width <= 0 || copy_rect.height <= 0) return DrBitmap(0, 0);
-    if (copy_rect.right() > this->width - 1)   copy_rect.width =  width - copy_rect.left();
-    if (copy_rect.bottom() > this->height - 1) copy_rect.height = height - copy_rect.top();
-    if (copy_rect.width <= 0 || copy_rect.height <= 0) return DrBitmap(0, 0);
+    if (from_rect.width <= 0 || from_rect.height <= 0) return DrBitmap(0, 0);
+    if (from_rect.right() > this->width - 1)   from_rect.width =  width - from_rect.left();
+    if (from_rect.bottom() > this->height - 1) from_rect.height = height - from_rect.top();
+    if (from_rect.width <= 0 || from_rect.height <= 0) return DrBitmap(0, 0);
 
     // Create empty DrBitmap
-    DrBitmap copy(copy_rect.width, copy_rect.height, format);
+    DrBitmap copy(from_rect.width, from_rect.height, format);
 
     // Copy source
-    int source_x = copy_rect.left();
+    int source_x = from_rect.left();
     for (int x = 0; x < copy.width; ++x) {
-        int source_y = copy_rect.top();
+        int source_y = from_rect.top();
         for (int y = 0; y < copy.height; ++y) {
             copy.setPixel(x, y, this->getPixel(source_x, source_y));
             ++source_y;

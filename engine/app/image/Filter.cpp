@@ -312,7 +312,7 @@ bool DrFilter::findObjectsInBitmap(const DrBitmap& bitmap, std::vector<DrBitmap>
 
                     // Add buffer around rect, create image of rect only
                     rect.adjust(-1, -1, 1, 1);
-                    DrBitmap    fill_only = flood_fill.copy(rect);
+                    DrBitmap    fill_only = flood_fill.makeCopy(rect);
 
                     // If adequate image, add to list of floods
                     if (fill_only.width >= 1 && fill_only.height >= 1 && flood_pixel_count > 1) {

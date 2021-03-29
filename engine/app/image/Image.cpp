@@ -127,7 +127,7 @@ void DrImage::outlinePoints(float lod) {
 
 
         // ******************** Copy image and finds holes as seperate outlines
-        DrBitmap holes = image.copy();
+        DrBitmap holes = image.makeCopy();
         DrFilter::fillBorder(holes, DROP_COLOR_WHITE, holes.rect());                      // Ensures only holes are left as black spots
 
         // Breaks holes into seperate images for each Hole

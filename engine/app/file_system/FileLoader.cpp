@@ -6,10 +6,20 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Fri Mar 26 2021
 //
 //
-#include "engine/app/App.h"
+#include "3rd_party/stb/stb_rect_pack.h"
 #include "engine/app/image/Image.h"
 #include "engine/app/image/Bitmap.h"
+#include "engine/app/App.h"
 #include "FileLoader.h"
+
+
+//####################################################################################
+//##    Constructor / Destructor
+//####################################################################################
+DrFileLoader::DrFileLoader() {
+    m_rect_packs.push_back(std::make_shared<stbrp_context>());
+    m_atlases.push_back(std::make_shared<DrBitmap>(MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, DROP_BITMAP_FORMAT_ARGB));
+}
 
 
 //####################################################################################
@@ -47,6 +57,7 @@ void DrFileLoader::fetchNextImage() {
         sokol_fetch_image.callback = +[](const sfetch_response_t* response) {
             // Load Data from response
             DrBitmap bmp((unsigned char*)response->buffer_ptr, (int)response->fetched_size);
+            assert((bmp.width <= MAX_TEXTURE_SIZE && bmp.height <= MAX_TEXTURE_SIZE) && "Image dimensions too large! Max width and height are MAX_TEXTURE_SIZE!");
 
             // If valid, create image on gpu
             if (response->error_code == SFETCH_ERROR_FILE_NOT_FOUND /* '1' */) { }
@@ -57,6 +68,7 @@ void DrFileLoader::fetchNextImage() {
     sfetch_send(&sokol_fetch_image);    
 }
 
+// Creates DrImage from DrBitmap on top of image loading stack
 void DrFileLoader::createImage(DrBitmap& bmp) {
     if (bmp.isValid()) {
         sg_image_desc img_desc { };

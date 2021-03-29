@@ -54,8 +54,8 @@ public:
     int         size() const { return (width * height * channels); }
 
     // Manipulation
-    DrBitmap    copy();
-    DrBitmap    copy(DrRect &copy_rect);
+    DrBitmap    makeCopy();
+    DrBitmap    makeCopy(DrRect &from_rect);
     DrPolygonF  polygon() const;
     DrRect      rect() const;
     DrColor     getPixel(int x, int y) const;

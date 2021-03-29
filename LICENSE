@@ -46,7 +46,7 @@
 //####################################################################################
 
 
-## System libraries:
+## System
 
 - Any-lite              (Boost)     C++11   https://github.com/martinmoene/any-lite       
 - Handmade-Math         (CC0)       C99     https://github.com/StrangeZak/Handmade-Math
@@ -62,7 +62,7 @@
 - IconFontCppHeaders    (ZLIB):     Flex    https://github.com/juliettef/IconFontCppHeaders
 
 
-## Algorithim libraries:
+## Algorithm
 
 - Delaunator            (MIT):      C++11   https://github.com/soerendd/delaunator-cpp
 - Mesh Optimizer        (MIT):      C++11   https://github.com/zeux/meshoptimizer 

@@ -99,7 +99,7 @@ private:
 
     // Fonts
     FONScontext*            m_fontstash;
-    int                     m_font_normal = INVALID_IMAGE;
+    int                     m_font_normal = FONS_INVALID;
 
     // ImGui, disabled by default
     #if defined (ENABLE_DEBUG)
