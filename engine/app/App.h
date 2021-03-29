@@ -112,9 +112,6 @@ protected:
     uint64_t                m_time_start        { 0 };                              // Sokol_time start time since App started running
     double                  m_frames_per_second { 0.0 };                            // Stores current calculated frames per second
 
-    // Fetch / Drag & Drop Buffers
-    uint8_t                 m_drag_drop_file_buffer[MAX_FILE_SIZE]; 
-
     
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################
 public:

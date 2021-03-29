@@ -36,18 +36,21 @@ void DrFileLoader::initializeSgImageDesc(const int& width, const int& height, sg
 
 
 //####################################################################################
-//##    Image Fetching
+//##    Image Functions
 //####################################################################################
 // Adds a new atlas into the App, inits onto GPU
 void DrFileLoader::addAtlas() {
     m_rect_packs.push_back(std::make_shared<stbrp_context>());
     m_atlases.push_back(std::make_shared<DrBitmap>(MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, DROP_BITMAP_FORMAT_ARGB));
-
 }
 
+
+//####################################################################################
+//##    Image Fetching
+//####################################################################################
 // Adds image to stack of images to be loaded
-void DrFileLoader::addImageToFetch(std::shared_ptr<DrImage>& load_to, std::string image_file, ImageFunction callback, bool outline) {
-    ImageData img_data = { load_to, image_file, callback, outline };
+void DrFileLoader::addImageToFetch(std::shared_ptr<DrImage>& load_to, std::string image_file, ImageFunction callback, bool perform_outline, bool was_dropped) {
+    ImageData img_data = { load_to, image_file, callback, perform_outline, was_dropped };
     m_load_image_stack.push_back(img_data);
 }
 
@@ -55,27 +58,52 @@ void DrFileLoader::addImageToFetch(std::shared_ptr<DrImage>& load_to, std::strin
 void DrFileLoader::fetchNextImage() {
     if (m_loading_image || m_load_image_stack.size() < 1) return;
     m_loading_image = true;
+    
+    bool already_handled_fetch = false;
+    #if defined(DROP_TARGET_HTML5)
+        if (m_load_image_stack[0].was_dropped == true) {
+            sapp_html5_fetch_request sokol_fetch_request { };
+                sokol_fetch_request.dropped_file_index = 0;
+                sokol_fetch_request.buffer_ptr = m_load_image_buffer;
+                sokol_fetch_request.buffer_size = sizeof(m_load_image_buffer);
+                sokol_fetch_request.callback = +[](const sapp_html5_fetch_response* response) {
+                    // Load Data from response
+                    DrBitmap bmp((unsigned char*)response->buffer_ptr, (int)response->fetched_size);
+                    assert((bmp.width <= MAX_TEXTURE_SIZE && bmp.height <= MAX_TEXTURE_SIZE) && "Image dimensions too large! Max width and height are MAX_TEXTURE_SIZE!");
+                    
+                    // Could check for errors...
+                    if (response->error_code == SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL     /* '1' */) { }
 
-    sfetch_request_t sokol_fetch_image { };
-        sokol_fetch_image.path = m_load_image_stack[0].image_file.c_str();
-        sokol_fetch_image.buffer_ptr = m_load_image_buffer;
-        sokol_fetch_image.buffer_size = sizeof(m_load_image_buffer);
-        sokol_fetch_image.callback = +[](const sfetch_response_t* response) {
-            // Load Data from response
-            DrBitmap bmp((unsigned char*)response->buffer_ptr, (int)response->fetched_size);
-            assert((bmp.width <= MAX_TEXTURE_SIZE && bmp.height <= MAX_TEXTURE_SIZE) && "Image dimensions too large! Max width and height are MAX_TEXTURE_SIZE!");
+                    // Attempt to create image
+                    g_app->fileLoader()->createImage(bmp);
+                };
+            sapp_html5_fetch_dropped_file(&sokol_fetch_request);
+            already_handled_fetch = true;
+        }
+    #endif
+    
+    if (already_handled_fetch == false) {
+        sfetch_request_t sokol_fetch_image { };
+            sokol_fetch_image.path = m_load_image_stack[0].image_file.c_str();
+            sokol_fetch_image.buffer_ptr = m_load_image_buffer;
+            sokol_fetch_image.buffer_size = sizeof(m_load_image_buffer);
+            sokol_fetch_image.callback = +[](const sfetch_response_t* response) {
+                // Load Data from response
+                DrBitmap bmp((unsigned char*)response->buffer_ptr, (int)response->fetched_size);
+                assert((bmp.width <= MAX_TEXTURE_SIZE && bmp.height <= MAX_TEXTURE_SIZE) && "Image dimensions too large! Max width and height are MAX_TEXTURE_SIZE!");
 
-            // If valid, create image on gpu
-            if (response->error_code == SFETCH_ERROR_FILE_NOT_FOUND     /* '1' */) { }
-            if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL   /* '3' */) { }
+                // Could check for errors...
+                if (response->error_code == SFETCH_ERROR_FILE_NOT_FOUND     /* '1' */) { }
+                if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL   /* '3' */) { }
 
-            // Attempt to create image
-            g_app->fileLoader()->createImage(bmp);
-        };
-    sfetch_send(&sokol_fetch_image);    
+                // Attempt to create image
+                g_app->fileLoader()->createImage(bmp);
+            };
+        sfetch_send(&sokol_fetch_image);
+    }
 }
 
-// Creates DrImage from DrBitmap on top of image loading stack
+// Creates DrImage from DrBitmap from top of image loading stack, calls image callback function if there is one and image creation was successful
 void DrFileLoader::createImage(DrBitmap& bmp) {
     if (bmp.isValid()) {
         sg_image_desc img_desc { };

@@ -367,24 +367,8 @@ void DrEditor::onEvent(const sapp_event* event) {
         }
 
     } else if (event->type == SAPP_EVENTTYPE_FILES_DROPPED) {
-        #if defined(DROP_TARGET_HTML5)
-            // on emscripten need to use the sokol-app helper function to load the file data
-            // sapp_html5_fetch_request sokol_fetch_request { };
-            //     sokol_fetch_request.dropped_file_index = 0;
-            //     sokol_fetch_request.buffer_ptr = m_drag_drop_file_buffer;
-            //     sokol_fetch_request.buffer_size = sizeof(m_drag_drop_file_buffer);
-            //     sokol_fetch_request.callback = +[](const sapp_html5_fetch_response* response) {
-            //         if (response->succeeded) {
-            //             DrEditor* editor = dynamic_cast<DrEditor*>(g_app);
-            //             editor->initImage((stbi_uc *)response->buffer_ptr, (int)response->fetched_size);
-            //         } else {
-            //             // File too big if (response->error_code == SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL), otherwise file failed to load for unknown reason
-            //         }
-            //     };
-            // sapp_html5_fetch_dropped_file(&sokol_fetch_request);
-        #else
-            fileLoader()->addImageToFetch(m_image, sapp_get_dropped_file_path(0), setMeshTexture, true);
-        #endif
+        // Load image, apply to mesh and shader afterwards
+        fileLoader()->addImageToFetch(m_image, sapp_get_dropped_file_path(0), setMeshTexture, true, true);
     }
 }
 

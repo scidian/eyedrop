@@ -34,6 +34,7 @@ struct ImageData {
     std::string                     image_file;                                     // File name and path on disk
     ImageFunction                   callback;                                       // Function to call after loading
     bool                            outline;                                        // Should we run outline function on Image?
+    bool                            was_dropped;                                    // Was this file dropped onto window?
 };
     
 //####################################################################################
@@ -63,7 +64,7 @@ public:
 
     // #################### IMAGE ####################
     void        addAtlas();
-    void        addImageToFetch(std::shared_ptr<DrImage>& load_to, std::string image_file, ImageFunction callback, bool outline = false);
+    void        addImageToFetch(std::shared_ptr<DrImage>& load_to, std::string image_file, ImageFunction callback, bool perform_outlin = false, bool was_dropped = false);
     void        createImage(DrBitmap& bmp);
     void        fetchNextImage();
 

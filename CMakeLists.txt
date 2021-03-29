@@ -223,7 +223,7 @@ elseif (EXPORT_TARGET MATCHES "web")
     #   --preload-file assets/shapes.png        Include file in compiled code, allows access to files in simulated local filesystem
     #   --embed-file assets/shapes.png          Embed file in compiled code, also allows access through simulated filesystem (not compatible yet with sokol_app)
     #
-    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-fno-exceptions -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s TOTAL_MEMORY=16777216 -s WASM=1 -std=c++11 --bind")# -s ASSERTIONS=1")
+    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-fno-exceptions -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s TOTAL_MEMORY=33554432 -s WASM=1 -std=c++11 --bind")# -s ASSERTIONS=1")
 
 
 ####################################################################################    
