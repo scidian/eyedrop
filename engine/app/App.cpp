@@ -9,6 +9,7 @@
 #include "engine/app/core/Math.h"
 #include "engine/app/core/Reflect.h"
 #include "engine/app/core/Strings.h"
+#include "engine/app/file_system/FileLoader.h"
 #include "engine/app/image/Bitmap.h"
 #include "engine/app/image/Color.h"
 #include "engine/app/image/Filter.h"
@@ -72,6 +73,7 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
 
 // Destructor
 DrApp::~DrApp() {
+    delete m_file_loader;
     delete m_context;
 }
 
@@ -191,13 +193,7 @@ void DrApp::init(void) {
         int font_width, font_height;
         imgui_io.Fonts->GetTexDataAsRGBA32(&font_pixels, &font_width, &font_height);
         sg_image_desc img_desc { };
-            img_desc.width =        font_width;
-            img_desc.height =       font_height;
-            img_desc.pixel_format = SG_PIXELFORMAT_RGBA8;
-            img_desc.wrap_u =       SG_WRAP_CLAMP_TO_EDGE;
-            img_desc.wrap_v =       SG_WRAP_CLAMP_TO_EDGE;
-            img_desc.min_filter =   SG_FILTER_LINEAR;
-            img_desc.mag_filter =   SG_FILTER_LINEAR;
+            DrFileLoader::initializeSgImage(font_width, font_height, img_desc);
             img_desc.data.subimage[0][0].ptr = font_pixels;
             img_desc.data.subimage[0][0].size = static_cast<size_t>(font_width * font_height * 4);
         imgui_io.Fonts->TexID = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
@@ -205,10 +201,10 @@ void DrApp::init(void) {
 
   
     //####################################################################################
-    //##    Set Up Render Context
-    //##        Handles initial pipeline / bindings
+    //##    App Singletons
     //####################################################################################
-    m_context = new DrRenderContext(m_bg_color);
+    m_file_loader = new DrFileLoader();                                                 // File Loader: Helps with multi threaded fetching / file loading
+    m_context = new DrRenderContext(m_bg_color);                                        // Render Context: Handles initial pipeline / bindings
     
 
     // #################### Virtual onCreate() ####################
@@ -223,6 +219,11 @@ void DrApp::frame(void) {
     // #################### Sokol Fetch ####################
     // Pump the sokol-fetch message queues, and invoke response callbacks
     sfetch_dowork();
+
+    // Check for images to load
+    if (m_file_loader) {
+        m_file_loader->fetchNextImage();
+    }
 
     // #################### Begin Renderer ####################
     sg_begin_default_pass(&m_context->pass_action, sapp_width(), sapp_height());

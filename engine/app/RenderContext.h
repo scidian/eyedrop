@@ -9,7 +9,6 @@
 #ifndef DR_RENDER_CONTEXT_H
 #define DR_RENDER_CONTEXT_H
 
-
 // Shaders
 #include "engine/scene3d/shaders/BasicShader.glsl.h"
 

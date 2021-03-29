@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "engine/app/geometry/PointF.h"
+#include "engine/app/geometry/Vec2.h"
 #include "engine/app/image/Bitmap.h"
 #include "engine/data/Types.h"
 
@@ -27,10 +28,14 @@ const double    c_alpha_tolerance =     0.875;
 class DrImage
 {
 private:
-    // Local Variables
+    // Image Data
     std::string                 m_simple_name           { "" };                     // Simple name, i.e. "pretty tree 1"
     DrBitmap                    m_bitmap;                                           // Stored image as Bitmap
+    
+    // Gpu Info
     uint32_t                    m_gpu_id                { 0 };                      // Gpu texture ID if image is also stored on gpu
+    DrVec2                      m_uv0                   { 0, 0 };                   // Top left corner of image in gpu texture
+    DrVec2                      m_uv1                   { 1, 1 };                   // Bottom right corner of image in gpu texture
 
 public:
     vtr<vtr<DrPointF>>          m_poly_list;                                        // Stores list of image outline points (polygons)
@@ -49,8 +54,10 @@ public:
     std::string         name() { return m_simple_name; }
     const DrBitmap&     bitmap() const { return m_bitmap; }
     uint32_t            id() { return m_gpu_id; }
+
+    // ImGui Convenience Functions
     void*               imguiID() { return ((void*)(uintptr_t)m_gpu_id); }          // Returns ImGui compatible texture ID
-    
+
     // Setters
     void                setID(uint32_t id) { m_gpu_id = id; }
 

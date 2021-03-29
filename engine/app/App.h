@@ -41,6 +41,7 @@
 #endif
 
 // ##### Engine
+#include "engine/app/file_system/FileLoader.h"
 #include "engine/app/geometry/Matrix.h"
 #include "engine/app/geometry/Vec2.h"
 #include "engine/app/image/Color.h"
@@ -50,6 +51,7 @@
 
 // Forward Declarations
 class DrApp;
+class DrFileLoader;
 class DrRenderContext;
 
 //####################################################################################
@@ -79,8 +81,9 @@ public:
 private:
     // Modules
     sapp_desc               m_sokol_app;                                            // Sokol_app descriptor for this Window
+    DrFileLoader*           m_file_loader           { nullptr };                    // File Loader helper
     DrRenderContext*        m_context               { nullptr };                    // Rendering context for this App (currently built on Sokol_Gfx)
-
+    
     // ----- User Data -----
     GameMap                 m_game                  { };                            // Collection of open Game instances
     ProjectMap              m_projects              { };                            // Collection of open Projects
@@ -132,6 +135,7 @@ public:
     void    cleanup(void);                                                          // Linked to internal sokol callbacks
 
     // Singletons
+    DrFileLoader*       fileLoader()                                    { return m_file_loader; }
     DrRenderContext*    renderContext()                                 { return m_context; }
     
     // Local Variable Getters

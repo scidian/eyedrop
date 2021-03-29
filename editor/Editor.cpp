@@ -9,7 +9,6 @@
 #include "engine/app/core/Math.h"
 #include "engine/app/core/Random.h"
 #include "engine/app/core/Reflect.h"
-#include "engine/app/file_system/LoadImage.h"
 #include "engine/app/geometry/Matrix.h"
 #include "engine/app/geometry/Rect.h"
 #include "engine/app/geometry/Vec2.h"
@@ -149,14 +148,14 @@ void DrEditor::onCreate() {
     
     // Load Images
     for (int i = 0; i < EDITOR_IMAGE_TOTAL; ++i) gui_images.push_back(nullptr);
-    AddImageToFetch(gui_images[EDITOR_IMAGE_WORLD_GRAPH],   (appDirectory() + "assets/toolbar_icons/world_graph.png"));
-    AddImageToFetch(gui_images[EDITOR_IMAGE_WORLD_CREATOR], (appDirectory() + "assets/toolbar_icons/world_creator.png"));
-    AddImageToFetch(gui_images[EDITOR_IMAGE_UI_CREATOR],    (appDirectory() + "assets/toolbar_icons/ui_creator.png"));
+    fileLoader()->addImageToFetch(gui_images[EDITOR_IMAGE_WORLD_GRAPH],   (appDirectory() + "assets/toolbar_icons/world_graph.png"));
+    fileLoader()->addImageToFetch(gui_images[EDITOR_IMAGE_WORLD_CREATOR], (appDirectory() + "assets/toolbar_icons/world_creator.png"));
+    fileLoader()->addImageToFetch(gui_images[EDITOR_IMAGE_UI_CREATOR],    (appDirectory() + "assets/toolbar_icons/ui_creator.png"));
 
 
     // Initiate Blob Fetch
-    //AddImageToFetch(m_image, appDirectory() + "assets/images/blob.png", true);
-    //AddImageToFetch("http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true");
+    fileLoader()->addImageToFetch(m_image, appDirectory() + "assets/images/blob.png", true);
+    //fileLoader()->addImageToFetch("http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true");
 }
 
 
@@ -208,9 +207,6 @@ void DrEditor::onUpdateScene() {
 //##    Gui Update
 //####################################################################################
 void DrEditor::onUpdateGUI() { 
-    // Check for images to load
-    FetchNextImage();
-
     // Keep track of open windows / widgets
     static bool widgets[EDITOR_WIDGET_TOTAL_NUMBER];
     if (isFirstFrame()) {
