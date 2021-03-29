@@ -6,9 +6,9 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Fri Mar 26 2021
 //
 //
-#include "core/imaging/Bitmap.h"
 #include "engine/app/App.h"
 #include "engine/app/Image.h"
+#include "engine/core/imaging/Bitmap.h"
 
 
 //####################################################################################

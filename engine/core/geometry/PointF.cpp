@@ -8,7 +8,7 @@
 //
 #include <math.h>
 
-#include "core/Math.h"
+#include "../Math.h"
 #include "Point.h"
 #include "PointF.h"
 

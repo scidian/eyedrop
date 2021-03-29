@@ -6,7 +6,7 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "core/Math.h"
+#include "../Math.h"
 #include "Point.h"
 #include "PointF.h"
 #include "Rect.h"

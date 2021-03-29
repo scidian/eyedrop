@@ -11,8 +11,8 @@
 
 #include <vector>
 
-#include "core/geometry/PointF.h"
-#include "core/imaging/Bitmap.h"
+#include "engine/core/geometry/PointF.h"
+#include "engine/core/imaging/Bitmap.h"
 #include "engine/data/Types.h"
 
 // Local Constants

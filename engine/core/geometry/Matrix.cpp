@@ -6,7 +6,7 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Wed Mar 03 2021
 //
 //
-#include "core/geometry/Matrix.h"
+#include "Matrix.h"
 
 
 //####################################################################################

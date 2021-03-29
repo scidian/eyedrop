@@ -6,13 +6,13 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "core/imaging/Bitmap.h"
-#include "core/imaging/Color.h"
-#include "core/imaging/Filter.h"
-#include "core/Math.h"
-#include "core/Reflect.h"
-#include "core/Strings.h"
 #include "engine/app/Image.h"
+#include "engine/core/imaging/Bitmap.h"
+#include "engine/core/imaging/Color.h"
+#include "engine/core/imaging/Filter.h"
+#include "engine/core/Math.h"
+#include "engine/core/Reflect.h"
+#include "engine/core/Strings.h"
 #include "engine/ecs/Coordinator.h"
 #include "engine/scene3d/Mesh.h"
 #include "App.h"

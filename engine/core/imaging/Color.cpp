@@ -6,9 +6,9 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "core/imaging/Color.h"
-#include "core/Math.h"
-#include "core/Strings.h"
+#include "../Math.h"
+#include "../Strings.h"
+#include "Color.h"
 
 
 inline constexpr unsigned char operator "" _uc( unsigned long long arg ) noexcept {

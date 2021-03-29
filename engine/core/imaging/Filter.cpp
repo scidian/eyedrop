@@ -7,12 +7,12 @@
 //
 //
 #include "3rd_party/stb/stb_image_write.h"
-#include "core/geometry/Point.h"
-#include "core/geometry/PointF.h"
-#include "core/geometry/Rect.h"
-#include "core/imaging/Color.h"
-#include "core/imaging/Filter.h"
-#include "core/Math.h"
+#include "../geometry/Point.h"
+#include "../geometry/PointF.h"
+#include "../geometry/Rect.h"
+#include "../imaging/Color.h"
+#include "../Math.h"
+#include "Filter.h"
 
 
 //####################################################################################

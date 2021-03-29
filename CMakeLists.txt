@@ -65,12 +65,10 @@ include_directories(${CMAKE_SOURCE_DIR}/3rd_party)
 
 ##### Glob the files, add the executable
 file(GLOB_RECURSE 3RD_PARTY_CODE_FILES      "3rd_party/*.c**")
-file(GLOB_RECURSE CORE_CODE_FILES           "core/*.c**")
 file(GLOB_RECURSE ENGINE_CODE_FILES         "engine/*.c**")
 file(GLOB SOURCE_CODE_FILES                 
     ${MAIN_DIRECTORY_FILES}
     ${3RD_PARTY_CODE_FILES}
-    ${CORE_CODE_FILES}
     ${ENGINE_CODE_FILES}
     "*.c**"
 )

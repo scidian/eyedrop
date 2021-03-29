@@ -6,10 +6,10 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //
 //
-#include "core/geometry/Point.h"
-#include "core/geometry/PointF.h"
-#include "core/imaging/Color.h"
-#include "core/Math.h"
+#include "geometry/Point.h"
+#include "geometry/PointF.h"
+#include "imaging/Color.h"
+#include "Math.h"
 
 
 //####################################################################################

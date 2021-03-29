@@ -41,9 +41,9 @@
 #endif
 
 // ##### Engine
-#include "core/geometry/Matrix.h"
-#include "core/geometry/Vec2.h"
-#include "core/imaging/Color.h"
+#include "engine/core/geometry/Matrix.h"
+#include "engine/core/geometry/Vec2.h"
+#include "engine/core/imaging/Color.h"
 #include "engine/data/Game.h"
 #include "engine/data/Project.h"
 #include "engine/scene3d/Mesh.h"

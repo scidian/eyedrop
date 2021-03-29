@@ -9,8 +9,8 @@
 #ifndef DR_COMP_TRANSFORM2D_H
 #define DR_COMP_TRANSFORM2D_H
 
-#include "core/imaging/Color.h"
-#include "core/Reflect.h"
+#include "engine/core/imaging/Color.h"
+#include "engine/core/Reflect.h"
 #include "engine/data/Types.h"
 
 

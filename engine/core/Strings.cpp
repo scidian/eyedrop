@@ -7,7 +7,7 @@
 //
 //
 #include <ctype.h>
-#include "core/Strings.h"
+#include "engine/core/Strings.h"
 
 
 //####################################################################################
