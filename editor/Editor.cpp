@@ -53,7 +53,7 @@ DrEditor::~DrEditor() { }
 //####################################################################################
 // Sets shader texture to passed in image texture
 void setMeshTexture(std::shared_ptr<DrImage>& image) {
-    g_app->renderContext()->bindings.fs_images[SLOT_tex].id = image->id();
+    g_app->renderContext()->bindings.fs_images[SLOT_tex].id = image->gpuID();
     DrEditor* editor = dynamic_cast<DrEditor*>(g_app);
     editor->calculateMesh(true);
 }

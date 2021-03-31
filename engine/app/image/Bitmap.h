@@ -9,6 +9,7 @@
 #ifndef DR_BITMAP_H
 #define DR_BITMAP_H
 
+// Includes
 #include <string>
 #include <vector>
 
@@ -54,13 +55,14 @@ public:
     int         size() const { return (width * height * channels); }
 
     // Blit
-    static void Blit(DrBitmap& source, DrRect& src_rect, DrBitmap& dest, DrPoint& dst_point);
+    static void Blit(const DrBitmap& source, DrRect& src_rect, DrBitmap& dest, DrPoint& dst_point);
 
     // Manipulation
     DrBitmap    makeCopy();
     DrBitmap    makeCopy(DrRect &from_rect);
     DrPolygonF  polygon() const;
     DrRect      rect() const;
+    void        clearPixels();
     DrColor     getPixel(int x, int y) const;
     void        setPixel(int x, int y, DrColor color);
 

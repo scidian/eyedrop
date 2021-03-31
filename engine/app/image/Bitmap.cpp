@@ -71,7 +71,7 @@ DrBitmap::DrBitmap(const unsigned char* from_data, const int& number_of_bytes, b
 //####################################################################################
 // Standard blit, does not stretch. Draws source bitmap from src_rect starting at dst_point in destination
 // !! For this current implementation, use only positive source rect widths and heights !!
-void DrBitmap::Blit(DrBitmap& source, DrRect& src_rect, DrBitmap& dest, DrPoint& dst_point) {
+void DrBitmap::Blit(const DrBitmap& source, DrRect& src_rect, DrBitmap& dest, DrPoint& dst_point) {
     int srcx1 = Max(src_rect.left(),    0);
     int srcx2 = Min(src_rect.right(),   source.rect().right());
     int srcy1 = Max(src_rect.top(),     0);
@@ -144,6 +144,10 @@ DrPolygonF DrBitmap::polygon() const {
 
 DrRect DrBitmap::rect() const {
     return DrRect(0, 0, width, height);
+}
+
+void DrBitmap::clearPixels() {
+    std::fill(data.begin(), data.end(), 0);
 }
 
 // !!!!! #WARNING: No out of bounds checks are done here for speed!!

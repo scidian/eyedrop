@@ -7,6 +7,8 @@
 //
 //
 #include "3rd_party/stb/stb_rect_pack.h"
+#include "engine/app/geometry/Point.h"
+#include "engine/app/geometry/Rect.h"
 #include "engine/app/image/Image.h"
 #include "engine/app/image/Bitmap.h"
 #include "engine/app/App.h"
@@ -50,11 +52,16 @@ void DrImageManager::addAtlas(Atlas_Type atlas_type) {
     // Create empty atlas
     std::shared_ptr<DrAtlas> atlas = std::make_shared<DrAtlas>();
         atlas->type =       atlas_type;
-        atlas->id =         getNextKey();
+        atlas->key =        getNextKey();
         atlas->gpu =        gpu_handle;
         atlas->bitmap =     std::make_shared<DrBitmap>(MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, DROP_BITMAP_FORMAT_ARGB);
         atlas->rect_pack =  std::make_shared<stbrp_context>();
     
+    // Initialize Rect Pack
+    int node_count = MAX_TEXTURE_SIZE * 2;
+    stbrp_node nodes[node_count];
+    stbrp_init_target(atlas->rect_pack.get(), MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, nodes, node_count);
+
     // Add to atlases
     m_atlases.push_back(atlas);
 
@@ -132,13 +139,67 @@ void DrImageManager::createImage(DrBitmap& bmp) {
             image_desc.data.subimage[0][0].ptr = &bmp.data[0];
             image_desc.data.subimage[0][0].size = static_cast<size_t>(bmp.width * bmp.height * bmp.channels);
         m_load_image_stack[0].image = std::make_shared<DrImage>(m_load_image_stack[0].image_file, bmp, m_load_image_stack[0].outline);
-        m_load_image_stack[0].image->setID(sg_make_image(&image_desc).id);
+        m_load_image_stack[0].image->setKey(getNextKey());
+        m_load_image_stack[0].image->setGpuID(sg_make_image(&image_desc).id);
 
         // Call callback function
         if (m_load_image_stack[0].callback != NULL) {
             m_load_image_stack[0].callback(m_load_image_stack[0].image);
         }
     }
+
+
+    // **************** ATLAS EXPERIMENT
+    bool packed = false;
+    
+    // Loop through available atlases, attempt to pack
+    for (auto atlas : m_atlases) {
+        if (atlas->type != m_load_image_stack[0].atlas_type) continue;
+
+        size_t num_rects = atlas->packed_images.size() + 1;
+        std::vector<stbrp_rect> rects(num_rects);
+        
+        for (int i = 0; i < num_rects - 1; ++i) {
+            rects[i].id =   atlas->packed_images[i]->key();
+            rects[i].w =    atlas->packed_images[i]->bitmap().width;
+            rects[i].h =    atlas->packed_images[i]->bitmap().height;
+            rects[i].x =    0;
+            rects[i].y =    0;
+            rects[i].was_packed = 0;
+        }
+        rects[num_rects-1].id =   m_load_image_stack[0].image->key();
+        rects[num_rects-1].w =    m_load_image_stack[0].image->bitmap().width;
+        rects[num_rects-1].h =    m_load_image_stack[0].image->bitmap().height;
+        rects[num_rects-1].x =    0;
+        rects[num_rects-1].y =    0;
+        rects[num_rects-1].was_packed = 0;
+
+        int rects_length = sizeof(rects) / sizeof(rects[0]);
+        stbrp_pack_rects(atlas->rect_pack.get(), &rects[0], rects_length);
+
+        if (rects[num_rects-1].was_packed) {
+            //atlas->bitmap->clearPixels();
+
+            DrRect source_rect = m_load_image_stack[0].image->bitmap().rect();
+            DrPoint dest_point = DrPoint(rects[num_rects-1].x, rects[num_rects-1].y);
+            DrBitmap::Blit(m_load_image_stack[0].image->bitmap(), source_rect, *(atlas->bitmap.get()), dest_point);
+
+            // Update image on gpu with new bitmap data
+            sg_uninit_image({static_cast<uint32_t>(atlas->gpu)});
+            sg_image_desc image_desc { };
+                initializeSgImageDesc(atlas->bitmap->width, atlas->bitmap->height, image_desc);
+                image_desc.data.subimage[0][0].ptr = &atlas->bitmap->data[0];
+                image_desc.data.subimage[0][0].size = static_cast<size_t>(atlas->bitmap->width * atlas->bitmap->height * atlas->bitmap->channels);
+            sg_init_image({static_cast<uint32_t>(atlas->gpu)}, &image_desc);
+
+
+            packed = true;
+            break;
+        }
+    }
+    // ****************
+
+
 
     // Remove image of list to be fetched
     m_load_image_stack.pop_front();

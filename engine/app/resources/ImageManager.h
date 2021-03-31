@@ -61,10 +61,11 @@ struct ImageData {
 //############################
 struct DrAtlas {
     Atlas_Type                      type;                                           // Type of this Atlas
-    int                             id;                                             // Image manager indentifier
-    std::shared_ptr<stbrp_context>  rect_pack;                                      // Stb Rect Pack Context
-    std::shared_ptr<DrBitmap>       bitmap;                                         // Atlas in system memory
-    int                             gpu;                                            // Atlas in gpu memory
+    int                             key                     { KEY_NONE };           // Image Manager unique indentifier
+    std::shared_ptr<DrBitmap>       bitmap                  { nullptr };            // Atlas in system memory
+    int                             gpu                     { INVALID_IMAGE };      // Atlas in gpu memory
+    std::shared_ptr<stbrp_context>          rect_pack       { nullptr };            // Stb Rect Pack Context
+    std::vector<std::shared_ptr<DrImage>>   packed_images   { };                    // Images packed onto this atlas
 };
 
 //####################################################################################

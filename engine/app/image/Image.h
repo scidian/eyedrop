@@ -29,9 +29,10 @@ class DrImage
 {
 private:
     // Image Data
+    int                         m_key                   { KEY_NONE };               // Key handed out by ImageManager
     std::string                 m_simple_name           { "" };                     // Simple name, i.e. "pretty tree 1"
     DrBitmap                    m_bitmap;                                           // Stored image as Bitmap
-    
+        
     // Gpu Info
     uint32_t                    m_gpu_id                { INVALID_IMAGE };          // Gpu texture ID if image is also stored on gpu
     DrVec2                      m_uv0                   { 0, 0 };                   // Top left corner of image in gpu texture
@@ -53,13 +54,13 @@ public:
     // Settings
     std::string         name() { return m_simple_name; }
     const DrBitmap&     bitmap() const { return m_bitmap; }
-    uint32_t            id() { return m_gpu_id; }
+    int                 key() { return m_key; }
+    void                setKey(int key) { m_key = key; }
 
-    // ImGui Convenience Functions
+    // Gpu Ids
+    uint32_t            gpuID() { return m_gpu_id; }
     void*               imguiID() { return ((void*)(uintptr_t)m_gpu_id); }          // Returns ImGui compatible texture ID
-
-    // Setters
-    void                setID(uint32_t id) { m_gpu_id = id; }
+    void                setGpuID(uint32_t id) { m_gpu_id = id; }
 
     // Image Helper Functions
     void                outlinePoints(float lod);
