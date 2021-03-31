@@ -21,7 +21,7 @@ class DrKeys
 public:
     // Constructor / Destructor
     DrKeys(int key_start = KEY_START) : m_key_generator(key_start) { };
-    ~DrKeys();
+    ~DrKeys() { }
 
     // #################### VARIABLES ####################
 private:

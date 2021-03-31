@@ -9,11 +9,11 @@
 #include "engine/app/core/Math.h"
 #include "engine/app/core/Reflect.h"
 #include "engine/app/core/Strings.h"
-#include "engine/app/file_system/FileLoader.h"
 #include "engine/app/image/Bitmap.h"
 #include "engine/app/image/Color.h"
 #include "engine/app/image/Filter.h"
 #include "engine/app/image/Image.h"
+#include "engine/app/resources/ImageManager.h"
 #include "engine/ecs/Coordinator.h"
 #include "engine/scene3d/Mesh.h"
 #include "App.h"
@@ -73,7 +73,7 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
 
 // Destructor
 DrApp::~DrApp() {
-    delete m_file_loader;
+    delete m_image_manager;
     delete m_context;
 }
 
@@ -193,7 +193,7 @@ void DrApp::init(void) {
         int font_width, font_height;
         imgui_io.Fonts->GetTexDataAsRGBA32(&font_pixels, &font_width, &font_height);
         sg_image_desc img_desc { };
-            DrFileLoader::initializeSgImageDesc(font_width, font_height, img_desc);
+            DrImageManager::initializeSgImageDesc(font_width, font_height, img_desc);
             img_desc.data.subimage[0][0].ptr = font_pixels;
             img_desc.data.subimage[0][0].size = static_cast<size_t>(font_width * font_height * 4);
         imgui_io.Fonts->TexID = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
@@ -203,7 +203,7 @@ void DrApp::init(void) {
     //####################################################################################
     //##    App Singletons
     //####################################################################################
-    m_file_loader = new DrFileLoader();                                                 // Image Loader: Helps with image loading / fetching, atlas creation
+    m_image_manager = new DrImageManager(KEY_START);                                    // Image Manager: Helps with image loading / fetching, atlas creation
     m_context = new DrRenderContext(m_bg_color);                                        // Render Context: Handles initial pipeline / bindings
     
 
@@ -221,9 +221,7 @@ void DrApp::frame(void) {
     sfetch_dowork();
 
     // Check for images to load
-    if (m_file_loader) {
-        m_file_loader->fetchNextImage();
-    }
+    if (m_image_manager) m_image_manager->fetchNextImage();
 
     // #################### Begin Renderer ####################
     sg_begin_default_pass(&m_context->pass_action, sapp_width(), sapp_height());

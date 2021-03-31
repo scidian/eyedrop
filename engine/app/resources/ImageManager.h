@@ -6,15 +6,15 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Fri Mar 26 2021
 //
 //
-#ifndef DR_APP_FILE_LOADER_H
-#define DR_APP_FILE_LOADER_H
+#ifndef DR_APP_IMAGE_MANAGER_H
+#define DR_APP_IMAGE_MANAGER_H
 
 // Include
 #include <deque>
 #include <functional>
 #include <string>
 #include <vector>
-#include "engine/data/Constants.h"
+#include "engine/data/Keys.h"
 
 // Forward Declarations
 class DrBitmap;
@@ -27,30 +27,47 @@ struct stbrp_context;
 // Type Def / Using
 using ImageFunction = std::function<void(std::shared_ptr<DrImage>&)>;
 
+// Enums
+enum Atlas_Type {
+    ATLAS_TYPE_NONE,                                                                // Store image on gpu by itself, not in atlas
+    ATLAS_TYPE_GUI,                                                                 // Store image in atlas for use with Drop (away from Project / Game)
+    ATLAS_TYPE_GAME,                                                                // Store image in atlas for use with Project / Game
+};
+
 //####################################################################################
 //##    Image Loading Struct
 //############################
 struct ImageData {
+    ImageData(std::shared_ptr<DrImage>& load_to, std::string file, Atlas_Type atlas, 
+              ImageFunction callback_func = NULL, bool perform_outline = false, bool drag_drop = false) :
+        image(load_to),
+        image_file(file),
+        atlas_type(atlas),
+        callback(callback_func),
+        outline(perform_outline),
+        was_dropped(drag_drop) 
+    { }
     std::shared_ptr<DrImage>&       image;                                          // DrImage pointer to load new DrImage into after loading
     std::string                     image_file;                                     // File name and path on disk
+    Atlas_Type                      atlas_type;                                     // How to store image
     ImageFunction                   callback;                                       // Function to call after loading
     bool                            outline;                                        // Should we run outline function on Image?
     bool                            was_dropped;                                    // Was this file dropped onto window?
 };
     
 //####################################################################################
-//##    DrFileLoader
-//##        Loads files for use in App
+//##    DrImageManager
+//##        Loads images for use in App, handles atlases of loaded images
 //############################
-class DrFileLoader 
+class DrImageManager : public DrKeys
 {
 public:
     // Constructor / Destructor
-    DrFileLoader();
-    ~DrFileLoader() { }
+    DrImageManager(int key_start = KEY_START);
+    ~DrImageManager() { }
 
 private:
-    // #################### IMAGES ####################
+    // #################### VARIABLES ####################
     // Atlas Variables
     std::vector<std::shared_ptr<stbrp_context>> m_rect_packs;                       // Stb Rect Pack Contexts
     std::vector<std::shared_ptr<DrBitmap>>      m_atlases;                          // Holds packed atlases of loaded DrImages
@@ -65,16 +82,17 @@ private:
     bool                            m_loading_image         { false };              // True when waiting for fetch to complete
     
 public:
-    // #################### HELPERS ####################
+    // #################### FUNCTIONS ####################
+    // Static Helpers
     static void initializeSgImageDesc(const int& width, const int& height, sg_image_desc& image_desc);
 
-    // #################### IMAGE ####################
+    // Image Loading
     void        addAtlas();
-    void        addImageToFetch(std::shared_ptr<DrImage>& load_to, std::string image_file, ImageFunction callback, bool perform_outlin = false, bool was_dropped = false);
+    void        addImageToFetch(ImageData image_data);
     void        createImage(DrBitmap& bmp);
     void        fetchNextImage();
 
 
 };
 
-#endif  // DR_APP_FILE_LOADER_H
+#endif  // DR_APP_IMAGE_MANAGER_H

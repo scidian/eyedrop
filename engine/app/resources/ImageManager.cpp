@@ -10,13 +10,13 @@
 #include "engine/app/image/Image.h"
 #include "engine/app/image/Bitmap.h"
 #include "engine/app/App.h"
-#include "FileLoader.h"
+#include "ImageManager.h"
 
 
 //####################################################################################
 //##    Constructor / Destructor
 //####################################################################################
-DrFileLoader::DrFileLoader() {
+DrImageManager::DrImageManager(int key_start) : DrKeys(key_start) {
     addAtlas();
 }
 
@@ -24,7 +24,7 @@ DrFileLoader::DrFileLoader() {
 //####################################################################################
 //##    Sokol Helper
 //####################################################################################
-void DrFileLoader::initializeSgImageDesc(const int& width, const int& height, sg_image_desc& image_desc) {
+void DrImageManager::initializeSgImageDesc(const int& width, const int& height, sg_image_desc& image_desc) {
     image_desc.width =        width;
     image_desc.height =       height;
     image_desc.pixel_format = SG_PIXELFORMAT_RGBA8;
@@ -39,7 +39,7 @@ void DrFileLoader::initializeSgImageDesc(const int& width, const int& height, sg
 //##    Image Functions
 //####################################################################################
 // Adds a new atlas into the App, inits onto GPU
-void DrFileLoader::addAtlas() {
+void DrImageManager::addAtlas() {
     m_rect_packs.push_back(std::make_shared<stbrp_context>());
     m_atlases.push_back(std::make_shared<DrBitmap>(MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, DROP_BITMAP_FORMAT_ARGB));
 }
@@ -49,13 +49,12 @@ void DrFileLoader::addAtlas() {
 //##    Image Fetching
 //####################################################################################
 // Adds image to stack of images to be loaded
-void DrFileLoader::addImageToFetch(std::shared_ptr<DrImage>& load_to, std::string image_file, ImageFunction callback, bool perform_outline, bool was_dropped) {
-    ImageData img_data = { load_to, image_file, callback, perform_outline, was_dropped };
-    m_load_image_stack.push_back(img_data);
+void DrImageManager::addImageToFetch(ImageData image_data) {
+    m_load_image_stack.push_back(image_data);
 }
 
 // Initiates fetch of next image on the load stack
-void DrFileLoader::fetchNextImage() {
+void DrImageManager::fetchNextImage() {
     if (m_loading_image || m_load_image_stack.size() < 1) return;
     m_loading_image = true;
     
@@ -75,7 +74,7 @@ void DrFileLoader::fetchNextImage() {
                     if (response->error_code == SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL     /* '1' */) { }
 
                     // Attempt to create image
-                    g_app->fileLoader()->createImage(bmp);
+                    g_app->imageManager()->createImage(bmp);
                 };
             sapp_html5_fetch_dropped_file(&sokol_fetch_request);
             already_handled_fetch = true;
@@ -97,14 +96,14 @@ void DrFileLoader::fetchNextImage() {
                 if (response->error_code == SFETCH_ERROR_BUFFER_TOO_SMALL   /* '3' */) { }
 
                 // Attempt to create image
-                g_app->fileLoader()->createImage(bmp);
+                g_app->imageManager()->createImage(bmp);
             };
         sfetch_send(&sokol_fetch_image);
     }
 }
 
 // Creates DrImage from DrBitmap from top of image loading stack, calls image callback function if there is one and image creation was successful
-void DrFileLoader::createImage(DrBitmap& bmp) {
+void DrImageManager::createImage(DrBitmap& bmp) {
     if (bmp.isValid()) {
         sg_image_desc img_desc { };
             initializeSgImageDesc(bmp.width, bmp.height, img_desc);
