@@ -25,7 +25,6 @@
 #include "ui/Toolbar.h"
 #include "widgets/ThemeSelector.h"
 #include "Editor.h"
-#include "Types.h"
 
 
 //####################################################################################

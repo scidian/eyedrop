@@ -8,8 +8,6 @@
 //
 #include "engine/app/image/Image.h"
 #include "editor/Editor.h"
-#include "editor/Types.h"
-#include "Toolbar.h"
 
 
 //####################################################################################

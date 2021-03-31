@@ -14,7 +14,7 @@
 #include <functional>
 #include <string>
 #include <vector>
-#include "engine/data/Types.h"
+#include "engine/data/Constants.h"
 
 // Forward Declarations
 class DrBitmap;
@@ -24,6 +24,7 @@ class DrImage;
 struct sg_image_desc;
 struct stbrp_context;
 
+// Type Def / Using
 using ImageFunction = std::function<void(std::shared_ptr<DrImage>&)>;
 
 //####################################################################################

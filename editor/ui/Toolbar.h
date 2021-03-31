@@ -9,6 +9,9 @@
 #ifndef DR_EDITOR_TOOLBAR_H
 #define DR_EDITOR_TOOLBAR_H
 
+// Includes
+#include <vector>
+
 // Forward Declarations
 class DrImage;
 

@@ -9,7 +9,7 @@
 #ifndef DR_ECS_COMPONENT_MANAGER_H
 #define DR_ECS_COMPONENT_MANAGER_H
 
-#include "engine/data/Types.h"
+#include "engine/data/Constants.h"
 #include "ComponentArray.h"
 
 

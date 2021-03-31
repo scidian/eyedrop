@@ -14,7 +14,7 @@
 #include "engine/app/geometry/PointF.h"
 #include "engine/app/geometry/Vec2.h"
 #include "engine/app/image/Bitmap.h"
-#include "engine/data/Types.h"
+#include "engine/data/Constants.h"
 
 // Local Constants
 #define         vtr                     std::vector

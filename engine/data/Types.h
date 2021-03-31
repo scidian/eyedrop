@@ -9,30 +9,6 @@
 #ifndef DR_ENGINE_DATA_TYPES_H
 #define DR_ENGINE_DATA_TYPES_H
 
-#include <bitset>
-#include <cstdint>
-
-// Global Enum Constants
-#define DROP_VERSION             2000                               // Drop Creator version number, important for file loading / saving
-
-#define MAX_FILE_SIZE       512 * 512                               // Used for filebuffers with sokol_fetch
-#define MAX_TEXTURE_SIZE         2048                               // Max texture size for gpu images (atlases, etc), 2048 should support 99.9% of devices from year 2010 on
-#define INVALID_IMAGE               0                               // Used to identify images that have been initialized, but not loaded yet
-
-#define KEY_NONE                   -1                               // Value that represents no item selected
-#define KEY_START                   1                               // Starting value for key generators
-
-#define MAX_ENTITIES            10000                               // Total of number of entities allowed for now
-#define MAX_COMPONENTS             32                               // Current maximum number of compoenents (uint_8), used for sizing Signature
-
-
-// ECS System
-using EntityID =            std::uint32_t;                          // Unique Entity ID Key
-using ComponentID =         std::uint8_t;                           // Identifier for Components
-using Archetype =           std::bitset<MAX_COMPONENTS>;            // A bitset to represent a collection of Components (formerly Signature)
-using ArrayIndex = 		    size_t;                                 // For referencing Array subscript values
-using HashID =              size_t;                                 // This comes from typeid(OBJECT).hash_code() ... identical to Reflect.h's 'TypeHash'
-
 
 //####################################################################################
 //##    Used to track what types Properties of Components are, stored in DrReflect meta data
@@ -98,7 +74,7 @@ enum Property_Type {
 //############################
 enum Asset_Type {    
     // Misc Types
-    ASSET_TYPE_NOT_FOUND = 0,               // For passing a value in functions that represents No Type Selected / Found, !!!!! #NOTE: Keep as zero
+    ASSET_TYPE_NOT_FOUND            = 0,    // For passing a value in functions that represents No Type Selected / Found, !!!!! #NOTE: Keep as zero
 
     // Shared Types
     ASSET_TYPE_PREFAB,                      // Keeps information about an Object so we can easily make a copy

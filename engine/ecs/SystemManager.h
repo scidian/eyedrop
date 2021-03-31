@@ -10,7 +10,6 @@
 #define DR_ECS_SYSTEM_MANAGER_H
 
 #include <unordered_map>
-#include "engine/data/Types.h"
 #include "System.h"
 
 

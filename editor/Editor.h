@@ -9,7 +9,9 @@
 #ifndef DR_EDITOR_H
 #define DR_EDITOR_H
 
+// Includes
 #include "engine/app/App.h"
+#include "editor/Types.h"
 
 // Forward Declarations
 class DrImage;

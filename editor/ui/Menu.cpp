@@ -7,7 +7,6 @@
 //
 //
 #include "editor/Editor.h"
-#include "editor/Types.h"
 #include "Menu.h"
 
 
