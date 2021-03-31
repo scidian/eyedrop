@@ -192,11 +192,11 @@ void DrApp::init(void) {
         unsigned char* font_pixels;
         int font_width, font_height;
         imgui_io.Fonts->GetTexDataAsRGBA32(&font_pixels, &font_width, &font_height);
-        sg_image_desc img_desc { };
-            DrImageManager::initializeSgImageDesc(font_width, font_height, img_desc);
-            img_desc.data.subimage[0][0].ptr = font_pixels;
-            img_desc.data.subimage[0][0].size = static_cast<size_t>(font_width * font_height * 4);
-        imgui_io.Fonts->TexID = (ImTextureID)(uintptr_t) sg_make_image(&img_desc).id;
+        sg_image_desc image_desc { };
+            DrImageManager::initializeSgImageDesc(font_width, font_height, image_desc);
+            image_desc.data.subimage[0][0].ptr = font_pixels;
+            image_desc.data.subimage[0][0].size = static_cast<size_t>(font_width * font_height * 4);
+        imgui_io.Fonts->TexID = (ImTextureID)(uintptr_t) sg_make_image(&image_desc).id;
     #endif
 
   

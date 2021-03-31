@@ -12,6 +12,7 @@
 // Include
 #include <deque>
 #include <functional>
+#include <map>
 #include <string>
 #include <vector>
 #include "engine/data/Keys.h"
@@ -30,8 +31,8 @@ using ImageFunction = std::function<void(std::shared_ptr<DrImage>&)>;
 // Enums
 enum Atlas_Type {
     ATLAS_TYPE_NONE,                                                                // Store image on gpu by itself, not in atlas
-    ATLAS_TYPE_GUI,                                                                 // Store image in atlas for use with Drop (away from Project / Game)
-    ATLAS_TYPE_GAME,                                                                // Store image in atlas for use with Project / Game
+    ATLAS_TYPE_ENGINE,                                                              // Store image in atlas for use with Engine (away from Project / Game)
+    ATLAS_TYPE_PROJECT,                                                             // Store image in atlas for use with Project / Game
 };
 
 //####################################################################################
@@ -54,7 +55,18 @@ struct ImageData {
     bool                            outline;                                        // Should we run outline function on Image?
     bool                            was_dropped;                                    // Was this file dropped onto window?
 };
-    
+
+//####################################################################################
+//##    Atlas Struct
+//############################
+struct DrAtlas {
+    Atlas_Type                      type;                                           // Type of this Atlas
+    int                             id;                                             // Image manager indentifier
+    std::shared_ptr<stbrp_context>  rect_pack;                                      // Stb Rect Pack Context
+    std::shared_ptr<DrBitmap>       bitmap;                                         // Atlas in system memory
+    int                             gpu;                                            // Atlas in gpu memory
+};
+
 //####################################################################################
 //##    DrImageManager
 //##        Loads images for use in App, handles atlases of loaded images
@@ -69,9 +81,7 @@ public:
 private:
     // #################### VARIABLES ####################
     // Atlas Variables
-    std::vector<std::shared_ptr<stbrp_context>> m_rect_packs;                       // Stb Rect Pack Contexts
-    std::vector<std::shared_ptr<DrBitmap>>      m_atlases;                          // Holds packed atlases of loaded DrImages
-    std::vector<uint32_t>                       m_atlas_ids;                        // GPU Texture IDs for atlases  
+    std::vector<std::shared_ptr<DrAtlas>>       m_atlases;                          // Collection of Atlases
 
     // Image Tracking
     std::vector<std::shared_ptr<DrImage>>       m_loaded_images;                    // Keeps list of loaded images
@@ -87,7 +97,7 @@ public:
     static void initializeSgImageDesc(const int& width, const int& height, sg_image_desc& image_desc);
 
     // Image Loading
-    void        addAtlas();
+    void        addAtlas(Atlas_Type atlas_type);
     void        addImageToFetch(ImageData image_data);
     void        createImage(DrBitmap& bmp);
     void        fetchNextImage();

@@ -17,7 +17,8 @@
 //##    Constructor / Destructor
 //####################################################################################
 DrImageManager::DrImageManager(int key_start) : DrKeys(key_start) {
-    addAtlas();
+    addAtlas(ATLAS_TYPE_ENGINE);
+    addAtlas(ATLAS_TYPE_PROJECT);
 }
 
 
@@ -38,10 +39,31 @@ void DrImageManager::initializeSgImageDesc(const int& width, const int& height, 
 //####################################################################################
 //##    Image Functions
 //####################################################################################
-// Adds a new atlas into the App, inits onto GPU
-void DrImageManager::addAtlas() {
-    m_rect_packs.push_back(std::make_shared<stbrp_context>());
-    m_atlases.push_back(std::make_shared<DrBitmap>(MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, DROP_BITMAP_FORMAT_ARGB));
+// Inits atlas on GPU, adds a into the Image Manager
+void DrImageManager::addAtlas(Atlas_Type atlas_type) {
+    // Check valid type
+    if (atlas_type == ATLAS_TYPE_NONE) return;
+    
+    // Alloc an image on the gpu
+    int gpu_handle = sg_alloc_image().id;
+
+    // Create empty atlas
+    std::shared_ptr<DrAtlas> atlas = std::make_shared<DrAtlas>();
+        atlas->type =       atlas_type;
+        atlas->id =         getNextKey();
+        atlas->gpu =        gpu_handle;
+        atlas->bitmap =     std::make_shared<DrBitmap>(MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, DROP_BITMAP_FORMAT_ARGB);
+        atlas->rect_pack =  std::make_shared<stbrp_context>();
+    
+    // Add to atlases
+    m_atlases.push_back(atlas);
+
+    // Update image on gpu with new empty bitmap data
+    sg_image_desc image_desc { };
+        initializeSgImageDesc(atlas->bitmap->width, atlas->bitmap->height, image_desc);
+        image_desc.data.subimage[0][0].ptr = &atlas->bitmap->data[0];
+        image_desc.data.subimage[0][0].size = static_cast<size_t>(atlas->bitmap->width * atlas->bitmap->height * atlas->bitmap->channels);
+    sg_init_image({static_cast<uint32_t>(atlas->gpu)}, &image_desc);
 }
 
 
@@ -105,12 +127,12 @@ void DrImageManager::fetchNextImage() {
 // Creates DrImage from DrBitmap from top of image loading stack, calls image callback function if there is one and image creation was successful
 void DrImageManager::createImage(DrBitmap& bmp) {
     if (bmp.isValid()) {
-        sg_image_desc img_desc { };
-            initializeSgImageDesc(bmp.width, bmp.height, img_desc);
-            img_desc.data.subimage[0][0].ptr = &bmp.data[0];
-            img_desc.data.subimage[0][0].size = static_cast<size_t>(bmp.width * bmp.height * bmp.channels);
+        sg_image_desc image_desc { };
+            initializeSgImageDesc(bmp.width, bmp.height, image_desc);
+            image_desc.data.subimage[0][0].ptr = &bmp.data[0];
+            image_desc.data.subimage[0][0].size = static_cast<size_t>(bmp.width * bmp.height * bmp.channels);
         m_load_image_stack[0].image = std::make_shared<DrImage>(m_load_image_stack[0].image_file, bmp, m_load_image_stack[0].outline);
-        m_load_image_stack[0].image->setID(sg_make_image(&img_desc).id);
+        m_load_image_stack[0].image->setID(sg_make_image(&image_desc).id);
 
         // Call callback function
         if (m_load_image_stack[0].callback != NULL) {

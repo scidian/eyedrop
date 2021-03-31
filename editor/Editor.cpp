@@ -158,14 +158,14 @@ void DrEditor::onCreate() {
     
     // Load Images
     for (int i = 0; i < EDITOR_IMAGE_TOTAL; ++i) gui_images.push_back(nullptr);
-    imageManager()->addImageToFetch({gui_images[EDITOR_IMAGE_WORLD_GRAPH],   (appDirectory() + "assets/toolbar_icons/world_graph.png"),     ATLAS_TYPE_GUI});
-    imageManager()->addImageToFetch({gui_images[EDITOR_IMAGE_WORLD_CREATOR], (appDirectory() + "assets/toolbar_icons/world_creator.png"),   ATLAS_TYPE_GUI});
-    imageManager()->addImageToFetch({gui_images[EDITOR_IMAGE_UI_CREATOR],    (appDirectory() + "assets/toolbar_icons/ui_creator.png"),      ATLAS_TYPE_GUI});
+    imageManager()->addImageToFetch({gui_images[EDITOR_IMAGE_WORLD_GRAPH],   (appDirectory() + "assets/toolbar_icons/world_graph.png"),     ATLAS_TYPE_ENGINE});
+    imageManager()->addImageToFetch({gui_images[EDITOR_IMAGE_WORLD_CREATOR], (appDirectory() + "assets/toolbar_icons/world_creator.png"),   ATLAS_TYPE_ENGINE});
+    imageManager()->addImageToFetch({gui_images[EDITOR_IMAGE_UI_CREATOR],    (appDirectory() + "assets/toolbar_icons/ui_creator.png"),      ATLAS_TYPE_ENGINE});
 
 
     // Initiate Blob Fetch
-    imageManager()->addImageToFetch({m_image, appDirectory() + "assets/images/blob.png", ATLAS_TYPE_GUI, setMeshTexture, true});
-    //imageManager()->addImageToFetch({m_image, "http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true", ATLAS_TYPE_GUI, setMeshTexture, true});
+    imageManager()->addImageToFetch({m_image, appDirectory() + "assets/images/blob.png", ATLAS_TYPE_PROJECT, setMeshTexture, true});
+    //imageManager()->addImageToFetch({m_image, "http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true", ATLAS_TYPE_PROJECT, setMeshTexture, true});
 }
 
 
@@ -367,7 +367,7 @@ void DrEditor::onEvent(const sapp_event* event) {
 
     } else if (event->type == SAPP_EVENTTYPE_FILES_DROPPED) {
         // Load image, apply to mesh and shader afterwards
-        imageManager()->addImageToFetch({m_image, sapp_get_dropped_file_path(0), ATLAS_TYPE_GAME, setMeshTexture, true, true});
+        imageManager()->addImageToFetch({m_image, sapp_get_dropped_file_path(0), ATLAS_TYPE_PROJECT, setMeshTexture, true, true});
     }
 }
 
