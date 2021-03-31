@@ -27,6 +27,11 @@
 #ifndef DR_PROJECT_H
 #define DR_PROJECT_H
 
+// Includes
+#include <string>
+#include <unordered_map>
+#include "Keys.h"
+
 // Forward Declarations
 class GaAsset;
 
@@ -43,28 +48,25 @@ enum Orientation {
 //##    DrProject
 //##        Class to hold data for one Project
 //############################
-class DrProject
+class DrProject : public DrKeys
 {
 public:
     // Constructor / Destructor
-    DrProject();
-    ~DrProject();
+    DrProject(int key_start = KEY_START) : DrKeys(key_start) { }
+    ~DrProject() { }
 
 
     // #################### VARIABLES ####################
-private:
-    // Project Variables
-    long            m_key_generator         { KEY_START };                          // Variable to hand out unique id key's to all Project::Entities
-    
+private:    
     // Project Options
     std::string     m_name                  { "" };                                 // Name of Current Project
     std::string     m_file_path_name        { "" };                                 // Full Path and File Name of Project, will save to this unless choose Save As
 
     int             m_orientation           { ORIENTATION_PORTAIT };                // This Project's target device orientation (enum Orientation)
-    long            m_width                 { DEFAULT_PROJECT_WIDTH };              // This Project's target device window width,  usually 800
-    long            m_height                { DEFAULT_PROJECT_HEIGHT };             // This Project's target device window height, usually 1600
+    int             m_width                 { DEFAULT_PROJECT_WIDTH };              // This Project's target device window width,  usually 800
+    int             m_height                { DEFAULT_PROJECT_HEIGHT };             // This Project's target device window height, usually 1600
 
-    long            m_current_scene         { KEY_NONE };                           // Scene currently displayed in Editor_Mode::World_Creator
+    int             m_current_scene         { KEY_NONE };                           // Scene currently displayed in Editor_Mode::World_Creator
 
     // Project Items
     std::unordered_map<int, std::shared_ptr<GaAsset>>       m_assets        { };    // Holds Project things (Scenes, Images, Sounds, etc)
@@ -77,10 +79,7 @@ public:
 
     // #################### INTERNAL FUNCTIONS ####################
 public:
-    // Key Generator
-    long                checkCurrentGeneratorKey()                      { return m_key_generator; }
-    long                getNextKey()                                    { return m_key_generator++; }
-    void                setGeneratorKeyStartNumber(long initial_key)    { m_key_generator = initial_key; }
+    
 
 };
 

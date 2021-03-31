@@ -11,27 +11,25 @@
 
 // Includes
 #include "engine/ecs/Coordinator.h"
+#include "Keys.h"
 
 
 //####################################################################################
 //##    DrGame
 //##        Class to hold data for current active Game
 //############################
-class DrGame
+class DrGame : public DrKeys
 {
 public:
     // Constructor / Destructor
-    DrGame();
-    ~DrGame();
+    DrGame(int key_start = KEY_START) : DrKeys(key_start) { }
+    ~DrGame() { } 
 
 
     // #################### VARIABLES ####################
 private:
-    // Game Variables
-    long            m_key_generator         { KEY_START };                          // Variable to hand out unique id key's to all Game::Entities
-
     // Scene Variables
-    long            m_current_scene         { KEY_NONE };                           // Scene currently displayed in Editor_Mode::World_Creator
+    int             m_current_scene         { KEY_NONE };                           // Scene currently displayed in Editor_Mode::World_Creator
     //Entities        m_entities;                                                   // Holds all the game's Entities
     //EntityLists     m_lists;                                                      // Holds lists of Archetypes of available Entities in the game
 
@@ -44,10 +42,7 @@ public:
 
     // #################### INTERNAL FUNCTIONS ####################
 public:
-    // Key Generator
-    long                checkCurrentGeneratorKey()                      { return m_key_generator; }
-    long                getNextKey()                                    { return m_key_generator++; }
-    void                setGeneratorKeyStartNumber(long initial_key)    { m_key_generator = initial_key; }
+
     
 };
 

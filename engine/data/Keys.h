@@ -20,24 +20,21 @@ class DrKeys
 {
 public:
     // Constructor / Destructor
-    DrKeys();
+    DrKeys(int key_start = KEY_START) : m_key_generator(key_start) { };
     ~DrKeys();
 
     // #################### VARIABLES ####################
 private:
-    // Local Variables
-    int                 m_variable              { 0 };                          // Description
+    // Key Variables
+    int                 m_key_generator             { KEY_START };                  // Variable to hand out unique id key's
         
-
-    // #################### FUNCTIONS TO BE EXPOSED TO API ####################
-public:
-
 
     // #################### INTERNAL FUNCTIONS ####################
 public:
-    // Local Variable Functions
-    int                 getVariable() { return m_variable; }
-    void                setVariable(int variable) { m_variable = variable; }
+    // Key Generator
+    int                 checkCurrentKey()                               { return m_key_generator; }
+    int                 getNextKey()                                    { return m_key_generator++; }
+    void                setGenerator(int current_key)                   { m_key_generator = current_key; }
 
 };
 
