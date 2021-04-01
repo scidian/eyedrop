@@ -18,6 +18,7 @@
 #include "engine/data/Keys.h"
 
 // Forward Declarations
+class DrAtlas;
 class DrBitmap;
 class DrImage;
 
@@ -56,17 +57,6 @@ struct ImageData {
     bool                            was_dropped;                                    // Was this file dropped onto window?
 };
 
-//####################################################################################
-//##    Atlas Struct
-//############################
-struct DrAtlas {
-    Atlas_Type                      type;                                           // Type of this Atlas
-    int                             key                     { KEY_NONE };           // Image Manager unique indentifier
-    std::shared_ptr<DrBitmap>       bitmap                  { nullptr };            // Atlas in system memory
-    int                             gpu                     { INVALID_IMAGE };      // Atlas in gpu memory
-    std::shared_ptr<stbrp_context>  rect_pack               { nullptr };            // Stb Rect Pack Context
-    std::vector<int>                packed_image_keys       { };                    // Images packed onto this atlas
-};
 
 //####################################################################################
 //##    DrImageManager
@@ -97,8 +87,11 @@ public:
     // Static Helpers
     static void initializeSgImageDesc(const int& width, const int& height, sg_image_desc& image_desc);
 
-    // Image Loading
+    // Atlas Stuff
     void        addAtlas(Atlas_Type atlas_type);
+    void        packImageToAtlas(ImageData& image_data);
+
+    // Image Loading
     void        addImageToFetch(ImageData image_data);
     void        createImage(DrBitmap& bmp);
     void        fetchNextImage();
