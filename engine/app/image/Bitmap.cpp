@@ -78,9 +78,9 @@ void DrBitmap::Blit(const DrBitmap& source, DrRect& src_rect, DrBitmap& dest, Dr
     int srcy2 = Min(src_rect.bottom(),  source.rect().bottom());
     
     int at_y = dst_point.y;
-    for (int x = srcx1; x <= srcx2; ++x) {
+    for (int y = srcy1; y <= srcy2; ++y) {
         int at_x = dst_point.x;
-        for (int y = srcy1; y <= srcy2; ++y) {
+        for (int x = srcx1; x <= srcx2; ++x) {
             DrColor pixel = source.getPixel(x, y);
             if (at_x >= 0 && at_x <= dest.rect().right()) {
                 if (at_y >= 0 && at_y <= dest.rect().bottom()) {

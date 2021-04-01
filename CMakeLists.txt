@@ -194,6 +194,7 @@ if (EXPORT_TARGET MATCHES "osx")
 ####################################################################################
 elseif (EXPORT_TARGET MATCHES "ios")
 
+
     ### TODO ###
 
 
@@ -225,21 +226,16 @@ elseif (EXPORT_TARGET MATCHES "web")
     #
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-fno-exceptions -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s TOTAL_MEMORY=33554432 -s WASM=1 -std=c++11 --bind")# -s ASSERTIONS=1")
 
-
 ####################################################################################    
 elseif (EXPORT_TARGET MATCHES "android")
+
 
     ### TODO ###
 
 
 ####################################################################################
 elseif (EXPORT_TARGET MATCHES "windows")
-
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
-    ### TODO ###
-
+    ### Don't need to do anything for MSVC compiler on Windows ###
 
 ####################################################################################
 elseif (EXPORT_TARGET MATCHES "linux")
