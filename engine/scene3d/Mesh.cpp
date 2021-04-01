@@ -133,10 +133,10 @@ void DrMesh::initializeTextureCube() {
     float tx3 = 1.0, ty3 = 0.0;
     float tx4 = 0.0, ty4 = 0.0;
 
-    cube( x1,  y1,  tx1, ty1,
-          x2,  y2,  tx2, ty2,
-          x3,  y3,  tx3, ty3,
-          x4,  y4,  tx4, ty4, depth);
+    cube(x1,  y1,  tx1, ty1,
+         x2,  y2,  tx2, ty2,
+         x3,  y3,  tx3, ty3,
+         x4,  y4,  tx4, ty4, depth);
 }
 
 

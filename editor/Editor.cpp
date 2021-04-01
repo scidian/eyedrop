@@ -53,8 +53,8 @@ DrEditor::~DrEditor() { }
 //####################################################################################
 // Sets shader texture to passed in image texture
 void setMeshTexture(std::shared_ptr<DrImage>& image) {
-    g_app->renderContext()->bindings.fs_images[SLOT_tex].id = image->gpuID();
-    DrEditor* editor = dynamic_cast<DrEditor*>(g_app);
+    App()->renderContext()->bindings.fs_images[SLOT_tex].id = image->gpuID();
+    DrEditor* editor = dynamic_cast<DrEditor*>(App());
     editor->calculateMesh(true);
 }
 
@@ -400,11 +400,18 @@ void DrEditor::calculateMesh(bool reset_position) {
     m_mesh = std::make_shared<DrMesh>();
     m_mesh->image_size = Max(m_image->bitmap().width, m_image->bitmap().height);      
     m_mesh->wireframe = m_wireframe;
-    m_mesh->initializeExtrudedImage(m_image.get(), m_mesh_quality);
-    //mesh->initializeTextureQuad();
-    //mesh->initializeTextureCube();
-    //mesh->initializeTextureCone();
+
+    //m_mesh->initializeExtrudedImage(m_image.get(), m_mesh_quality);
+    //m_mesh->initializeTextureQuad();
+    m_mesh->initializeTextureCube();
+    //m_mesh->initializeTextureCone();
             
+    // ***** Optimize and smooth mesh
+    m_mesh->optimizeMesh();
+    // ----- Experimental, doesnt work great -----
+    //m_mesh->smoothMesh();                               
+
+
     // ***** Copy vertex data and set into state buffer
     if (m_mesh->vertexCount() > 0) {
         // ***** Vertex Buffer

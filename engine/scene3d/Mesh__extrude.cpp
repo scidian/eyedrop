@@ -56,12 +56,6 @@ void DrMesh::initializeExtrudedImage(DrImage* image, int quality) {
             extrudeFacePolygon(hole, w, h, slices);
         }
     }
-
-    // Optimize and smooth mesh
-    optimizeMesh();
-
-    // ----- Experimental, doesnt work great -----
-    //smoothMesh();                               
 }
 
 

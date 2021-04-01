@@ -58,7 +58,8 @@ class DrRenderContext;
 //####################################################################################
 //##    Global Variable Declarations
 //####################################################################################
-extern DrApp*               g_app;                                                  // App singleton            Defined in App.cpp      Assigned in App.cpp::App()
+extern DrApp*               g_app_pointer;                                          // App singleton            Defined in App.cpp      Assigned in App.cpp::App()
+DrApp*                      App();                                                  // Returns App singleton
 
 //####################################################################################
 //##    Local Structs / Defines

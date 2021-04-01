@@ -26,7 +26,8 @@
 //####################################################################################
 //##    Global Variables Definitions
 //####################################################################################
-DrApp*              g_app       { nullptr };                                        // App singleton            Declared in App.h       Assigned in App:App()
+DrApp*              g_app_pointer   { nullptr };                                    // App singleton            Declared in App.h       Assigned in App:App()
+DrApp*              App()           { return g_app_pointer; }                       // Returns App singleton 
 
 
 //####################################################################################
@@ -48,7 +49,7 @@ extern "C" void cleanupWrapper()                        { cleanupCallback(); }
 //####################################################################################
 DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
     // Assign global pointer to the current App
-    g_app = this;
+    g_app_pointer = this;
 
     // Set locals
     m_app_name = title;

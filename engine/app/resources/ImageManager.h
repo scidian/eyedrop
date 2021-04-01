@@ -64,8 +64,8 @@ struct DrAtlas {
     int                             key                     { KEY_NONE };           // Image Manager unique indentifier
     std::shared_ptr<DrBitmap>       bitmap                  { nullptr };            // Atlas in system memory
     int                             gpu                     { INVALID_IMAGE };      // Atlas in gpu memory
-    std::shared_ptr<stbrp_context>          rect_pack       { nullptr };            // Stb Rect Pack Context
-    std::vector<std::shared_ptr<DrImage>>   packed_images   { };                    // Images packed onto this atlas
+    std::shared_ptr<stbrp_context>  rect_pack               { nullptr };            // Stb Rect Pack Context
+    std::vector<int>                packed_image_keys       { };                    // Images packed onto this atlas
 };
 
 //####################################################################################
@@ -85,7 +85,7 @@ private:
     std::vector<std::shared_ptr<DrAtlas>>       m_atlases;                          // Collection of Atlases
 
     // Image Tracking
-    std::vector<std::shared_ptr<DrImage>>       m_loaded_images;                    // Keeps list of loaded images
+    std::map<int, std::shared_ptr<DrImage>>     m_images;                           // Keeps list of loaded images, stored by DrImage key
 
     // Fetching Variables
     uint8_t                         m_load_image_buffer[MAX_FILE_SIZE];             // Buffer to use to load images
