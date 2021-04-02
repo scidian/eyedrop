@@ -62,6 +62,12 @@ public:
     void*               imguiID() { return ((void*)(uintptr_t)m_gpu_id); }          // Returns ImGui compatible texture ID
     void                setGpuID(uint32_t id) { m_gpu_id = id; }
 
+    // Texture Coords
+    void                setUv0(float x, float y) { m_uv0 = DrVec2(x, y); }
+    void                setUv1(float x, float y) { m_uv1 = DrVec2(x, y); }
+    const DrVec2&       uv0() { return m_uv0; }
+    const DrVec2&       uv1() { return m_uv1; }
+
     // Image Helper Functions
     void                outlinePoints(float lod);
     bool                outlineCanceled()   { return m_outline_canceled; }

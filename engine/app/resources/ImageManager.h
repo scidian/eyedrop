@@ -12,8 +12,8 @@
 // Include
 #include <deque>
 #include <functional>
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include "engine/data/Keys.h"
 
@@ -24,7 +24,7 @@ class DrImage;
 
 // 3rd Party Forward Declarations
 struct sg_image_desc;
-struct stbrp_context;
+struct stbrp_rect;
 
 // Type Def / Using
 using ImageFunction = std::function<void(std::shared_ptr<DrImage>&)>;
@@ -79,11 +79,11 @@ public:
 private:
     // #################### VARIABLES ####################
     // Atlas Variables
-    std::vector<std::shared_ptr<DrAtlas>>       m_atlas_multi;                      // Atlases (gpu textures) that hold multiple images
-    std::vector<std::shared_ptr<DrAtlas>>       m_atlas_single;                     // Atlases (gpu textures) that hold a singular image
+    std::unordered_map<int, std::shared_ptr<DrAtlas>>   m_atlas_multi;              // Atlases (gpu textures) that hold multiple images
+    std::unordered_map<int, std::shared_ptr<DrAtlas>>   m_atlas_single;             // Atlases (gpu textures) that hold a singular image
 
     // Image Tracking
-    std::map<int, std::shared_ptr<DrImage>>     m_images;                           // Keeps list of loaded images, stored by DrImage key
+    std::unordered_map<int, std::shared_ptr<DrImage>>   m_images;                   // Keeps list of loaded images, stored by DrImage key
 
     // Fetching Variables
     uint8_t                         m_load_image_buffer[MAX_FILE_SIZE];             // Buffer to use to load images
@@ -94,6 +94,7 @@ public:
     // #################### FUNCTIONS ####################
     // Static Helpers
     static void initializeSgImageDesc(const int& width, const int& height, sg_image_desc& image_desc);
+    static void setStbRect(stbrp_rect& rect, std::shared_ptr<DrImage>& image);
 
     // Atlas Stuff
     std::shared_ptr<DrAtlas>&   addAtlas(Atlas_Type atlas_type, int atlas_size);

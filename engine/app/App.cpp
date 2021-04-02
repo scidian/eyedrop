@@ -204,7 +204,7 @@ void DrApp::init(void) {
     //####################################################################################
     //##    App Singletons
     //####################################################################################
-    m_image_manager = new DrImageManager(KEY_START);                                    // Image Manager: Helps with image loading / fetching, atlas creation
+    m_image_manager = new DrImageManager();                                             // Image Manager: Helps with image loading / fetching, atlas creation
     m_context = new DrRenderContext(m_bg_color);                                        // Render Context: Handles initial pipeline / bindings
     
 

@@ -197,10 +197,10 @@ void DrEditor::onUpdateScene() {
         fs_params.u_wireframe = (m_mesh->wireframe) ? 1.0f : 0.0f;
 
     // Check if user requested new model quality, if so recalculate
-    if ((m_mesh_quality != m_before_keys) && (m_image != nullptr)) {
-        calculateMesh(true);
-        m_before_keys = m_mesh_quality;
-    }
+//    if ((m_mesh_quality != m_before_keys) && (m_image != nullptr)) {
+//        calculateMesh(true);
+//        m_before_keys = m_mesh_quality;
+//    }
 
     sg_apply_pipeline(renderContext()->pipeline);
     sg_apply_bindings(&renderContext()->bindings);
