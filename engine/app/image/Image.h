@@ -33,7 +33,7 @@ private:
     std::string                 m_simple_name           { "" };                     // Simple name, i.e. "pretty tree 1"
     DrBitmap                    m_bitmap;                                           // Stored image as Bitmap
         
-    // Gpu Info
+    // Gpu Info (matched to DrAtlas)
     uint32_t                    m_gpu_id                { INVALID_IMAGE };          // Gpu texture ID if image is also stored on gpu
     DrVec2                      m_uv0                   { 0, 0 };                   // Top left corner of image in gpu texture
     DrVec2                      m_uv1                   { 1, 1 };                   // Bottom right corner of image in gpu texture

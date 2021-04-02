@@ -84,7 +84,7 @@ std::shared_ptr<DrAtlas>& DrImageManager::addAtlas(Atlas_Type atlas_type, int at
 
     // No rect pack for single images
     if (atlas_type == ATLAS_TYPE_NONE) {   
-        atlas->rect_pack =  nullptr;
+        atlas->rect_pack = nullptr;
         atlas->nodes.resize(0);
     
     // Initialize rect pack memory for multi image atlases
@@ -176,8 +176,10 @@ bool DrImageManager::addImageToAtlas(ImageData& image_data, std::shared_ptr<DrAt
         DrPoint dest_point = DrPoint(rects[i].x, rects[i].y);
         DrBitmap::Blit(m_images[rects[i].id]->bitmap(), source_rect, *(atlas->bitmap.get()), dest_point);
 
-        // Update uv texture coordinates
+        // Update image gpu texture id to match Atlas
         m_images[rects[i].id]->setGpuID(atlas->gpu);
+
+        // Update uv texture coordinates
         float x0 = static_cast<float>(rects[i].x) / static_cast<float>(atlas->bitmap->width);
         float y0 = static_cast<float>(rects[i].y) / static_cast<float>(atlas->bitmap->height);
         m_images[rects[i].id]->setUv0(x0, y0);
