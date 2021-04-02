@@ -7,6 +7,7 @@
 //
 //
 #include "3rd_party/stb/stb_rect_pack.h"
+#include "engine/app/core/Math.h"
 #include "engine/app/geometry/Point.h"
 #include "engine/app/geometry/Rect.h"
 #include "engine/app/image/Image.h"
@@ -19,6 +20,21 @@
 //##    Constants
 //####################################################################################
 #define NODE_COUNT  (MAX_TEXTURE_SIZE * 2)
+
+
+//####################################################################################
+//##    Sokol Helper
+//####################################################################################
+// Sokol image description initiliazer
+void DrImageManager::initializeSgImageDesc(const int& width, const int& height, sg_image_desc& image_desc) {
+    image_desc.width =        width;
+    image_desc.height =       height;
+    image_desc.pixel_format = SG_PIXELFORMAT_RGBA8;
+    image_desc.wrap_u =       SG_WRAP_CLAMP_TO_EDGE;        // also available: SG_WRAP_MIRRORED_REPEAT
+    image_desc.wrap_v =       SG_WRAP_CLAMP_TO_EDGE;        // also available: SG_WRAP_MIRRORED_REPEAT
+    image_desc.min_filter =   SG_FILTER_LINEAR;
+    image_desc.mag_filter =   SG_FILTER_LINEAR;
+}
 
 
 //####################################################################################
@@ -38,51 +54,38 @@ struct DrAtlas {
 //####################################################################################
 //##    Constructor / Destructor
 //####################################################################################
-DrImageManager::DrImageManager(int key_start) : DrKeys(key_start) {
-    addAtlas(ATLAS_TYPE_ENGINE);
-    addAtlas(ATLAS_TYPE_PROJECT);
-}
-
-
-//####################################################################################
-//##    Sokol Helper
-//####################################################################################
-void DrImageManager::initializeSgImageDesc(const int& width, const int& height, sg_image_desc& image_desc) {
-    image_desc.width =        width;
-    image_desc.height =       height;
-    image_desc.pixel_format = SG_PIXELFORMAT_RGBA8;
-    image_desc.wrap_u =       SG_WRAP_CLAMP_TO_EDGE;        // also available: SG_WRAP_MIRRORED_REPEAT
-    image_desc.wrap_v =       SG_WRAP_CLAMP_TO_EDGE;        // also available: SG_WRAP_MIRRORED_REPEAT
-    image_desc.min_filter =   SG_FILTER_LINEAR;
-    image_desc.mag_filter =   SG_FILTER_LINEAR;
+DrImageManager::DrImageManager(std::vector<int> key_starts) : DrKeys(IMAGE_KEY_TOTAL, key_starts) {
+    addAtlas(ATLAS_TYPE_ENGINE,     MAX_TEXTURE_SIZE);
+    addAtlas(ATLAS_TYPE_PROJECT,    MAX_TEXTURE_SIZE);
 }
 
 
 //####################################################################################
 //##    Atlas Creation
 //####################################################################################
-// Inits atlas on GPU, adds a into the Image Manager
-void DrImageManager::addAtlas(Atlas_Type atlas_type) {
-    // Check valid type
-    if (atlas_type == ATLAS_TYPE_NONE) return;
-    
-    // Alloc an image on the gpu
-    int gpu_handle = sg_alloc_image().id;
-
+// Inits Atlas on GPU, adds a into the Image Manager
+std::shared_ptr<DrAtlas>& DrImageManager::addAtlas(Atlas_Type atlas_type, int atlas_size) {
     // Create empty atlas
     std::shared_ptr<DrAtlas> atlas = std::make_shared<DrAtlas>();
-        atlas->type =       atlas_type;
-        atlas->key =        getNextKey();
-        atlas->gpu =        gpu_handle;
-        atlas->bitmap =     std::make_shared<DrBitmap>(MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, DROP_BITMAP_FORMAT_ARGB);
+        atlas->type = atlas_type;
+        atlas->key = getNextKey(IMAGE_KEY_ATLAS);
+        atlas->gpu = sg_alloc_image().id;                                           // Alloc an image on the gpu  
+        atlas->bitmap = std::make_shared<DrBitmap>(atlas_size, atlas_size, DROP_BITMAP_FORMAT_ARGB);
+    
+
+    // No rect pack for single images
+    if (atlas_type == ATLAS_TYPE_NONE) {   
+        atlas->rect_pack =  nullptr;
+        atlas->nodes.resize(0);
+    
+    // Rect pack memory for multi image atlases
+    } else {
         atlas->rect_pack =  std::make_shared<stbrp_context>();
         atlas->nodes.resize(NODE_COUNT);
-
-    // Add to atlases
-    m_atlases.push_back(atlas);
-
-    // Initialize Rect Pack
-    stbrp_init_target(atlas->rect_pack.get(), MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, &atlas->nodes[0], NODE_COUNT);
+        
+        // Initialize Rect Pack
+        stbrp_init_target(atlas->rect_pack.get(), atlas_size, atlas_size, &atlas->nodes[0], NODE_COUNT);
+    }
 
     // Update image on gpu with new empty bitmap data
     sg_image_desc image_desc { };
@@ -90,78 +93,97 @@ void DrImageManager::addAtlas(Atlas_Type atlas_type) {
         image_desc.data.subimage[0][0].ptr = &atlas->bitmap->data[0];
         image_desc.data.subimage[0][0].size = static_cast<size_t>(atlas->bitmap->width * atlas->bitmap->height * atlas->bitmap->channels);
     sg_init_image({static_cast<uint32_t>(atlas->gpu)}, &image_desc);
+
+    // Add to atlases
+    if (atlas_type == ATLAS_TYPE_NONE) {
+        m_atlas_single.push_back(atlas);
+        return m_atlas_single.back();
+    } else {
+        m_atlas_multi.push_back(atlas);
+        return m_atlas_multi.back();
+    }    
 }
 
 
 //####################################################################################
 //##    Atlas Packing
 //####################################################################################
+// Packs new Image onto an available Atlas
+void DrImageManager::findAtlasForImage(ImageData& image_data) {
+    // Loop through available atlases, attempt to pack
+    if (image_data.atlas_type != ATLAS_TYPE_NONE) {
+        for (auto atlas : m_atlas_multi) {
+            if (atlas->type != image_data.atlas_type) continue;                     // Wrong atlas type, skip
+            if (addImageToAtlas(image_data, atlas)) return;                         // Attempt to add to atlas
+        }
+    }
+
+    // If we're still here we need a new Atlas, Image didn't fit in current Atlases!!
+    int max_dimension = image_data.image->bitmap().maxDimension();
+    int atlas_size = (image_data.atlas_type == ATLAS_TYPE_NONE) ? RoundPowerOf2(max_dimension) : (MAX_TEXTURE_SIZE);
+    std::shared_ptr<DrAtlas> atlas = addAtlas(image_data.atlas_type, atlas_size);
+    addImageToAtlas(image_data, atlas);
+}
+
+//############################
+
 // Fills a Stb Rect
 void SetStbRect(stbrp_rect& rect, std::shared_ptr<DrImage>& image) {
     rect.id =   image->key();
     rect.w =    image->bitmap().width;
     rect.h =    image->bitmap().height;
-    rect.x =    0;      rect.y =    0;      rect.was_packed = 0;
+    rect.x =    0;      
+    rect.y =    0;      
+    rect.was_packed = 0;
 }
 
-// Packs new Image onto an available Atlas
-void DrImageManager::packImageToAtlas(ImageData& image_data) {
-    
-    // ***** Loop through available atlases, attempt to pack
-    for (auto atlas : m_atlases) {
-        // Wrong atlas type, skip
-        if (atlas->type != image_data.atlas_type) continue;
+// Attempts to put an Image on an Atlas, returns true if successful
+bool DrImageManager::addImageToAtlas(ImageData& image_data, std::shared_ptr<DrAtlas>& atlas) {
+    // ***** Test if new image fits
+    std::vector<stbrp_rect> new_image_rect(1);
+    SetStbRect(new_image_rect[0], image_data.image);
+    stbrp_pack_rects(atlas->rect_pack.get(), &new_image_rect[0], 1);
 
-        // Test if new image fits
-        std::vector<stbrp_rect> new_image_rect(1);
-        SetStbRect(new_image_rect[0], image_data.image);
-        stbrp_pack_rects(atlas->rect_pack.get(), &new_image_rect[0], 1);
+    //  Image didn't fit, return false
+    if (new_image_rect[0].was_packed == false) return false;
+        
+    // ***** Image fits, repack atlas nicely *****
 
-        // ***** Image fits, repack atlas nicely
-        if (new_image_rect[0].was_packed) {
-            // Add new image key
-            atlas->packed_image_keys.push_back(new_image_rect[0].id);
+    // Add new image key to list of packed images
+    atlas->packed_image_keys.push_back(new_image_rect[0].id);
 
-            // Fill rects with image data
-            size_t num_rects = atlas->packed_image_keys.size();
-            std::vector<stbrp_rect> rects(num_rects);
-            for (int i = 0; i < num_rects; ++i) {
-                SetStbRect(rects[i], m_images[atlas->packed_image_keys[i]]);
-            }
-
-            // Reset stb rect pack context, pack rects
-            stbrp_init_target(atlas->rect_pack.get(), MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, &atlas->nodes[0], NODE_COUNT);
-            stbrp_pack_rects(atlas->rect_pack.get(), &rects[0], num_rects);
-
-            // Copy image pixel data to atlas
-            atlas->bitmap->clearPixels();
-            for (int i = 0; i < atlas->packed_image_keys.size(); ++i) {
-                DrRect source_rect = m_images[rects[i].id]->bitmap().rect();
-                DrPoint dest_point = DrPoint(rects[i].x, rects[i].y);
-                DrBitmap::Blit(m_images[rects[i].id]->bitmap(), source_rect, *(atlas->bitmap.get()), dest_point);
-
-
-                // !!!!!!!!!!!! NEED TO UPDATE DrImage.uv0 AND DrImage.uv1 COORDINBATES HERE NOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-            }
-
-            // Update image on gpu with new bitmap data
-            sg_uninit_image({static_cast<uint32_t>(atlas->gpu)});
-            sg_image_desc image_desc { };
-                initializeSgImageDesc(atlas->bitmap->width, atlas->bitmap->height, image_desc);
-                image_desc.data.subimage[0][0].ptr = &atlas->bitmap->data[0];
-                image_desc.data.subimage[0][0].size = static_cast<size_t>(atlas->bitmap->width * atlas->bitmap->height * atlas->bitmap->channels);
-            sg_init_image({static_cast<uint32_t>(atlas->gpu)}, &image_desc);
-
-            return;
-        }
+    // Fill rects with image data
+    size_t num_rects = atlas->packed_image_keys.size();
+    std::vector<stbrp_rect> rects(num_rects);
+    for (int i = 0; i < num_rects; ++i) {
+        SetStbRect(rects[i], m_images[atlas->packed_image_keys[i]]);
     }
 
-    // ***** If we're still here we need a new Atlas, Image didn't fit in current Atlases!!
+    // Reset stb rect pack context, pack rects
+    stbrp_init_target(atlas->rect_pack.get(), MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, &atlas->nodes[0], NODE_COUNT);
+    stbrp_pack_rects(atlas->rect_pack.get(), &rects[0], num_rects);
 
-    // TODO: Create new atlas, add image
+    // Copy image pixel data to atlas
+    atlas->bitmap->clearPixels();
+    for (int i = 0; i < atlas->packed_image_keys.size(); ++i) {
+        DrRect source_rect = m_images[rects[i].id]->bitmap().rect();
+        DrPoint dest_point = DrPoint(rects[i].x, rects[i].y);
+        DrBitmap::Blit(m_images[rects[i].id]->bitmap(), source_rect, *(atlas->bitmap.get()), dest_point);
 
 
+        // !!!!!!!!!!!! NEED TO UPDATE DrImage.uv0 AND DrImage.uv1 COORDINATES HERE NOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    }
+
+    // Update image on gpu with new bitmap data
+    sg_uninit_image({static_cast<uint32_t>(atlas->gpu)});
+    sg_image_desc image_desc { };
+        initializeSgImageDesc(atlas->bitmap->width, atlas->bitmap->height, image_desc);
+        image_desc.data.subimage[0][0].ptr = &atlas->bitmap->data[0];
+        image_desc.data.subimage[0][0].size = static_cast<size_t>(atlas->bitmap->width * atlas->bitmap->height * atlas->bitmap->channels);
+    sg_init_image({static_cast<uint32_t>(atlas->gpu)}, &image_desc);
+
+    return true;
 }
 
 
@@ -231,7 +253,7 @@ void DrImageManager::createImage(DrBitmap& bmp) {
     if (bmp.isValid()) {
         // Image data
         ImageData& image_data = m_load_image_stack[0];
-        int new_image_key = getNextKey();
+        int new_image_key = getNextKey(IMAGE_KEY_IMAGE);
 
         // Load onto GPU
         sg_image_desc image_desc { };
@@ -254,7 +276,7 @@ void DrImageManager::createImage(DrBitmap& bmp) {
         }
     
         // Pack Image onto an Atlas
-        packImageToAtlas(image_data);
+        findAtlasForImage(image_data);
     }
 
     // Remove image of list to be fetched

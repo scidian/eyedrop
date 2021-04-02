@@ -22,7 +22,7 @@ class DrGame : public DrKeys
 {
 public:
     // Constructor / Destructor
-    DrGame(int key_start = KEY_START) : DrKeys(key_start) { }
+    DrGame(std::vector<int> key_starts = { }) : DrKeys(KEY_SINGLE_GENERATOR, key_starts) { }
     ~DrGame() { } 
 
 

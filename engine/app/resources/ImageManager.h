@@ -29,6 +29,13 @@ struct stbrp_context;
 // Type Def / Using
 using ImageFunction = std::function<void(std::shared_ptr<DrImage>&)>;
 
+// Constants
+enum Image_Keys {
+    IMAGE_KEY_ATLAS,
+    IMAGE_KEY_IMAGE,
+    IMAGE_KEY_TOTAL,
+};
+
 // Enums
 enum Atlas_Type {
     ATLAS_TYPE_NONE,                                                                // Store image on gpu by itself, not in atlas
@@ -66,13 +73,14 @@ class DrImageManager : public DrKeys
 {
 public:
     // Constructor / Destructor
-    DrImageManager(int key_start = KEY_START);
+    DrImageManager(std::vector<int> key_starts = { });
     ~DrImageManager() { }
 
 private:
     // #################### VARIABLES ####################
     // Atlas Variables
-    std::vector<std::shared_ptr<DrAtlas>>       m_atlases;                          // Collection of Atlases
+    std::vector<std::shared_ptr<DrAtlas>>       m_atlas_multi;                      // Atlases (gpu textures) that hold multiple images
+    std::vector<std::shared_ptr<DrAtlas>>       m_atlas_single;                     // Atlases (gpu textures) that hold a singular image
 
     // Image Tracking
     std::map<int, std::shared_ptr<DrImage>>     m_images;                           // Keeps list of loaded images, stored by DrImage key
@@ -88,8 +96,9 @@ public:
     static void initializeSgImageDesc(const int& width, const int& height, sg_image_desc& image_desc);
 
     // Atlas Stuff
-    void        addAtlas(Atlas_Type atlas_type);
-    void        packImageToAtlas(ImageData& image_data);
+    std::shared_ptr<DrAtlas>&   addAtlas(Atlas_Type atlas_type, int atlas_size);
+    bool                        addImageToAtlas(ImageData& image_data, std::shared_ptr<DrAtlas>& atlas);
+    void                        findAtlasForImage(ImageData& image_data);
 
     // Image Loading
     void        addImageToFetch(ImageData image_data);

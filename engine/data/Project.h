@@ -52,7 +52,7 @@ class DrProject : public DrKeys
 {
 public:
     // Constructor / Destructor
-    DrProject(int key_start = KEY_START) : DrKeys(key_start) { }
+    DrProject(std::vector<int> key_starts = { }) : DrKeys(KEY_SINGLE_GENERATOR, key_starts) { }
     ~DrProject() { }
 
 

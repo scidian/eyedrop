@@ -9,7 +9,12 @@
 #ifndef DR_KEY_GENERATOR
 #define DR_KEY_GENERATOR
 
+// Includes
 #include "Constants.h"
+
+// Constants
+#define     KEY_SINGLE_GENERATOR    1
+#define     KEY_INDEX_DEFAULT       0
 
 
 //####################################################################################
@@ -20,21 +25,29 @@ class DrKeys
 {
 public:
     // Constructor / Destructor
-    DrKeys(int key_start = KEY_START) : m_key_generator(key_start) { };
+    DrKeys(int number_of_generators = KEY_SINGLE_GENERATOR, std::vector<int> key_starts = { }) { 
+        for (int i = 0; i < number_of_generators; i++) {
+            if (i < key_starts.size()) {
+                m_key_generators[i] = key_starts[i];
+            } else {
+                m_key_generators[i] = KEY_START;
+            }
+        }
+    };
     ~DrKeys() { }
 
     // #################### VARIABLES ####################
 private:
     // Key Variables
-    int                 m_key_generator             { KEY_START };                  // Variable to hand out unique id key's
+    std::map<int, int>  m_key_generators;                                           // Map of key generators to hand out unique keys
         
 
     // #################### INTERNAL FUNCTIONS ####################
 public:
     // Key Generator
-    int                 checkCurrentKey()                               { return m_key_generator; }
-    int                 getNextKey()                                    { return m_key_generator++; }
-    void                setGenerator(int current_key)                   { m_key_generator = current_key; }
+    int                 checkCurrentKey(int key_index = KEY_INDEX_DEFAULT)          { return m_key_generators[key_index]; }
+    int                 getNextKey(int key_index = KEY_INDEX_DEFAULT)               { return m_key_generators[key_index]++; }
+    void                setGenerator(int key, int key_index = KEY_INDEX_DEFAULT)    { m_key_generators[key_index] = key; }
 
 };
 

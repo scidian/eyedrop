@@ -97,7 +97,7 @@ template<class T> T     RoundToMultiple(T value, double m) {
     return static_cast<T>(rounded);
 }
 
-// Round to next power of 2 (see bit-twiddling-hacks)
+// Round to next power of 2
 template<class T> int   RoundPowerOf2(T number) {
     int pow2 = 1;
     int new_number = 2;

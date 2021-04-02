@@ -21,7 +21,7 @@
 #define KEY_START                   1                               // Starting value for key generators
 
 #define MAX_FILE_SIZE       512 * 512                               // Used for filebuffers with sokol_fetch
-#define MAX_TEXTURE_SIZE         2048                               // Max texture size for gpu images (atlases, etc), 2048 should support 99.9% of devices from year 2010 on
+#define MAX_TEXTURE_SIZE         512                               // Max texture size for gpu images (atlases, etc), 2048 should support 99.9% of devices from year 2010 on
 #define INVALID_IMAGE               0                               // Used to identify images that have been initialized, but not loaded yet
 
 #define MAX_ENTITIES            10000                               // Total of number of entities allowed for now
