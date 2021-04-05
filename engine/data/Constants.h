@@ -20,7 +20,7 @@
 #define KEY_NONE                   -1                               // Value that represents no item selected
 #define KEY_START                   1                               // Starting value for key generators
 
-#define MAX_FILE_SIZE       512 * 512                               // Used for filebuffers with sokol_fetch
+#define MAX_FILE_SIZE     1024 * 1024                               // Used for filebuffers with sokol_fetch
 #define MAX_IMAGE_SIZE           2048                               // Max image size for gpu images, 2048 should support 99.9% of devices from year 2010 on
 #define MAX_ATLAS_SIZE          16384                               // Stop stb rect pack from working too hard (2048, 4096, 8192, 16384, 32768, etc, also depends on hardware)
 #define INVALID_IMAGE               0                               // Used to identify images that have been initialized, but not loaded yet

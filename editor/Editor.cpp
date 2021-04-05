@@ -53,9 +53,9 @@ DrEditor::~DrEditor() { }
 //####################################################################################
 // Sets shader texture to passed in image texture
 void setMeshTexture(std::shared_ptr<DrImage>& image) {
-    App()->renderContext()->bindings.fs_images[SLOT_tex].id = image->gpuID();
     DrEditor* editor = dynamic_cast<DrEditor*>(App());
     editor->calculateMesh(true);
+    App()->renderContext()->bindings.fs_images[SLOT_tex].id = image->gpuID();
 }
 
 
@@ -367,10 +367,11 @@ void DrEditor::onEvent(const sapp_event* event) {
 
     } else if (event->type == SAPP_EVENTTYPE_FILES_DROPPED) {
         // Load image, apply to mesh and shader afterwards
-        imageManager()->addImageToFetch({m_image, sapp_get_dropped_file_path(0), ATLAS_TYPE_3D_GAME, setMeshTexture, true, true});
+        bool perform_outline = false;
+        bool was_dropped = true;
+        imageManager()->addImageToFetch({m_image, sapp_get_dropped_file_path(0), ATLAS_TYPE_3D_GAME, setMeshTexture, perform_outline, was_dropped});
     }
 }
-
 
 
 //####################################################################################
@@ -396,9 +397,9 @@ void DrEditor::calculateMesh(bool reset_position) {
     }
 
     // ***** Initialize Mesh
-    m_image->outlinePoints(level_of_detail);
+    if (m_image->outlineRequested()) m_image->outlinePoints(level_of_detail);
     m_mesh = std::make_shared<DrMesh>();
-    m_mesh->image_size = Max(m_image->bitmap().width, m_image->bitmap().height);      
+    m_mesh->image_size = m_image->bitmap().maxDimension();
     m_mesh->wireframe = m_wireframe;
 
     //m_mesh->initializeExtrudedImage(m_image.get(), m_mesh_quality);

@@ -244,8 +244,9 @@ void DrBitmap::loadFromMemory(const unsigned char* from_data, const int& number_
         }
 
         // Copy Image
-        data.resize(width * height * channels);                                                 // Resize data vector
-        memcpy(&data[0], ptr, data.size());                                                     // Copy data
+        int data_size = width * height * channels;
+        data.resize(data_size);                                                                 // Resize data vector
+        memcpy(&data[0], ptr, data_size);                                                       // Copy data
         stbi_image_free(ptr);                                                                   // Free the loaded pixels
     }
 }

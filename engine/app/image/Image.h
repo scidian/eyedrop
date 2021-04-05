@@ -41,6 +41,7 @@ private:
 public:
     vtr<vtr<DrPointF>>          m_poly_list;                                        // Stores list of image outline points (polygons)
     vtr<vtr<vtr<DrPointF>>>     m_hole_list;                                        // Stores list of hole  outline points (list of polygons for each polygon above)
+    bool                        m_outline_requested     { false };                  // Was this image asked to be outlined when it was created?
     bool                        m_outline_canceled      { false };                  // True when Image Outline has been canceled, when true extrudes in 3D as simple square
     bool                        m_outline_processed     { false };                  // Turns true when autoOutlinePoints() has completed successfully
 
@@ -70,6 +71,7 @@ public:
 
     // Image Helper Functions
     void                outlinePoints(float lod);
+    bool                outlineRequested()  { return m_outline_requested; }
     bool                outlineCanceled()   { return m_outline_canceled; }
     bool                outlineProcessed()  { return m_outline_processed; }
     void                setSimpleBox();   

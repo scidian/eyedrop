@@ -22,7 +22,6 @@
 // Local Constants
 const int c_neighbors =             5;                                              // Number of neighbors to smooth points with
 
-
 //####################################################################################
 //##    Constructors
 //####################################################################################
@@ -38,8 +37,7 @@ DrImage::DrImage(std::string image_name, DrBitmap& bitmap, bool outline, float l
     if (outline) {
         outlinePoints(lod);
     } else {
-        m_poly_list.push_back(bitmap.polygon().points());
-        m_hole_list.push_back({});
+        setSimpleBox();
     }
 }
 
@@ -178,7 +176,6 @@ void DrImage::outlinePoints(float lod) {
     // ***** Mark this DrImage as having traced the image outline
     m_outline_canceled = false;
     m_outline_processed = true;
-
 
 }   // End outlinePoints()
 
