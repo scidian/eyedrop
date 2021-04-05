@@ -98,8 +98,8 @@ bool DrFilter::compareBitmaps(const DrBitmap& bitmap1, const DrBitmap& bitmap2) 
 //####################################################################################
 //##    Returns black / white image (binary)
 //##        alpha_tolerance is from 0.0 to 1.0
-//##        NORMAL  (inverse == false): transparent areas are black, objects are white
-//##        INVERSE (inverse == true) : transparent areas are white, objects are black
+//##        NORMAL  (inverse == false) - transparent areas are black, objects are white
+//##        INVERSE (inverse == true)  - transparent areas are white, objects are black
 //####################################################################################
 DrBitmap DrFilter::blackAndWhiteFromAlpha(const DrBitmap& bitmap, double alpha_tolerance, bool inverse, Bitmap_Format desired_format) {
     DrColor color1 = DROP_COLOR_TRANSPARENT;

@@ -33,7 +33,9 @@ DrBitmap::~DrBitmap() {
     data.clear(); 
 }
 
-DrBitmap::DrBitmap(const DrBitmap& bitmap, Bitmap_Format desired_format) : DrBitmap(bitmap.width, bitmap.height, desired_format) {
+DrBitmap::DrBitmap(const DrBitmap& bitmap, Bitmap_Format desired_format) : 
+    DrBitmap(bitmap.width, bitmap.height, desired_format) 
+{
     if (bitmap.format == format && data.size() > 0) {
         channels =  bitmap.channels;
         width =     bitmap.width;
@@ -50,7 +52,9 @@ DrBitmap::DrBitmap(const DrBitmap& bitmap, Bitmap_Format desired_format) : DrBit
 }
 
 // Create empty bitmap
-DrBitmap::DrBitmap(int width_, int height_, Bitmap_Format desired_format) : DrBitmap(desired_format) {
+DrBitmap::DrBitmap(int width_, int height_, Bitmap_Format desired_format) : 
+    DrBitmap(desired_format) 
+{
     width =     width_;
     height =    height_;
     data.resize(width * height * channels);

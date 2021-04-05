@@ -48,16 +48,19 @@ enum Orientation {
 //##    DrProject
 //##        Class to hold data for one Project
 //############################
-class DrProject : public DrKeys
+class DrProject 
 {
 public:
     // Constructor / Destructor
-    DrProject(std::vector<int> key_starts = { }) : DrKeys(KEY_SINGLE_GENERATOR, key_starts) { }
+    DrProject(int project_key_start = KEY_START) : m_project_keys(project_key_start) { }
     ~DrProject() { }
 
 
     // #################### VARIABLES ####################
 private:    
+    // Project Variables
+    DrKeys          m_project_keys          { };                                    // Key generator for Project Assets
+
     // Project Options
     std::string     m_name                  { "" };                                 // Name of Current Project
     std::string     m_file_path_name        { "" };                                 // Full Path and File Name of Project, will save to this unless choose Save As

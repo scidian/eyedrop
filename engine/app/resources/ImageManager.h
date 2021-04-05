@@ -29,13 +29,6 @@ struct stbrp_rect;
 // Type Def / Using
 using ImageFunction = std::function<void(std::shared_ptr<DrImage>&)>;
 
-// Constants
-enum Image_Keys {
-    IMAGE_KEY_ATLAS,
-    IMAGE_KEY_IMAGE,
-    IMAGE_KEY_TOTAL,
-};
-
 // Enums
 enum Atlas_Type {
     ATLAS_TYPE_NONE,                                                                // Store image on gpu by itself, not in atlas
@@ -69,15 +62,19 @@ struct ImageData {
 //##    DrImageManager
 //##        Loads images for use in App, handles atlases of loaded images
 //############################
-class DrImageManager : public DrKeys
+class DrImageManager
 {
 public:
     // Constructor / Destructor
-    DrImageManager(std::vector<int> key_starts = { });
+    DrImageManager(int atlas_key_start = KEY_START, int image_key_start = KEY_START);
     ~DrImageManager() { }
 
 private:
     // #################### VARIABLES ####################
+    // Key Generators
+    DrKeys          m_atlas_keys             { };                                   // Key generator for Game Assets
+    DrKeys          m_image_keys             { };                                   // Key generator for Game Assets
+
     // Atlas Variables
     std::unordered_map<int, std::shared_ptr<DrAtlas>>   m_atlas_multi;              // Atlases (gpu textures) that hold multiple images
     std::unordered_map<int, std::shared_ptr<DrAtlas>>   m_atlas_single;             // Atlases (gpu textures) that hold a singular image
@@ -106,6 +103,9 @@ public:
     void        createImage(DrBitmap& bmp);
     void        fetchNextImage();
 
+    // Key Gen
+    DrKeys&     atlasKeys()     { return m_atlas_keys; }
+    DrKeys&     imageKeys()     { return m_image_keys; }
 
 };
 

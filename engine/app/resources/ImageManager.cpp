@@ -17,12 +17,6 @@
 
 
 //####################################################################################
-//##    Constants
-//####################################################################################
-#define NODE_COUNT  (MAX_TEXTURE_SIZE * 2)
-
-
-//####################################################################################
 //##    Atlas Struct
 //####################################################################################
 struct DrAtlas {
@@ -39,7 +33,10 @@ struct DrAtlas {
 //####################################################################################
 //##    Constructor / Destructor
 //####################################################################################
-DrImageManager::DrImageManager(std::vector<int> key_starts) : DrKeys(IMAGE_KEY_TOTAL, key_starts) {
+DrImageManager::DrImageManager(int atlas_key_start, int image_key_start) : 
+    m_atlas_keys(atlas_key_start),
+    m_image_keys(image_key_start)
+{
     addAtlas(ATLAS_TYPE_ENGINE,     MAX_TEXTURE_SIZE);
     addAtlas(ATLAS_TYPE_PROJECT,    MAX_TEXTURE_SIZE);
 }
@@ -77,7 +74,7 @@ std::shared_ptr<DrAtlas>& DrImageManager::addAtlas(Atlas_Type atlas_type, int at
     // Create empty atlas
     std::shared_ptr<DrAtlas> atlas = std::make_shared<DrAtlas>();
         atlas->type = atlas_type;
-        atlas->key = getNextKey(IMAGE_KEY_ATLAS);
+        atlas->key = atlasKeys().getNextKey();
         atlas->gpu = sg_alloc_image().id;                                           // Alloc an image on the gpu  
         atlas->bitmap = std::make_shared<DrBitmap>(atlas_size, atlas_size, DROP_BITMAP_FORMAT_ARGB);
     
@@ -90,8 +87,8 @@ std::shared_ptr<DrAtlas>& DrImageManager::addAtlas(Atlas_Type atlas_type, int at
     // Initialize rect pack memory for multi image atlases
     } else {
         atlas->rect_pack =  std::make_shared<stbrp_context>();
-        atlas->nodes.resize(NODE_COUNT);
-        stbrp_init_target(atlas->rect_pack.get(), atlas_size, atlas_size, &atlas->nodes[0], NODE_COUNT);
+        atlas->nodes.resize((atlas_size * 2));
+        stbrp_init_target(atlas->rect_pack.get(), atlas_size, atlas_size, &atlas->nodes[0], (atlas_size * 2));
     }
 
     // Update image on gpu with new empty bitmap data
@@ -165,7 +162,7 @@ bool DrImageManager::addImageToAtlas(ImageData& image_data, std::shared_ptr<DrAt
 
     // If multi image atlas, reset stb rect pack context, pack rects
     if (image_data.atlas_type != ATLAS_TYPE_NONE) {
-        stbrp_init_target(atlas->rect_pack.get(), MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, &atlas->nodes[0], NODE_COUNT);
+        stbrp_init_target(atlas->rect_pack.get(), MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, &atlas->nodes[0], (MAX_TEXTURE_SIZE * 2));
         stbrp_pack_rects(atlas->rect_pack.get(), &rects[0], num_rects);
     }
 
@@ -267,7 +264,7 @@ void DrImageManager::createImage(DrBitmap& bmp) {
     if (bmp.isValid()) {
         // Image data
         ImageData& image_data = m_load_image_stack[0];
-        int new_image_key = getNextKey(IMAGE_KEY_IMAGE);
+        int new_image_key = imageKeys().getNextKey();
 
         // Create DrImage
         image_data.image = std::make_shared<DrImage>(image_data.image_file, bmp, image_data.outline);
