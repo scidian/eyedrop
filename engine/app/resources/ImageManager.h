@@ -31,9 +31,12 @@ using ImageFunction = std::function<void(std::shared_ptr<DrImage>&)>;
 
 // Enums
 enum Atlas_Type {
-    ATLAS_TYPE_NONE,                                                                // Store image on gpu by itself, not in atlas
-    ATLAS_TYPE_ENGINE,                                                              // Store image in atlas for use with Engine (away from Project / Game)
-    ATLAS_TYPE_PROJECT,                                                             // Store image in atlas for use with Project / Game
+    ATLAS_TYPE_SINGLE,                                                              // Store image on gpu by itself, not in atlas with other images
+    ATLAS_TYPE_ENGINE,                                                              // Store image in atlas for use with Engine (internal usage away from Project)
+    ATLAS_TYPE_2D_GAME,                                                             // Store image in atlas for use with Project / Game, in 2D Worlds
+    ATLAS_TYPE_3D_GAME,                                                             // Store image in atlas for use with Project / Game, in 3D Worlds
+    ATLAS_TYPE_UI,                                                                  // Store image in atlas for use with Project / Game, for GUI usage
+    ATLAS_TYPE_BACKGROUND,                                                          // Store image in atlas for use with Project / Game, for background tiling
 };
 
 //####################################################################################

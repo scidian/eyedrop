@@ -35,8 +35,8 @@ private:
         
     // Gpu Info (matched to DrAtlas)
     uint32_t                    m_gpu_id                { INVALID_IMAGE };          // Gpu texture ID if image is also stored on gpu
-    DrVec2                      m_uv0                   { 0, 0 };                   // Top left corner of image in gpu texture
-    DrVec2                      m_uv1                   { 1, 1 };                   // Bottom right corner of image in gpu texture
+    DrVec2                      m_uv0                   { 0, 0 };                   // Top left corner of image in atlas (in gpu texture coordinates, 0-1)
+    DrVec2                      m_uv1                   { 1, 1 };                   // Bottom right corner of image in atlas (in gpu texture coordinates, 0-1)
 
 public:
     vtr<vtr<DrPointF>>          m_poly_list;                                        // Stores list of image outline points (polygons)

@@ -36,10 +36,7 @@ struct DrAtlas {
 DrImageManager::DrImageManager(int atlas_key_start, int image_key_start) : 
     m_atlas_keys(atlas_key_start),
     m_image_keys(image_key_start)
-{
-    addAtlas(ATLAS_TYPE_ENGINE,     MAX_TEXTURE_SIZE);
-    addAtlas(ATLAS_TYPE_PROJECT,    MAX_TEXTURE_SIZE);
-}
+{ }
 
 
 //####################################################################################
@@ -78,15 +75,14 @@ std::shared_ptr<DrAtlas>& DrImageManager::addAtlas(Atlas_Type atlas_type, int at
         atlas->gpu = sg_alloc_image().id;                                           // Alloc an image on the gpu  
         atlas->bitmap = std::make_shared<DrBitmap>(atlas_size, atlas_size, DROP_BITMAP_FORMAT_ARGB);
     
-
     // No rect pack for single images
-    if (atlas_type == ATLAS_TYPE_NONE) {   
+    if (atlas_type == ATLAS_TYPE_SINGLE) {   
         atlas->rect_pack = nullptr;
         atlas->nodes.resize(0);
     
     // Initialize rect pack memory for multi image atlases
     } else {
-        atlas->rect_pack =  std::make_shared<stbrp_context>();
+        atlas->rect_pack = std::make_shared<stbrp_context>();
         atlas->nodes.resize((atlas_size * 2));
         stbrp_init_target(atlas->rect_pack.get(), atlas_size, atlas_size, &atlas->nodes[0], (atlas_size * 2));
     }
@@ -99,7 +95,7 @@ std::shared_ptr<DrAtlas>& DrImageManager::addAtlas(Atlas_Type atlas_type, int at
     sg_init_image({static_cast<uint32_t>(atlas->gpu)}, &image_desc);
 
     // Add to atlases
-    if (atlas_type == ATLAS_TYPE_NONE) {
+    if (atlas_type == ATLAS_TYPE_SINGLE) {
         m_atlas_single[atlas->key] = atlas;
         return m_atlas_single[atlas->key];
     } else {
@@ -115,8 +111,7 @@ std::shared_ptr<DrAtlas>& DrImageManager::addAtlas(Atlas_Type atlas_type, int at
 // Packs new Image onto an available Atlas
 void DrImageManager::findAtlasForImage(ImageData& image_data) {
     // Single Image
-    if (image_data.atlas_type == ATLAS_TYPE_NONE) {
-    // If we're still here we need a new Atlas, Image didn't fit in current Atlases!!
+    if (image_data.atlas_type == ATLAS_TYPE_SINGLE) {
         int atlas_size = RoundPowerOf2(image_data.image->bitmap().maxDimension());
         std::shared_ptr<DrAtlas> atlas = addAtlas(image_data.atlas_type, atlas_size);
         addImageToAtlas(image_data, atlas);
@@ -126,11 +121,14 @@ void DrImageManager::findAtlasForImage(ImageData& image_data) {
         // Loop through available atlases, attempt to pack
         for (auto& pair : m_atlas_multi) {
             std::shared_ptr<DrAtlas>& atlas = pair.second;
-            if (atlas->type != image_data.atlas_type) continue;                     // Wrong atlas type, skip
-            if (addImageToAtlas(image_data, atlas)) return;                         // Attempt to add to atlas
+            // Make sure atlas type matches
+            if (atlas->type == image_data.atlas_type) {
+                // Attempt to add to atlas, if successful we're done
+                if (addImageToAtlas(image_data, atlas)) return;                         
+            }
         }
 
-        // Didn't find atlas that coule handle image, make new one
+        // Didn't find atlas that could fit image, make new one
         std::shared_ptr<DrAtlas> atlas = addAtlas(image_data.atlas_type, MAX_TEXTURE_SIZE);
         addImageToAtlas(image_data, atlas);
     }
@@ -142,8 +140,8 @@ void DrImageManager::findAtlasForImage(ImageData& image_data) {
 //####################################################################################
 // Attempts to put an Image on an Atlas, returns true if successful
 bool DrImageManager::addImageToAtlas(ImageData& image_data, std::shared_ptr<DrAtlas>& atlas) {
-    // Im multi image atlas, test if new image fits
-    if (image_data.atlas_type != ATLAS_TYPE_NONE) {
+    // If multi image atlas, test if new image fits
+    if (image_data.atlas_type != ATLAS_TYPE_SINGLE) {
         std::vector<stbrp_rect> new_image_rect(1);
         setStbRect(new_image_rect[0], image_data.image);
         stbrp_pack_rects(atlas->rect_pack.get(), &new_image_rect[0], 1);
@@ -161,7 +159,7 @@ bool DrImageManager::addImageToAtlas(ImageData& image_data, std::shared_ptr<DrAt
     }
 
     // If multi image atlas, reset stb rect pack context, pack rects
-    if (image_data.atlas_type != ATLAS_TYPE_NONE) {
+    if (image_data.atlas_type != ATLAS_TYPE_SINGLE) {
         stbrp_init_target(atlas->rect_pack.get(), MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, &atlas->nodes[0], (MAX_TEXTURE_SIZE * 2));
         stbrp_pack_rects(atlas->rect_pack.get(), &rects[0], num_rects);
     }

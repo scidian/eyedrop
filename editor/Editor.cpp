@@ -164,8 +164,8 @@ void DrEditor::onCreate() {
 
 
     // Initiate Blob Fetch
-    imageManager()->addImageToFetch({m_image, appDirectory() + "assets/images/blob.png", ATLAS_TYPE_PROJECT, setMeshTexture, true});
-    //imageManager()->addImageToFetch({m_image, "http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true", ATLAS_TYPE_PROJECT, setMeshTexture, true});
+    imageManager()->addImageToFetch({m_image, appDirectory() + "assets/images/blob.png", ATLAS_TYPE_3D_GAME, setMeshTexture, true});
+    //imageManager()->addImageToFetch({m_image, "http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true", ATLAS_TYPE_3D_GAME, setMeshTexture, true});
 }
 
 
@@ -367,7 +367,7 @@ void DrEditor::onEvent(const sapp_event* event) {
 
     } else if (event->type == SAPP_EVENTTYPE_FILES_DROPPED) {
         // Load image, apply to mesh and shader afterwards
-        imageManager()->addImageToFetch({m_image, sapp_get_dropped_file_path(0), ATLAS_TYPE_PROJECT, setMeshTexture, true, true});
+        imageManager()->addImageToFetch({m_image, sapp_get_dropped_file_path(0), ATLAS_TYPE_3D_GAME, setMeshTexture, true, true});
     }
 }
 
