@@ -36,7 +36,7 @@
 #if defined (ENABLE_IMGUI)
     #include "3rd_party/imgui/imgui.h"
     #include "3rd_party/imgui/imgui_internal.h"
-    #include "3rd_party/icons_font_awesome5.h"
+    //#include "3rd_party/icons_font_awesome5.h"                                    // If including font icons
     #include "3rd_party/sokol/sokol_imgui.h"
 #endif
 

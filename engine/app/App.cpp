@@ -181,13 +181,15 @@ void DrApp::init(void) {
             fontCfg.RasterizerMultiply = 1.5f;
         imgui_io.Fonts->AddFontFromMemoryTTF(aileron, sizeof(aileron), 16.0f, &fontCfg);
            
-        // Merge in icons from Font Awesome
-        static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
-        ImFontConfig icons_config { }; 
-            icons_config.MergeMode = true; 
-            icons_config.PixelSnapH = true;
-        imgui_io.Fonts->AddFontFromFileTTF((m_app_directory + FONT_ICON_FILE_NAME_FAR).c_str(), 16.0f, &icons_config, icons_ranges);
-        imgui_io.Fonts->AddFontFromFileTTF((m_app_directory + FONT_ICON_FILE_NAME_FAS).c_str(), 16.0f, &icons_config, icons_ranges);
+        // If including font icons, merge in icons from Font Awesome
+        /*
+            static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+            ImFontConfig icons_config { }; 
+                icons_config.MergeMode = true; 
+                icons_config.PixelSnapH = true;
+            imgui_io.Fonts->AddFontFromFileTTF((m_app_directory + FONT_ICON_FILE_NAME_FAR).c_str(), 16.0f, &icons_config, icons_ranges);
+            imgui_io.Fonts->AddFontFromFileTTF((m_app_directory + FONT_ICON_FILE_NAME_FAS).c_str(), 16.0f, &icons_config, icons_ranges);
+        */
 
         // Create font texture for the custom font
         unsigned char* font_pixels;
