@@ -110,10 +110,11 @@ std::shared_ptr<DrAtlas>& DrImageManager::addAtlas(Atlas_Type atlas_type, int at
 //####################################################################################
 // Packs new Image onto an available Atlas
 void DrImageManager::findAtlasForImage(ImageData& image_data) {
+    int minimum_size = RoundPowerOf2(image_data.image->bitmap().maxDimension());
+
     // Single Image
     if (image_data.atlas_type == ATLAS_TYPE_SINGLE) {
-        int atlas_size = RoundPowerOf2(image_data.image->bitmap().maxDimension());
-        std::shared_ptr<DrAtlas> atlas = addAtlas(image_data.atlas_type, atlas_size);
+        std::shared_ptr<DrAtlas> atlas = addAtlas(image_data.atlas_type, minimum_size);
         addImageToAtlas(image_data, atlas);
 
     // Multi Image
@@ -129,7 +130,7 @@ void DrImageManager::findAtlasForImage(ImageData& image_data) {
         }
 
         // Didn't find atlas that could fit image, make new one
-        std::shared_ptr<DrAtlas> atlas = addAtlas(image_data.atlas_type, MAX_TEXTURE_SIZE);
+        std::shared_ptr<DrAtlas> atlas = addAtlas(image_data.atlas_type, minimum_size);
         addImageToAtlas(image_data, atlas);
     }
 }
@@ -145,7 +146,18 @@ bool DrImageManager::addImageToAtlas(ImageData& image_data, std::shared_ptr<DrAt
         std::vector<stbrp_rect> new_image_rect(1);
         setStbRect(new_image_rect[0], image_data.image);
         stbrp_pack_rects(atlas->rect_pack.get(), &new_image_rect[0], 1);
-        if (new_image_rect[0].was_packed == false) return false;                    //  Image didn't fit, return false
+
+        //  Image didn't fit, return false
+        if (new_image_rect[0].was_packed == false) {
+            int size_needed = atlas->bitmap->maxDimension() + image_data.image->bitmap().maxDimension();
+            if (size_needed <= sg_query_limits().max_image_size_2d) {
+                int resize_atlas = RoundPowerOf2(size_needed);
+                atlas->bitmap = std::make_shared<DrBitmap>(resize_atlas, resize_atlas, DROP_BITMAP_FORMAT_ARGB);
+                atlas->nodes.resize((resize_atlas * 2));
+            } else {
+                return false;
+            }            
+        }
     }
 
     // Add new image key to list of packed images
@@ -160,7 +172,7 @@ bool DrImageManager::addImageToAtlas(ImageData& image_data, std::shared_ptr<DrAt
 
     // If multi image atlas, reset stb rect pack context, pack rects
     if (image_data.atlas_type != ATLAS_TYPE_SINGLE) {
-        stbrp_init_target(atlas->rect_pack.get(), MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, &atlas->nodes[0], (MAX_TEXTURE_SIZE * 2));
+        stbrp_init_target(atlas->rect_pack.get(), atlas->bitmap->width, atlas->bitmap->height, &atlas->nodes[0], (atlas->bitmap->maxDimension() * 2));
         stbrp_pack_rects(atlas->rect_pack.get(), &rects[0], num_rects);
     }
 
@@ -185,7 +197,9 @@ bool DrImageManager::addImageToAtlas(ImageData& image_data, std::shared_ptr<DrAt
     }
 
     // Update image on gpu with new bitmap data
-    sg_uninit_image({static_cast<uint32_t>(atlas->gpu)});
+    if (sg_query_image_info({static_cast<uint32_t>(atlas->gpu)}).slot.state == SG_RESOURCESTATE_VALID) {
+        sg_uninit_image({static_cast<uint32_t>(atlas->gpu)});
+    }
     sg_image_desc image_desc { };
         initializeSgImageDesc(atlas->bitmap->width, atlas->bitmap->height, image_desc);
         image_desc.data.subimage[0][0].ptr = &atlas->bitmap->data[0];
@@ -219,7 +233,7 @@ void DrImageManager::fetchNextImage() {
                 sokol_fetch_request.callback = +[](const sapp_html5_fetch_response* response) {
                     // Load Data from response
                     DrBitmap bmp((unsigned char*)response->buffer_ptr, (int)response->fetched_size);
-                    assert((bmp.width <= MAX_TEXTURE_SIZE && bmp.height <= MAX_TEXTURE_SIZE) && "Image dimensions too large! Max width and height are MAX_TEXTURE_SIZE!");
+                    assert((bmp.width <= MAX_IMAGE_SIZE && bmp.height <= MAX_IMAGE_SIZE) && "Image dimensions too large! Max width and height are MAX_IMAGE_SIZE!");
                     
                     // Could check for errors...
                     if (response->error_code == SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL     /* '1' */) { }
@@ -240,7 +254,7 @@ void DrImageManager::fetchNextImage() {
             sokol_fetch_image.callback = +[](const sfetch_response_t* response) {
                 // Load Data from response
                 DrBitmap bmp((unsigned char*)response->buffer_ptr, (int)response->fetched_size);
-                assert((bmp.width <= MAX_TEXTURE_SIZE && bmp.height <= MAX_TEXTURE_SIZE) && "Image dimensions too large! Max width and height are MAX_TEXTURE_SIZE!");
+                assert((bmp.width <= MAX_IMAGE_SIZE && bmp.height <= MAX_IMAGE_SIZE) && "Image dimensions too large! Max width and height are MAX_IMAGE_SIZE!");
 
                 // Could check for errors...
                 if (response->error_code == SFETCH_ERROR_FILE_NOT_FOUND     /* '1' */) { }

@@ -205,7 +205,9 @@ void DrBitmap::fuzzyAlpha() {
 //####################################################################################
 void DrBitmap::loadFromFile(std::string filename, Bitmap_Format desired_format) {
     // Load Image
-    unsigned char* ptr = stbi_load(filename.c_str(), &width, &height, &channels, desired_format);
+    channels = desired_format;
+    int file_channels = channels;
+    unsigned char* ptr = stbi_load(filename.c_str(), &width, &height, &channels, channels);
 
     // Error Check
     if (ptr == nullptr || width == 0 || height == 0) {
@@ -229,11 +231,14 @@ void DrBitmap::loadFromMemory(const unsigned char* from_data, const int& number_
 
     // Load Image
     } else {
+        channels = DROP_BITMAP_FORMAT_ARGB;
+        int file_channels = channels;
         const stbi_uc* compressed_data = reinterpret_cast<const stbi_uc*>(from_data);
-        unsigned char* ptr = stbi_load_from_memory(compressed_data, number_of_bytes, &width, &height, &channels, channels);
+        unsigned char* ptr = stbi_load_from_memory(compressed_data, number_of_bytes, &width, &height, &file_channels, channels);
 
         // Error Check
         if (ptr == nullptr || width == 0 || height == 0) {
+            if (ptr != nullptr) stbi_image_free(ptr);
             width = 0; height = 0; 
             return;
         }

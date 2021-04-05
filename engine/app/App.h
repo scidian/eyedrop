@@ -81,8 +81,12 @@ public:
 
     // #################### VARIABLES ####################
 private:
-    // Modules
+    // Sokol Data
     sapp_desc               m_sokol_app;                                            // Sokol_app descriptor for this Window
+    sg_features             m_sg_features;                                          // Sokol gfx runtime information about available optional features
+    sg_limits               m_sg_limits;                                            // Sokol gfx runtime information about resource limits
+
+    // Modules
     DrImageManager*         m_image_manager         { nullptr };                    // Image loading / atlas creation
     DrRenderContext*        m_context               { nullptr };                    // Rendering context for this App (currently built on Sokol_Gfx)
     
@@ -99,7 +103,7 @@ private:
     int                     m_height                { 600 };                        // Window height
     float                   m_dpi_scale             { 1.f };                        // Dpi scale of device we're running on
 
-    // Fonts
+    // Gui Fonts
     FONScontext*            m_fontstash;
     int                     m_font_normal = FONS_INVALID;
 
@@ -127,7 +131,11 @@ public:
     // #################### INTERNAL FUNCTIONS ####################
 public:
     // Sokol Related
-    void    run() { sapp_run(m_sokol_app); }                                        // Starts Sokol App
+    void                run()       { sapp_run(m_sokol_app); }                      // Starts Sokol App
+    const sg_features&  features()  { return m_sg_features; }                       // Return Sokol Gfx available optional features
+    const sg_limits&    limits()    { return m_sg_limits; }                         // Return Sokol Gfx resource limits
+
+    // Sokol Callbacks
     void    init(void);                                                             // Linked to internal sokol callbacks
     void    frame(void);                                                            // Linked to internal sokol callbacks
     void    event(const sapp_event* event);                                         // Linked to internal sokol callbacks

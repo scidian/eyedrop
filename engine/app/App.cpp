@@ -84,7 +84,6 @@ void DrApp::setAppName(std::string name) {
     sapp_set_window_title(m_app_name.c_str());
 }
 
-
 //####################################################################################
 //##    Sokol App Events - Init
 //####################################################################################
@@ -97,6 +96,8 @@ void DrApp::init(void) {
     sg_desc sokol_gfx { };
         sokol_gfx.context = sapp_sgcontext();                   // Call sokol_glue function to auto obtain values from sokol_app      
     sg_setup(&sokol_gfx);
+    m_sg_features = sg_query_features();
+    m_sg_limits = sg_query_limits();
 
     // #################### Sokol Gl ####################
     sgl_desc_t sokol_gl { };
