@@ -64,6 +64,20 @@ void DrImageManager::setStbRect(stbrp_rect& rect, std::shared_ptr<DrImage>& imag
 
 
 //####################################################################################
+//##    Atlas Checking
+//####################################################################################
+std::shared_ptr<DrBitmap> DrImageManager::atlasBitmapFromGpuID(int gpu_id) {
+    for (auto& pair : m_atlas_multi) {
+        if (pair.second->gpu == gpu_id) return pair.second->bitmap;
+    }
+    for (auto& pair : m_atlas_single) {
+        if (pair.second->gpu == gpu_id) return pair.second->bitmap;
+    }
+    return nullptr;
+}
+
+
+//####################################################################################
 //##    Atlas Creation
 //####################################################################################
 // Inits Atlas on GPU, adds a into the Image Manager

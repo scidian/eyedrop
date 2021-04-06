@@ -10,6 +10,7 @@
 //##    Basic Shader
 //####################################################################################
 @ctype mat4 hmm_mat4
+@ctype vec3 hmm_vec3
 
 
 //########## Vertex Shader ##########
@@ -44,6 +45,7 @@ void main() {
 uniform sampler2D tex;
 
 uniform fs_params {
+    vec3  u_eye;
     float u_wireframe;
 };
 
@@ -62,9 +64,9 @@ void main() {
     // ***** Color from texture
     vec4  color_in  = texture(tex, uv);
     vec3  rgb_in    = color_in.xyz;
-    float alpha_in  = 1.0;//color_in.a;
+    float alpha_in  = color_in.a;//1.0;
     vec3  rgb_out   = rgb_in;
-    float alpha_out = 1.0;
+    float alpha_out = alpha_in;//1.0;
 
 
     // ***** Wireframe
@@ -89,7 +91,7 @@ void main() {
     // Calculate angle between camera vector and vertex normal for triangle shading
     float shade_away = 1.0;
     if (shade_away == 1.0) {
-        vec3 eye = vec3(0.0, 1.5, 500.0);
+        vec3 eye = u_eye;
         float dp = dot(normalize(vert_normal), normalize(vert - eye)) + 0.15;
               dp = clamp(dp, 0.0, 1.0);
         rgb_out = mix(vec3(0.0), rgb_out, dp);

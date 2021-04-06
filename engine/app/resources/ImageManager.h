@@ -110,6 +110,9 @@ public:
     DrKeys&     atlasKeys()     { return m_atlas_keys; }
     DrKeys&     imageKeys()     { return m_image_keys; }
 
+    // Getters
+    std::shared_ptr<DrBitmap>   atlasBitmapFromGpuID(int gpu_id);
+
 };
 
 #endif  // DR_APP_IMAGE_MANAGER_H

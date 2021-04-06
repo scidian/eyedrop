@@ -176,7 +176,8 @@ void DrEditor::onUpdateScene() {
 
     // Compute model-view-projection matrix for vertex shader
     hmm_mat4 proj = HMM_Perspective(52.5f, (float)sapp_width()/(float)sapp_height(), 5.f, 20000.0f);
-    hmm_mat4 view = HMM_LookAt(HMM_Vec3(0.0f, 1.5f, m_mesh->image_size * m_zoom), HMM_Vec3(0.0f, 0.0f, 0.0f), HMM_Vec3(0.0f, 1.0f, 0.0f));
+    hmm_vec3 eye =  HMM_Vec3(0.0f, 1.5f, m_mesh->image_size * m_zoom);
+    hmm_mat4 view = HMM_LookAt(eye, HMM_Vec3(0.0f, 0.0f, 0.0f), HMM_Vec3(0.0f, 1.0f, 0.0f));
     hmm_mat4 view_proj = HMM_MultiplyMat4(proj, view);
 
     hmm_mat4 rxm = HMM_Rotate(m_add_rotation.x, HMM_Vec3(1.0f, 0.0f, 0.0f));
@@ -194,6 +195,7 @@ void DrEditor::onUpdateScene() {
     
     // Uniforms for fragment shader
     fs_params_t fs_params;
+        fs_params.u_eye = eye;
         fs_params.u_wireframe = (m_mesh->wireframe) ? 1.0f : 0.0f;
 
     // Check if user requested new model quality, if so recalculate
@@ -399,14 +401,23 @@ void DrEditor::calculateMesh(bool reset_position) {
     // ***** Initialize Mesh
     if (m_image->outlineRequested()) m_image->outlinePoints(level_of_detail);
     m_mesh = std::make_shared<DrMesh>();
-    m_mesh->image_size = m_image->bitmap().maxDimension();
-    m_mesh->wireframe = m_wireframe;
+    
 
+    // !!!!! #TEMP: Size off of atlas
+    //m_mesh->image_size = m_image->bitmap().maxDimension();
+    std::shared_ptr<DrBitmap> atlas_bitmap = imageManager()->atlasBitmapFromGpuID(m_image->gpuID());
+    m_mesh->image_size = atlas_bitmap->maxDimension();
+    // !!!!! END TEMP
+    m_mesh->wireframe = m_wireframe;
+    
+
+    // ***** Create Mesh
     //m_mesh->initializeExtrudedImage(m_image.get(), m_mesh_quality);
     //m_mesh->initializeTextureQuad();
     m_mesh->initializeTextureCube();
     //m_mesh->initializeTextureCone();
             
+
     // ***** Optimize and smooth mesh
     m_mesh->optimizeMesh();
     // ----- Experimental, doesnt work great -----

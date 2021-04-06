@@ -10,6 +10,7 @@
 #define DR_RENDER_CONTEXT_H
 
 // Includes
+#include "3rd_party/sokol/sokol_gfx.h"
 #include "engine/app/image/Color.h"
 
 // Shaders
