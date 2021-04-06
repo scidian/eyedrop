@@ -202,7 +202,7 @@ void DrEditor::onUpdateScene() {
        m_before_keys = m_mesh_quality;
    }
 
-    sg_apply_pipeline(renderContext()->pipeline);
+    sg_apply_pipeline( renderContext()->pipeline);
     sg_apply_bindings(&renderContext()->bindings);
     sg_apply_uniforms(SG_SHADERSTAGE_VS, SLOT_vs_params, SG_RANGE(vs_params));
     sg_apply_uniforms(SG_SHADERSTAGE_FS, SLOT_fs_params, SG_RANGE(fs_params));
