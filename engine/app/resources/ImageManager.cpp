@@ -163,7 +163,18 @@ bool DrImageManager::addImageToAtlas(ImageData& image_data, std::shared_ptr<DrAt
 
         //  Image didn't fit, return false
         if (new_image_rect[0].was_packed == false) {
-            int size_needed = atlas->bitmap->maxDimension() + image_data.image->bitmap().maxDimension();
+            // Find size that will fit existing atlas plus new image
+            int atlas_x2 =  atlas->bitmap->maxDimension() * 2;
+            int min_dimen = atlas->bitmap->maxDimension() + image_data.image->bitmap().minDimension();
+            int max_dimen = image_data.image->bitmap().maxDimension();
+            int size_needed = 0;
+            if ((min_dimen <= atlas_x2) && (max_dimen <= atlas_x2)) {
+                size_needed = Max(min_dimen, max_dimen);
+            } else {
+                size_needed = atlas->bitmap->maxDimension() + image_data.image->bitmap().maxDimension();
+            }
+
+            // If needed size is within hardware limits, increase atlas size
             if (size_needed <= sg_query_limits().max_image_size_2d) {
                 int resize_atlas = RoundPowerOf2(size_needed);
                 atlas->bitmap = std::make_shared<DrBitmap>(resize_atlas, resize_atlas, DROP_BITMAP_FORMAT_ARGB);

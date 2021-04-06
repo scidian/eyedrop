@@ -111,7 +111,6 @@ void DrMesh::initializeTextureQuad() {
     add(DrVec3(x3, y3, 0.f), n, DrVec2(tx3, ty3), TRIANGLE_POINT3);
 }
 
-#include <iostream>
 
 //####################################################################################
 //##    Builds a Textured Cube
@@ -122,8 +121,6 @@ void DrMesh::initializeTextureCube() {
     float w2 =      width  / 2.f;
     float h2 =      height / 2.f;
     float depth =   image_size * c_cube_depth;
-
-    std::cout << "Init cube, W: " << width << ", H: " << height << ", Depth: " << depth << std::endl;
 
     // EXAMPLE: Adding Triangles
     float x1 = +w2,     y1 = +h2;                                                   // Top Right

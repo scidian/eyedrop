@@ -54,6 +54,7 @@ public:
     // Info
     int         size() const { return (width * height * channels); }
     int         maxDimension() const { return ((width > height) ? width : height); }
+    int         minDimension() const { return ((width < height) ? width : height); }
 
     // Blit
     static void Blit(const DrBitmap& source, DrRect& src_rect, DrBitmap& dest, DrPoint& dst_point);
