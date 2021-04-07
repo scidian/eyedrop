@@ -100,6 +100,7 @@ public:
     std::shared_ptr<DrAtlas>&   addAtlas(Atlas_Type atlas_type, int atlas_size);
     bool                        addImageToAtlas(ImageData& image_data, std::shared_ptr<DrAtlas>& atlas);
     void                        findAtlasForImage(ImageData& image_data);
+    bool                        packAtlas(std::shared_ptr<DrAtlas>& atlas, std::vector<stbrp_rect>& rects);
 
     // Image Loading
     void        addImageToFetch(ImageData image_data);
@@ -111,7 +112,7 @@ public:
     DrKeys&     imageKeys()     { return m_image_keys; }
 
     // Getters
-    std::shared_ptr<DrBitmap>   atlasBitmapFromGpuID(int gpu_id);
+    DrBitmap&   atlasBitmapFromGpuID(int gpu_id);
 
 };
 

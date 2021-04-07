@@ -53,6 +53,7 @@ public:
 
     // Info
     int         size() const { return (width * height * channels); }
+    int         numberOfPixels() const { return (width * height); }
     int         maxDimension() const { return ((width > height) ? width : height); }
     int         minDimension() const { return ((width < height) ? width : height); }
 
