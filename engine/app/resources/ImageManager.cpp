@@ -66,13 +66,24 @@ std::shared_ptr<DrAtlas>& DrImageManager::atlasFromGpuID(int gpu_id) {
 //####################################################################################
 //##    Image Fetching
 //####################################################################################
-// Adds image to stack of images to be loaded
-void DrImageManager::addImageToFetch(ImageLoadData image_data) {
+// Adds image to stack of images to be loaded in the background
+void DrImageManager::fetchImage(ImageLoadData image_data) {
     m_load_image_stack.push_back(image_data);
 }
 
-// Initiates fetch of next image on the load stack
-void DrImageManager::fetchNextImage() {
+// Loads image immediately
+void DrImageManager::loadImage(ImageLoadData image_data) {    
+    // Load from file, check image dimensions aren't too large! Max width and height are MAX_IMAGE_SIZE!
+    DrBitmap bmp(image_data.image_file);
+    if (bmp.width > MAX_IMAGE_SIZE || bmp.height > MAX_IMAGE_SIZE) return;
+
+    // Attempt to create image
+    m_load_image_stack.push_back(image_data);
+    createImage(bmp);
+}
+
+// Initiates fetch of next image from the load stack
+void DrImageManager::processFetchStack() {
     if (m_loading_image || m_load_image_stack.size() < 1) return;
     m_loading_image = true;
     
@@ -308,9 +319,12 @@ bool DrImageManager::addImageToAtlas(ImageLoadData& image_data, std::shared_ptr<
 //####################################################################################
 // Creates DrImage from DrBitmap from top of image loading stack, calls image callback function if there is one and image creation was successful
 void DrImageManager::createImage(DrBitmap& bmp) {
+    // Image data
+    ImageLoadData& image_data = m_load_image_stack[0];
+
+    // Only create image if bitmap is valid
     if (bmp.isValid()) {
-        // Image data
-        ImageLoadData& image_data = m_load_image_stack[0];
+        // Key for new Image
         int new_image_key = imageKeys().getNextKey();
 
         // Create DrImage
@@ -327,6 +341,8 @@ void DrImageManager::createImage(DrBitmap& bmp) {
         if (image_data.callback != NULL) {
             image_data.callback(image_data.image);
         }
+    } else {
+        image_data.image = nullptr;
     }
 
     // Remove image of list to be fetched

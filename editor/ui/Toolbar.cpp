@@ -47,7 +47,7 @@ void ToolbarUI(bool* widgets, std::vector<std::shared_ptr<DrImage>>& images, int
 		
 		ImGui::SameLine();
 		if (images[EDITOR_IMAGE_UI_CREATOR] != nullptr) {
-	    	ImGui::ImageButton(images[EDITOR_IMAGE_UI_CREATOR]->imguiID(), ImVec2(EDITOR_TOOLBAR_SIZE - 10, EDITOR_TOOLBAR_SIZE - 14),
+	    	ImGui::ImageButton(images[EDITOR_IMAGE_UI_CREATOR]->imguiID(), ImVec2(EDITOR_TOOLBAR_SIZE - 16, EDITOR_TOOLBAR_SIZE - 14),
 				ImVec2(images[EDITOR_IMAGE_UI_CREATOR]->uv0().x, images[EDITOR_IMAGE_UI_CREATOR]->uv0().y), 
 				ImVec2(images[EDITOR_IMAGE_UI_CREATOR]->uv1().x, images[EDITOR_IMAGE_UI_CREATOR]->uv1().y));
 		}

@@ -120,8 +120,9 @@ public:
     std::shared_ptr<DrAtlas>&   atlasFromGpuID(int gpu_id);
 
     // Image Loading
-    void        addImageToFetch(ImageLoadData image_data);
-    void        fetchNextImage();
+    void        fetchImage(ImageLoadData image_data);
+    void        loadImage(ImageLoadData image_data);
+    void        processFetchStack();
 
 private:
     // Atlas Creation

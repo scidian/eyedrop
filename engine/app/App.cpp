@@ -225,7 +225,7 @@ void DrApp::frame(void) {
     sfetch_dowork();
 
     // Check for images to load
-    if (m_image_manager) m_image_manager->fetchNextImage();
+    if (m_image_manager) m_image_manager->processFetchStack();
 
     // #################### Begin Renderer ####################
     sg_begin_default_pass(&m_context->pass_action, sapp_width(), sapp_height());
