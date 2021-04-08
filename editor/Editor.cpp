@@ -405,8 +405,8 @@ void DrEditor::calculateMesh(bool reset_position) {
 
     // !!!!! #TEMP: Size off of atlas
     //m_mesh->image_size = m_image->bitmap().maxDimension();
-    DrBitmap& atlas_bitmap = imageManager()->atlasBitmapFromGpuID(m_image->gpuID());
-    m_mesh->image_size = atlas_bitmap.maxDimension();
+    std::shared_ptr<DrAtlas>& atlas = imageManager()->atlasFromGpuID(m_image->gpuID());
+    m_mesh->image_size = Max(atlas->width, atlas->height);
     // !!!!! END TEMP
     m_mesh->wireframe = m_wireframe;
     

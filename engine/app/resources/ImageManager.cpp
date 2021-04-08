@@ -17,23 +17,6 @@
 
 
 //####################################################################################
-//##    Atlas Class
-//####################################################################################
-class DrAtlas {
-public:
-    Atlas_Type                  type                    { ATLAS_TYPE_SINGLE };      // Type of this Atlas
-    int                         key                     { KEY_NONE };               // Image Manager unique indentifier
-    int                         gpu                     { INVALID_IMAGE };          // Atlas in gpu memory (texture id)
-    DrBitmap                    bitmap                  { };                        // Atlas in system memory
-    stbrp_context               rect_pack               { };                        // Stb Rect Pack Context
-    std::vector<int>            packed_image_keys       { };                        // Images packed onto this atlas
-    int                         pixels_used             { 0 };                      // Total pixels used up by rects
-    int availablePixels()       { return totalPixels() - pixels_used; }             // Total avaiable unused pixels
-    int totalPixels()           { return bitmap.numberOfPixels(); }                 // Total pixels available (width * height)
-};
-
-
-//####################################################################################
 //##    Constructor / Destructor
 //####################################################################################
 DrImageManager::DrImageManager(int atlas_key_start, int image_key_start) : 
@@ -69,14 +52,14 @@ void DrImageManager::setStbRect(stbrp_rect& rect, std::shared_ptr<DrImage>& imag
 //####################################################################################
 //##    Atlas Checking
 //####################################################################################
-DrBitmap& DrImageManager::atlasBitmapFromGpuID(int gpu_id) {
+std::shared_ptr<DrAtlas>& DrImageManager::atlasFromGpuID(int gpu_id) {
     for (auto& pair : m_atlas_multi) {
-        if (pair.second->gpu == gpu_id) return pair.second->bitmap;
+        if (pair.second->gpu == gpu_id) return pair.second;
     }
     for (auto& pair : m_atlas_single) {
-        if (pair.second->gpu == gpu_id) return pair.second->bitmap;
+        if (pair.second->gpu == gpu_id) return pair.second;
     }
-    assert(false && "No atlas with requested gpu_id");
+    assert(false && "No atlas found with the requested gpu_id!!");
 }
 
 
@@ -90,13 +73,15 @@ std::shared_ptr<DrAtlas>& DrImageManager::addAtlas(Atlas_Type atlas_type, int at
         atlas->type = atlas_type;
         atlas->key = atlasKeys().getNextKey();
         atlas->gpu = sg_alloc_image().id;                                           // Alloc an image on the gpu  
-        atlas->bitmap = DrBitmap(atlas_size, atlas_size, DROP_BITMAP_FORMAT_ARGB);
+        atlas->width = atlas_size;
+        atlas->height = atlas_size;
 
     // Update image on gpu with new empty bitmap data
+    DrBitmap bitmap(atlas->width, atlas->height, DROP_BITMAP_FORMAT_ARGB);
     sg_image_desc image_desc { };
-        initializeSgImageDesc(atlas->bitmap.width, atlas->bitmap.height, image_desc);
-        image_desc.data.subimage[0][0].ptr = &atlas->bitmap.data[0];
-        image_desc.data.subimage[0][0].size = static_cast<size_t>(atlas->bitmap.size());
+        initializeSgImageDesc(bitmap.width, bitmap.height, image_desc);
+        image_desc.data.subimage[0][0].ptr = &bitmap.data[0];
+        image_desc.data.subimage[0][0].size = static_cast<size_t>(bitmap.size());
     sg_init_image({static_cast<uint32_t>(atlas->gpu)}, &image_desc);
 
     // Add to atlases
@@ -114,7 +99,7 @@ std::shared_ptr<DrAtlas>& DrImageManager::addAtlas(Atlas_Type atlas_type, int at
 //##    Atlas Finding
 //####################################################################################
 // Packs new Image onto an available Atlas
-void DrImageManager::findAtlasForImage(ImageData& image_data) {
+void DrImageManager::findAtlasForImage(ImageLoadData& image_data) {
     int minimum_size = RoundPowerOf2(image_data.image->bitmap().maxDimension());
 
     // Single Image
@@ -148,9 +133,10 @@ void DrImageManager::findAtlasForImage(ImageData& image_data) {
 bool DrImageManager::packAtlas(std::shared_ptr<DrAtlas>& atlas, std::vector<stbrp_rect>& rects) {
     // If multi image atlas, pack rects
     if (atlas->type != ATLAS_TYPE_SINGLE) {
-        std::vector<stbrp_node> nodes(atlas->bitmap.maxDimension() * 2);
-        stbrp_init_target(&atlas->rect_pack, atlas->bitmap.width, atlas->bitmap.height, &nodes[0], nodes.size());
-        stbrp_pack_rects(&atlas->rect_pack, &rects[0], rects.size());
+        std::vector<stbrp_node> nodes(atlas->maxDimension() * 2);
+        stbrp_context rect_pack { }; 
+        stbrp_init_target(&rect_pack, atlas->width, atlas->height, &nodes[0], nodes.size());
+        stbrp_pack_rects(&rect_pack, &rects[0], rects.size());
         
         // Test that all rects were packed
         bool packed = true;
@@ -164,7 +150,7 @@ bool DrImageManager::packAtlas(std::shared_ptr<DrAtlas>& atlas, std::vector<stbr
 }
 
 // Attempts to put an Image onto an Atlas, returns true if successful
-bool DrImageManager::addImageToAtlas(ImageData& image_data, std::shared_ptr<DrAtlas>& atlas) {
+bool DrImageManager::addImageToAtlas(ImageLoadData& image_data, std::shared_ptr<DrAtlas>& atlas) {
     // Add image to list of atlas image keys, if checks don't pass below this will be removed
     atlas->packed_image_keys.push_back(image_data.image->key());
     
@@ -185,20 +171,21 @@ bool DrImageManager::addImageToAtlas(ImageData& image_data, std::shared_ptr<DrAt
         // If not packed, try to increase Atlas size
         if (packed == false) {
             // Find size that will fit existing atlas plus new image
-            int atlas_x2 =  atlas->bitmap.maxDimension() * 2;
-            int min_dimen = atlas->bitmap.maxDimension() + image_data.image->bitmap().minDimension();
+            int atlas_x2 =  atlas->maxDimension() * 2;
+            int min_dimen = atlas->maxDimension() + image_data.image->bitmap().minDimension();
             int max_dimen = image_data.image->bitmap().maxDimension();
             int size_needed = 0;
             if ((min_dimen <= atlas_x2) && (max_dimen <= atlas_x2)) {
                 size_needed = Max(min_dimen, max_dimen);
             } else {
-                size_needed = atlas->bitmap.maxDimension() + image_data.image->bitmap().maxDimension();
+                size_needed = atlas->maxDimension() + image_data.image->bitmap().maxDimension();
             }
 
             // If needed size is within hardware limits, increase atlas size, repack
             if (size_needed <= sg_query_limits().max_image_size_2d && size_needed <= MAX_ATLAS_SIZE) {
                 int resize_atlas = RoundPowerOf2(size_needed);
-                atlas->bitmap = DrBitmap(resize_atlas, resize_atlas, DROP_BITMAP_FORMAT_ARGB);
+                atlas->width = resize_atlas;
+                atlas->height = resize_atlas;
             } else {
                 atlas->packed_image_keys.pop_back();
                 return false;
@@ -212,12 +199,12 @@ bool DrImageManager::addImageToAtlas(ImageData& image_data, std::shared_ptr<DrAt
     }
 
     // Copy image pixel data to atlas
-    atlas->bitmap.clearPixels();
+    DrBitmap bitmap(atlas->width, atlas->height, DROP_BITMAP_FORMAT_ARGB);
     atlas->pixels_used = 0;
     for (int i = 0; i < atlas->packed_image_keys.size(); ++i) {
         DrRect source_rect = m_images[rects[i].id]->bitmap().rect();
         DrPoint dest_point = DrPoint(rects[i].x, rects[i].y);
-        DrBitmap::Blit(m_images[rects[i].id]->bitmap(), source_rect, atlas->bitmap, dest_point);
+        DrBitmap::Blit(m_images[rects[i].id]->bitmap(), source_rect, bitmap, dest_point);
 
         // Add rect pixels to variable tracking how many pixels have been filled
         atlas->pixels_used += m_images[rects[i].id]->bitmap().numberOfPixels();
@@ -226,12 +213,12 @@ bool DrImageManager::addImageToAtlas(ImageData& image_data, std::shared_ptr<DrAt
         m_images[rects[i].id]->setGpuID(atlas->gpu);
 
         // Update uv texture coordinates
-        float x0 = static_cast<float>(rects[i].x) / static_cast<float>(atlas->bitmap.width);
-        float y0 = static_cast<float>(rects[i].y) / static_cast<float>(atlas->bitmap.height);
+        float x0 = static_cast<float>(rects[i].x) / static_cast<float>(bitmap.width);
+        float y0 = static_cast<float>(rects[i].y) / static_cast<float>(bitmap.height);
         m_images[rects[i].id]->setUv0(x0, y0);
         
-        float x1 = static_cast<float>(rects[i].x + rects[i].w) / static_cast<float>(atlas->bitmap.width);
-        float y1 = static_cast<float>(rects[i].y + rects[i].h) / static_cast<float>(atlas->bitmap.height);
+        float x1 = static_cast<float>(rects[i].x + rects[i].w) / static_cast<float>(bitmap.width);
+        float y1 = static_cast<float>(rects[i].y + rects[i].h) / static_cast<float>(bitmap.height);
         m_images[rects[i].id]->setUv1(x1, y1);
     }
 
@@ -240,9 +227,9 @@ bool DrImageManager::addImageToAtlas(ImageData& image_data, std::shared_ptr<DrAt
         sg_uninit_image({static_cast<uint32_t>(atlas->gpu)});
     }
     sg_image_desc image_desc { };
-        initializeSgImageDesc(atlas->bitmap.width, atlas->bitmap.height, image_desc);
-        image_desc.data.subimage[0][0].ptr = &atlas->bitmap.data[0];
-        image_desc.data.subimage[0][0].size = static_cast<size_t>(atlas->bitmap.size());
+        initializeSgImageDesc(bitmap.width, bitmap.height, image_desc);
+        image_desc.data.subimage[0][0].ptr = &bitmap.data[0];
+        image_desc.data.subimage[0][0].size = static_cast<size_t>(bitmap.size());
     sg_init_image({static_cast<uint32_t>(atlas->gpu)}, &image_desc);
 
     return true;
@@ -253,7 +240,7 @@ bool DrImageManager::addImageToAtlas(ImageData& image_data, std::shared_ptr<DrAt
 //##    Image Fetching
 //####################################################################################
 // Adds image to stack of images to be loaded
-void DrImageManager::addImageToFetch(ImageData image_data) {
+void DrImageManager::addImageToFetch(ImageLoadData image_data) {
     m_load_image_stack.push_back(image_data);
 }
 
@@ -322,7 +309,7 @@ void DrImageManager::fetchNextImage() {
 void DrImageManager::createImage(DrBitmap& bmp) {
     if (bmp.isValid()) {
         // Image data
-        ImageData& image_data = m_load_image_stack[0];
+        ImageLoadData& image_data = m_load_image_stack[0];
         int new_image_key = imageKeys().getNextKey();
 
         // Create DrImage

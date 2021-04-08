@@ -18,7 +18,6 @@
 #include "engine/data/Keys.h"
 
 // Forward Declarations
-class DrAtlas;
 class DrBitmap;
 class DrImage;
 
@@ -39,12 +38,33 @@ enum Atlas_Type {
     ATLAS_TYPE_BACKGROUND,                                                          // Store image in atlas for use with Project / Game, for background tiling
 };
 
+
+//####################################################################################
+//##    Atlas Class
+//############################
+class DrAtlas {
+public:
+    // Variables
+    Atlas_Type                  type                    { ATLAS_TYPE_SINGLE };      // Type of this Atlas
+    int                         width                   { 0 };                      // Width of Atlas
+    int                         height                  { 0 };                      // Height of Atlas
+    int                         key                     { KEY_NONE };               // Image Manager unique indentifier
+    int                         gpu                     { INVALID_IMAGE };          // Atlas in gpu memory (texture id)
+    std::vector<int>            packed_image_keys       { };                        // Images packed onto this atlas
+    int                         pixels_used             { 0 };                      // Total number of pixels used up by rects
+
+    // Functions
+    int         availablePixels()       { return ((width * height) - pixels_used); }
+    int         maxDimension() const    { return ((width > height) ? width : height); }
+};
+
+
 //####################################################################################
 //##    Image Loading Struct
 //############################
-struct ImageData {
-    ImageData(std::shared_ptr<DrImage>& load_to, std::string file, Atlas_Type atlas, 
-              ImageFunction callback_func = NULL, bool perform_outline = false, bool drag_drop = false) :
+struct ImageLoadData {
+    ImageLoadData(std::shared_ptr<DrImage>& load_to, std::string file, Atlas_Type atlas, 
+                  ImageFunction callback_func = NULL, bool perform_outline = false, bool drag_drop = false) :
         image(load_to),
         image_file(file),
         atlas_type(atlas),
@@ -87,7 +107,7 @@ private:
 
     // Fetching Variables
     uint8_t                         m_load_image_buffer[MAX_FILE_SIZE];             // Buffer to use to load images
-    std::deque<ImageData>           m_load_image_stack      { };                    // Stack of images to fetch
+    std::deque<ImageLoadData>       m_load_image_stack      { };                    // Stack of images to fetch
     bool                            m_loading_image         { false };              // True when waiting for fetch to complete
     
 public:
@@ -98,12 +118,12 @@ public:
 
     // Atlas Stuff
     std::shared_ptr<DrAtlas>&   addAtlas(Atlas_Type atlas_type, int atlas_size);
-    bool                        addImageToAtlas(ImageData& image_data, std::shared_ptr<DrAtlas>& atlas);
-    void                        findAtlasForImage(ImageData& image_data);
+    bool                        addImageToAtlas(ImageLoadData& image_data, std::shared_ptr<DrAtlas>& atlas);
+    void                        findAtlasForImage(ImageLoadData& image_data);
     bool                        packAtlas(std::shared_ptr<DrAtlas>& atlas, std::vector<stbrp_rect>& rects);
 
     // Image Loading
-    void        addImageToFetch(ImageData image_data);
+    void        addImageToFetch(ImageLoadData image_data);
     void        createImage(DrBitmap& bmp);
     void        fetchNextImage();
 
@@ -112,7 +132,7 @@ public:
     DrKeys&     imageKeys()     { return m_image_keys; }
 
     // Getters
-    DrBitmap&   atlasBitmapFromGpuID(int gpu_id);
+    std::shared_ptr<DrAtlas>&   atlasFromGpuID(int gpu_id);
 
 };
 
