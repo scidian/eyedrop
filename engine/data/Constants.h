@@ -17,13 +17,13 @@
 // Global Constants
 #define DROP_VERSION             2000                               // Drop Creator version number, important for file loading / saving
 
-#define KEY_NONE                   -1                               // Value that represents no item selected
+#define KEY_NONE                    0                               // Value that represents no item selected
 #define KEY_START                   1                               // Starting value for key generators
 
 #define MAX_FILE_SIZE     1024 * 1024                               // Used for filebuffers with sokol_fetch
 #define MAX_IMAGE_SIZE           2048                               // Max image size for gpu images, 2048 should support 99.9% of devices from year 2010 on
 #define MAX_ATLAS_SIZE           8192                               // Stop stb rect pack from working too hard (2048, 4096, 8192, 16384, 32768, etc, also depends on hardware)
-#define INVALID_IMAGE               0                               // Used to identify images that have been initialized, but not loaded yet
+#define ATLAS_PADDING               1                               // Padding of empty pixels added around Images before they are copied onto Atlas
 
 #define MAX_ENTITIES            10000                               // Total of number of entities allowed for now
 #define MAX_COMPONENTS             32                               // Current maximum number of compoenents (uint_8), used for sizing Signature

@@ -158,14 +158,14 @@ void DrEditor::onCreate() {
     
     // Load Images
     for (int i = 0; i < EDITOR_IMAGE_TOTAL; ++i) gui_images.push_back(nullptr);
-    imageManager()->fetchImage({gui_images[EDITOR_IMAGE_WORLD_GRAPH],   (appDirectory() + "assets/toolbar_icons/world_graph.png"),      ATLAS_TYPE_ENGINE});
-    imageManager()->fetchImage({gui_images[EDITOR_IMAGE_WORLD_CREATOR], (appDirectory() + "assets/toolbar_icons/world_creator.png"),    ATLAS_TYPE_ENGINE});
-    imageManager()->fetchImage({gui_images[EDITOR_IMAGE_UI_CREATOR],    (appDirectory() + "assets/toolbar_icons/ui_creator.png"),       ATLAS_TYPE_ENGINE});
+    imageManager()->fetchImage({gui_images[EDITOR_IMAGE_WORLD_GRAPH],   (appDirectory() + "assets/toolbar_icons/world_graph.png"),      ATLAS_TYPE_ENGINE, ATLAS_PADDING});
+    imageManager()->fetchImage({gui_images[EDITOR_IMAGE_WORLD_CREATOR], (appDirectory() + "assets/toolbar_icons/world_creator.png"),    ATLAS_TYPE_ENGINE, ATLAS_PADDING});
+    imageManager()->fetchImage({gui_images[EDITOR_IMAGE_UI_CREATOR],    (appDirectory() + "assets/toolbar_icons/ui_creator.png"),       ATLAS_TYPE_ENGINE, ATLAS_PADDING});
 
 
     // Initiate Blob Fetch
-    imageManager()->fetchImage({m_image, appDirectory() + "assets/images/blob.png", ATLAS_TYPE_3D_GAME, setMeshTexture, true});
-    //imageManager()->fetchImage({m_image, "http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true", ATLAS_TYPE_3D_GAME, setMeshTexture, true});
+    imageManager()->fetchImage({m_image, appDirectory() + "assets/images/blob.png", ATLAS_TYPE_3D_GAME, ATLAS_PADDING, setMeshTexture, true});
+    //imageManager()->fetchImage({m_image, "http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true", ATLAS_TYPE_3D_GAME, ATLAS_PADDING, setMeshTexture, true});
 }
 
 
@@ -371,7 +371,7 @@ void DrEditor::onEvent(const sapp_event* event) {
         // Load image, apply to mesh and shader afterwards
         bool perform_outline = false;
         bool was_dropped = true;
-        imageManager()->fetchImage({m_image, sapp_get_dropped_file_path(0), ATLAS_TYPE_3D_GAME, setMeshTexture, perform_outline, was_dropped});
+        imageManager()->fetchImage({m_image, sapp_get_dropped_file_path(0), ATLAS_TYPE_3D_GAME, ATLAS_PADDING, setMeshTexture, perform_outline, was_dropped});
     }
 }
 

@@ -48,10 +48,10 @@ public:
     Atlas_Type                  type                    { ATLAS_TYPE_SINGLE };      // Type of this Atlas
     int                         width                   { 0 };                      // Width of Atlas
     int                         height                  { 0 };                      // Height of Atlas
-    int                         key                     { KEY_NONE };               // Image Manager unique indentifier
-    int                         gpu                     { INVALID_IMAGE };          // Atlas in gpu memory (texture id)
-    std::vector<int>            packed_image_keys       { };                        // Images packed onto this atlas
-    int                         pixels_used             { 0 };                      // Total number of pixels used up by rects
+    int                         key                     { KEY_NONE };               // Image Manager unique indentifier for this Atlas
+    int                         gpu                     { KEY_NONE };               // Texture ID (Atlas in gpu memory)
+    std::vector<int>            packed_image_keys       { };                        // Images (image keys) packed onto this Atlas
+    int                         pixels_used             { 0 };                      // Total number of pixels used up by Images packed onto this Atlas
 
     // Functions
     int         availablePixels()       { return ((width * height) - pixels_used); }
@@ -63,11 +63,12 @@ public:
 //##    Image Loading Struct
 //############################
 struct ImageLoadData {
-    ImageLoadData(std::shared_ptr<DrImage>& load_to, std::string file, Atlas_Type atlas, 
+    ImageLoadData(std::shared_ptr<DrImage>& load_to, std::string file, Atlas_Type atlas, int border_padding = 0,
                   ImageFunction callback_func = NULL, bool perform_outline = false, bool drag_drop = false) :
         image(load_to),
         image_file(file),
         atlas_type(atlas),
+        padding(border_padding),
         callback(callback_func),
         outline(perform_outline),
         was_dropped(drag_drop) 
@@ -75,6 +76,7 @@ struct ImageLoadData {
     std::shared_ptr<DrImage>&       image;                                          // DrImage pointer to load new DrImage into after loading
     std::string                     image_file;                                     // File name and path on disk
     Atlas_Type                      atlas_type;                                     // How to store image
+    int                             padding;                                        // Padding around image when added to Atlas
     ImageFunction                   callback;                                       // Function to call after loading
     bool                            outline;                                        // Should we run outline function on Image?
     bool                            was_dropped;                                    // Was this file dropped onto window?

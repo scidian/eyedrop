@@ -11,6 +11,7 @@
 
 #include <vector>
 
+#include "engine/app/geometry/Point.h"
 #include "engine/app/geometry/PointF.h"
 #include "engine/app/geometry/Vec2.h"
 #include "engine/app/image/Bitmap.h"
@@ -32,11 +33,14 @@ private:
     int                         m_key                   { KEY_NONE };               // Key handed out by ImageManager
     std::string                 m_simple_name           { "" };                     // Simple name, i.e. "pretty tree 1"
     DrBitmap                    m_bitmap;                                           // Stored image as Bitmap
-        
+
     // Gpu Info (matched to DrAtlas)
-    uint32_t                    m_gpu_id                { INVALID_IMAGE };          // Gpu texture ID if image is also stored on gpu
-    DrVec2                      m_uv0                   { 0, 0 };                   // Top left corner of image in atlas (in gpu texture coordinates, 0-1)
-    DrVec2                      m_uv1                   { 1, 1 };                   // Bottom right corner of image in atlas (in gpu texture coordinates, 0-1)
+    int                         m_padding               { 0 };                      // Padding around Image on Atlas
+    uint32_t                    m_gpu_id                { KEY_NONE };               // Gpu texture ID if image is also stored on gpu
+    DrPoint                     m_top_left              { 0, 0 };                   // Top left corner of image in atlas        (in pixel coordinates)
+    DrPoint                     m_bottom_right          { 0, 0 };                   // Bottom right corner of image in atlas    (in pixel coordinates)
+    DrVec2                      m_uv0                   { 0, 0 };                   // Top left corner of image in atlas        (in gpu texture coordinates, 0-1)
+    DrVec2                      m_uv1                   { 1, 1 };                   // Bottom right corner of image in atlas    (in gpu texture coordinates, 0-1)
 
 public:
     vtr<vtr<DrPointF>>          m_poly_list;                                        // Stores list of image outline points (polygons)
@@ -61,9 +65,17 @@ public:
     // Gpu Ids
     uint32_t            gpuID() { return m_gpu_id; }
     void*               imguiID() { return ((void*)(uintptr_t)m_gpu_id); }          // Returns ImGui compatible texture ID
+    int                 padding() { return m_padding; }
     void                setGpuID(uint32_t id) { m_gpu_id = id; }
+    void                setPadding(int pad) { m_padding = pad; }
 
-    // Texture Coords
+    // Atlas Position (in Pixels)
+    void                setTopLeft(int x, int y) { m_top_left = DrPoint(x, y); }
+    void                setBottomRight(int x, int y) { m_bottom_right = DrPoint(x, y); }
+    const DrPoint&      topLeft() { return m_top_left; }
+    const DrPoint&      bottomRight() { return m_bottom_right; }
+
+    // Atlas Position (in Texture Coords)
     void                setUv0(float x, float y) { m_uv0 = DrVec2(x, y); }
     void                setUv1(float x, float y) { m_uv1 = DrVec2(x, y); }
     const DrVec2&       uv0() { return m_uv0; }
