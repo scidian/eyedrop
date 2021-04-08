@@ -116,23 +116,28 @@ public:
     static void initializeSgImageDesc(const int& width, const int& height, sg_image_desc& image_desc);
     static void setStbRect(stbrp_rect& rect, std::shared_ptr<DrImage>& image);
 
-    // Atlas Stuff
-    std::shared_ptr<DrAtlas>&   addAtlas(Atlas_Type atlas_type, int atlas_size);
-    bool                        addImageToAtlas(ImageLoadData& image_data, std::shared_ptr<DrAtlas>& atlas);
-    void                        findAtlasForImage(ImageLoadData& image_data);
-    bool                        packAtlas(std::shared_ptr<DrAtlas>& atlas, std::vector<stbrp_rect>& rects);
+    // Getters
+    std::shared_ptr<DrAtlas>&   atlasFromGpuID(int gpu_id);
 
     // Image Loading
     void        addImageToFetch(ImageLoadData image_data);
-    void        createImage(DrBitmap& bmp);
     void        fetchNextImage();
+
+private:
+    // Atlas Creation
+    std::shared_ptr<DrAtlas>&   addAtlas(Atlas_Type atlas_type, int atlas_size);
+    void                        findAtlasForImage(ImageLoadData& image_data);
+
+    // Atlas Packing
+    bool                        addImageToAtlas(ImageLoadData& image_data, std::shared_ptr<DrAtlas>& atlas);
+    bool                        packAtlas(std::shared_ptr<DrAtlas>& atlas, std::vector<stbrp_rect>& rects);
+
+    // Image Creation
+    void                        createImage(DrBitmap& bmp);
 
     // Key Gen
     DrKeys&     atlasKeys()     { return m_atlas_keys; }
     DrKeys&     imageKeys()     { return m_image_keys; }
-
-    // Getters
-    std::shared_ptr<DrAtlas>&   atlasFromGpuID(int gpu_id);
 
 };
 
