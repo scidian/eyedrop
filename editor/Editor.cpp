@@ -164,7 +164,8 @@ void DrEditor::onCreate() {
 
 
     // Initiate Blob Fetch
-    imageManager()->fetchImage({m_image, appDirectory() + "assets/images/blob.png", ATLAS_TYPE_3D_GAME, ATLAS_PADDING, setMeshTexture, true});
+    imageManager()->fetchImage({m_image, appDirectory() + "assets/images/blob.png",  ATLAS_TYPE_3D_GAME, ATLAS_PADDING, setMeshTexture, true});
+    imageManager()->fetchImage({m_image, appDirectory() + "assets/images/craft.png", ATLAS_TYPE_3D_GAME, ATLAS_PADDING, setMeshTexture, true});
     //imageManager()->fetchImage({m_image, "http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true", ATLAS_TYPE_3D_GAME, ATLAS_PADDING, setMeshTexture, true});
 }
 
@@ -203,6 +204,18 @@ void DrEditor::onUpdateScene() {
        calculateMesh(true);
        m_before_keys = m_mesh_quality;
    }
+
+    hmm_vec4 instance_uv[1] { 0, 0, 0, 0 };
+    if (m_image != nullptr) {
+        instance_uv[0].X = m_image->uv0().x;
+        instance_uv[0].Y = m_image->uv1().x;
+        instance_uv[0].Z = m_image->uv0().y;
+        instance_uv[0].W = m_image->uv1().y;
+    }
+    sg_range instance_range {};
+        instance_range.ptr = instance_uv;
+        instance_range.size = (size_t)1 * sizeof(hmm_vec4);
+    sg_update_buffer(renderContext()->bindings.vertex_buffers[1], instance_range);
 
     sg_apply_pipeline( renderContext()->pipeline);
     sg_apply_bindings(&renderContext()->bindings);
@@ -433,9 +446,11 @@ void DrEditor::calculateMesh(bool reset_position) {
         for (size_t i = 0; i < total_vertices; i++) vertices[i] = m_mesh->vertices[i];
         sg_buffer_desc sokol_buffer_vertex { };
             sokol_buffer_vertex.data = sg_range{ &vertices[0], vertices.size() * sizeof(Vertex) };
-            sokol_buffer_vertex.label = "extruded-vertices";
+            sokol_buffer_vertex.label = "Vertices-Extruded";
         sg_destroy_buffer(renderContext()->bindings.vertex_buffers[0]);
         renderContext()->bindings.vertex_buffers[0] = sg_make_buffer(&sokol_buffer_vertex);
+
+        //sg_update_buffer(renderContext()->bindings.vertex_buffers[0], sokol_buffer_vertex.data);
 
         // ***** Index Buffer
         unsigned int total_indices = m_mesh->indices.size();
@@ -444,7 +459,7 @@ void DrEditor::calculateMesh(bool reset_position) {
         sg_buffer_desc sokol_buffer_index { };
             sokol_buffer_index.type = SG_BUFFERTYPE_INDEXBUFFER;
             sokol_buffer_index.data = sg_range{ &indices[0], indices.size() * sizeof(uint16_t) };
-            sokol_buffer_index.label = "temp-indices";
+            sokol_buffer_index.label = "Indices-Extruded";
         sg_destroy_buffer(renderContext()->bindings.index_buffer);
         renderContext()->bindings.index_buffer = sg_make_buffer(&(sokol_buffer_index));
 

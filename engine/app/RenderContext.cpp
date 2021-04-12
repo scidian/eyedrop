@@ -51,24 +51,6 @@ DrRenderContext::DrRenderContext(DrColor initial_color) {
     pass_action.colors[0].action = SG_ACTION_CLEAR;
     pass_action.colors[0].value = { red, green, blue, alpha };
 
-    // Pipeline State Object
-    sg_pipeline_desc (sokol_pipleine) { };
-        sokol_pipleine.shader = sg_make_shader(basic_shader_shader_desc(sg_query_backend()));
-        sokol_pipleine.layout.attrs[ATTR_vs_pos].format =       SG_VERTEXFORMAT_FLOAT3;
-        sokol_pipleine.layout.attrs[ATTR_vs_norm].format =      SG_VERTEXFORMAT_FLOAT3;
-        sokol_pipleine.layout.attrs[ATTR_vs_texcoord0].format = SG_VERTEXFORMAT_FLOAT2; //SG_VERTEXFORMAT_SHORT2N;
-        sokol_pipleine.layout.attrs[ATTR_vs_bary].format =      SG_VERTEXFORMAT_FLOAT3;
-        sokol_pipleine.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
-        //sokol_pipleine.index_type =   SG_INDEXTYPE_NONE;
-        sokol_pipleine.index_type =     SG_INDEXTYPE_UINT16;
-        //sokol_pipleine.cull_mode =    SG_CULLMODE_NONE; 
-        sokol_pipleine.cull_mode =      SG_CULLMODE_FRONT;
-        sokol_pipleine.depth.compare =  SG_COMPAREFUNC_LESS_EQUAL;
-        sokol_pipleine.depth.write_enabled = true;
-        sokol_pipleine.label = "BasicShader-Pipeline";
-        sokol_pipleine.colors[0].blend = sokol_blend_alpha;
-    pipeline = sg_make_pipeline(&sokol_pipleine);
-
     // ***** Allocate an image handle, 
     //  But don't actually initialize the image yet, this happens later when the asynchronous file load has finished.
     //  Any draw calls containing such an "incomplete" image handle will be silently dropped.        
@@ -85,7 +67,7 @@ DrRenderContext::DrRenderContext(DrColor initial_color) {
     */
 
     // ***** Starter triangle
-    // Vertex buffer
+    // Vertex buffer for static geometry (goes into vertex buffer bind slot 0)
     const Vertex vertices[] = {
         // pos                  normals                uvs          barycentric (wireframe)
         { -1.0f, -1.0f, -1.0f,  1.0f, 1.0f, 1.0f,      0,   0,      1.0f, 1.0f, 1.0f },
@@ -95,15 +77,66 @@ DrRenderContext::DrRenderContext(DrColor initial_color) {
     };
     sg_buffer_desc sokol_buffer_vertex { };
         sokol_buffer_vertex.data = SG_RANGE(vertices);
-        sokol_buffer_vertex.label = "temp-vertices";
-    bindings.vertex_buffers[0] = sg_make_buffer(&sokol_buffer_vertex);
+        sokol_buffer_vertex.label = "Vertices-Temp";
 
-    // Index buffer
+    // Index buffer for static geometry
     const uint16_t indices[] = { 0, 1, 2, 0, 2, 3 };
     sg_buffer_desc sokol_buffer_index { };
         sokol_buffer_index.type = SG_BUFFERTYPE_INDEXBUFFER;
         sokol_buffer_index.data = SG_RANGE(indices);
-        sokol_buffer_index.label = "temp-indices";
-    bindings.index_buffer = sg_make_buffer(&(sokol_buffer_index));
+        sokol_buffer_index.label = "Indices-Temp";
+    
+    // Empty, dynamic instance-data vertex buffer (goes into vertex buffer bind slot 1)
+    sg_buffer_desc sokol_buffer_instance { };
+        sokol_buffer_instance.size = 1 * sizeof(hmm_vec4);
+        sokol_buffer_instance.usage = SG_USAGE_STREAM;
+
+    // Bind Buffers
+    bindings.vertex_buffers[0] =    sg_make_buffer(&sokol_buffer_vertex);
+    bindings.vertex_buffers[1] =    sg_make_buffer(&sokol_buffer_instance);
+    bindings.index_buffer =         sg_make_buffer(&sokol_buffer_index);
+
+    // ***** Pipeline State Object
+    sg_pipeline_desc (sokol_pipleine) { };
+        sokol_pipleine.layout.buffers[0].stride = (sizeof(hmm_vec3) * (size_t)3) + ((sizeof(hmm_vec2) * (size_t)1));    // 44;
+        
+        sokol_pipleine.layout.buffers[1].stride = (sizeof(hmm_vec4));       // 16
+        sokol_pipleine.layout.buffers[1].step_func = SG_VERTEXSTEP_PER_INSTANCE;
+
+        sokol_pipleine.layout.attrs[ATTR_vs_pos].format =           SG_VERTEXFORMAT_FLOAT3;
+        sokol_pipleine.layout.attrs[ATTR_vs_norm].format =          SG_VERTEXFORMAT_FLOAT3;
+        sokol_pipleine.layout.attrs[ATTR_vs_texcoord0].format =     SG_VERTEXFORMAT_FLOAT2; //SG_VERTEXFORMAT_SHORT2N;
+        sokol_pipleine.layout.attrs[ATTR_vs_bary].format =          SG_VERTEXFORMAT_FLOAT3;
+
+        sokol_pipleine.layout.attrs[ATTR_vs_instance_uv].format =   SG_VERTEXFORMAT_FLOAT4;
+
+        sokol_pipleine.layout.attrs[ATTR_vs_pos].buffer_index =         0;
+        sokol_pipleine.layout.attrs[ATTR_vs_norm].buffer_index =        0;
+        sokol_pipleine.layout.attrs[ATTR_vs_texcoord0].buffer_index =   0;
+        sokol_pipleine.layout.attrs[ATTR_vs_bary].buffer_index =        0;
+
+        sokol_pipleine.layout.attrs[ATTR_vs_instance_uv].buffer_index = 1;
+
+        sokol_pipleine.layout.attrs[ATTR_vs_pos].offset =           0;
+        sokol_pipleine.layout.attrs[ATTR_vs_norm].offset =          12;
+        sokol_pipleine.layout.attrs[ATTR_vs_texcoord0].offset =     24;
+        sokol_pipleine.layout.attrs[ATTR_vs_bary].offset =          32;
+        
+        sokol_pipleine.layout.attrs[ATTR_vs_instance_uv].offset =   0;
+
+        sokol_pipleine.label = "Pipeline-BasicShader";
+        sokol_pipleine.shader = sg_make_shader(basic_shader_shader_desc(sg_query_backend()));
+        sokol_pipleine.colors[0].blend = sokol_blend_alpha;
+
+        sokol_pipleine.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
+        //sokol_pipleine.index_type =   SG_INDEXTYPE_NONE;
+        sokol_pipleine.index_type =     SG_INDEXTYPE_UINT16;
+        //sokol_pipleine.cull_mode =    SG_CULLMODE_NONE; 
+        sokol_pipleine.cull_mode =      SG_CULLMODE_FRONT;
+        sokol_pipleine.depth.compare =  SG_COMPAREFUNC_LESS_EQUAL;
+        sokol_pipleine.depth.write_enabled = true;
+                
+    pipeline = sg_make_pipeline(&sokol_pipleine);
+
 }
 

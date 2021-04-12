@@ -11,6 +11,7 @@
 //####################################################################################
 @ctype mat4 hmm_mat4
 @ctype vec3 hmm_vec3
+@ctype vec4 hmm_vec4
 
 
 //########## Vertex Shader ##########
@@ -20,10 +21,16 @@ uniform vs_params {
     mat4 m;
 };
 
-in vec4 pos;
-in vec3 norm;
-in vec2 texcoord0;
-in vec3 bary;
+in vec4 pos;                // Vertex Position
+in vec3 norm;               // Vertex Normal
+in vec2 texcoord0;          // Vertex Texture Coordinate
+in vec3 bary;               // Vertex Barycentric Coordinate
+
+in vec4 instance_uv;        // Sprite Instance Atlas Coordinates
+                            //  .x = uv0.x
+                            //  .y = uv1.x
+                            //  .z = uv0.y
+                            //  .w = uv1.y
 
 out vec2 uv;
 out vec3 vert;
@@ -33,6 +40,8 @@ out vec3 vert_bary;
 void main() {
     gl_Position = mvp * pos;
     uv = texcoord0;
+    uv.x = instance_uv.x + (texcoord0.x * (instance_uv.y - instance_uv.x));
+    uv.y = instance_uv.z + (texcoord0.y * (instance_uv.w - instance_uv.z));
     vert =          (m * vec4(pos.xyz, 1.0)).xyz;
     vert_normal =   (m * vec4(norm, 0.0)).xyz;
     vert_bary = bary;
@@ -57,9 +66,6 @@ in vec3 vert_bary;
 out vec4 frag_color;
 
 void main() {
-    vec4 norm = vec4(0.0, vert_normal * 0.0);
-    vec4 bary = vec4(0.0, vert_bary * 0.0);
-       
 
     // ***** Color from texture
     vec4  color_in  = texture(tex, uv);

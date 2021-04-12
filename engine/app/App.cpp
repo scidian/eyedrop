@@ -98,6 +98,8 @@ void DrApp::init(void) {
     sg_setup(&sokol_gfx);
     m_sg_features = sg_query_features();
     m_sg_limits = sg_query_limits();
+    assert(sg_isvalid() && "Could not initialize Sokol Gfx!!");
+    assert(m_sg_features.instancing && "Instancing not supported!!");
 
     // #################### Sokol Gl ####################
     sgl_desc_t sokol_gl { };
