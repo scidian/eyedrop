@@ -14,14 +14,15 @@
 
 
 // Filters types
-enum Image_Filter_Type {              // ApplySinglePixelFilter 'value' argument
-    DROP_IMAGE_FILTER_BRIGHTNESS,           //      -255 to 255
-    DROP_IMAGE_FILTER_CONTRAST,             //      -255 to 255
-    DROP_IMAGE_FILTER_SATURATION,           //      -255 to 255 
-    DROP_IMAGE_FILTER_HUE,                  //      -360 to 360
-    DROP_IMAGE_FILTER_GRAYSCALE,            //          N/A
-    DROP_IMAGE_FILTER_NEGATIVE,             //          N/A
-    DROP_IMAGE_FILTER_OPACITY,              //      -255 to 255
+enum Image_Filter_Type {                            // applySinglePixelFilter() 'value' argument
+    DROP_IMAGE_FILTER_BRIGHTNESS,                   //          -255 to 255
+    DROP_IMAGE_FILTER_CONTRAST,                     //          -255 to 255
+    DROP_IMAGE_FILTER_SATURATION,                   //          -255 to 255 
+    DROP_IMAGE_FILTER_HUE,                          //          -360 to 360
+    DROP_IMAGE_FILTER_GRAYSCALE,                    //              N/A
+    DROP_IMAGE_FILTER_NEGATIVE,                     //              N/A
+    DROP_IMAGE_FILTER_OPACITY,                      //          -255 to 255
+    DROP_IMAGE_FILTER_PREMULTIPLIED_ALPHA,          //              N/A
 };
 
 // Imaging Enumerations

@@ -68,6 +68,12 @@ DrBitmap DrFilter::applySinglePixelFilter(Image_Filter_Type filter, const DrBitm
                 case DROP_IMAGE_FILTER_OPACITY:
                     color.setAlpha( Clamp(color.alpha() + value, 0, 255) );
                     break;
+                case DROP_IMAGE_FILTER_PREMULTIPLIED_ALPHA: {
+                    color.setRedF(   color.redF() *   color.alphaF() );
+                    color.setGreenF( color.greenF() * color.alphaF() );
+                    color.setBlueF(  color.blueF() *  color.alphaF() );
+                    break;
+                }
             }
 
             // Sets the new pixel color

@@ -12,6 +12,7 @@
 #include "engine/app/geometry/Rect.h"
 #include "engine/app/image/Image.h"
 #include "engine/app/image/Bitmap.h"
+#include "engine/app/image/Filter.h"
 #include "engine/app/App.h"
 #include "ImageManager.h"
 
@@ -338,7 +339,8 @@ void DrImageManager::createImage(DrBitmap& bmp) {
         int new_image_key = imageKeys().getNextKey();
 
         // Create DrImage
-        image_data.image = std::make_shared<DrImage>(image_data.image_file, bmp, image_data.outline);
+        DrBitmap premultiplied = DrFilter::applySinglePixelFilter(DROP_IMAGE_FILTER_PREMULTIPLIED_ALPHA, bmp, 0);
+        image_data.image = std::make_shared<DrImage>(image_data.image_file, premultiplied, image_data.outline);
         image_data.image->setKey(new_image_key);
         image_data.image->setPadding(image_data.padding);
 

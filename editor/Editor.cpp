@@ -164,9 +164,9 @@ void DrEditor::onCreate() {
 
 
     // Initiate Blob Fetch
-    imageManager()->fetchImage({m_image, appDirectory() + "assets/images/blob.png",  ATLAS_TYPE_3D_GAME, ATLAS_PADDING, setMeshTexture, true});
-    imageManager()->fetchImage({m_image, appDirectory() + "assets/images/craft.png", ATLAS_TYPE_3D_GAME, ATLAS_PADDING, setMeshTexture, true});
-    //imageManager()->fetchImage({m_image, "http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true", ATLAS_TYPE_3D_GAME, ATLAS_PADDING, setMeshTexture, true});
+    imageManager()->fetchImage({m_image, appDirectory() + "assets/images/blob.png",  ATLAS_TYPE_3D_GAME, ATLAS_PADDING, setMeshTexture, false});
+    imageManager()->fetchImage({m_image, appDirectory() + "assets/images/craft.png", ATLAS_TYPE_3D_GAME, ATLAS_PADDING, setMeshTexture, false});
+    //imageManager()->fetchImage({m_image, "http://github.com/stevinz/extrude/blob/master/assets/blob.png?raw=true", ATLAS_TYPE_3D_GAME, ATLAS_PADDING, setMeshTexture, false});
 }
 
 
@@ -190,15 +190,16 @@ void DrEditor::onUpdateScene() {
     m_add_rotation.set(0.f, 0.f);
 
     // Uniforms for vertex shader
-    vs_params_t vs_params;
+    vs_params_t vs_params { };
+        vs_params.vp =  view_proj;
         vs_params.m =   m_model;
-        vs_params.mvp = HMM_MultiplyMat4(view_proj, m_model);
-    
+            
     // Uniforms for fragment shader
-    fs_params_t fs_params;
+    fs_params_t fs_params { };
         fs_params.u_eye = eye;
+        fs_params.u_premultiplied = 1.0f;
         fs_params.u_wireframe = (m_mesh->wireframe) ? 1.0f : 0.0f;
-
+        
     // Check if user requested new model quality, if so recalculate
    if ((m_mesh_quality != m_before_keys) && (m_image != nullptr)) {
        calculateMesh(true);

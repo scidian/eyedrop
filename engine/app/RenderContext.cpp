@@ -13,6 +13,17 @@
 //####################################################################################
 //##    Blend Functions
 //####################################################################################
+/*
+    case Blend_Object::Standard:
+        ///glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);                   // Standard non-premultiplied alpha blend
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);                            // Premultiplied alpha blend
+    case Blend_Object::Additive:
+        glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
+    case Blend_Object::Subtractive:
+        glBlendFuncSeparate(GL_SRC_COLOR, GL_DST_COLOR, GL_ZERO, GL_ONE);       // Subtract color only, not alpha
+        glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);                              // Reverse Subtract is Dest - Source = new Color
+*/
+
 // Normal
 sg_blend_state (sokol_blend_normal) {
     .enabled =              true,
@@ -31,6 +42,17 @@ sg_blend_state (sokol_blend_alpha) {
     .dst_factor_rgb =       SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
     .op_rgb =               SG_BLENDOP_ADD,
     .src_factor_alpha =     SG_BLENDFACTOR_SRC_ALPHA,
+    .dst_factor_alpha =     SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
+    .op_alpha =             SG_BLENDOP_ADD,
+};
+
+// Alpha Enabled
+sg_blend_state (sokol_blend_premultipied_alpha) {
+    .enabled =              true,
+    .src_factor_rgb =       SG_BLENDFACTOR_ONE,
+    .dst_factor_rgb =       SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
+    .op_rgb =               SG_BLENDOP_ADD,
+    .src_factor_alpha =     SG_BLENDFACTOR_ONE,
     .dst_factor_alpha =     SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
     .op_alpha =             SG_BLENDOP_ADD,
 };
@@ -126,7 +148,7 @@ DrRenderContext::DrRenderContext(DrColor initial_color) {
 
         sokol_pipleine.label = "Pipeline-BasicShader";
         sokol_pipleine.shader = sg_make_shader(basic_shader_shader_desc(sg_query_backend()));
-        sokol_pipleine.colors[0].blend = sokol_blend_alpha;
+        sokol_pipleine.colors[0].blend = sokol_blend_premultipied_alpha;
 
         sokol_pipleine.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
         //sokol_pipleine.index_type =   SG_INDEXTYPE_NONE;
