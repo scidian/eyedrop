@@ -18,7 +18,6 @@
 @vs vs
 uniform vs_params {
     mat4 vp;                // Was 'mvp' (model-view-projection), now model matrix is an instance variable
-    mat4 m;
 };
 
 in vec4 pos;                // Vertex Position
@@ -26,6 +25,10 @@ in vec3 norm;               // Vertex Normal
 in vec2 texcoord0;          // Vertex Texture Coordinate
 in vec3 bary;               // Vertex Barycentric Coordinate
 
+in vec4 instance_mat0;      // Sprite Instance Model Matrix
+in vec4 instance_mat1;
+in vec4 instance_mat2;
+in vec4 instance_mat3;
 in vec4 instance_uv;        // Sprite Instance Atlas Coordinates
                             //  .x = uv0.x
                             //  .y = uv1.x
@@ -38,13 +41,14 @@ out vec3 vert_normal;
 out vec3 vert_bary;
 
 void main() {
-    mat4 mvp = vp * m;
+    mat4 instance_matrix = mat4(instance_mat0, instance_mat1, instance_mat2, instance_mat3);
+    mat4 mvp = vp * instance_matrix;
     gl_Position = mvp * pos;
     uv = texcoord0;
     uv.x = instance_uv.x + (texcoord0.x * (instance_uv.y - instance_uv.x));
     uv.y = instance_uv.z + (texcoord0.y * (instance_uv.w - instance_uv.z));
-    vert =          (m * vec4(pos.xyz,  1.0)).xyz;
-    vert_normal =   (m * vec4(norm.xyz, 0.0)).xyz;
+    vert =          (instance_matrix * vec4(pos.xyz,  1.0)).xyz;
+    vert_normal =   (instance_matrix * vec4(norm.xyz, 0.0)).xyz;
     vert_bary = bary;
 }
 @end

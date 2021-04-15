@@ -28,6 +28,12 @@
 #define MAX_ENTITIES            10000                               // Total of number of entities allowed for now
 #define MAX_COMPONENTS             32                               // Current maximum number of compoenents (uint_8), used for sizing Signature
 
+// !!!!! #TEMP
+#define INSTANCE_X  300
+#define INSTANCE_Y  300
+#define INSTANCES   (INSTANCE_X * INSTANCE_Y)
+// !!!!! END TEMP
+
 
 // ECS System Type Defs / Using
 using EntityID =            std::uint32_t;                          // Unique Entity ID Key

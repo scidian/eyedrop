@@ -109,41 +109,65 @@ DrRenderContext::DrRenderContext(DrColor initial_color) {
         sokol_buffer_index.label = "Indices-Temp";
     
     // Empty, dynamic instance-data vertex buffer (goes into vertex buffer bind slot 1)
-    sg_buffer_desc sokol_buffer_instance { };
-        sokol_buffer_instance.size = 1 * sizeof(hmm_vec4);
-        sokol_buffer_instance.usage = SG_USAGE_STREAM;
+    sg_buffer_desc sokol_buffer_instance_uv { };
+        sokol_buffer_instance_uv.size = INSTANCES * sizeof(hmm_vec4);
+        sokol_buffer_instance_uv.usage = SG_USAGE_STREAM;
+
+    // Empty, dynamic instance-data vertex buffer (goes into vertex buffer bind slot 2)
+    sg_buffer_desc sokol_buffer_instance_m { };
+        sokol_buffer_instance_m.size = INSTANCES * sizeof(hmm_mat4);
+        sokol_buffer_instance_m.usage = SG_USAGE_STREAM;
 
     // Bind Buffers
     bindings.vertex_buffers[0] =    sg_make_buffer(&sokol_buffer_vertex);
-    bindings.vertex_buffers[1] =    sg_make_buffer(&sokol_buffer_instance);
+    bindings.vertex_buffers[1] =    sg_make_buffer(&sokol_buffer_instance_m);
+    bindings.vertex_buffers[2] =    sg_make_buffer(&sokol_buffer_instance_uv);
     bindings.index_buffer =         sg_make_buffer(&sokol_buffer_index);
 
     // ***** Pipeline State Object
     sg_pipeline_desc (sokol_pipleine) { };
-        sokol_pipleine.layout.buffers[0].stride = (sizeof(hmm_vec3) * (size_t)3) + ((sizeof(hmm_vec2) * (size_t)1));    // 44;
-        
-        sokol_pipleine.layout.buffers[1].stride = (sizeof(hmm_vec4));       // 16
+        sokol_pipleine.layout.buffers[0].stride = 44; //(sizeof(hmm_vec3) * (size_t)3) + ((sizeof(hmm_vec2) * (size_t)1));
+        sokol_pipleine.layout.buffers[0].step_func = SG_VERTEXSTEP_PER_VERTEX;
+
+        sokol_pipleine.layout.buffers[1].stride = 64; //(sizeof(hmm_mat4));
         sokol_pipleine.layout.buffers[1].step_func = SG_VERTEXSTEP_PER_INSTANCE;
+        
+        sokol_pipleine.layout.buffers[2].stride = 16; //(sizeof(hmm_vec4));
+        sokol_pipleine.layout.buffers[2].step_func = SG_VERTEXSTEP_PER_INSTANCE;
 
         sokol_pipleine.layout.attrs[ATTR_vs_pos].format =           SG_VERTEXFORMAT_FLOAT3;
         sokol_pipleine.layout.attrs[ATTR_vs_norm].format =          SG_VERTEXFORMAT_FLOAT3;
         sokol_pipleine.layout.attrs[ATTR_vs_texcoord0].format =     SG_VERTEXFORMAT_FLOAT2; //SG_VERTEXFORMAT_SHORT2N;
         sokol_pipleine.layout.attrs[ATTR_vs_bary].format =          SG_VERTEXFORMAT_FLOAT3;
 
+        sokol_pipleine.layout.attrs[ATTR_vs_instance_mat0].format = SG_VERTEXFORMAT_FLOAT4;
+        sokol_pipleine.layout.attrs[ATTR_vs_instance_mat1].format = SG_VERTEXFORMAT_FLOAT4;
+        sokol_pipleine.layout.attrs[ATTR_vs_instance_mat2].format = SG_VERTEXFORMAT_FLOAT4;
+        sokol_pipleine.layout.attrs[ATTR_vs_instance_mat3].format = SG_VERTEXFORMAT_FLOAT4;
         sokol_pipleine.layout.attrs[ATTR_vs_instance_uv].format =   SG_VERTEXFORMAT_FLOAT4;
 
-        sokol_pipleine.layout.attrs[ATTR_vs_pos].buffer_index =         0;
-        sokol_pipleine.layout.attrs[ATTR_vs_norm].buffer_index =        0;
-        sokol_pipleine.layout.attrs[ATTR_vs_texcoord0].buffer_index =   0;
-        sokol_pipleine.layout.attrs[ATTR_vs_bary].buffer_index =        0;
+        sokol_pipleine.layout.attrs[ATTR_vs_pos].buffer_index =             0;
+        sokol_pipleine.layout.attrs[ATTR_vs_norm].buffer_index =            0;
+        sokol_pipleine.layout.attrs[ATTR_vs_texcoord0].buffer_index =       0;
+        sokol_pipleine.layout.attrs[ATTR_vs_bary].buffer_index =            0;
 
-        sokol_pipleine.layout.attrs[ATTR_vs_instance_uv].buffer_index = 1;
+        sokol_pipleine.layout.attrs[ATTR_vs_instance_mat0].buffer_index =   1;
+        sokol_pipleine.layout.attrs[ATTR_vs_instance_mat1].buffer_index =   1;
+        sokol_pipleine.layout.attrs[ATTR_vs_instance_mat2].buffer_index =   1;
+        sokol_pipleine.layout.attrs[ATTR_vs_instance_mat3].buffer_index =   1;
+
+        sokol_pipleine.layout.attrs[ATTR_vs_instance_uv].buffer_index =     2;
 
         sokol_pipleine.layout.attrs[ATTR_vs_pos].offset =           0;
         sokol_pipleine.layout.attrs[ATTR_vs_norm].offset =          12;
         sokol_pipleine.layout.attrs[ATTR_vs_texcoord0].offset =     24;
         sokol_pipleine.layout.attrs[ATTR_vs_bary].offset =          32;
         
+        sokol_pipleine.layout.attrs[ATTR_vs_instance_mat0].offset = 0;
+        sokol_pipleine.layout.attrs[ATTR_vs_instance_mat1].offset = 16;
+        sokol_pipleine.layout.attrs[ATTR_vs_instance_mat2].offset = 32;
+        sokol_pipleine.layout.attrs[ATTR_vs_instance_mat3].offset = 48;
+
         sokol_pipleine.layout.attrs[ATTR_vs_instance_uv].offset =   0;
 
         sokol_pipleine.label = "Pipeline-BasicShader";

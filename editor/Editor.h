@@ -36,7 +36,7 @@ enum Editor_Images {
 class DrEditor : public DrApp 
 {
 public:
-    using DrApp::DrApp;                                                             // Inherit base ctor, requires C++ 11
+    DrEditor(std::string title = "Drop Creator", DrColor bg_color = DROP_COLOR_BLACK, int width = 800, int height = 600);
     virtual ~DrEditor();
 
 
@@ -57,7 +57,7 @@ public:
     // Model Rotation
     DrVec2                      m_total_rotation    {  0.f,  0.f };
     DrVec2                      m_add_rotation      { 25.f, 25.f };
-    hmm_mat4                    m_model             { DrMatrix::identityMatrix() };
+    std::vector<hmm_mat4>       m_model             { };
     DrVec2                      m_mouse_down        { 0, 0 };
     float                       m_rotate_speed      { 1.f };
     bool                        m_is_mouse_down     { false };
@@ -77,6 +77,7 @@ public:
 
     // Temp Demo Functions
     void        calculateMesh(bool reset_position);
+    void        resetPositions();
 
 };
 

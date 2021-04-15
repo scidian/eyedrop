@@ -43,8 +43,16 @@ int main(int argc, char* argv[]) {
 
 
 //####################################################################################
-//##    Destructor
+//##    Contructor / Destructor
 //####################################################################################
+DrEditor::DrEditor(std::string title, DrColor bg_color, int width, int height) :
+    DrApp(title, bg_color, width, height)
+{
+    m_model.resize(INSTANCES);
+    resetPositions();
+
+}
+
 DrEditor::~DrEditor() { }
 
 
@@ -184,7 +192,9 @@ void DrEditor::onUpdateScene() {
     hmm_mat4 rxm = HMM_Rotate(m_add_rotation.x, HMM_Vec3(1.0f, 0.0f, 0.0f));
     hmm_mat4 rym = HMM_Rotate(m_add_rotation.y, HMM_Vec3(0.0f, 1.0f, 0.0f));
     hmm_mat4 rotate = HMM_MultiplyMat4(rxm, rym); 
-    m_model =  HMM_MultiplyMat4(rotate, m_model);
+    for (auto& m : m_model) {
+        m = HMM_MultiplyMat4(rotate, m);
+    }
     m_total_rotation.x = EqualizeAngle0to360(m_total_rotation.x + m_add_rotation.x);
     m_total_rotation.y = EqualizeAngle0to360(m_total_rotation.y + m_add_rotation.y);
     m_add_rotation.set(0.f, 0.f);
@@ -192,7 +202,6 @@ void DrEditor::onUpdateScene() {
     // Uniforms for vertex shader
     vs_params_t vs_params { };
         vs_params.vp =  view_proj;
-        vs_params.m =   m_model;
             
     // Uniforms for fragment shader
     fs_params_t fs_params { };
@@ -201,28 +210,41 @@ void DrEditor::onUpdateScene() {
         fs_params.u_wireframe = (m_mesh->wireframe) ? 1.0f : 0.0f;
         
     // Check if user requested new model quality, if so recalculate
-   if ((m_mesh_quality != m_before_keys) && (m_image != nullptr)) {
-       calculateMesh(true);
-       m_before_keys = m_mesh_quality;
-   }
-
-    hmm_vec4 instance_uv[1] { 0, 0, 0, 0 };
-    if (m_image != nullptr) {
-        instance_uv[0].X = m_image->uv0().x;
-        instance_uv[0].Y = m_image->uv1().x;
-        instance_uv[0].Z = m_image->uv0().y;
-        instance_uv[0].W = m_image->uv1().y;
+    if ((m_mesh_quality != m_before_keys) && (m_image != nullptr)) {
+        calculateMesh(true);
+        m_before_keys = m_mesh_quality;
     }
-    sg_range instance_range {};
-        instance_range.ptr = instance_uv;
-        instance_range.size = (size_t)1 * sizeof(hmm_vec4);
-    sg_update_buffer(renderContext()->bindings.vertex_buffers[1], instance_range);
+
+    // Check we have valid image to use
+    if (m_image == nullptr) return;
+
+    // Update Instance Buffers
+    std::vector<hmm_mat4> instance_m(INSTANCES);
+    for (int i = 0; i < INSTANCES; i++) {
+        instance_m[i] = m_model[i];
+    }
+    sg_range instance_m_range {};
+        instance_m_range.ptr = &instance_m[0];
+        instance_m_range.size = (size_t)INSTANCES * sizeof(hmm_mat4);
+    sg_update_buffer(renderContext()->bindings.vertex_buffers[1], instance_m_range);
+
+    std::vector<hmm_vec4> instance_uv(INSTANCES);
+    for (int i = 0; i < INSTANCES; i++) {
+        instance_uv[i].X = m_image->uv0().x;
+        instance_uv[i].Y = m_image->uv1().x;
+        instance_uv[i].Z = m_image->uv0().y;
+        instance_uv[i].W = m_image->uv1().y;
+    }
+    sg_range instance_uv_range {};
+        instance_uv_range.ptr = &instance_uv[0];
+        instance_uv_range.size = (size_t)INSTANCES * sizeof(hmm_vec4);
+    sg_update_buffer(renderContext()->bindings.vertex_buffers[2], instance_uv_range);
 
     sg_apply_pipeline( renderContext()->pipeline);
     sg_apply_bindings(&renderContext()->bindings);
     sg_apply_uniforms(SG_SHADERSTAGE_VS, SLOT_vs_params, SG_RANGE(vs_params));
     sg_apply_uniforms(SG_SHADERSTAGE_FS, SLOT_fs_params, SG_RANGE(fs_params));
-    sg_draw(0, m_mesh->indices.size(), 1);
+    sg_draw(0, m_mesh->indices.size(), INSTANCES);
 }
 
 
@@ -334,7 +356,7 @@ void DrEditor::onEvent(const sapp_event* event) {
             case SAPP_KEYCODE_R:
                 m_total_rotation.set(0.f, 0.f);
                 m_add_rotation.set(25.f, 25.f);
-                m_model = DrMatrix::identityMatrix();
+                resetPositions();
                 break;
             case SAPP_KEYCODE_W:
                 m_mesh->wireframe = !m_mesh->wireframe;
@@ -468,7 +490,46 @@ void DrEditor::calculateMesh(bool reset_position) {
         if (reset_position) {
             m_total_rotation.set(0.f, 0.f);
             m_add_rotation.set(25.f, 25.f);
-            m_model = DrMatrix::identityMatrix();
+            resetPositions();
         }
     }
 }
+
+
+//####################################################################################
+//##    Reset Model Positions
+//####################################################################################
+void DrEditor::resetPositions() {
+    
+    float spacing_x = -1.f * (4.f * INSTANCE_X); 
+    float spacing_y = -1.f * (4.f * INSTANCE_Y);
+    float step_x = (abs(spacing_x) * 2.f) / INSTANCE_X;
+    float step_y = (abs(spacing_y) * 2.f) / INSTANCE_Y;
+
+    int index = 0;
+    float x = spacing_x;
+    for (int i = 0; i < INSTANCE_X; i++) {
+        float y = spacing_y;
+
+        for (int j = 0; j < INSTANCE_Y; j++) {
+            // Translate
+            hmm_mat4 model = HMM_Translate(HMM_Vec3(x, y, 0.f));
+
+            // Scale between 0.001 and 0.01f
+            float scale = (rand() % 10) / 1000.0f + 0.01;
+                  scale *= 0.35f;
+            model = HMM_MultiplyMat4(model, HMM_Scale(HMM_Vec3(scale, scale, scale)));
+
+            // Rotation: add random rotation around a (semi)randomly picked rotation axis vector
+            float rot_angle = (rand() % 360);
+            model = HMM_MultiplyMat4(model, HMM_Rotate(rot_angle, HMM_Vec3(0.4f, 0.6f, 0.8f)));
+
+            m_model[index] = model;
+            y += step_y;
+            index++;
+        }
+        x += step_x;
+    }
+
+}
+
