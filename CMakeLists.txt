@@ -206,7 +206,7 @@ elseif (EXPORT_TARGET MATCHES "web")
     #   -fno-exceptions                         Turns off "try {} catch {}" blocks, and std::except(), saves ~500kb
     #
     set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -std=c99   -Oz -fno-exceptions")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Oz -fno-exceptions --shell-file ../shell.html") # -Werror -Wno-error=unused-command-line-argument") 
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Oz -fno-exceptions --shell-file ../shell_full.html") # -Werror -Wno-error=unused-command-line-argument") 
     set(CMAKE_C_COMPILER "emcc")
     set(CMAKE_CXX_COMPILER "emcc")
     SET(CMAKE_EXECUTABLE_SUFFIX ".html")
