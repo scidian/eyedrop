@@ -61,7 +61,7 @@ public:
     DrVec2                      m_mouse_down        { 0, 0 };
     float                       m_rotate_speed      { 1.f };
     bool                        m_is_mouse_down     { false };
-    float                       m_zoom              { 1.5f };
+    float                       m_zoom              { 2.0f };
     bool                        m_wireframe         { true };
     // !!!!! End temp variables
 

@@ -367,11 +367,16 @@ void DrEditor::onEvent(const sapp_event* event) {
                 
     } else if (event->type == SAPP_EVENTTYPE_MOUSE_SCROLL) {
         m_zoom -= (event->scroll_y * 0.1f);
-        m_zoom = Clamp(m_zoom, 0.5f, 5.0f);
+        m_zoom = Clamp(m_zoom, 0.5f, 25.0f);
 
     } else if (event->type == SAPP_EVENTTYPE_MOUSE_DOWN) {
         if (event->mouse_button == SAPP_MOUSEBUTTON_LEFT) {
             m_mouse_down.set(event->mouse_y, event->mouse_x);
+            m_is_mouse_down = true;
+        }
+     } else if (event->type == SAPP_EVENTTYPE_TOUCHES_BEGAN) {
+        if (event->num_touches >= 0) {
+            m_mouse_down.set(event->touches[0].pos_y, event->touches[0].pos_x);
             m_is_mouse_down = true;
         }
         
@@ -379,11 +384,21 @@ void DrEditor::onEvent(const sapp_event* event) {
         if (event->mouse_button == SAPP_MOUSEBUTTON_LEFT) {
             m_is_mouse_down = false;
         }
+    } else if (event->type == SAPP_EVENTTYPE_TOUCHES_ENDED) {
+        if (event->num_touches == 0) m_is_mouse_down = false;
 
-    } else if (event->type == SAPP_EVENTTYPE_MOUSE_MOVE) {
+    } else if (event->type == SAPP_EVENTTYPE_MOUSE_MOVE || event->type == SAPP_EVENTTYPE_TOUCHES_MOVED) {
         if (m_is_mouse_down) {
-            float x_movement = event->mouse_y;
-            float y_movement = event->mouse_x;
+            float x_movement = 0.f;
+            float y_movement = 0.f;
+
+            if (event->type == SAPP_EVENTTYPE_MOUSE_MOVE) {
+                x_movement = event->mouse_y;
+                y_movement = event->mouse_x;
+            } else if (event->type == SAPP_EVENTTYPE_TOUCHES_MOVED) {
+                x_movement = event->touches[0].pos_y;
+                y_movement = event->touches[0].pos_x;
+            }
 
             if (m_mouse_down.x < x_movement) {
                 m_add_rotation.x = m_rotate_speed * (x_movement - m_mouse_down.x);
