@@ -31,8 +31,9 @@ enum Editor_Images {
 
 
 //####################################################################################
-//##    Editor
-//####################################################################################
+//##    DrEditor
+//##        Drop Creator Game Editor built on top of Drop App Engine
+//############################
 class DrEditor : public DrApp 
 {
 public:
@@ -62,7 +63,7 @@ public:
     float                       m_rotate_speed      { 1.f };
     bool                        m_is_mouse_down     { false };
     float                       m_zoom              { 2.0f };
-    bool                        m_wireframe         { true };
+    bool                        m_wireframe         { false };
     // !!!!! End temp variables
 
 

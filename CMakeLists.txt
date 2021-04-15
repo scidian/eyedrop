@@ -21,7 +21,7 @@ cmake_minimum_required(VERSION 3.10)
 #
 #   APP_TYPE
 #       "editor"                                    Drop Editor, defines ENABLE_DEBUG
-#       "player"                                    Drop Engine, by default does not have ImGui enabled unless DEBUG_MODE is set to "true"
+#       "player"                                    Drop Runtime, by default does not have ImGui enabled unless DEBUG_MODE is set to "true"
 #
 #   DEBUG_MODE
 #       "true"                                      defines ENABLE_DEBUG, ENABLE_IMGUI (turns on ImGui and Sokol Gfx debug menus by default)
@@ -49,7 +49,7 @@ if      (APP_TYPE MATCHES "player")
     file(GLOB_RECURSE MAIN_DIRECTORY_FILES
         "player/*.c**"
     )
-    project(player)                                 ##### Project Name for Engine Only
+    project(player)                                 ##### Project Name for Engine Runtime Only
 elseif  (APP_TYPE MATCHES "editor")  
     add_compile_definitions(SOKOL_NO_ENTRY)         ##### STOP SOKOL HIJACK    
     add_compile_definitions(ENABLE_IMGUI)           ##### Signal we want ImGui available to application

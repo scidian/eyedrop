@@ -516,8 +516,8 @@ void DrEditor::calculateMesh(bool reset_position) {
 //####################################################################################
 void DrEditor::resetPositions() {
     
-    float spacing_x = -1.f * (4.f * INSTANCE_X); 
-    float spacing_y = -1.f * (4.f * INSTANCE_Y);
+    float spacing_x = -1.f * (7.f * INSTANCE_X); 
+    float spacing_y = -1.f * (7.f * INSTANCE_Y);
     float step_x = (abs(spacing_x) * 2.f) / INSTANCE_X;
     float step_y = (abs(spacing_y) * 2.f) / INSTANCE_Y;
 
@@ -532,7 +532,7 @@ void DrEditor::resetPositions() {
 
             // Scale between 0.001 and 0.01f
             float scale = (rand() % 10) / 1000.0f + 0.01;
-                  scale *= 0.35f;
+                  scale *= 0.6f;
             model = HMM_MultiplyMat4(model, HMM_Scale(HMM_Vec3(scale, scale, scale)));
 
             // Rotation: add random rotation around a (semi)randomly picked rotation axis vector

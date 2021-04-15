@@ -1,5 +1,5 @@
 /*
-  HandmadeMath.h v1.11.0
+  HandmadeMath.h v1.12.1
 
   This is a single header file with a bunch of useful functions for game and
   graphics math operations.
@@ -84,7 +84,7 @@
 
   CREDITS
 
-  Written by Zakary Strange (strangezak@gmail.com && @strangezak)
+  Written by Zakary Strange (strangezak@protonmail.com && @strangezak)
 
   Functionality:
    Matt Mascarenhas (@miblo_)
@@ -165,7 +165,12 @@ extern "C"
 #endif
 
 #define HMM_INLINE static inline
-#define HMM_EXTERN extern
+
+#ifdef HMM_STATIC
+#define HMM_DEF static
+#else
+#define HMM_DEF extern
+#endif
 
 #if !defined(HMM_SINF) || !defined(HMM_COSF) || !defined(HMM_TANF) || \
     !defined(HMM_SQRTF) || !defined(HMM_EXPF) || !defined(HMM_LOGF) || \
@@ -212,10 +217,10 @@ extern "C"
 #define HMM_PI32 3.14159265359f
 #define HMM_PI 3.14159265358979323846
 
-#define HMM_MIN(a, b) (a) > (b) ? (b) : (a)
-#define HMM_MAX(a, b) (a) < (b) ? (b) : (a)
+#define HMM_MIN(a, b) ((a) > (b) ? (b) : (a))
+#define HMM_MAX(a, b) ((a) < (b) ? (b) : (a))
 #define HMM_ABS(a) ((a) > 0 ? (a) : -(a))
-#define HMM_MOD(a, m) ((a) % (m)) >= 0 ? ((a) % (m)) : (((a) % (m)) + (m))
+#define HMM_MOD(a, m) (((a) % (m)) >= 0 ? ((a) % (m)) : (((a) % (m)) + (m)))
 #define HMM_SQUARE(x) ((x) * (x))
 
 #ifndef HMM_PREFIX
@@ -547,7 +552,7 @@ HMM_INLINE float HMM_PREFIX(RSquareRootF)(float Float)
     return(Result);
 }
 
-HMM_EXTERN float HMM_PREFIX(Power)(float Base, int Exponent);
+HMM_DEF float HMM_PREFIX(Power)(float Base, int Exponent);
 
 COVERAGE(HMM_PowerF, 1)
 HMM_INLINE float HMM_PREFIX(PowerF)(float Base, float Exponent)
@@ -1315,7 +1320,7 @@ HMM_INLINE hmm_mat4 HMM_PREFIX(Transpose)(hmm_mat4 Matrix)
     return (Result);
 }
 #else
-HMM_EXTERN hmm_mat4 HMM_PREFIX(Transpose)(hmm_mat4 Matrix);
+HMM_DEF hmm_mat4 HMM_PREFIX(Transpose)(hmm_mat4 Matrix);
 #endif
 
 #ifdef HANDMADE_MATH__USE_SSE
@@ -1334,7 +1339,7 @@ HMM_INLINE hmm_mat4 HMM_PREFIX(AddMat4)(hmm_mat4 Left, hmm_mat4 Right)
     return (Result);
 }
 #else
-HMM_EXTERN hmm_mat4 HMM_PREFIX(AddMat4)(hmm_mat4 Left, hmm_mat4 Right);
+HMM_DEF hmm_mat4 HMM_PREFIX(AddMat4)(hmm_mat4 Left, hmm_mat4 Right);
 #endif
 
 #ifdef HANDMADE_MATH__USE_SSE
@@ -1353,10 +1358,10 @@ HMM_INLINE hmm_mat4 HMM_PREFIX(SubtractMat4)(hmm_mat4 Left, hmm_mat4 Right)
     return (Result);
 }
 #else
-HMM_EXTERN hmm_mat4 HMM_PREFIX(SubtractMat4)(hmm_mat4 Left, hmm_mat4 Right);
+HMM_DEF hmm_mat4 HMM_PREFIX(SubtractMat4)(hmm_mat4 Left, hmm_mat4 Right);
 #endif
 
-HMM_EXTERN hmm_mat4 HMM_PREFIX(MultiplyMat4)(hmm_mat4 Left, hmm_mat4 Right);
+HMM_DEF hmm_mat4 HMM_PREFIX(MultiplyMat4)(hmm_mat4 Left, hmm_mat4 Right);
 
 #ifdef HANDMADE_MATH__USE_SSE
 COVERAGE(HMM_MultiplyMat4f, 1)
@@ -1375,10 +1380,10 @@ HMM_INLINE hmm_mat4 HMM_PREFIX(MultiplyMat4f)(hmm_mat4 Matrix, float Scalar)
     return (Result);
 }
 #else
-HMM_EXTERN hmm_mat4 HMM_PREFIX(MultiplyMat4f)(hmm_mat4 Matrix, float Scalar);
+HMM_DEF hmm_mat4 HMM_PREFIX(MultiplyMat4f)(hmm_mat4 Matrix, float Scalar);
 #endif
 
-HMM_EXTERN hmm_vec4 HMM_PREFIX(MultiplyMat4ByVec4)(hmm_mat4 Matrix, hmm_vec4 Vector);
+HMM_DEF hmm_vec4 HMM_PREFIX(MultiplyMat4ByVec4)(hmm_mat4 Matrix, hmm_vec4 Vector);
 
 #ifdef HANDMADE_MATH__USE_SSE
 COVERAGE(HMM_DivideMat4f, 1)
@@ -1397,7 +1402,7 @@ HMM_INLINE hmm_mat4 HMM_PREFIX(DivideMat4f)(hmm_mat4 Matrix, float Scalar)
     return (Result);
 }
 #else
-HMM_EXTERN hmm_mat4 HMM_PREFIX(DivideMat4f)(hmm_mat4 Matrix, float Scalar);
+HMM_DEF hmm_mat4 HMM_PREFIX(DivideMat4f)(hmm_mat4 Matrix, float Scalar);
 #endif
 
 
@@ -1459,7 +1464,7 @@ HMM_INLINE hmm_mat4 HMM_PREFIX(Translate)(hmm_vec3 Translation)
     return (Result);
 }
 
-HMM_EXTERN hmm_mat4 HMM_PREFIX(Rotate)(float Angle, hmm_vec3 Axis);
+HMM_DEF hmm_mat4 HMM_PREFIX(Rotate)(float Angle, hmm_vec3 Axis);
 
 COVERAGE(HMM_Scale, 1)
 HMM_INLINE hmm_mat4 HMM_PREFIX(Scale)(hmm_vec3 Scale)
@@ -1475,7 +1480,7 @@ HMM_INLINE hmm_mat4 HMM_PREFIX(Scale)(hmm_vec3 Scale)
     return (Result);
 }
 
-HMM_EXTERN hmm_mat4 HMM_PREFIX(LookAt)(hmm_vec3 Eye, hmm_vec3 Center, hmm_vec3 Up);
+HMM_DEF hmm_mat4 HMM_PREFIX(LookAt)(hmm_vec3 Eye, hmm_vec3 Center, hmm_vec3 Up);
 
 
 /*
@@ -1633,7 +1638,7 @@ HMM_INLINE hmm_quaternion HMM_PREFIX(DivideQuaternionF)(hmm_quaternion Left, flo
     return (Result);
 }
 
-HMM_EXTERN hmm_quaternion HMM_PREFIX(InverseQuaternion)(hmm_quaternion Left);
+HMM_DEF hmm_quaternion HMM_PREFIX(InverseQuaternion)(hmm_quaternion Left);
 
 COVERAGE(HMM_DotQuaternion, 1)
 HMM_INLINE float HMM_PREFIX(DotQuaternion)(hmm_quaternion Left, hmm_quaternion Right)
@@ -1693,10 +1698,10 @@ HMM_INLINE hmm_quaternion HMM_PREFIX(NLerp)(hmm_quaternion Left, float Time, hmm
     return (Result);
 }
 
-HMM_EXTERN hmm_quaternion HMM_PREFIX(Slerp)(hmm_quaternion Left, float Time, hmm_quaternion Right);
-HMM_EXTERN hmm_mat4 HMM_PREFIX(QuaternionToMat4)(hmm_quaternion Left);
-HMM_EXTERN hmm_quaternion HMM_PREFIX(Mat4ToQuaternion)(hmm_mat4 Left);
-HMM_EXTERN hmm_quaternion HMM_PREFIX(QuaternionFromAxisAngle)(hmm_vec3 Axis, float AngleOfRotation);
+HMM_DEF hmm_quaternion HMM_PREFIX(Slerp)(hmm_quaternion Left, float Time, hmm_quaternion Right);
+HMM_DEF hmm_mat4 HMM_PREFIX(QuaternionToMat4)(hmm_quaternion Left);
+HMM_DEF hmm_quaternion HMM_PREFIX(Mat4ToQuaternion)(hmm_mat4 Left);
+HMM_DEF hmm_quaternion HMM_PREFIX(QuaternionFromAxisAngle)(hmm_vec3 Axis, float AngleOfRotation);
 
 #ifdef __cplusplus
 }
@@ -2790,6 +2795,46 @@ HMM_INLINE hmm_bool operator!=(hmm_vec4 Left, hmm_vec4 Right)
     return !HMM_PREFIX(EqualsVec4)(Left, Right);
 }
 
+COVERAGE(HMM_UnaryMinusVec2, 1)
+HMM_INLINE hmm_vec2 operator-(hmm_vec2 In)
+{
+    ASSERT_COVERED(HMM_UnaryMinusVec2);
+
+    hmm_vec2 Result;
+    Result.X = -In.X;
+    Result.Y = -In.Y;
+    return(Result);
+}
+
+COVERAGE(HMM_UnaryMinusVec3, 1)
+HMM_INLINE hmm_vec3 operator-(hmm_vec3 In)
+{
+    ASSERT_COVERED(HMM_UnaryMinusVec3);
+
+    hmm_vec3 Result;
+    Result.X = -In.X;
+    Result.Y = -In.Y;
+    Result.Z = -In.Z;
+    return(Result);
+}
+
+COVERAGE(HMM_UnaryMinusVec4, 1)
+HMM_INLINE hmm_vec4 operator-(hmm_vec4 In)
+{
+    ASSERT_COVERED(HMM_UnaryMinusVec4);
+
+    hmm_vec4 Result;
+#if HANDMADE_MATH__USE_SSE
+    Result.InternalElementsSSE = _mm_xor_ps(In.InternalElementsSSE, _mm_set1_ps(-0.0f));
+#else
+    Result.X = -In.X;
+    Result.Y = -In.Y;
+    Result.Z = -In.Z;
+    Result.W = -In.W;
+#endif
+    return(Result);
+}
+
 #endif /* __cplusplus */
 
 #if defined(__GNUC__) || defined(__clang__)
@@ -3236,9 +3281,5 @@ hmm_quaternion HMM_PREFIX(QuaternionFromAxisAngle)(hmm_vec3 Axis, float AngleOfR
 
     return (Result);
 }
-
-
-
-
 
 #endif /* HANDMADE_MATH_IMPLEMENTATION */

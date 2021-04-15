@@ -46,37 +46,43 @@
 //####################################################################################
 
 
-## System
+## System Libs
+    - Any-lite              (Boost)     C++11   https://github.com/martinmoene/any-lite       
+    - Dear ImGui            (MIT):      Flex    https://github.com/ocornut/imgui
+    - Fontstash             (ZLIB):     C99     https://github.com/memononen/fontstash
+    - Handmade-Math         (CC0)       C99     https://github.com/StrangeZak/Handmade-Math
+    - Stb                   (MIT):      C99     https://github.com/nothings/stb
+    - Sokol                 (ZLIB):     C99     https://github.com/floooh/sokol
+    - Whereami              (MIT):      C99     https://github.com/gpakosz/whereami
 
-- Any-lite              (Boost)     C++11   https://github.com/martinmoene/any-lite       
-- Handmade-Math         (CC0)       C99     https://github.com/StrangeZak/Handmade-Math
-- Stb                   (MIT):      C99     https://github.com/nothings/stb
-- Sokol                 (ZLIB):     C99     https://github.com/floooh/sokol
-- Whereami              (MIT):      C99     https://github.com/gpakosz/whereami
-
-
-## Gui
-
-- Dear ImGui            (MIT):      Flex    https://github.com/ocornut/imgui
-- Fontstash             (ZLIB):     C99     https://github.com/memononen/fontstash
-- IconFontCppHeaders    (ZLIB):     Flex    https://github.com/juliettef/IconFontCppHeaders
-
-
-## Algorithm
-
-- Delaunator            (MIT):      C++11   https://github.com/soerendd/delaunator-cpp
-- Mesh Optimizer        (MIT):      C++11   https://github.com/zeux/meshoptimizer 
-- Poly Partition        (MIT):      C++11   https://github.com/ivanfratric/polypartition
-- Ramer-Douglas-Peucker (CC0):      C++11   https://gist.github.com/TimSC/0813573d77734bcb6f2cd2cf6cc7aa51
-
+## Algorithm Libs
+    - Delaunator            (MIT):      C++11   https://github.com/soerendd/delaunator-cpp
+    - Mesh Optimizer        (MIT):      C++11   https://github.com/zeux/meshoptimizer 
+    - Poly Partition        (MIT):      C++11   https://github.com/ivanfratric/polypartition
+    - Ramer-Douglas-Peucker (CC0):      C++11   https://gist.github.com/TimSC/0813573d77734bcb6f2cd2cf6cc7aa51
 
 ## Tools
+    - Hex Embed             (ZLIB)      https://github.com/codeplea/hexembed
+    - Sokol Shdc            (MIT)       https://github.com/floooh/sokol-tools
 
-- Hex Embed             (ZLIB)      https://github.com/codeplea/hexembed
-- Sokol Shdc            (MIT)       https://github.com/floooh/sokol-tools
+## Assets
+    - Font: Aileron         (CC0)       https://github.com/Nicholaiii/Aileron (source: http://dotcolon.net)
 
 
-## Fonts
+//####################################################################################
+//##    Not Currently Using
+//############################
+## Libs
+    - Bullet Physics        (ZLIB)      C++03   https://github.com/bulletphysics/bullet3
+    - Cereal                (BSD)       C++11   https://github.com/USCiLab/cereal
+    - Chipmunk Physics      (MIT)       C99     https://github.com/slembcke/Chipmunk2D          
+    - Duktape               (MIT)       C++03   https://github.com/svaarala/duktape
+    - IconFontCppHeaders    (ZLIB):     Flex    https://github.com/juliettef/IconFontCppHeaders
+    - ImGuizmo              (MIT)       C++03   https://github.com/CedricGuillemet/ImGuizmo
+    - Parrallel Hashmap     (Apache)    C++11   https://github.com/greg7mdp/parallel-hashmap
+    - Partow Bitmap         (MIT)       C++03   https://github.com/ArashPartow/bitmap
+    - SoLoud                (ZLIB)      C99     https://github.com/jarikomppa/soloud
+    - TinyObj               (MIT)       C++03   https://github.com/tinyobjloader/tinyobjloader
 
-- Aileron               (CC0)       https://github.com/Nicholaiii/Aileron (source: http://dotcolon.net)
-- Font Awesome 5        (OFL)       https://github.com/FortAwesome/Font-Awesome
+## Assets
+    - Font: Font Awesome 5  (OFL)       https://github.com/FortAwesome/Font-Awesome
