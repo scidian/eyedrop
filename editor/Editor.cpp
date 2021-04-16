@@ -215,7 +215,6 @@ void DrEditor::onUpdateScene() {
         m_before_keys = m_mesh_quality;
     }
 
-    // Check we have valid image to use
     if (m_image == nullptr) return;
 
     // Update Instance Buffers
@@ -227,18 +226,6 @@ void DrEditor::onUpdateScene() {
         instance_m_range.ptr = &instance_m[0];
         instance_m_range.size = (size_t)INSTANCES * sizeof(hmm_mat4);
     sg_update_buffer(renderContext()->bindings.vertex_buffers[1], instance_m_range);
-
-    std::vector<hmm_vec4> instance_uv(INSTANCES);
-    for (int i = 0; i < INSTANCES; i++) {
-        instance_uv[i].X = m_image->uv0().x;
-        instance_uv[i].Y = m_image->uv1().x;
-        instance_uv[i].Z = m_image->uv0().y;
-        instance_uv[i].W = m_image->uv1().y;
-    }
-    sg_range instance_uv_range {};
-        instance_uv_range.ptr = &instance_uv[0];
-        instance_uv_range.size = (size_t)INSTANCES * sizeof(hmm_vec4);
-    sg_update_buffer(renderContext()->bindings.vertex_buffers[2], instance_uv_range);
 
     sg_apply_pipeline( renderContext()->pipeline);
     sg_apply_bindings(&renderContext()->bindings);
@@ -545,6 +532,20 @@ void DrEditor::resetPositions() {
         }
         x += step_x;
     }
+
+    if (m_image == nullptr) return;
+
+    std::vector<hmm_vec4> instance_uv(INSTANCES);
+    for (int i = 0; i < INSTANCES; i++) {
+        instance_uv[i].X = m_image->uv0().x;
+        instance_uv[i].Y = m_image->uv1().x;
+        instance_uv[i].Z = m_image->uv0().y;
+        instance_uv[i].W = m_image->uv1().y;
+    }
+    sg_range instance_uv_range {};
+        instance_uv_range.ptr = &instance_uv[0];
+        instance_uv_range.size = (size_t)INSTANCES * sizeof(hmm_vec4);
+    sg_update_buffer(renderContext()->bindings.vertex_buffers[2], instance_uv_range);
 
 }
 

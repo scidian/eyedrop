@@ -29,8 +29,8 @@
 #define MAX_COMPONENTS             32                               // Current maximum number of compoenents (uint_8), used for sizing Signature
 
 // !!!!! #TEMP
-#define INSTANCE_X  300
-#define INSTANCE_Y  300
+#define INSTANCE_X  100
+#define INSTANCE_Y  100
 #define INSTANCES   (INSTANCE_X * INSTANCE_Y)
 // !!!!! END TEMP
 
