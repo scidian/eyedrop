@@ -13,6 +13,7 @@
 #include "engine/app/image/Color.h"
 #include "engine/app/image/Filter.h"
 #include "engine/app/image/Image.h"
+#include "engine/app/imgui/MainMenu.h"
 #include "engine/app/resources/ImageManager.h"
 #include "engine/ecs/Coordinator.h"
 #include "engine/scene3d/Mesh.h"
@@ -76,6 +77,11 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
 DrApp::~DrApp() {
     delete m_image_manager;
     delete m_context;
+
+    // MacOS Main Menu Cleanup
+    #if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
+        MainMenu::osxMenuShutDown();
+    #endif
 }
 
 // Sets application name, updates title bar
@@ -89,6 +95,11 @@ void DrApp::setAppName(std::string name) {
 //####################################################################################
 // Initializes all sokol libraries
 void DrApp::init(void) {
+    // #################### Mac Menu ####################
+    #if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
+        MainMenu::osxMenuInitialize();
+    #endif
+
     // #################### Sokol App ####################
     m_dpi_scale = sapp_dpi_scale();
 

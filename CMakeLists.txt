@@ -65,7 +65,7 @@ include_directories(${CMAKE_SOURCE_DIR}/3rd_party)
 
 ##### Glob the files, add the executable
 file(GLOB_RECURSE 3RD_PARTY_CODE_FILES      "3rd_party/*.c**")
-file(GLOB_RECURSE ENGINE_CODE_FILES         "engine/*.c**")
+file(GLOB_RECURSE ENGINE_CODE_FILES         "engine/*.c**" "engine/*.mm")
 file(GLOB SOURCE_CODE_FILES                 
     ${MAIN_DIRECTORY_FILES}
     ${3RD_PARTY_CODE_FILES}
@@ -96,6 +96,7 @@ endif()
 if     (EXPORT_TARGET MATCHES "osx")
     add_compile_definitions(DROP_TARGET_APPLE)
     add_compile_definitions(DROP_TARGET_OSX)
+    add_compile_definitions(DROP_TARGET_OSX_MENUS)  # Use MacOS main menu bar, instead of ImGui
     add_compile_definitions(SOKOL_GLCORE33)         # MacOS, Windows, Linux, Switch, Playstation
     #add_compile_definitions(SOKOL_METAL)           # MacOS, iOS, tvOS
 elseif (EXPORT_TARGET MATCHES "ios")
@@ -164,7 +165,7 @@ if (EXPORT_TARGET MATCHES "osx")
     # -fobjc-arc            MacOS ARC object counting, needed for Sokol
     #
     set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Os -std=c99   -fno-exceptions -fobjc-arc -xobjective-c")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -std=c++11 -fno-exceptions -fobjc-arc")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -std=c++11 -fno-exceptions")
     set(CMAKE_C_COMPILER "gcc")
     set(CMAKE_CXX_COMPILER "g++")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa -framework OpenGL -framework IOKit -framework Foundation")

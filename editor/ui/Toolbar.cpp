@@ -6,8 +6,8 @@
 // Written by Stephens Nunnally <stevinz@gmail.com> - Sat Mar 06 2021
 //
 //
-#include "3rd_party/imgui_color_gradient.h"
 #include "engine/app/image/Image.h"
+#include "engine/app/imgui/ImGradient.h"
 #include "editor/Editor.h"
 
 

@@ -4,9 +4,8 @@
 //
 //  Created by David Gallardo on 11/06/16.
 
-
-#include "imgui_color_gradient.h"
-#include "imgui/imgui_internal.h"
+#include "ImGradient.h"
+#include "3rd_party/imgui/imgui_internal.h"
 
 static const float GRADIENT_BAR_WIDGET_HEIGHT = 25;
 static const float GRADIENT_BAR_EDITOR_HEIGHT = 40;

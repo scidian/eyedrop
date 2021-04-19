@@ -3,7 +3,6 @@
 //  imgui extension
 //
 //  Created by David Gallardo on 11/06/16.
-
 /*
  
  Usage:
@@ -43,16 +42,13 @@
  gradient.addMark(0.8f, ImColor(0xDC, 0xB5, 0x79));
  gradient.addMark(1.0f, ImColor(0xE6, 0xBF, 0x83));
  
- */
-
+*/
 #pragma once
 
-#include "imgui/imgui.h"
-
+#include "3rd_party/imgui/imgui.h"
 #include <list>
 
-struct ImGradientMark
-{
+struct ImGradientMark {
     float color[4];
     float position; //0 to 1
 };
@@ -74,13 +70,9 @@ private:
     float m_cachedValues[256 * 3];
 };
 
-namespace ImGui
-{
+namespace ImGui {
+    
     bool GradientButton(ImGradient* gradient);
+    bool GradientEditor(ImGradient* gradient, ImGradientMark*& draggingMark, ImGradientMark*& selectedMark);
     
-    bool GradientEditor(ImGradient* gradient,
-                        ImGradientMark* & draggingMark,
-                        ImGradientMark* & selectedMark);
-    
-
 }

@@ -7,6 +7,7 @@
 //
 //
 #include "editor/Editor.h"
+#include "engine/app/imgui/MainMenu.h"
 #include "Menu.h"
 
 
@@ -15,35 +16,35 @@
 //####################################################################################
 void MainMenuUI(bool* widgets) {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
-    if (ImGui::BeginMainMenuBar()) {
-        if (ImGui::BeginMenu("File")) {
-            bool clicked_new  { false };
-            bool clicked_open { false };
-            bool clicked_save { false };
-            if (ImGui::MenuItem("New",  "CTRL+N", &clicked_new)) { }
-            if (ImGui::MenuItem("Open", "CTRL+O", &clicked_open)) { }
-            if (ImGui::MenuItem("Save", "CTRL+S", &clicked_save)) { }
-            ImGui::Separator();
-            if (ImGui::MenuItem("Quit", "CTRL+Q")) { sapp_request_quit(); }
-            ImGui::EndMenu();
+    if (MainMenu::BeginMainMenuBar()) {
+        // if (MainMenu::BeginMenu("File")) {
+        //     bool clicked_new  { false };
+        //     bool clicked_open { false };
+        //     bool clicked_save { false };
+        //     if (MainMenu::MenuItem("New",  "CTRL+N", &clicked_new)) { }
+        //     if (MainMenu::MenuItem("Open", "CTRL+O", &clicked_open)) { }
+        //     if (MainMenu::MenuItem("Save", "CTRL+S", &clicked_save)) { }
+        //     MainMenu::Separator();
+        //     if (MainMenu::MenuItem("Quit", "CTRL+Q")) { sapp_request_quit(); }
+        //     MainMenu::EndMenu();
+        // }
+        // if (MainMenu::BeginMenu("Edit")) {
+        //     if (MainMenu::MenuItem("Cut", "CTRL+X")) { }
+        //     if (MainMenu::MenuItem("Copy", "CTRL+C")) { }
+        //     if (MainMenu::MenuItem("Paste", "CTRL+V")) { }
+        //     MainMenu::EndMenu();
+        // }
+        if (MainMenu::BeginMenu("View")) {
+            MainMenu::MenuItem("Asset Viewer", 0,          &widgets[EDITOR_WIDGET_ASSETS]);
+            MainMenu::MenuItem("Object Inspector", 0,      &widgets[EDITOR_WIDGET_INSPECTOR]);
+            MainMenu::Separator();
+            MainMenu::MenuItem("Color Theme Selector", 0,  &widgets[EDITOR_WIDGET_THEME]);
+            MainMenu::MenuItem("Style Selector", 0,        &widgets[EDITOR_WIDGET_STYLE]);
+            MainMenu::Separator();
+            MainMenu::MenuItem("ImGui Demo", 0,            &widgets[EDITOR_WIDGET_DEMO]);
+            MainMenu::EndMenu();
         }
-        if (ImGui::BeginMenu("Edit")) {
-            if (ImGui::MenuItem("Cut", "CTRL+X")) { }
-            if (ImGui::MenuItem("Copy", "CTRL+C")) { }
-            if (ImGui::MenuItem("Paste", "CTRL+V")) { }
-            ImGui::EndMenu();
-        }
-        if (ImGui::BeginMenu("View")) {
-            ImGui::MenuItem("Asset Viewer", 0,          &widgets[EDITOR_WIDGET_ASSETS]);
-            ImGui::MenuItem("Object Inspector", 0,      &widgets[EDITOR_WIDGET_INSPECTOR]);
-            ImGui::Separator();
-            ImGui::MenuItem("Color Theme Selector", 0,  &widgets[EDITOR_WIDGET_THEME]);
-            ImGui::MenuItem("Style Selector", 0,        &widgets[EDITOR_WIDGET_STYLE]);
-            ImGui::Separator();
-            ImGui::MenuItem("ImGui Demo", 0,            &widgets[EDITOR_WIDGET_DEMO]);
-            ImGui::EndMenu();
-        }
-        ImGui::EndMainMenuBar();
+        MainMenu::EndMainMenuBar();
     }
     ImGui::PopStyleVar();
 }
