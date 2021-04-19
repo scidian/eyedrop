@@ -69,7 +69,24 @@ namespace MainMenu {
     static bool         s_build_menus = true;
     static bool         s_clear_menus = false;
 
-    void osxMenuInitialize() {
+    void osxMenuInitialize(const char* app_name) {
+        // !!!!! Code from https://github.com/floooh/sokol/pull/362:
+        NSMenu* menu_bar = [[NSMenu new] autorelease];
+        NSMenuItem* app_menu_item = [[NSMenuItem new] autorelease];
+            NSMenu* app_menu = [[NSMenu new] autorelease];
+            NSString* window_title_as_nsstring = [NSString stringWithUTF8String:app_name];
+            NSString* quit_title = [@"Quit " stringByAppendingString:window_title_as_nsstring];
+            NSMenuItem* quit_menu_item = [[NSMenuItem alloc]
+                initWithTitle:quit_title
+                action:@selector(terminate:)
+                keyEquivalent:@"q"];
+        [app_menu addItem:quit_menu_item];
+        app_menu_item.submenu = app_menu;
+        [menu_bar addItem:app_menu_item];
+        NSApp.mainMenu = menu_bar;
+        // !!!!! End Code
+       
+
         s_menu_handler = [[MenuItemHandler new] autorelease];
         s_menus.push_back(MenuState());
         s_menus.back().menu = [NSApp menu];

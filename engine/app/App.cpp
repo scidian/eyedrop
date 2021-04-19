@@ -97,10 +97,11 @@ void DrApp::setAppName(std::string name) {
 void DrApp::init(void) {
     // #################### Mac Menu ####################
     #if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
-        MainMenu::osxMenuInitialize();
+        MainMenu::osxMenuInitialize(m_app_name.c_str());
     #endif
 
     // #################### Sokol App ####################
+    setAppName(m_app_name);                                     // Set initial Window Title
     m_dpi_scale = sapp_dpi_scale();
 
     // #################### Sokol Gfx ####################

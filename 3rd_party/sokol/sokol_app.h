@@ -2784,38 +2784,8 @@ _SOKOL_PRIVATE void _sapp_macos_run(const sapp_desc* desc) {
     _sapp_init_state(desc);
     _sapp_macos_init_keytable();
     [NSApplication sharedApplication];
-
-
-//####################################################################################
-//####################################################################################
-// Added by Stevinz from:
-// https://github.com/floooh/sokol/pull/362
-    NSMenu* menu_bar = [[NSMenu alloc] init];
-        NSMenuItem* app_menu_item = [[NSMenuItem alloc] init];
-            NSMenu* app_menu = [[NSMenu alloc] init];
-            NSString* window_title_as_nsstring = [NSString stringWithUTF8String:_sapp.window_title];
-            // `quit_title` memory will be owned by the NSMenuItem, so no need to release it ourselves
-            NSString* quit_title = [@"Quit " stringByAppendingString:window_title_as_nsstring];
-            NSMenuItem* quit_menu_item = [[NSMenuItem alloc]
-                initWithTitle:quit_title
-                action:@selector(terminate:)
-                keyEquivalent:@"q"];
-        [app_menu addItem:quit_menu_item];
-        app_menu_item.submenu = app_menu;
-    [menu_bar addItem:app_menu_item];
-    NSApp.mainMenu = menu_bar;
-    _SAPP_OBJC_RELEASE( window_title_as_nsstring );
-    _SAPP_OBJC_RELEASE( app_menu );
-    _SAPP_OBJC_RELEASE( app_menu_item );
-    _SAPP_OBJC_RELEASE( menu_bar );
-//####################################################################################
-//####################################################################################
-
-
-    NSApp.activationPolicy = NSApplicationActivationPolicyRegular;
     _sapp.macos.app_dlg = [[_sapp_macos_app_delegate alloc] init];
     NSApp.delegate = _sapp.macos.app_dlg;
-    [NSApp activateIgnoringOtherApps:YES];
     [NSApp run];
     // NOTE: [NSApp run] never returns, instead cleanup code
     // must be put into applicationWillTerminate
@@ -3011,6 +2981,10 @@ _SOKOL_PRIVATE void _sapp_macos_frame(void) {
 @implementation _sapp_macos_app_delegate
 - (void)applicationDidFinishLaunching:(NSNotification*)aNotification {
     _SOKOL_UNUSED(aNotification);
+
+    NSApp.activationPolicy = NSApplicationActivationPolicyRegular;
+    [NSApp activateIgnoringOtherApps:YES];
+
     if (_sapp.fullscreen) {
         NSRect screen_rect = NSScreen.mainScreen.frame;
         _sapp.window_width = screen_rect.size.width;

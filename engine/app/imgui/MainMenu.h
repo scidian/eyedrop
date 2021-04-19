@@ -20,7 +20,7 @@ namespace MainMenu {
     void Separator();
 
 	// MacOS Menu Functions
-    void osxMenuInitialize();
+    void osxMenuInitialize(const char* app_name);
     void osxMenuShutDown();
     bool osxBeginMainMenuBar();
     void osxEndMainMenuBar();
