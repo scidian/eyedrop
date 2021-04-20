@@ -7,6 +7,8 @@
 //
 //
 /*
+..... This file started from: https://github.com/JamesBoer/ImFrame .....
+
 The MIT License (MIT)
 
 Copyright (c) 2021 James Boer
@@ -71,12 +73,12 @@ namespace ImUtilities {
 
     void osxMenuInitialize(const char* app_name) {
         // !!!!! Code from https://github.com/floooh/sokol/pull/362:
-        NSMenu* menu_bar = [[NSMenu new] autorelease];
-        NSMenuItem* app_menu_item = [[NSMenuItem new] autorelease];
-            NSMenu* app_menu = [[NSMenu new] autorelease];
+        NSMenu* menu_bar = [[NSMenu alloc] init];                           // Main Menu Bar
+        NSMenuItem* app_menu_item = [[NSMenuItem alloc] init];              // "Drop"
+            NSMenu* app_menu = [[NSMenu alloc] init];                       // Sub Menu
             NSString* window_title_as_nsstring = [NSString stringWithUTF8String:app_name];
             NSString* quit_title = [@"Quit " stringByAppendingString:window_title_as_nsstring];
-            NSMenuItem* quit_menu_item = [[NSMenuItem alloc]
+            NSMenuItem* quit_menu_item = [[NSMenuItem alloc]                // "Quit Drop"
                 initWithTitle:quit_title
                 action:@selector(terminate:)
                 keyEquivalent:@"q"];
@@ -86,9 +88,9 @@ namespace ImUtilities {
         NSApp.mainMenu = menu_bar;
         // !!!!! End Code
        
-        s_menu_handler = [[MenuItemHandler new] autorelease];
+        s_menu_handler = [[MenuItemHandler alloc] init];//[[MenuItemHandler new] autorelease];
         s_menus.push_back(MenuState());
-        s_menus.back().menu = [NSApp menu];
+        s_menus.back().menu = menu_bar;//[NSApp menu];
     }
 
     void osxMenuShutDown() {
@@ -113,8 +115,8 @@ namespace ImUtilities {
         NSMenu* main_menu_bar = s_menus.front().menu;
 
         // Note idx + 1, because we started at one, and we never reached the last "Window" menu.       
-        NSUInteger checkedCount = s_menus.back().idx + 1;
-        if (s_clear_menus || main_menu_bar.itemArray.count != checkedCount) {
+        NSUInteger checked_count = s_menus.back().idx + 1;
+        if (s_clear_menus || main_menu_bar.itemArray.count != checked_count) {
             // This is sort of weird, I know.  We want to preserve the first and last menus ("AppName" and Window), which we didn't create.
             // But we need to clear everything between those two.  Thus, the weird clearing code here.
             while (main_menu_bar.itemArray.count > 2)
@@ -141,12 +143,12 @@ namespace ImUtilities {
         // Create a new menu_item and add to menu
         if (s_build_menus) {
             // New submenus consist of both a new menu and a new menu_item to trigger it
-            NSMenu* newMenu = [[NSMenu new] autorelease];
-                newMenu.autoenablesItems = false;
-                newMenu.title = label_str;
-            NSMenuItem* menu_item = [[NSMenuItem new] autorelease];
+            NSMenu* new_menu = [[NSMenu alloc] init];//[[NSMenu new] autorelease];
+                new_menu.autoenablesItems = false;
+                new_menu.title = label_str;
+            NSMenuItem* menu_item = [[NSMenuItem alloc] init];//[[NSMenuItem new] autorelease];
                 menu_item.title = label_str;
-            [menu_item setSubmenu:newMenu];
+            [menu_item setSubmenu:new_menu];
             [menu insertItem:menu_item atIndex:idx];
         }
         
@@ -194,7 +196,7 @@ namespace ImUtilities {
             
         // If we're in a building pass, create new NSMenuItem and insert into menu
         if (s_build_menus) {
-            NSMenuItem* menu_item = [[NSMenuItem new] autorelease];
+            NSMenuItem* menu_item = [[NSMenuItem alloc] init];//[[NSMenuItem new] autorelease];
                 menu_item.title = label_str;
             [menu_item setTag:s_current_tag_id];
             ++s_current_tag_id;
