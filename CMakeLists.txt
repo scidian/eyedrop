@@ -29,6 +29,7 @@ cmake_minimum_required(VERSION 3.10)
 ####################################################################################
 #################### Build Options
 ####################################################################################
+
 # Standard editor build:
 set(EXPORT_TARGET   "osx")
 set(APP_TYPE        "editor")
@@ -39,6 +40,36 @@ set(DEBUG_MODE      "true")
 # set(APP_TYPE        "player")
 # set(DEBUG_MODE      "false")  
 
+
+####################################################################################
+####################################################################################
+#################### Possible Compile Defitions
+#
+#   System
+#       DROP_TARGET_APPLE                           ##### True when compiling for either MacOS or iOS
+#       DROP_TARGET_OSX                             ##### True when compiling for MacOS
+#       DROP_TARGET_OSX_MENUS                       ##### Use Mac main menu bar instead of ImGui for main menu
+#       DROP_TARGET_IOS                             ##### True when compiling for iOS
+#
+#       DROP_TARGET_HTML5                           ##### True when compiling for javascript (emscripten)
+#       DROP_TARGET_GOOGLE                          ##### True when compiling for Android
+#       DROP_TARGET_WINDOWS                         ##### True when compiling for Windows
+#       DROP_TARGET_LINUX                           ##### True when compiling for Linux
+#
+#   Sokol
+#       SOKOL_TRACE_HOOKS                           ##### Needed for Sokol Debug Viewer
+#       SOKOL_GLCORE33                              ##### OpenGL Core 3.3 Backend   - MacOS, Windows, Linux, Switch, Playstation
+#       SOKOL_GLES2                                 ##### OpenGLES 2.0 Backend      - Android, WebAssembly
+#       SOKOL_GLES3                                 ##### OpenGLES 3.0 Backend      - Android, WebAssembly
+#       SOKOL_D3D11                                 ##### DirectX 11 Backend        - Windows, XBox    
+#       SOKOL_METAL                                 ##### Metal Backend             - MacOS, iOS, tvOS
+#
+#   ImGui
+#       ENABLE_IMGUI                                ##### Signal we want ImGui available to application
+#
+#   Debug
+#       ENABLE_DEBUG                                ##### Signal we want Sokol Debug Viewer capability
+#
 ####################################################################################
 ####################################################################################
 #################### Program to Build
