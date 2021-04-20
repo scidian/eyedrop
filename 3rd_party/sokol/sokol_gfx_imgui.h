@@ -87,7 +87,6 @@
 
             if (ImGui::BeginMainMenuBar()) {
                 if (ImGui::BeginMenu("sokol-gfx")) {
-                    ImGui::MenuItem("Capabilities", 0, &sg_imgui.caps.open);
                     ImGui::MenuItem("Buffers", 0, &sg_imgui.buffers.open);
                     ImGui::MenuItem("Images", 0, &sg_imgui.images.open);
                     ImGui::MenuItem("Shaders", 0, &sg_imgui.shaders.open);

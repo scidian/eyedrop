@@ -13,7 +13,7 @@
 #include "engine/app/image/Color.h"
 #include "engine/app/image/Filter.h"
 #include "engine/app/image/Image.h"
-#include "engine/app/imgui/MainMenu.h"
+#include "engine/app/imgui/ImUtilities.h"
 #include "engine/app/resources/ImageManager.h"
 #include "engine/ecs/Coordinator.h"
 #include "engine/scene3d/Mesh.h"
@@ -78,10 +78,8 @@ DrApp::~DrApp() {
     delete m_image_manager;
     delete m_context;
 
-    // MacOS Main Menu Cleanup
-    #if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
-        MainMenu::osxMenuShutDown();
-    #endif
+    // Mac Menu Bar Cleanup
+    ImUtilities::MenuShutDown();
 }
 
 // Sets application name, updates title bar
@@ -95,11 +93,9 @@ void DrApp::setAppName(std::string name) {
 //####################################################################################
 // Initializes all sokol libraries
 void DrApp::init(void) {
-    // #################### Mac Menu ####################
-    #if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
-        MainMenu::osxMenuInitialize(m_app_name.c_str());
-    #endif
-
+    // #################### Mac Menu Bar ####################
+    ImUtilities::MenuInitialize(m_app_name.c_str());
+    
     // #################### Sokol App ####################
     setAppName(m_app_name);                                     // Set initial Window Title
     m_dpi_scale = sapp_dpi_scale();
@@ -268,18 +264,18 @@ void DrApp::frame(void) {
 
         // Debug Sokol
         #if defined (ENABLE_DEBUG)
-            if (ImGui::BeginMainMenuBar()) {
-                if (ImGui::BeginMenu("sokol-gfx")) {
-                    ImGui::MenuItem("Capabilities", 0, &m_sg_imgui.caps.open);
-                    ImGui::MenuItem("Buffers", 0, &m_sg_imgui.buffers.open);
-                    ImGui::MenuItem("Images", 0, &m_sg_imgui.images.open);
-                    ImGui::MenuItem("Shaders", 0, &m_sg_imgui.shaders.open);
-                    ImGui::MenuItem("Pipelines", 0, &m_sg_imgui.pipelines.open);
-                    ImGui::MenuItem("Passes", 0, &m_sg_imgui.passes.open);
-                    ImGui::MenuItem("Calls", 0, &m_sg_imgui.capture.open);
-                    ImGui::EndMenu();
+            if (ImUtilities::BeginMainMenuBar()) {
+                if (ImUtilities::BeginMenu("sokol-gfx")) {
+                    ImUtilities::MenuItem("Capabilities",   0, &m_sg_imgui.caps.open);
+                    ImUtilities::MenuItem("Buffers",        0, &m_sg_imgui.buffers.open);
+                    ImUtilities::MenuItem("Images",         0, &m_sg_imgui.images.open);
+                    ImUtilities::MenuItem("Shaders",        0, &m_sg_imgui.shaders.open);
+                    ImUtilities::MenuItem("Pipelines",      0, &m_sg_imgui.pipelines.open);
+                    ImUtilities::MenuItem("Passes",         0, &m_sg_imgui.passes.open);
+                    ImUtilities::MenuItem("Calls",          0, &m_sg_imgui.capture.open);
+                    ImUtilities::EndMenu();
                 }
-                ImGui::EndMainMenuBar();
+                ImUtilities::EndMainMenuBar();
             }
             sg_imgui_draw(&m_sg_imgui);
         #endif

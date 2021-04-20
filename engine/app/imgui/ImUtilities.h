@@ -8,7 +8,11 @@
 //
 #include <string>
 
-namespace MainMenu {
+namespace ImUtilities {
+
+    // Init Functions
+    void MenuInitialize(const char* app_name);
+    void MenuShutDown();
 
     // ImGui / Native Menu Wrappers
     bool BeginMainMenuBar();

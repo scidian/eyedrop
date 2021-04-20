@@ -7,10 +7,22 @@
 //
 //
 #include "3rd_party/imgui/imgui.h"
-#include "MainMenu.h"
+#include "ImUtilities.h"
 
-namespace MainMenu {
+namespace ImUtilities {
 	
+ 	void MenuInitialize(const char* app_name) {
+		#if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
+        	osxMenuInitialize(app_name);
+		#endif
+    }
+
+	void MenuShutDown() {
+		#if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
+        	osxMenuShutDown();
+		#endif
+    }
+
     bool BeginMainMenuBar() {
 		#if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
         	return osxBeginMainMenuBar();

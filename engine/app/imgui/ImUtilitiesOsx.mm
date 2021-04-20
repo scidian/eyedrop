@@ -33,10 +33,10 @@ THE SOFTWARE.
 #import <Cocoa/Cocoa.h>
 
 #include <vector>
-#include "MainMenu.h"
+#include "ImUtilities.h"
 
 
-namespace MainMenu {
+namespace ImUtilities {
     static NSInteger s_selected_tag_id = -1;
 }
 
@@ -48,7 +48,7 @@ namespace MainMenu {
 -(void) OnClick: (id) sender
 {
     NSMenuItem* menu_item = sender;
-    MainMenu::s_selected_tag_id = menu_item.tag;
+    ImUtilities::s_selected_tag_id = menu_item.tag;
 }
 @end
 
@@ -56,7 +56,7 @@ namespace MainMenu {
 #include <iostream>
 
 
-namespace MainMenu {
+namespace ImUtilities {
     
     struct MenuState {
         NSMenu*     menu = nullptr;
@@ -86,7 +86,6 @@ namespace MainMenu {
         NSApp.mainMenu = menu_bar;
         // !!!!! End Code
        
-
         s_menu_handler = [[MenuItemHandler new] autorelease];
         s_menus.push_back(MenuState());
         s_menus.back().menu = [NSApp menu];
@@ -111,15 +110,15 @@ namespace MainMenu {
         s_build_menus = false;
         
         // Check for both the clear menu flag being set, as well as the number of menuitems in the topmost menu being changed.
-        NSMenu* mainMenuBar = s_menus.front().menu;
+        NSMenu* main_menu_bar = s_menus.front().menu;
 
         // Note idx + 1, because we started at one, and we never reached the last "Window" menu.       
         NSUInteger checkedCount = s_menus.back().idx + 1;
-        if (s_clear_menus || mainMenuBar.itemArray.count != checkedCount) {
+        if (s_clear_menus || main_menu_bar.itemArray.count != checkedCount) {
             // This is sort of weird, I know.  We want to preserve the first and last menus ("AppName" and Window), which we didn't create.
             // But we need to clear everything between those two.  Thus, the weird clearing code here.
-            while (mainMenuBar.itemArray.count > 2)
-                [mainMenuBar removeItemAtIndex:1];
+            while (main_menu_bar.itemArray.count > 2)
+                [main_menu_bar removeItemAtIndex:1];
             
             // All custom menus are cleared, so we're reset the clear flag and trigger a rebuild pass on the next update.
             s_clear_menus = false;

@@ -42,6 +42,8 @@
     to override defaults:
 
     SOKOL_ASSERT(c)     - your own assert macro (default: assert(c))
+    SOKOL_MALLOC(s)     - your own malloc function (default: malloc(s))
+    SOKOL_FREE(p)       - your own free function (default: free(p))
     SOKOL_IMGUI_API_DECL- public function declaration prefix (default: extern)
     SOKOL_API_DECL      - same as SOKOL_IMGUI_API_DECL
     SOKOL_API_IMPL      - public function implementation prefix (default: -)
@@ -270,7 +272,7 @@ inline void simgui_setup(const simgui_desc_t& desc) { return simgui_setup(&desc)
 #include <stddef.h> /* offsetof */
 #include <string.h> /* memset */
 
-#if !defined(SOKOL_IMGUI_NO_SOKOL_APP) && defined(__EMSCRIPTEN__)
+#if defined(__EMSCRIPTEN__) && !defined(SOKOL_DUMMY_BACKEND)
 #include <emscripten.h>
 #endif
 
@@ -285,6 +287,11 @@ inline void simgui_setup(const simgui_desc_t& desc) { return simgui_setup(&desc)
 #ifndef SOKOL_ASSERT
     #include <assert.h>
     #define SOKOL_ASSERT(c) assert(c)
+#endif
+#ifndef SOKOL_MALLOC
+    #include <stdlib.h>
+    #define SOKOL_MALLOC(s) malloc(s)
+    #define SOKOL_FREE(p) free(p)
 #endif
 #ifndef _SOKOL_PRIVATE
     #if defined(__GNUC__) || defined(__clang__)
@@ -312,6 +319,10 @@ typedef struct {
     sg_shader shd;
     sg_pipeline pip;
     bool is_osx;    // return true if running on OSX (or HTML5 OSX), needed for copy/paste
+
+    sg_range vertices;
+    sg_range indices;
+
     #if !defined(SOKOL_IMGUI_NO_SOKOL_APP)
     bool btn_down[SAPP_MAX_MOUSEBUTTONS];
     bool btn_up[SAPP_MAX_MOUSEBUTTONS];
@@ -1583,7 +1594,7 @@ static const char* _simgui_get_clipboard(void* user_data) {
 }
 #endif
 
-#if defined(__EMSCRIPTEN__)
+#if defined(__EMSCRIPTEN__) && !defined(SOKOL_DUMMY_BACKEND)
 EM_JS(int, simgui_js_is_osx, (void), {
     if (navigator.userAgent.includes('Macintosh')) {
         return 1;
@@ -1595,12 +1606,14 @@ EM_JS(int, simgui_js_is_osx, (void), {
 #endif
 
 static bool _simgui_is_osx(void) {
-    #if defined(__EMSCRIPTEN__)
-    return simgui_js_is_osx();
+    #if defined(SOKOL_DUMMY_BACKEND)
+        return false;
+    #elif defined(__EMSCRIPTEN__)
+        return simgui_js_is_osx();
     #elif defined(__APPLE__)
-    return true;
+        return true;
     #else
-    return false;
+        return false;
     #endif
 }
 
@@ -1616,6 +1629,15 @@ SOKOL_API_IMPL void simgui_setup(const simgui_desc_t* desc) {
     /* can keep color_format, depth_format and sample_count as is,
        since sokol_gfx.h will do its own default-value handling
     */
+
+    /* allocate an intermediate vertex- and index-buffer */
+    SOKOL_ASSERT(_simgui.desc.max_vertices > 0);
+    _simgui.vertices.size = (size_t)_simgui.desc.max_vertices * sizeof(ImDrawVert);
+    _simgui.vertices.ptr = SOKOL_MALLOC(_simgui.vertices.size);
+    SOKOL_ASSERT(_simgui.vertices.ptr);
+    _simgui.indices.size = (size_t)_simgui.desc.max_vertices * 3 * sizeof(ImDrawIdx);
+    _simgui.indices.ptr = SOKOL_MALLOC(_simgui.indices.size);
+    SOKOL_ASSERT(_simgui.indices.ptr);
 
     /* initialize Dear ImGui */
     #if defined(__cplusplus)
@@ -1672,7 +1694,7 @@ SOKOL_API_IMPL void simgui_setup(const simgui_desc_t* desc) {
     sg_buffer_desc vb_desc;
     memset(&vb_desc, 0, sizeof(vb_desc));
     vb_desc.usage = SG_USAGE_STREAM;
-    vb_desc.size = (size_t)_simgui.desc.max_vertices * sizeof(ImDrawVert);
+    vb_desc.size = _simgui.vertices.size;
     vb_desc.label = "sokol-imgui-vertices";
     _simgui.vbuf = sg_make_buffer(&vb_desc);
 
@@ -1680,7 +1702,7 @@ SOKOL_API_IMPL void simgui_setup(const simgui_desc_t* desc) {
     memset(&ib_desc, 0, sizeof(ib_desc));
     ib_desc.type = SG_BUFFERTYPE_INDEXBUFFER;
     ib_desc.usage = SG_USAGE_STREAM;
-    ib_desc.size = (size_t)_simgui.desc.max_vertices * 3 * sizeof(uint16_t);
+    ib_desc.size = _simgui.indices.size;
     ib_desc.label = "sokol-imgui-indices";
     _simgui.ibuf = sg_make_buffer(&ib_desc);
 
@@ -1761,8 +1783,8 @@ SOKOL_API_IMPL void simgui_setup(const simgui_desc_t* desc) {
         shd_desc.vs.bytecode = SG_RANGE(_simgui_vs_bytecode_wgpu);
         shd_desc.fs.bytecode = SG_RANGE(_simgui_fs_bytecode_wgpu);
     #else
-        shd_desc.vs.source = _simgui_vs_src_dummy;
-        shd_desc.fs.source = _simgui_fs_src_dummy;
+        shd_desc.vs.source = _simgui_vs_source_dummy;
+        shd_desc.fs.source = _simgui_fs_source_dummy;
     #endif
     _simgui.shd = sg_make_shader(&shd_desc);
 
@@ -1814,6 +1836,10 @@ SOKOL_API_IMPL void simgui_shutdown(void) {
     sg_destroy_buffer(_simgui.ibuf);
     sg_destroy_buffer(_simgui.vbuf);
     sg_pop_debug_group();
+    SOKOL_ASSERT(_simgui.vertices.ptr);
+    SOKOL_FREE((void*)_simgui.vertices.ptr);
+    SOKOL_ASSERT(_simgui.indices.ptr);
+    SOKOL_FREE((void*)_simgui.indices.ptr);
 }
 
 #if !defined(SOKOL_IMGUI_NO_SOKOL_APP)
@@ -1887,10 +1913,58 @@ SOKOL_API_IMPL void simgui_render(void) {
     if (draw_data->CmdListsCount == 0) {
         return;
     }
+    /* copy vertices and indices into an intermediate buffer so that
+       they can be updated with a single sg_update_buffer() call each
+       (sg_append_buffer() has performance problems on some GL platforms),
+       also keep track of valid number of command lists in case of a
+       buffer overflow
+    */
+    size_t all_vtx_size = 0;
+    size_t all_idx_size = 0;
+    int cmd_list_count = 0;
+    for (int cl_index = 0; cl_index < draw_data->CmdListsCount; cl_index++, cmd_list_count++) {
+        ImDrawList* cl = draw_data->CmdLists[cl_index];
+        #if defined(__cplusplus)
+            const size_t vtx_size = cl->VtxBuffer.size() * sizeof(ImDrawVert);
+            const size_t idx_size = cl->IdxBuffer.size() * sizeof(ImDrawIdx);
+            const ImDrawVert* vtx_ptr = &cl->VtxBuffer.front();
+            const ImDrawIdx* idx_ptr = &cl->IdxBuffer.front();
+        #else
+            const size_t vtx_size = (size_t)cl->VtxBuffer.Size * sizeof(ImDrawVert);
+            const size_t idx_size = (size_t)cl->IdxBuffer.Size * sizeof(ImDrawIdx);
+            const ImDrawVert* vtx_ptr = cl->VtxBuffer.Data;
+            const ImDrawIdx* idx_ptr = cl->IdxBuffer.Data;
+        #endif
+
+        /* check for buffer overflow */
+        if (((all_vtx_size + vtx_size) > _simgui.vertices.size) ||
+            ((all_idx_size + idx_size) > _simgui.indices.size))
+        {
+            break;
+        }
+
+        /* copy vertices and indices into common buffers */
+        void* dst_vtx_ptr = (void*) (((uint8_t*)_simgui.vertices.ptr) + all_vtx_size);
+        void* dst_idx_ptr = (void*) (((uint8_t*)_simgui.indices.ptr) + all_idx_size);
+        memcpy(dst_vtx_ptr, vtx_ptr, vtx_size);
+        memcpy(dst_idx_ptr, idx_ptr, idx_size);
+        all_vtx_size += vtx_size;
+        all_idx_size += idx_size;
+    }
+    if (0 == cmd_list_count) {
+        return;
+    }
+
+    /* update the sokol-gfx vertex- and index-buffer */
+    sg_push_debug_group("sokol-imgui");
+    sg_range vtx_data = _simgui.vertices;
+    vtx_data.size = all_vtx_size;
+    sg_range idx_data = _simgui.indices;
+    idx_data.size = all_idx_size;
+    sg_update_buffer(_simgui.vbuf, &vtx_data);
+    sg_update_buffer(_simgui.ibuf, &idx_data);
 
     /* render the ImGui command list */
-    sg_push_debug_group("sokol-imgui");
-
     const float dpi_scale = _simgui.desc.dpi_scale;
     const int fb_width = (int) (io->DisplaySize.x * dpi_scale);
     const int fb_height = (int) (io->DisplaySize.y * dpi_scale);
@@ -1911,38 +1985,9 @@ SOKOL_API_IMPL void simgui_render(void) {
     bind.fs_images[0].id = (uint32_t)(uintptr_t)tex_id;
     int vb_offset = 0;
     int ib_offset = 0;
-    for (int cl_index = 0; cl_index < draw_data->CmdListsCount; cl_index++) {
-        ImDrawList* cl = draw_data->CmdLists[cl_index];
+    for (int cl_index = 0; cl_index < cmd_list_count; cl_index++) {
+        const ImDrawList* cl = draw_data->CmdLists[cl_index];
 
-        /* append vertices and indices to buffers, record start offsets in draw state */
-        #if defined(__cplusplus)
-            const size_t vtx_size = cl->VtxBuffer.size() * sizeof(ImDrawVert);
-            const size_t idx_size = cl->IdxBuffer.size() * sizeof(ImDrawIdx);
-            const ImDrawVert* vtx_ptr = &cl->VtxBuffer.front();
-            const ImDrawIdx* idx_ptr = &cl->IdxBuffer.front();
-        #else
-            const size_t vtx_size = (size_t)cl->VtxBuffer.Size * sizeof(ImDrawVert);
-            const size_t idx_size = (size_t)cl->IdxBuffer.Size * sizeof(ImDrawIdx);
-            const ImDrawVert* vtx_ptr = cl->VtxBuffer.Data;
-            const ImDrawIdx* idx_ptr = cl->IdxBuffer.Data;
-        #endif
-        if (vtx_ptr) {
-            const sg_range vtx_range = { vtx_ptr, vtx_size };
-            vb_offset = sg_append_buffer(bind.vertex_buffers[0], &vtx_range);
-        }
-        if (idx_ptr) {
-            const sg_range idx_range = { idx_ptr, idx_size };
-            ib_offset = sg_append_buffer(bind.index_buffer, &idx_range);
-        }
-        /* don't render anything if the buffer is in overflow state (this is also
-            checked internally in sokol_gfx, draw calls that attempt to draw with
-            overflowed buffers will be silently dropped)
-        */
-        if (sg_query_buffer_overflow(bind.vertex_buffers[0]) ||
-            sg_query_buffer_overflow(bind.index_buffer))
-        {
-            break;
-        }
         bind.vertex_buffer_offsets[0] = vb_offset;
         bind.index_buffer_offset = ib_offset;
         sg_apply_bindings(&bind);
@@ -1981,6 +2026,15 @@ SOKOL_API_IMPL void simgui_render(void) {
             }
             base_element += (int)pcmd->ElemCount;
         }
+        #if defined(__cplusplus)
+            const size_t vtx_size = cl->VtxBuffer.size() * sizeof(ImDrawVert);
+            const size_t idx_size = cl->IdxBuffer.size() * sizeof(ImDrawIdx);
+        #else
+            const size_t vtx_size = (size_t)cl->VtxBuffer.Size * sizeof(ImDrawVert);
+            const size_t idx_size = (size_t)cl->IdxBuffer.Size * sizeof(ImDrawIdx);
+        #endif
+        vb_offset += (int)vtx_size;
+        ib_offset += (int)idx_size;
     }
     sg_apply_viewport(0, 0, fb_width, fb_height, true);
     sg_apply_scissor_rect(0, 0, fb_width, fb_height, true);

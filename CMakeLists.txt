@@ -27,9 +27,10 @@ cmake_minimum_required(VERSION 3.10)
 #       "true"                                      defines ENABLE_DEBUG, ENABLE_IMGUI (turns on ImGui and Sokol Gfx debug menus by default)
 #       "false"                                     
 ####################################################################################
-
+#################### Build Options
+####################################################################################
 # Standard editor build:
-set(EXPORT_TARGET   "osx")
+set(EXPORT_TARGET   "web")
 set(APP_TYPE        "editor")
 set(DEBUG_MODE      "true")
 
@@ -40,8 +41,7 @@ set(DEBUG_MODE      "true")
 
 ####################################################################################
 ####################################################################################
-####################################################################################
-####################################################################################
+#################### Program to Build
 ####################################################################################
 ##### SELECT DESIRED EXECUTABLE (MAIN)
 if      (APP_TYPE MATCHES "player")
@@ -58,23 +58,38 @@ elseif  (APP_TYPE MATCHES "editor")
     )
     project(drop)                                   ##### Project Name for Editor
 endif()
-
-##### Include Directories, allows for easy #includes...
-include_directories(${CMAKE_SOURCE_DIR})
-include_directories(${CMAKE_SOURCE_DIR}/3rd_party)
-
-##### Glob the files, add the executable
-file(GLOB_RECURSE 3RD_PARTY_CODE_FILES      "3rd_party/*.c**")
-file(GLOB_RECURSE ENGINE_CODE_FILES         "engine/*.c**" "engine/*.mm")
-file(GLOB SOURCE_CODE_FILES                 
-    ${MAIN_DIRECTORY_FILES}
-    ${3RD_PARTY_CODE_FILES}
-    ${ENGINE_CODE_FILES}
-    "*.c**"
-)
-add_executable(${PROJECT_NAME} ${SOURCE_CODE_FILES})
 ####################################################################################
 ####################################################################################
+#################### Possible Compile Defitions
+#
+#   System
+#       DROP_TARGET_APPLE                           ##### True when compiling for either MacOS or iOS
+#       DROP_TARGET_OSX                             ##### True when compiling for MacOS
+#       DROP_TARGET_OSX_MENUS                       ##### Use Mac main menu bar instead of ImGui for main menu
+#       DROP_TARGET_IOS                             ##### True when compiling for iOS
+#
+#       DROP_TARGET_HTML5                           ##### True when compiling for javascript (emscripten)
+#       DROP_TARGET_GOOGLE                          ##### True when compiling for Android
+#       DROP_TARGET_WINDOWS                         ##### True when compiling for Windows
+#       DROP_TARGET_LINUX                           ##### True when compiling for Linux
+#
+#   Sokol
+#       SOKOL_TRACE_HOOKS                           ##### Needed for Sokol Debug Viewer
+#       SOKOL_GLCORE33                              ##### OpenGL Core 3.3 Backend   - MacOS, Windows, Linux, Switch, Playstation
+#       SOKOL_GLES2                                 ##### OpenGLES 2.0 Backend      - Android, WebAssembly
+#       SOKOL_GLES3                                 ##### OpenGLES 3.0 Backend      - Android, WebAssembly
+#       SOKOL_D3D11                                 ##### DirectX 11 Backend        - Windows, XBox    
+#       SOKOL_METAL                                 ##### Metal Backend             - MacOS, iOS, tvOS
+#
+#   ImGui
+#       ENABLE_IMGUI                                ##### Signal we want ImGui available to application
+#
+#   Debug
+#       ENABLE_DEBUG                                ##### Signal we want Sokol Debug Viewer capability
+#
+####################################################################################
+####################################################################################
+#################### Target Definitions
 ####################################################################################
 ##### DEBUG??
 if     (DEBUG_MODE MATCHES "true") 
@@ -121,6 +136,29 @@ elseif (EXPORT_TARGET MATCHES "linux")
 endif()
 ####################################################################################
 ####################################################################################
+#################### Files to Include
+####################################################################################
+##### Include Directories, allows for easy #includes...
+include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/3rd_party)
+
+##### Glob the files, add the executable
+file(GLOB_RECURSE 3RD_PARTY_CODE_FILES      "3rd_party/*.c**")
+if     (EXPORT_TARGET MATCHES "osx")
+    file(GLOB_RECURSE ENGINE_CODE_FILES     "engine/*.c**" "engine/*.mm")
+else()
+    file(GLOB_RECURSE ENGINE_CODE_FILES     "engine/*.c**")
+endif()
+file(GLOB SOURCE_CODE_FILES                 
+    ${MAIN_DIRECTORY_FILES}
+    ${3RD_PARTY_CODE_FILES}
+    ${ENGINE_CODE_FILES}
+    "*.c**"
+)
+add_executable(${PROJECT_NAME} ${SOURCE_CODE_FILES})
+####################################################################################
+####################################################################################
+#################### Pre Build Steps
 ####################################################################################
 ##### Change output directory thanks to iCloud constatly backing up builds
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
