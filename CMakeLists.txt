@@ -12,25 +12,25 @@ cmake_minimum_required(VERSION 3.10)
 #
 #   EXPORT_TARGET:
 #       "auto"      Attempt Auto-Detect
-#       "osx"       Apple MacOS                     defines DROP_TARGET_OSX, DROP_TARGET_APPLE
-#       "ios"       Apple iOS                       defines DROP_TARGET_IOS, DROP_TARGET_APPLE
-#       "web"       Emscripten                      defines DROP_TARGET_HTML5
+#       "osx"       Apple MacOS                     defines DROP_TARGET_OSX     SOKOL_GLCORE33      DROP_TARGET_APPLE   DROP_TARGET_OSX_MENUS
+#       "ios"       Apple iOS                       defines DROP_TARGET_IOS     SOKOL_GLCORE33      DROP_TARGET_APPLE
+#       "web"       Emscripten                      defines DROP_TARGET_HTML5   SOKOL_GLES2
 #       "android"   Google Android                  defines DROP_TARGET_GOOGLE
-#       "windows"   Microsoft Windows               defines DROP_TARGET_WINDOWS
+#       "windows"   Microsoft Windows               defines DROP_TARGET_WINDOWS SOKOL_D3D11
 #       "linux"     Linux                           defines DROP_TARGET_LINUX
 #
 #   APP_TYPE
-#       "editor"                                    Drop Editor, defines ENABLE_DEBUG
-#       "player"                                    Drop Runtime, by default does not have ImGui enabled unless DEBUG_MODE is set to "true"
+#       "editor"    Drop Editor                     defines ENABLE_IMGUI
+#       "player"    Drop Runtime                    ...does not have ImGui enabled unless DEBUG_MODE is set to "true"
 #
 #   DEBUG_MODE
-#       "true"                                      defines ENABLE_DEBUG, ENABLE_IMGUI (turns on ImGui and Sokol Gfx debug menus by default)
+#       "true"                                      defines SOKOL_TRACE_HOOKS, ENABLE_DEBUG, ENABLE_IMGUI (turns on ImGui and Sokol Gfx debug menu by default)
 #       "false"                                     
 ####################################################################################
 #################### Build Options
 ####################################################################################
 # Standard editor build:
-set(EXPORT_TARGET   "web")
+set(EXPORT_TARGET   "osx")
 set(APP_TYPE        "editor")
 set(DEBUG_MODE      "true")
 
@@ -60,35 +60,6 @@ elseif  (APP_TYPE MATCHES "editor")
 endif()
 ####################################################################################
 ####################################################################################
-#################### Possible Compile Defitions
-#
-#   System
-#       DROP_TARGET_APPLE                           ##### True when compiling for either MacOS or iOS
-#       DROP_TARGET_OSX                             ##### True when compiling for MacOS
-#       DROP_TARGET_OSX_MENUS                       ##### Use Mac main menu bar instead of ImGui for main menu
-#       DROP_TARGET_IOS                             ##### True when compiling for iOS
-#
-#       DROP_TARGET_HTML5                           ##### True when compiling for javascript (emscripten)
-#       DROP_TARGET_GOOGLE                          ##### True when compiling for Android
-#       DROP_TARGET_WINDOWS                         ##### True when compiling for Windows
-#       DROP_TARGET_LINUX                           ##### True when compiling for Linux
-#
-#   Sokol
-#       SOKOL_TRACE_HOOKS                           ##### Needed for Sokol Debug Viewer
-#       SOKOL_GLCORE33                              ##### OpenGL Core 3.3 Backend   - MacOS, Windows, Linux, Switch, Playstation
-#       SOKOL_GLES2                                 ##### OpenGLES 2.0 Backend      - Android, WebAssembly
-#       SOKOL_GLES3                                 ##### OpenGLES 3.0 Backend      - Android, WebAssembly
-#       SOKOL_D3D11                                 ##### DirectX 11 Backend        - Windows, XBox    
-#       SOKOL_METAL                                 ##### Metal Backend             - MacOS, iOS, tvOS
-#
-#   ImGui
-#       ENABLE_IMGUI                                ##### Signal we want ImGui available to application
-#
-#   Debug
-#       ENABLE_DEBUG                                ##### Signal we want Sokol Debug Viewer capability
-#
-####################################################################################
-####################################################################################
 #################### Target Definitions
 ####################################################################################
 ##### DEBUG??
@@ -111,28 +82,28 @@ endif()
 if     (EXPORT_TARGET MATCHES "osx")
     add_compile_definitions(DROP_TARGET_APPLE)
     add_compile_definitions(DROP_TARGET_OSX)
-    add_compile_definitions(DROP_TARGET_OSX_MENUS)  # Use MacOS main menu bar, instead of ImGui
-    add_compile_definitions(SOKOL_GLCORE33)         # MacOS, Windows, Linux, Switch, Playstation
-    #add_compile_definitions(SOKOL_METAL)           # MacOS, iOS, tvOS
+    add_compile_definitions(DROP_TARGET_OSX_MENUS)
+    add_compile_definitions(SOKOL_GLCORE33)         ##### OpenGL Core 3.3 Backend   - MacOS, Windows, Linux, Switch, Playstation
+    #add_compile_definitions(SOKOL_METAL)           ##### Metal Backend             - MacOS, iOS, tvOS
 elseif (EXPORT_TARGET MATCHES "ios")
     add_compile_definitions(DROP_TARGET_APPLE)    
     add_compile_definitions(DROP_TARGET_IOS)
-    add_compile_definitions(SOKOL_GLCORE33)         # MacOS, Windows, Linux, Switch, Playstation
-    #add_compile_definitions(SOKOL_METAL)           # MacOS, iOS, tvOS
+    add_compile_definitions(SOKOL_GLCORE33)         ##### OpenGL Core 3.3 Backend   - MacOS, Windows, Linux, Switch, Playstation
+    #add_compile_definitions(SOKOL_METAL)           ##### Metal Backend             - MacOS, iOS, tvOS
 elseif (EXPORT_TARGET MATCHES "web") 
     add_compile_definitions(DROP_TARGET_HTML5)
-    add_compile_definitions(SOKOL_GLES2)            # Android, WebAssembly
-    #add_compile_definitions(SOKOL_GLES3)           # Android, WebAssembly
-    #add_compile_definitions(SOKOL_WGPU)            # Next Gen WebAssembly
+    add_compile_definitions(SOKOL_GLES2)            ##### OpenGLES 2.0 Backend      - Android, WebAssembly
+    #add_compile_definitions(SOKOL_GLES3)           ##### OpenGLES 3.0 Backend      - Android, WebAssembly
+    #add_compile_definitions(SOKOL_WGPU)            ##### WebGL Backend             - Next Gen WebAssembly
 elseif (EXPORT_TARGET MATCHES "android") 
     add_compile_definitions(DROP_TARGET_GOOGLE)
-    add_compile_definitions(SOKOL_GLES3)            # Android, WebAssembly
+    add_compile_definitions(SOKOL_GLES3)            ##### OpenGLES 3.0 Backend      - Android, WebAssembly
 elseif (EXPORT_TARGET MATCHES "windows") 
     add_compile_definitions(DROP_TARGET_WINDOWS)
-    add_compile_definitions(SOKOL_D3D11)            # Windows, XBox    
+    add_compile_definitions(SOKOL_D3D11)            ##### DirectX 11 Backend        - Windows, XBox   
 elseif (EXPORT_TARGET MATCHES "linux") 
     add_compile_definitions(DROP_TARGET_LINUX)
-    add_compile_definitions(SOKOL_GLCORE33)         # MacOS, Windows, Linux, Switch, Playstation
+    add_compile_definitions(SOKOL_GLCORE33)         ##### OpenGL Core 3.3 Backend   - MacOS, Windows, Linux, Switch, Playstation
 endif()
 ####################################################################################
 ####################################################################################
