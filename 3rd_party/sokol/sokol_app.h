@@ -3168,11 +3168,12 @@ _SOKOL_PRIVATE void _sapp_macos_frame(void) {
     else {
         [_sapp.macos.window center];
     }
-    NSApp.activationPolicy = NSApplicationActivationPolicyRegular;
-    [NSApp activateIgnoringOtherApps:YES];
     [_sapp.macos.window makeKeyAndOrderFront:nil];
     _sapp_macos_update_dimensions();
     [NSEvent setMouseCoalescingEnabled:NO];
+
+    NSApp.activationPolicy = NSApplicationActivationPolicyRegular;
+    [NSApp activateIgnoringOtherApps:YES];
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)sender {

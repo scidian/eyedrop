@@ -12,11 +12,11 @@ cmake_minimum_required(VERSION 3.10)
 #
 #   EXPORT_TARGET:
 #       "auto"      Attempt Auto-Detect
-#       "osx"       Apple MacOS                     defines DROP_TARGET_OSX     SOKOL_GLCORE33      DROP_TARGET_APPLE   DROP_TARGET_OSX_MENUS
-#       "ios"       Apple iOS                       defines DROP_TARGET_IOS     SOKOL_GLCORE33      DROP_TARGET_APPLE
-#       "web"       Emscripten                      defines DROP_TARGET_HTML5   SOKOL_GLES2
+#       "osx"       Apple MacOS                     defines DROP_TARGET_OSX, DROP_TARGET_APPLE, DROP_TARGET_OSX_MENUS
+#       "ios"       Apple iOS                       defines DROP_TARGET_IOS, DROP_TARGET_APPLE
+#       "web"       Emscripten                      defines DROP_TARGET_HTML5   
 #       "android"   Google Android                  defines DROP_TARGET_GOOGLE
-#       "windows"   Microsoft Windows               defines DROP_TARGET_WINDOWS SOKOL_D3D11
+#       "windows"   Microsoft Windows               defines DROP_TARGET_WINDOWS 
 #       "linux"     Linux                           defines DROP_TARGET_LINUX
 #
 #   APP_TYPE
@@ -30,16 +30,15 @@ cmake_minimum_required(VERSION 3.10)
 #################### Build Options
 ####################################################################################
 
-# Standard editor build:
+##### Standard editor build:
 set(EXPORT_TARGET   "osx")
 set(APP_TYPE        "editor")
 set(DEBUG_MODE      "true")
 
-# For testing no-gui html5 build:
+##### For testing no-gui html5 build:
 # set(EXPORT_TARGET   "web")
 # set(APP_TYPE        "player")
 # set(DEBUG_MODE      "false")  
-
 
 ####################################################################################
 ####################################################################################
@@ -57,7 +56,10 @@ set(DEBUG_MODE      "true")
 #       DROP_TARGET_LINUX                           ##### True when compiling for Linux
 #
 #   Sokol
+#       SOKOL_NO_ENTRY                              ##### Stops sokol_app from hijacking main()
 #       SOKOL_TRACE_HOOKS                           ##### Needed for Sokol Debug Viewer
+#
+#   Sokol Backend, Selects One
 #       SOKOL_GLCORE33                              ##### OpenGL Core 3.3 Backend   - MacOS, Windows, Linux, Switch, Playstation
 #       SOKOL_GLES2                                 ##### OpenGLES 2.0 Backend      - Android, WebAssembly
 #       SOKOL_GLES3                                 ##### OpenGLES 3.0 Backend      - Android, WebAssembly
@@ -76,13 +78,13 @@ set(DEBUG_MODE      "true")
 ####################################################################################
 ##### SELECT DESIRED EXECUTABLE (MAIN)
 if      (APP_TYPE MATCHES "player")
-    add_compile_definitions(SOKOL_NO_ENTRY)         ##### STOP SOKOL HIJACK
+    add_compile_definitions(SOKOL_NO_ENTRY)         ##### Stops sokol_app from hijacking main()
     file(GLOB_RECURSE MAIN_DIRECTORY_FILES
         "player/*.c**"
     )
     project(player)                                 ##### Project Name for Engine Runtime Only
 elseif  (APP_TYPE MATCHES "editor")  
-    add_compile_definitions(SOKOL_NO_ENTRY)         ##### STOP SOKOL HIJACK    
+    add_compile_definitions(SOKOL_NO_ENTRY)         ##### Stops sokol_app from hijacking main()
     add_compile_definitions(ENABLE_IMGUI)           ##### Signal we want ImGui available to application
     file(GLOB_RECURSE MAIN_DIRECTORY_FILES
         "editor/*.c**"
