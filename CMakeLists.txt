@@ -31,7 +31,7 @@ cmake_minimum_required(VERSION 3.10)
 ####################################################################################
 
 ##### Standard editor build:
-set(EXPORT_TARGET   "osx")
+set(EXPORT_TARGET   "web")
 set(APP_TYPE        "editor")
 set(DEBUG_MODE      "true")
 
@@ -248,11 +248,13 @@ elseif (EXPORT_TARGET MATCHES "web")
     #   --shell-file <path>                     Create a html file without emscripten logo and debug shell
     #   -fno-exceptions                         Turns off "try {} catch {}" blocks, and std::except(), saves ~500kb
     #
+    set(CMAKE_C_LINK_FLAGS "")
+    set(CMAKE_CXX_LINK_FLAGS "")
     set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -std=c99   -Oz -fno-exceptions")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Oz -fno-exceptions --shell-file ../shell_full.html") # -Werror -Wno-error=unused-command-line-argument") 
     set(CMAKE_C_COMPILER "emcc")
     set(CMAKE_CXX_COMPILER "emcc")
-    SET(CMAKE_EXECUTABLE_SUFFIX ".html")
+    set(CMAKE_EXECUTABLE_SUFFIX ".html")
 
     #   -s WASM=0                               Force javascript (no web assembly, more compatiable, but bigger file size) or
     #   -s WASM=1                               Use web assembly (!!!!! #NOTE: MUST RUN ON WEB SERVER FOR IT TO WORK!!!!!) ('.wast' file is human readable, don't need it!)
