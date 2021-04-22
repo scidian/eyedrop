@@ -1,19 +1,33 @@
+//####################################################################################
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// Description:     ImMenu, ImGui to MacOS Main Menu Bar Wrapper
+// Author:          Stephens Nunnally and Scidian Software
+// License:         Distributed under the MIT License
+// Source(s):       https://github.com/stevinz/immenu
+// Original Idea:   https://github.com/JamesBoer/ImFrame
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Apr 19 2021
+// Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// Copyright (c) 2021 James Boer
 //
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
-/*
-..... This file started from:   https://github.com/JamesBoer/ImFrame
-..... Some menu code from:      https://github.com/floooh/sokol/pull/362
-*/
-
-#include <iostream>
-
-
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+//####################################################################################
 // Includes
 #include <vector>
 #import <Foundation/Foundation.h>
@@ -59,15 +73,15 @@ namespace ImMenu {
 //####################################################################################
 // Menu Variables
 static NSMenu*                  s_menu_bar;
+static NSInteger                s_menu_index = 0;
+static NSInteger                s_item_index = 0;
 
 // Click Handler
 static MenuItemHandler*         s_menu_handler;
 static NSInteger                s_current_tag_id = 1;
 
-// Local Flags
-static bool                     s_build_menus = true;
-static bool                     s_clear_menus = false;
-
+// Flags
+static bool                     s_build_menu = false;
 
 //####################################################################################
 //##    Init
@@ -92,12 +106,10 @@ void osxMenuInitialize(const char* app_name) {
         app_menu_item.submenu = app_menu;
     [menu_bar addItem:app_menu_item];
     
-    // Apply menu bar to our Application
-    NSApp.mainMenu = menu_bar;
-
-    // Get ready to build menu
-    s_menu_handler = [[MenuItemHandler alloc] init];//[[MenuItemHandler new] autorelease];
-    s_menu_bar = menu_bar;
+    // Init Menu
+    NSApp.mainMenu = menu_bar;                                                      // Apply menu bar to our Application
+    s_menu_bar = menu_bar;                                                          // Save reference to menu bar
+    s_menu_handler = [[MenuItemHandler alloc] init];                                // Initialize click handler
 }
 
 // Called when App is closing to clean up menu
@@ -117,79 +129,60 @@ bool osxBeginMainMenuBar() {
 
 void osxEndMainMenuBar() {
     // Clear menus if flag was set, preserve the first menu ("AppName")
-    if (s_clear_menus) {
-        while (s_menu_bar.itemArray.count > 1) {
-            [s_menu_bar removeItemAtIndex:1];
-        }
-        s_clear_menus = false;
-    }
+    // if (s_clear_menus) {
+    //     while (s_menu_bar.itemArray.count > 1) {
+    //         [s_menu_bar removeItemAtIndex:1];
+    //     }
+    //     s_clear_menus = false;
+    // }
 }
 
 //####################################################################################
 //##    Begin / End Menu
 //####################################################################################
 bool osxBeginMenu(const char* label, bool enabled) {
-    if (s_clear_menus) return false;
+    // Label as NSString
+    NSString* title = [NSString stringWithUTF8String:label];
 
-    // Preserve only characters up to ## in label
-    NSString* label_str = [NSString stringWithUTF8String:label];
-    NSUInteger loc = [label_str rangeOfString:@"##"].location;
-    if (loc < [label_str length]) label_str = [label_str substringToIndex:loc];
+    // Check if menu exists
+    s_menu_index = [s_menu_bar indexOfItemWithTitle:title];
+    
+    // Does exist, do not build
+    if (s_menu_index != -1) {
+        s_build_menu = false;
 
-    //[[NSApp mainMenu] insertItem:menuBarItem atIndex:3];
+    // Does not exist, build now
+    } else {
+        s_build_menu = true;
 
-    NSUInteger find_menu = [s_menu_bar indexOfItemWithTitle:label_str];
-    if (find_menu != -1) {
-        if (s_build_menus) {
-            s_build_menus = false;
-            std::cout << "Done building menu..." << std::endl;
-        }
-    }
-
-
-    NSUInteger idx = [s_menu_bar numberOfItems];
-
-    // Create a new menu_item and add to menu
-    if (s_build_menus) {
         // New submenus consist of both a new menu and a new menu_item to trigger it
-        NSMenu* new_menu = [[NSMenu alloc] init];//[[NSMenu new] autorelease];
+        NSMenu* new_menu = [[NSMenu alloc] init];
             new_menu.autoenablesItems = false;
-            new_menu.title = label_str;
-        NSMenuItem* menu_item = [[NSMenuItem alloc] init];//[[NSMenuItem new] autorelease];
-            menu_item.title = label_str;
+            new_menu.title = title;
+        NSMenuItem* menu_item = [[NSMenuItem alloc] init];
+            menu_item.title = title;
         [menu_item setSubmenu:new_menu];
 
         // Add item to menu bar
-        [s_menu_bar insertItem:menu_item atIndex:idx];
-        idx++;
+        s_menu_index = [s_menu_bar numberOfItems];
+        [s_menu_bar insertItem:menu_item atIndex:s_menu_index];
     }
-    
-    idx--;
-    NSMenuItem* menu_item = [s_menu_bar itemAtIndex:idx];
 
-    if (menu_item) {    
-        menu_item.enabled = enabled;                                    // Update enabled state
+    // Update 'enabled' property
+    NSMenuItem* menu_bar_item = [s_menu_bar itemAtIndex:s_menu_index];
+    if (menu_bar_item) {    
+        menu_bar_item.enabled = enabled;
     }
-    // // If the labels don't match, something has dynamically changed and we need to clear and rebuild the menus
-    // if (![label_str isEqualToString:menu_item.title]) {
-    //     s_clear_menus = true;
-    //     return false;
-    // }
-            
-                    
-    // Unlike Dear ImGui menus, we typically return true so clicks can be checked by any menu_item
+                                
+    // Reset item index
+    s_item_index = 0;
+
+    // Return true so clicks can be handled by any clicked NSMenuItem
     return true;
 }
 
 void osxEndMenu() {
-    // // Check to see if the number of menu items doesn't agree.  If so, something has
-    // // been dynamically added or removed, and we need to clear the menus and rebuild.
-    // NSMenu* menu = s_menus.back().menu;
-    // NSUInteger idx = s_menus.back().idx;
-    // if (menu.itemArray.count != idx) s_clear_menus = true;
-    
-    // // We've finished this menu, so pop tracking data off the menu stack
-    // s_menus.pop_back();
+    s_build_menu = false;
 }
 
 
@@ -197,73 +190,62 @@ void osxEndMenu() {
 //##    Menu Items
 //####################################################################################
 bool osxMenuItem(const char* label, const char* shortcut, bool selected, bool enabled) {
-    // if (s_clear_menus) return false;
-    
-    // // Save off current index value, and increment index on stack
-    // NSInteger idx = s_menus.back().idx;
-    // s_menus.back().idx++;
-    
-    // // Preserve only characters up to ## in label
-    // NSString* label_str = [NSString stringWithUTF8String:label];
-    // NSUInteger loc = [label_str rangeOfString:@"##"].location;
-    // if (loc < [label_str length]) label_str = [label_str substringToIndex:loc];
-        
-    // // If we're in a building pass, create new NSMenuItem and insert into menu
-    // if (s_build_menus) {
-    //     NSMenuItem* menu_item = [[NSMenuItem alloc] init];//[[NSMenuItem new] autorelease];
-    //         menu_item.title = label_str;
-    //     [menu_item setTag:s_current_tag_id];
-    //     ++s_current_tag_id;
-    //     menu_item.action = @selector(OnClick:);
-    //     menu_item.target = s_menu_handler;
-    //     // We'll assume the shortcut isn't going to dynamically change
-    //     if (shortcut) menu_item.keyEquivalent = [NSString stringWithUTF8String:shortcut];
-    //     [s_menus.back().menu addItem:menu_item];
-    // }
-    
-    // // Get the current menu item
-    // NSMenuItem* menu_item = [s_menus.back().menu itemAtIndex:idx];
-    
-    // // If the labels don't match, something has dynamically changed and we need to clear and rebuild the menus
-    // if (![label_str isEqualToString:menu_item.title]) {
-    //     s_clear_menus = true;
-    //     return false;
-    // }
-    
-    // // Set enabled and selected properties
-    // menu_item.enabled = enabled;
-    // menu_item.state = selected ? NSControlStateValueOn : NSControlStateValueOff;
-    
-    // // Check for click only if we're enabled
-    // if (enabled) {
-    //     // We use the tag integer to uniquely identify which menu_item was clicked, since
-    //     // they all use the same handler target object.
-    //     if ([menu_item tag] == s_selected_tag_id) {
-    //         // Reset selected tag and return true, indicating we've clicked on this menu_item
-    //         s_selected_tag_id = -1;
-    //         return true;
-    //     }
-    // }
+    // Label as NSString
+    NSString* title = [NSString stringWithUTF8String:label];
 
+    // Get current Main Menu Item
+    NSMenuItem* menu_bar_item = [s_menu_bar itemAtIndex:s_menu_index];
+
+    // Build if in building pass
+    if (s_build_menu) {
+        NSMenuItem* menu_item = [[NSMenuItem alloc] init];
+            menu_item.title = title;
+            menu_item.action = @selector(OnClick:);
+            menu_item.target = s_menu_handler;
+        [menu_item setTag:s_current_tag_id];
+        ++s_current_tag_id;
+        if (shortcut) menu_item.keyEquivalent = [NSString stringWithUTF8String:shortcut];
+
+        // Add Item to Menu
+        [menu_bar_item.submenu addItem:menu_item];
+    }
+    
+    // Set 'enable' and 'selected' properties
+    NSMenuItem* menu_item = [menu_bar_item.submenu itemAtIndex:s_item_index];
+    if (menu_item) {
+        menu_item.enabled = enabled;
+        menu_item.state = selected ? NSControlStateValueOn : NSControlStateValueOff;
+    }
+    
+    // If enabled, see if it was clicked
+    if (enabled) {
+        // Compare handler tag to current item tag to see if has been clicked
+        if ([menu_item tag] == s_selected_tag_id) {
+            // Reset handler tag and return true to signify menu item has been clicked
+            s_selected_tag_id = -1;
+            return true;
+        }
+    }
+
+    s_item_index++;
     return false;
 }
 
 bool osxMenuItem(const char* label, const char* shortcut, bool* p_selected, bool enabled) {
     if (osxMenuItem(label, shortcut, p_selected ? *p_selected : false, enabled)) {
-        if (p_selected) *p_selected = !*p_selected;
+        if (p_selected) *p_selected = !(*p_selected);
         return true;
     }
     return false;
 }
 
 void osxSeparator() {
-    // if (s_clear_menus) return;
-    
-    // // If we're in a building pass, create new NSMenuItem as separator and insert into menu
-    // if (s_build_menus) {
-    //     NSMenuItem* menu_item = [NSMenuItem separatorItem];
-    //     //[s_menu_bar.items.back().submenu addItem:menu_item];
-    // }
+    if (s_build_menu) {
+        NSMenuItem* seperator_item = [NSMenuItem separatorItem];
+        NSMenuItem* menu_bar_item = [s_menu_bar itemAtIndex:s_menu_index];
+        [menu_bar_item.submenu addItem:seperator_item];
+    }
+    s_item_index++;
 }
 
 
