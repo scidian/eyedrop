@@ -19,7 +19,7 @@ public:
 
     virtual void onUpdateGUI() override { 
 
-        #if defined (ENABLE_IMGUI)  
+        #if defined(ENABLE_IMGUI)  
             // Demo Window
             //ImGui::ShowDemoWindow();
         #endif

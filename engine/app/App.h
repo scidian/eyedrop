@@ -16,7 +16,7 @@
 #include "3rd_party/sokol/sokol_app.h"
 #include "3rd_party/sokol/sokol_gfx.h"
 #include "3rd_party/sokol/sokol_gl.h"
-#if defined (ENABLE_DEBUG)
+#if defined(ENABLE_DEBUG)
     #include "3rd_party/sokol/sokol_gfx_imgui.h"
 #endif
 #include "3rd_party/sokol/sokol_glue.h"
@@ -33,7 +33,7 @@
     #include <emscripten/html5.h>
 #endif
 #include "3rd_party/handmade_math.h"
-#if defined (ENABLE_IMGUI)
+#if defined(ENABLE_IMGUI)
     #include "3rd_party/imgui/imgui.h"
     #include "3rd_party/imgui/imgui_internal.h"
     //#include "3rd_party/icons_font_awesome5.h"                                    // If including font icons
@@ -58,7 +58,7 @@ class DrRenderContext;
 //####################################################################################
 //##    Global Variable Declarations
 //####################################################################################
-extern DrApp*               g_app_pointer;                                          // App singleton            Defined in App.cpp      Assigned in App.cpp::App()
+extern DrApp*               g_app_pointer;                                          // App singleton            Definition in App.cpp   Assigned in App.cpp::App()
 DrApp*                      App();                                                  // Returns App singleton
 
 //####################################################################################
@@ -108,7 +108,7 @@ private:
     int                     m_font_normal = FONS_INVALID;
 
     // ImGui, disabled by default
-    #if defined (ENABLE_DEBUG)
+    #if defined(ENABLE_DEBUG)
         sg_imgui_t          m_sg_imgui;                                             // Sokol_gfx_debug keeps track of data structures used by sokol_gfx for Debug View
     #endif
 

@@ -8,20 +8,20 @@
 //
 #include <string>
 
-// Target OS Enum
-enum Utilities_Target {
-    UTILITIES_TARGET_MACOS,
-    UTILITIES_TARGET_OTHER,
-};
+// If compiling for Apple, MacOS and menu is enabled, define flag that calls osx functions
+#if defined(__APPLE__) && defined(__MACH__) && defined(ENABLE_IMGUI_MAC_MENU)
+    #ifndef IMMENU_MENU_MAC
+        #define IMMENU_MENU_MAC
+    #endif
+#endif
 
 //####################################################################################
-//##    ImUtilities
-//##        ImGui wrapper for OS specific functions
+//##    ImMenu
+//##        ImGui wrapper for OS specific menu functions
 //############################
-namespace ImUtilities {
+namespace ImMenu {
 
     // Init Functions
-    void TargetOS(Utilities_Target target_os);
     void MenuInitialize(const char* app_name);
     void MenuShutDown();
 

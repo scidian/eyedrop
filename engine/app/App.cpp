@@ -13,7 +13,7 @@
 #include "engine/app/image/Color.h"
 #include "engine/app/image/Filter.h"
 #include "engine/app/image/Image.h"
-#include "engine/app/imgui/ImUtilities.h"
+#include "engine/app/imgui/ImMenu.h"
 #include "engine/app/resources/ImageManager.h"
 #include "engine/ecs/Coordinator.h"
 #include "engine/scene3d/Mesh.h"
@@ -79,7 +79,7 @@ DrApp::~DrApp() {
     delete m_context;
 
     // Mac Menu Bar Cleanup
-    ImUtilities::MenuShutDown();
+    ImMenu::MenuShutDown();
 }
 
 // Sets application name, updates title bar
@@ -94,10 +94,7 @@ void DrApp::setAppName(std::string name) {
 // Initializes all sokol libraries
 void DrApp::init(void) {
     // #################### Mac Menu Bar ####################
-    #if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
-        ImUtilities::TargetOS(UTILITIES_TARGET_MACOS);
-    #endif
-    ImUtilities::MenuInitialize(m_app_name.c_str());
+    ImMenu::MenuInitialize(m_app_name.c_str());
         
     // #################### Sokol App ####################
     setAppName(m_app_name);                                     // Set initial Window Title
@@ -129,7 +126,7 @@ void DrApp::init(void) {
     sfetch_setup(&sokol_fetch); 
 
     // #################### Sokol Debug ####################
-    #if defined (ENABLE_DEBUG)
+    #if defined(ENABLE_DEBUG)
         sg_imgui_init(&m_sg_imgui);
     #endif
 
@@ -157,7 +154,7 @@ void DrApp::init(void) {
     //####################################################################################
     //##    Sokol ImGui Renderer
     //####################################################################################
-    #if defined (ENABLE_IMGUI)
+    #if defined(ENABLE_IMGUI)
         simgui_desc_t simgui_desc { };
             simgui_desc.sample_count =     sapp_sample_count();
             simgui_desc.no_default_font =  true;
@@ -255,7 +252,7 @@ void DrApp::frame(void) {
     this->onUpdateScene();
     
     // #################### ImGui Rendering ####################
-    #if defined (ENABLE_IMGUI)
+    #if defined(ENABLE_IMGUI)
         // Start ImGui Frame
         int width = sapp_width();
         int height = sapp_height();
@@ -266,19 +263,19 @@ void DrApp::frame(void) {
         // ####################
 
         // Debug Sokol
-        #if defined (ENABLE_DEBUG)
-            if (ImUtilities::BeginMainMenuBar()) {
-                if (ImUtilities::BeginMenu("sokol-gfx")) {
-                    ImUtilities::MenuItem("Capabilities",   0, &m_sg_imgui.caps.open);
-                    ImUtilities::MenuItem("Buffers",        0, &m_sg_imgui.buffers.open);
-                    ImUtilities::MenuItem("Images",         0, &m_sg_imgui.images.open);
-                    ImUtilities::MenuItem("Shaders",        0, &m_sg_imgui.shaders.open);
-                    ImUtilities::MenuItem("Pipelines",      0, &m_sg_imgui.pipelines.open);
-                    ImUtilities::MenuItem("Passes",         0, &m_sg_imgui.passes.open);
-                    ImUtilities::MenuItem("Calls",          0, &m_sg_imgui.capture.open);
-                    ImUtilities::EndMenu();
+        #if defined(ENABLE_DEBUG)
+            if (ImMenu::BeginMainMenuBar()) {
+                if (ImMenu::BeginMenu("sokol-gfx")) {
+                    ImMenu::MenuItem("Capabilities",   0, &m_sg_imgui.caps.open);
+                    ImMenu::MenuItem("Buffers",        0, &m_sg_imgui.buffers.open);
+                    ImMenu::MenuItem("Images",         0, &m_sg_imgui.images.open);
+                    ImMenu::MenuItem("Shaders",        0, &m_sg_imgui.shaders.open);
+                    ImMenu::MenuItem("Pipelines",      0, &m_sg_imgui.pipelines.open);
+                    ImMenu::MenuItem("Passes",         0, &m_sg_imgui.passes.open);
+                    ImMenu::MenuItem("Calls",          0, &m_sg_imgui.capture.open);
+                    ImMenu::EndMenu();
                 }
-                ImUtilities::EndMainMenuBar();
+                ImMenu::EndMainMenuBar();
             }
             sg_imgui_draw(&m_sg_imgui);
         #endif
@@ -335,7 +332,7 @@ void DrApp::frame(void) {
 //####################################################################################
 void DrApp::event(const sapp_event* event) {
     // Pass event to ImGui
-    #if defined (ENABLE_IMGUI)
+    #if defined(ENABLE_IMGUI)
         simgui_handle_event(event);
     #endif
 
@@ -355,9 +352,9 @@ void DrApp::cleanup(void) {
     sfetch_shutdown();
     sfons_destroy(m_fontstash);
     sgl_shutdown();
-    #if defined (ENABLE_IMGUI)
+    #if defined(ENABLE_IMGUI)
         simgui_shutdown();
-        #if defined (ENABLE_DEBUG)
+        #if defined(ENABLE_DEBUG)
             sg_imgui_discard(&m_sg_imgui);
         #endif
     #endif

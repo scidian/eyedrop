@@ -12,10 +12,10 @@
 #include <vector>
 #import <Foundation/Foundation.h>
 #import <Cocoa/Cocoa.h>
-#include "ImUtilities.h"
+#include "ImMenu.h"
 
 
-namespace ImUtilities {
+namespace ImMenu {
     static NSInteger s_selected_tag_id = -1;
 }
 
@@ -26,7 +26,7 @@ namespace ImUtilities {
 @implementation MenuItemHandler
 -(void) OnClick: (id) sender {
     NSMenuItem* menu_item = sender;
-    ImUtilities::s_selected_tag_id = menu_item.tag;
+    ImMenu::s_selected_tag_id = menu_item.tag;
 }
 @end
 
@@ -34,7 +34,7 @@ namespace ImUtilities {
 #include <iostream>
 
 
-namespace ImUtilities {
+namespace ImMenu {
     
     // Built Menu Variables
     static NSMenu*                  s_menu_bar;
@@ -52,11 +52,11 @@ namespace ImUtilities {
     void osxMenuInitialize(const char* app_name) {
         // !!!!! Code from https://github.com/floooh/sokol/pull/362:
         NSMenu* menu_bar = [[NSMenu alloc] init];                           // Main Menu Bar
-        NSMenuItem* app_menu_item = [[NSMenuItem alloc] init];              // "Drop"
+        NSMenuItem* app_menu_item = [[NSMenuItem alloc] init];              // "App Name"
             NSMenu* app_menu = [[NSMenu alloc] init];                       // Sub Menu
             NSString* window_title_as_nsstring = [NSString stringWithUTF8String:app_name];
             NSString* quit_title = [@"Quit " stringByAppendingString:window_title_as_nsstring];
-            NSMenuItem* quit_menu_item = [[NSMenuItem alloc]                // "Quit Drop"
+            NSMenuItem* quit_menu_item = [[NSMenuItem alloc]                // "Quit 'App Name'"
                 initWithTitle:quit_title
                 action:@selector(terminate:)
                 keyEquivalent:@"q"];
@@ -112,7 +112,7 @@ namespace ImUtilities {
         }
 
 
-        NSUInteger idx = [s_menu_bar numberOfItems] - 1;
+        NSUInteger idx = [s_menu_bar numberOfItems];
 
         // Create a new menu_item and add to menu
         if (s_build_menus) {
@@ -126,8 +126,10 @@ namespace ImUtilities {
 
             // Add item to menu bar
             [s_menu_bar insertItem:menu_item atIndex:idx];
+            idx++;
         }
         
+        idx--;
         NSMenuItem* menu_item = [s_menu_bar itemAtIndex:idx];
 
         if (menu_item) {    

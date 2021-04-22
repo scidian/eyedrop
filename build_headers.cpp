@@ -24,14 +24,14 @@
 //####################################################################################
 //##    ImGui Implmentation
 //####################################################################################
-#if defined (ENABLE_IMGUI)
+#if defined(ENABLE_IMGUI)
     #include "3rd_party/imgui/imgui.h"
     #define SOKOL_IMGUI_IMPL
     #include "3rd_party/sokol/sokol_imgui.h"
 #endif
 
 // ##### Debug Menu
-#if defined (ENABLE_DEBUG)
+#if defined(ENABLE_DEBUG)
     #define SOKOL_GFX_IMGUI_IMPL
     #include "3rd_party/sokol/sokol_gfx_imgui.h"
 #endif

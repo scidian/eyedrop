@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.10)
 #
 #   EXPORT_TARGET:
 #       "auto"      Attempt Auto-Detect
-#       "osx"       Apple MacOS                     defines DROP_TARGET_OSX, DROP_TARGET_APPLE, DROP_TARGET_OSX_MENUS
+#       "osx"       Apple MacOS                     defines DROP_TARGET_OSX, DROP_TARGET_APPLE, ENABLE_IMGUI_MAC_MENU
 #       "ios"       Apple iOS                       defines DROP_TARGET_IOS, DROP_TARGET_APPLE
 #       "web"       Emscripten                      defines DROP_TARGET_HTML5   
 #       "android"   Google Android                  defines DROP_TARGET_GOOGLE
@@ -46,11 +46,9 @@ set(DEBUG_MODE      "true")
 #
 #   System
 #       DROP_TARGET_APPLE                           ##### True when compiling for either MacOS or iOS
-#       DROP_TARGET_OSX                             ##### True when compiling for MacOS
-#       DROP_TARGET_OSX_MENUS                       ##### Use Mac main menu bar instead of ImGui for main menu
-#       DROP_TARGET_IOS                             ##### True when compiling for iOS
-#
-#       DROP_TARGET_HTML5                           ##### True when compiling for javascript (emscripten)
+#           DROP_TARGET_OSX                         #####   True when compiling for MacOS
+#           DROP_TARGET_IOS                         #####   True when compiling for iOS
+#       DROP_TARGET_HTML5                           ##### True when compiling for Html5 (emscripten)
 #       DROP_TARGET_GOOGLE                          ##### True when compiling for Android
 #       DROP_TARGET_WINDOWS                         ##### True when compiling for Windows
 #       DROP_TARGET_LINUX                           ##### True when compiling for Linux
@@ -68,6 +66,7 @@ set(DEBUG_MODE      "true")
 #
 #   ImGui
 #       ENABLE_IMGUI                                ##### Signal we want ImGui available to application
+#       ENABLE_IMGUI_MAC_MENU                       ##### Use Mac main menu bar instead of ImGui for main menu
 #
 #   Debug
 #       ENABLE_DEBUG                                ##### Signal we want Sokol Debug Viewer capability
@@ -82,14 +81,22 @@ if      (APP_TYPE MATCHES "player")
     file(GLOB_RECURSE MAIN_DIRECTORY_FILES
         "player/*.c**"
     )
-    project(player)                                 ##### Project Name for Engine Runtime Only
+    if (EXPORT_TARGET MATCHES "web") 
+        project(player)                             ##### Project Name for Engine Runtime Only for web
+    else()
+        project(Player)                             ##### Project Name for Engine Runtime Only for all others
+    endif()
 elseif  (APP_TYPE MATCHES "editor")  
     add_compile_definitions(SOKOL_NO_ENTRY)         ##### Stops sokol_app from hijacking main()
     add_compile_definitions(ENABLE_IMGUI)           ##### Signal we want ImGui available to application
     file(GLOB_RECURSE MAIN_DIRECTORY_FILES
         "editor/*.c**"
     )
-    project(drop)                                   ##### Project Name for Editor
+    if (EXPORT_TARGET MATCHES "web") 
+        project(drop)                               ##### Project Name for Editor for web
+    else()
+        project(Drop)                               ##### Project Name for Editor for all others
+    endif()
 endif()
 ####################################################################################
 ####################################################################################
@@ -115,7 +122,7 @@ endif()
 if     (EXPORT_TARGET MATCHES "osx")
     add_compile_definitions(DROP_TARGET_APPLE)
     add_compile_definitions(DROP_TARGET_OSX)
-    add_compile_definitions(DROP_TARGET_OSX_MENUS)
+    add_compile_definitions(ENABLE_IMGUI_MAC_MENU)
     add_compile_definitions(SOKOL_GLCORE33)         ##### OpenGL Core 3.3 Backend   - MacOS, Windows, Linux, Switch, Playstation
     #add_compile_definitions(SOKOL_METAL)           ##### Metal Backend             - MacOS, iOS, tvOS
 elseif (EXPORT_TARGET MATCHES "ios")
