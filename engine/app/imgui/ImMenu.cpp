@@ -12,7 +12,7 @@
 //####################################################################################
 //##    ImMenu
 //##        ImGui wrapper for OS specific functions
-//############################
+//####################################################################################
 namespace ImMenu {
 
 	// Needs to be called before any specific menu functions
