@@ -9,9 +9,9 @@
 #include <string>
 
 // If compiling for Apple, MacOS and menu is enabled, define flag that calls osx functions
-#if defined(__APPLE__) && defined(__MACH__) && defined(ENABLE_IMGUI_MAC_MENU)
-    #ifndef IMMENU_MENU_MAC
-        #define IMMENU_MENU_MAC
+#if defined(__APPLE__) && defined(__MACH__) && defined(DROP_MAC_MENU)
+    #ifndef IMMENU_MAC_MENU
+        #define IMMENU_MAC_MENU
     #endif
 #endif
 

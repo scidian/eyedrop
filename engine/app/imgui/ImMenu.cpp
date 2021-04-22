@@ -17,21 +17,21 @@ namespace ImMenu {
 
 	// Needs to be called before any specific menu functions
  	void MenuInitialize(const char* app_name) {
-		#if defined(IMMENU_MENU_MAC)
+		#if defined(IMMENU_MAC_MENU)
 			osxMenuInitialize(app_name);
 		#endif
     }
 
 	// Needs to be called during App closure
 	void MenuShutDown() {
-		#if defined(IMMENU_MENU_MAC)
+		#if defined(IMMENU_MAC_MENU)
 			osxMenuShutDown();
 		#endif
     }
 
 	// Replacement for ImGui::BeginMainMenuBar()
     bool BeginMainMenuBar() {
-		#if defined(IMMENU_MENU_MAC)
+		#if defined(IMMENU_MAC_MENU)
         	return osxBeginMainMenuBar();
 		#else
         	return ImGui::BeginMainMenuBar();
@@ -40,7 +40,7 @@ namespace ImMenu {
 
 	// Replacement for ImGui::EndMainMenuBar()
     void EndMainMenuBar() {
-		#if defined(IMMENU_MENU_MAC)
+		#if defined(IMMENU_MAC_MENU)
 			osxEndMainMenuBar();
 		#else
 		    ImGui::EndMainMenuBar();
@@ -49,7 +49,7 @@ namespace ImMenu {
 
 	// Replacement for ImGui::BeginMenu()
     bool BeginMenu(const char* label, bool enabled) {
-		#if defined(IMMENU_MENU_MAC)
+		#if defined(IMMENU_MAC_MENU)
         	return osxBeginMenu(label, enabled);
 		#else
         	return ImGui::BeginMenu(label, enabled);
@@ -58,7 +58,7 @@ namespace ImMenu {
 
 	// Replacement for ImGui::EndMenu()
     void EndMenu() {
-		#if defined(IMMENU_MENU_MAC)
+		#if defined(IMMENU_MAC_MENU)
         	osxEndMenu();
 		#else
         	ImGui::EndMenu();
@@ -67,7 +67,7 @@ namespace ImMenu {
 
 	// Replacement for ImGui::MenuItem()
     bool MenuItem(const char* label, const char* shortcut, bool selected, bool enabled) {
-		#if defined(IMMENU_MENU_MAC)
+		#if defined(IMMENU_MAC_MENU)
         	return osxMenuItem(label, shortcut, selected, enabled);
 		#else
         	return ImGui::MenuItem(label, shortcut, selected, enabled);
@@ -76,7 +76,7 @@ namespace ImMenu {
 
 	// Replacement for ImGui::MenuItem()
     bool MenuItem(const char* label, const char* shortcut, bool* p_selected, bool enabled) {
-		#if defined(IMMENU_MENU_MAC)
+		#if defined(IMMENU_MAC_MENU)
 			return osxMenuItem(label, shortcut, p_selected, enabled);
 		#else
 			return ImGui::MenuItem(label, shortcut, p_selected, enabled);
@@ -85,7 +85,7 @@ namespace ImMenu {
 
 	// Replacement for ImGui::Separator()
     void Separator() {
-		#if defined(IMMENU_MENU_MAC)
+		#if defined(IMMENU_MAC_MENU)
 			osxSeparator();
 		#else
 			ImGui::Separator();

@@ -22,6 +22,7 @@
 
 // ##### Embed Files
 #include "assets/embed/fonts/font_aileron_regular.h"
+#include "assets/embed/icons/drop_icon128.h"
 
 
 //####################################################################################
@@ -82,10 +83,24 @@ DrApp::~DrApp() {
     ImMenu::MenuShutDown();
 }
 
+
+//####################################################################################
+//##    Application Functions
+//####################################################################################
 // Sets application name, updates title bar
 void DrApp::setAppName(std::string name) { 
     m_app_name = name; 
     sapp_set_window_title(m_app_name.c_str());
+}
+
+// Sets application icon
+void DrApp::setAppIcon(const DrBitmap& icon) { 
+    sapp_icon_desc icon_desc { };
+        icon_desc.images[0].width =         icon.width;
+        icon_desc.images[0].height =        icon.height;
+        icon_desc.images[0].pixels.ptr =    &icon.data[0];
+        icon_desc.images[0].pixels.size =   icon.data.size();
+    sapp_set_icon(&icon_desc);
 }
 
 //####################################################################################
@@ -97,12 +112,13 @@ void DrApp::init(void) {
     ImMenu::MenuInitialize(m_app_name.c_str());
         
     // #################### Sokol App ####################
-    setAppName(m_app_name);                                     // Set initial Window Title
+    setAppName(m_app_name);                                                         // Set initial Window Title
+    setAppIcon(DrBitmap(drop_icon128, sizeof(drop_icon128)));                       // Set window Icon
     m_dpi_scale = sapp_dpi_scale();
-
+    
     // #################### Sokol Gfx ####################
     sg_desc sokol_gfx { };
-        sokol_gfx.context = sapp_sgcontext();                   // Call sokol_glue function to auto obtain values from sokol_app      
+        sokol_gfx.context = sapp_sgcontext();                                       // Call sokol_glue function to auto obtain values from sokol_app      
     sg_setup(&sokol_gfx);
     m_sg_features = sg_query_features();
     m_sg_limits = sg_query_limits();
@@ -126,7 +142,7 @@ void DrApp::init(void) {
     sfetch_setup(&sokol_fetch); 
 
     // #################### Sokol Debug ####################
-    #if defined(ENABLE_DEBUG)
+    #if defined(DROP_DEBUG)
         sg_imgui_init(&m_sg_imgui);
     #endif
 
@@ -154,7 +170,7 @@ void DrApp::init(void) {
     //####################################################################################
     //##    Sokol ImGui Renderer
     //####################################################################################
-    #if defined(ENABLE_IMGUI)
+    #if defined(DROP_IMGUI)
         simgui_desc_t simgui_desc { };
             simgui_desc.sample_count =     sapp_sample_count();
             simgui_desc.no_default_font =  true;
@@ -252,7 +268,7 @@ void DrApp::frame(void) {
     this->onUpdateScene();
     
     // #################### ImGui Rendering ####################
-    #if defined(ENABLE_IMGUI)
+    #if defined(DROP_IMGUI)
         // Start ImGui Frame
         int width = sapp_width();
         int height = sapp_height();
@@ -263,7 +279,7 @@ void DrApp::frame(void) {
         // ####################
 
         // Debug Sokol
-        #if defined(ENABLE_DEBUG)
+        #if defined(DROP_DEBUG)
             if (ImMenu::BeginMainMenuBar()) {
                 if (ImMenu::BeginMenu("sokol-gfx")) {
                     ImMenu::MenuItem("Capabilities",   0, &m_sg_imgui.caps.open);
@@ -332,7 +348,7 @@ void DrApp::frame(void) {
 //####################################################################################
 void DrApp::event(const sapp_event* event) {
     // Pass event to ImGui
-    #if defined(ENABLE_IMGUI)
+    #if defined(DROP_IMGUI)
         simgui_handle_event(event);
     #endif
 
@@ -352,9 +368,9 @@ void DrApp::cleanup(void) {
     sfetch_shutdown();
     sfons_destroy(m_fontstash);
     sgl_shutdown();
-    #if defined(ENABLE_IMGUI)
+    #if defined(DROP_IMGUI)
         simgui_shutdown();
-        #if defined(ENABLE_DEBUG)
+        #if defined(DROP_DEBUG)
             sg_imgui_discard(&m_sg_imgui);
         #endif
     #endif

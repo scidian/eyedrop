@@ -13,7 +13,6 @@
 #include <bitset>
 #include <cstdint>
 
-
 // Global Constants
 #define DROP_VERSION             2000                               // Drop Creator version number, important for file loading / saving
 

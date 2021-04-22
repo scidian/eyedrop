@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.10)
 #
 #   EXPORT_TARGET:
 #       "auto"      Attempt Auto-Detect
-#       "osx"       Apple MacOS                     defines DROP_TARGET_OSX, DROP_TARGET_APPLE, ENABLE_IMGUI_MAC_MENU
+#       "osx"       Apple MacOS                     defines DROP_TARGET_OSX, DROP_TARGET_APPLE, DROP_MAC_MENU
 #       "ios"       Apple iOS                       defines DROP_TARGET_IOS, DROP_TARGET_APPLE
 #       "web"       Emscripten                      defines DROP_TARGET_HTML5   
 #       "android"   Google Android                  defines DROP_TARGET_GOOGLE
@@ -20,11 +20,11 @@ cmake_minimum_required(VERSION 3.10)
 #       "linux"     Linux                           defines DROP_TARGET_LINUX
 #
 #   APP_TYPE
-#       "editor"    Drop Editor                     defines ENABLE_IMGUI
+#       "editor"    Drop Editor                     defines DROP_IMGUI
 #       "player"    Drop Runtime                    ...does not have ImGui enabled unless DEBUG_MODE is set to "true"
 #
 #   DEBUG_MODE
-#       "true"                                      defines SOKOL_TRACE_HOOKS, ENABLE_DEBUG, ENABLE_IMGUI (turns on ImGui and Sokol Gfx debug menu by default)
+#       "true"                                      defines SOKOL_TRACE_HOOKS, DROP_DEBUG, DROP_IMGUI (turns on ImGui and Sokol Gfx debug menu by default)
 #       "false"                                     
 ####################################################################################
 #################### Build Options
@@ -65,11 +65,11 @@ set(DEBUG_MODE      "true")
 #       SOKOL_METAL                                 ##### Metal Backend             - MacOS, iOS, tvOS
 #
 #   ImGui
-#       ENABLE_IMGUI                                ##### Signal we want ImGui available to application
-#       ENABLE_IMGUI_MAC_MENU                       ##### Use Mac main menu bar instead of ImGui for main menu
+#       DROP_IMGUI                                  ##### Signal we want ImGui available to application
+#       DROP_MAC_MENU                               ##### Use Mac main menu bar instead of ImGui for main menu
 #
 #   Debug
-#       ENABLE_DEBUG                                ##### Signal we want Sokol Debug Viewer capability
+#       DROP_DEBUG                                  ##### Signal we want Sokol Debug Viewer capability
 #
 ####################################################################################
 ####################################################################################
@@ -88,7 +88,7 @@ if      (APP_TYPE MATCHES "player")
     endif()
 elseif  (APP_TYPE MATCHES "editor")  
     add_compile_definitions(SOKOL_NO_ENTRY)         ##### Stops sokol_app from hijacking main()
-    add_compile_definitions(ENABLE_IMGUI)           ##### Signal we want ImGui available to application
+    add_compile_definitions(DROP_IMGUI)             ##### Signal we want ImGui available to application
     file(GLOB_RECURSE MAIN_DIRECTORY_FILES
         "editor/*.c**"
     )
@@ -105,8 +105,8 @@ endif()
 ##### DEBUG??
 if     (DEBUG_MODE MATCHES "true") 
     add_compile_definitions(SOKOL_TRACE_HOOKS)      ##### Needed for Sokol Debug Viewer
-    add_compile_definitions(ENABLE_DEBUG)           ##### Signal we want Sokol Debug Viewer capability
-    add_compile_definitions(ENABLE_IMGUI)           ##### Signal we want ImGui available to application
+    add_compile_definitions(DROP_DEBUG)             ##### Signal we want Sokol Debug Viewer capability
+    add_compile_definitions(DROP_IMGUI)             ##### Signal we want ImGui available to application
 endif()
 
 ##### TARGET??
@@ -122,7 +122,7 @@ endif()
 if     (EXPORT_TARGET MATCHES "osx")
     add_compile_definitions(DROP_TARGET_APPLE)
     add_compile_definitions(DROP_TARGET_OSX)
-    add_compile_definitions(ENABLE_IMGUI_MAC_MENU)
+    add_compile_definitions(DROP_MAC_MENU)
     add_compile_definitions(SOKOL_GLCORE33)         ##### OpenGL Core 3.3 Backend   - MacOS, Windows, Linux, Switch, Playstation
     #add_compile_definitions(SOKOL_METAL)           ##### Metal Backend             - MacOS, iOS, tvOS
 elseif (EXPORT_TARGET MATCHES "ios")
