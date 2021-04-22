@@ -35,7 +35,7 @@ void DockspaceUI(bool* widgets, int& menu_height) {
     ImGui::Begin("MasterDockspace", &widgets[EDITOR_WIDGET_MAIN_WINDOW], window_flags);
     ImGui::PopStyleVar(3);
             
-    // Save off menu bar height for later
+    // Save menu bar height for later
     menu_height = ImGui::GetCurrentWindow()->MenuBarHeight();
 
     // Programatically build dock space
