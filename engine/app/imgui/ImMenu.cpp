@@ -36,17 +36,26 @@
 //##        ImGui wrapper for OS specific functions
 //####################################################################################
 namespace ImMenu {
+	
+	// Returns true if using Mac Menus
+	bool UsingMacMenus() {
+		#if defined(IMMENU_MAC_MENU)
+			return true;
+		#else
+			return false;
+		#endif
+	}
 
 	// Needs to be called before any specific menu functions
  	void MenuInitialize(const char* app_name) {
-		#if defined(IMMENU_MAC_MENU)
+		#if defined(__APPLE__) && defined(__MACH__)
 			osxMenuInitialize(app_name);
 		#endif
     }
 
 	// Needs to be called during App closure
 	void MenuShutDown() {
-		#if defined(IMMENU_MAC_MENU)
+		#if defined(__APPLE__) && defined(__MACH__)
 			osxMenuShutDown();
 		#endif
     }

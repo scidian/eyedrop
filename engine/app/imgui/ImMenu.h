@@ -43,6 +43,9 @@
 //############################
 namespace ImMenu {
 
+    // Using Mac Menus?
+    bool UsingMacMenus();
+
     // Init Functions
     void MenuInitialize(const char* app_name);
     void MenuShutDown();

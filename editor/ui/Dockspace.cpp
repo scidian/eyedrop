@@ -7,6 +7,7 @@
 //
 //
 #include "editor/Editor.h"
+#include "engine/app/imgui/ImMenu.h"
 #include "Dockspace.h"
 
 
@@ -23,9 +24,10 @@ void DockspaceUI(bool* widgets, int& menu_height) {
     ImGui::SetNextWindowViewport(viewport->ID);
 
     ImGuiWindowFlags window_flags = 0
-        | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar 
+        | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar 
         | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
         | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
+    if (ImMenu::UsingMacMenus() == false) window_flags |= ImGuiWindowFlags_MenuBar;
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.f, 1.f));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
@@ -34,7 +36,7 @@ void DockspaceUI(bool* widgets, int& menu_height) {
     ImGui::PopStyleVar(3);
             
     // Save off menu bar height for later
-	menu_height = ImGui::GetCurrentWindow()->MenuBarHeight();
+    menu_height = ImGui::GetCurrentWindow()->MenuBarHeight();
 
     // Programatically build dock space
     ImGuiID dockspace_id = ImGui::GetID(DOCKSPACE_NAME);

@@ -21,19 +21,19 @@ void MainMenuUI(bool* widgets) {
             bool clicked_new  { false };
             bool clicked_open { false };
             bool clicked_save { false };
-            if (ImMenu::MenuItem("New",  "CTRL+N", &clicked_new)) { }
-            if (ImMenu::MenuItem("Open", "CTRL+O", &clicked_open)) { }
-            if (ImMenu::MenuItem("Save", "CTRL+S", &clicked_save)) { }
-            #ifndef DROP_TARGET_HTML5
+            if (ImMenu::MenuItem("New",  "n", &clicked_new)) { }
+            if (ImMenu::MenuItem("Open", "o", &clicked_open)) { }
+            if (ImMenu::MenuItem("Save", "s", &clicked_save)) { }
+            #if !defined(DROP_TARGET_HTML5) && !(defined(DROP_TARGET_OSX) && defined(DROP_MAC_MENU))
                 ImMenu::Separator();
-                if (ImMenu::MenuItem("Quit", "CTRL+Q")) { sapp_request_quit(); }
+                if (ImMenu::MenuItem("Quit", "q")) { sapp_request_quit(); }
             #endif
             ImMenu::EndMenu();
         }
         if (ImMenu::BeginMenu("Edit")) {
-            if (ImMenu::MenuItem("Cut", "CTRL+X")) { }
-            if (ImMenu::MenuItem("Copy", "CTRL+C")) { }
-            if (ImMenu::MenuItem("Paste", "CTRL+V")) { }
+            if (ImMenu::MenuItem("Cut", "x")) { }
+            if (ImMenu::MenuItem("Copy", "c")) { }
+            if (ImMenu::MenuItem("Paste", "v")) { }
             ImMenu::EndMenu();
         }
         if (ImMenu::BeginMenu("View")) {
