@@ -9,74 +9,95 @@
 #include "3rd_party/imgui/imgui.h"
 #include "ImUtilities.h"
 
+//####################################################################################
+//##    ImUtilities
+//##        ImGui wrapper for OS specific functions
+//############################
 namespace ImUtilities {
 	
+	// Global OS Variable
+    static Utilities_Target s_target_os { UTILITIES_TARGET_OTHER };
+
+	// Sets target operating system
+	void TargetOS(Utilities_Target target_os) {
+		s_target_os = target_os;
+	}
+
+	// Needs to be called before any specific menu functions
  	void MenuInitialize(const char* app_name) {
-		#if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
-        	osxMenuInitialize(app_name);
-		#endif
+		if (s_target_os == UTILITIES_TARGET_MACOS) {
+			osxMenuInitialize(app_name);
+		}
     }
 
+	// Needs to be called during App closure
 	void MenuShutDown() {
-		#if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
-        	osxMenuShutDown();
-		#endif
+		if (s_target_os == UTILITIES_TARGET_MACOS) {
+			osxMenuShutDown();
+		}
     }
 
+	// Replacement for ImGui::BeginMainMenuBar()
     bool BeginMainMenuBar() {
-		#if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
+		if (s_target_os == UTILITIES_TARGET_MACOS) {
         	return osxBeginMainMenuBar();
-		#else
+		} else {
         	return ImGui::BeginMainMenuBar();
-		#endif
+		}
     }
 
+	// Replacement for ImGui::EndMainMenuBar()
     void EndMainMenuBar() {
-		#if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
-				osxEndMainMenuBar();
-		#else
-				ImGui::EndMainMenuBar();
-		#endif
+		if (s_target_os == UTILITIES_TARGET_MACOS) {
+			osxEndMainMenuBar();
+		} else {
+		    ImGui::EndMainMenuBar();
+		}
     }
 
+	// Replacement for ImGui::BeginMenu()
     bool BeginMenu(const char* label, bool enabled) {
-		#if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
+		if (s_target_os == UTILITIES_TARGET_MACOS) {
         	return osxBeginMenu(label, enabled);
-		#else
+		} else {
         	return ImGui::BeginMenu(label, enabled);
-		#endif
+		}
     }
 
+	// Replacement for ImGui::EndMenu()
     void EndMenu() {
-		#if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
+		if (s_target_os == UTILITIES_TARGET_MACOS) {
         	osxEndMenu();
-		#else
+		} else {
         	ImGui::EndMenu();
-		#endif
+		}
     }
 
+	// Replacement for ImGui::MenuItem()
     bool MenuItem(const char* label, const char* shortcut, bool selected, bool enabled) {
-		#if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
+		if (s_target_os == UTILITIES_TARGET_MACOS) {
         	return osxMenuItem(label, shortcut, selected, enabled);
-		#else
+		} else {
         	return ImGui::MenuItem(label, shortcut, selected, enabled);
-		#endif
+		}
     }
 
+	// Replacement for ImGui::MenuItem()
     bool MenuItem(const char* label, const char* shortcut, bool* p_selected, bool enabled) {
-		#if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
+		if (s_target_os == UTILITIES_TARGET_MACOS) {
 			return osxMenuItem(label, shortcut, p_selected, enabled);
-		#else
+		} else {
 			return ImGui::MenuItem(label, shortcut, p_selected, enabled);
-		#endif
+		}
     }
 
+	// Replacement for ImGui::Separator()
     void Separator() {
-		#if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
-				osxSeparator();
-		#else
+		if (s_target_os == UTILITIES_TARGET_MACOS) {
+			osxSeparator();
+		} else {
 				ImGui::Separator();
-		#endif
+		}
     }
 
 }

@@ -94,8 +94,11 @@ void DrApp::setAppName(std::string name) {
 // Initializes all sokol libraries
 void DrApp::init(void) {
     // #################### Mac Menu Bar ####################
+    #if defined(DROP_TARGET_OSX) && defined(DROP_TARGET_OSX_MENUS)
+        ImUtilities::TargetOS(UTILITIES_TARGET_MACOS);
+    #endif
     ImUtilities::MenuInitialize(m_app_name.c_str());
-    
+        
     // #################### Sokol App ####################
     setAppName(m_app_name);                                     // Set initial Window Title
     m_dpi_scale = sapp_dpi_scale();

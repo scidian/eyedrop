@@ -31,7 +31,7 @@ cmake_minimum_required(VERSION 3.10)
 ####################################################################################
 
 ##### Standard editor build:
-set(EXPORT_TARGET   "web")
+set(EXPORT_TARGET   "osx")
 set(APP_TYPE        "editor")
 set(DEBUG_MODE      "true")
 
@@ -244,30 +244,30 @@ elseif (EXPORT_TARGET MATCHES "ios")
 ####################################################################################
 elseif (EXPORT_TARGET MATCHES "web")
     # Flags
-    #   -O#                                     Optimization, file size in order: -O1, -O2, -O3, -Os, -Oz (seems smallest)
-    #   --shell-file <path>                     Create a html file without emscripten logo and debug shell
-    #   -fno-exceptions                         Turns off "try {} catch {}" blocks, and std::except(), saves ~500kb
+    #   -O#                                         Optimization, file size in order: -O1, -O2, -O3, -Os, -Oz (seems smallest)
+    #   --shell-file <path>                         Create a html file without emscripten logo and debug shell
+    #   -fno-exceptions                             Turns off "try {} catch {}" blocks, and std::except(), saves ~500kb
     #
-    set(CMAKE_C_LINK_FLAGS "")
-    set(CMAKE_CXX_LINK_FLAGS "")
+    set(CMAKE_C_LINK_FLAGS "")                      # Clear MacOS linker flags
+    set(CMAKE_CXX_LINK_FLAGS "")                    # Clear MacOS linker flags
     set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -std=c99   -Oz -fno-exceptions")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Oz -fno-exceptions --shell-file ../shell_full.html") # -Werror -Wno-error=unused-command-line-argument") 
     set(CMAKE_C_COMPILER "emcc")
     set(CMAKE_CXX_COMPILER "emcc")
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
 
-    #   -s WASM=0                               Force javascript (no web assembly, more compatiable, but bigger file size) or
-    #   -s WASM=1                               Use web assembly (!!!!! #NOTE: MUST RUN ON WEB SERVER FOR IT TO WORK!!!!!) ('.wast' file is human readable, don't need it!)
-    #   -s ASSERTIONS=1|2                       Show errors in javascript console
-    #   -s ALLOW_MEMORY_GROWTH=1                Allow for dynamic memory access
-    #   -s DEMANGLE_SUPPORT=1                   Demangle stack traces, that is, emit human-readable C++ function names instead of _ZN.. ones
-    #   -s TOTAL_MEMORY=x                       Embed larger memory up front (default is 16777216... 33554432, 67108864, 134217728, 268435456
+    #   -s WASM=0                                   Force javascript (no web assembly, more compatiable, but bigger file size) or
+    #   -s WASM=1                                   Use web assembly (!!!!! #NOTE: MUST RUN ON WEB SERVER FOR IT TO WORK!!!!!) ('.wast' file is human readable, don't need it!)
+    #   -s ASSERTIONS=1|2                           Show errors in javascript console
+    #   -s ALLOW_MEMORY_GROWTH=1                    Allow for dynamic memory access
+    #   -s DEMANGLE_SUPPORT=1                       Demangle stack traces, that is, emit human-readable C++ function names instead of _ZN.. ones
+    #   -s TOTAL_MEMORY=x                           Embed larger memory up front (default is 16777216... 33554432, 67108864, 134217728, 268435456
     #
-    #   --bind                                  Allows javascript code to call c++ functions
-    #   --closure 1                             Turn on Googles closure compiler, reduces code size and improves javascript code
-    #   --memory-init-file 0                    Embed the usually external .mem file generated along side .js file
-    #   --preload-file assets/shapes.png        Include file in compiled code, allows access to files in simulated local filesystem
-    #   --embed-file assets/shapes.png          Embed file in compiled code, also allows access through simulated filesystem (not compatible yet with sokol_app)
+    #   --bind                                      Allows javascript code to call c++ functions
+    #   --closure 1                                 Turn on Googles closure compiler, reduces code size and improves javascript code
+    #   --memory-init-file 0                        Embed the usually external .mem file generated along side .js file
+    #   --preload-file assets/shapes.png            Include file in compiled code, allows access to files in simulated local filesystem
+    #   --embed-file assets/shapes.png              Embed file in compiled code, also allows access through simulated filesystem (not compatible yet with sokol_app)
     #
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-fno-exceptions -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s TOTAL_MEMORY=134217728 -s WASM=1 -std=c++11 --bind")# -s ASSERTIONS=1")
 

@@ -8,33 +8,10 @@
 //
 /*
 ..... This file started from: https://github.com/JamesBoer/ImFrame .....
-
-The MIT License (MIT)
-
-Copyright (c) 2021 James Boer
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
 */
+#include <vector>
 #import <Foundation/Foundation.h>
 #import <Cocoa/Cocoa.h>
-
-#include <vector>
 #include "ImUtilities.h"
 
 
@@ -47,12 +24,14 @@ namespace ImUtilities {
 @end
 
 @implementation MenuItemHandler
--(void) OnClick: (id) sender
-{
+-(void) OnClick: (id) sender {
     NSMenuItem* menu_item = sender;
     ImUtilities::s_selected_tag_id = menu_item.tag;
 }
 @end
+
+
+#include <iostream>
 
 
 namespace ImUtilities {
@@ -126,11 +105,14 @@ namespace ImUtilities {
 
         NSUInteger find_menu = [s_menu_bar indexOfItemWithTitle:label_str];
         if (find_menu != -1) {
-            s_build_menus = false;
+            if (s_build_menus) {
+                s_build_menus = false;
+                std::cout << "Done building menu..." << std::endl;
+            }
         }
 
 
-        NSUInteger idx = [s_menu_bar numberOfItems];
+        NSUInteger idx = [s_menu_bar numberOfItems] - 1;
 
         // Create a new menu_item and add to menu
         if (s_build_menus) {
@@ -147,15 +129,16 @@ namespace ImUtilities {
         }
         
         NSMenuItem* menu_item = [s_menu_bar itemAtIndex:idx];
-        
+
+        if (menu_item) {    
+            menu_item.enabled = enabled;                                    // Update enabled state
+        }
         // // If the labels don't match, something has dynamically changed and we need to clear and rebuild the menus
         // if (![label_str isEqualToString:menu_item.title]) {
         //     s_clear_menus = true;
         //     return false;
         // }
-        
-        // Update enabled state
-        menu_item.enabled = enabled;
+                
                         
         // Unlike Dear ImGui menus, we typically return true so clicks can be checked by any menu_item
         return true;
@@ -233,13 +216,13 @@ namespace ImUtilities {
     }
 
     void osxSeparator() {
-        if (s_clear_menus) return;
+        // if (s_clear_menus) return;
         
-        // If we're in a building pass, create new NSMenuItem as separator and insert into menu
-        if (s_build_menus) {
-            NSMenuItem* menu_item = [NSMenuItem separatorItem];
-            //[s_menu_bar.items.back().submenu addItem:menu_item];
-        }
+        // // If we're in a building pass, create new NSMenuItem as separator and insert into menu
+        // if (s_build_menus) {
+        //     NSMenuItem* menu_item = [NSMenuItem separatorItem];
+        //     //[s_menu_bar.items.back().submenu addItem:menu_item];
+        // }
     }
     
 }

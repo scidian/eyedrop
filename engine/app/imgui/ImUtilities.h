@@ -8,9 +8,20 @@
 //
 #include <string>
 
+// Target OS Enum
+enum Utilities_Target {
+    UTILITIES_TARGET_MACOS,
+    UTILITIES_TARGET_OTHER,
+};
+
+//####################################################################################
+//##    ImUtilities
+//##        ImGui wrapper for OS specific functions
+//############################
 namespace ImUtilities {
 
     // Init Functions
+    void TargetOS(Utilities_Target target_os);
     void MenuInitialize(const char* app_name);
     void MenuShutDown();
 
