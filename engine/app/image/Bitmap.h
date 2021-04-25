@@ -15,6 +15,7 @@
 
 // Forward Declarations
 class DrColor;
+class DrPoint;
 class DrPolygonF;
 class DrRect;
 

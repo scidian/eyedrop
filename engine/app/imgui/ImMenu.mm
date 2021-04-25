@@ -34,6 +34,10 @@
 #import <Cocoa/Cocoa.h>
 #include "ImMenu.h"
 
+// !!!!! #TEMP: Includes
+#include "assets/embed/icons/drop_icon128_2.h"
+#include "engine/app/image/Bitmap.h"
+
 // Free Function
 #if __has_feature(objc_arc)
     #define _IMMENU_OBJC_RELEASE(obj) { obj = nil; }
@@ -203,6 +207,21 @@ bool osxMenuItem(const char* label, const char* shortcut, bool selected, bool en
             menu_item.action = @selector(OnClick:);
             menu_item.target = s_menu_handler;
         [menu_item setTag:s_current_tag_id];
+
+        // !!!!! #TEMP: Experimental set menu icon
+        // Sets application icon
+        
+        DrBitmap icon = DrBitmap(drop_icon128_2, sizeof(drop_icon128_2));
+        ImageDescriptor icon_desc { };
+            icon_desc.width =   icon.width;
+            icon_desc.height =  icon.height;
+            icon_desc.ptr =    &icon.data[0];
+            icon_desc.size =    icon.data.size();
+        NSImage* nsimage = (NSImage*)osxCreateImage(&icon_desc, 32, 32);
+        [ menu_item setImage:nsimage ];
+
+
+
         ++s_current_tag_id;
         if (shortcut) menu_item.keyEquivalent = [NSString stringWithUTF8String:shortcut];
 
@@ -246,6 +265,38 @@ void osxSeparator() {
         [menu_bar_item.submenu addItem:seperator_item];
     }
     s_item_index++;
+}
+
+
+//####################################################################################
+//##    Builder Functions
+//####################################################################################
+void* osxCreateImage(const ImageDescriptor* image_desc, const int width, const int height) {
+    CGColorSpaceRef cg_color_space = CGColorSpaceCreateDeviceRGB();
+    CFDataRef cf_data = CFDataCreate(kCFAllocatorDefault, (const UInt8*)image_desc->ptr, (CFIndex)image_desc->size);
+    CGDataProviderRef cg_data_provider = CGDataProviderCreateWithCFData(cf_data);
+    CGImageRef cg_img = CGImageCreate(
+        (size_t)image_desc->width,                          // width
+        (size_t)image_desc->height,                         // height
+        8,                                                  // bitsPerComponent
+        32,                                                 // bitsPerPixel
+        (size_t)image_desc->width * 4,                      // bytesPerRow
+        cg_color_space,                                     // space
+        kCGImageAlphaLast | kCGImageByteOrderDefault,       // bitmapInfo
+        cg_data_provider,                                   // provider
+        NULL,                                               // decode
+        false,                                              // shouldInterpolate
+        kCGRenderingIntentDefault);
+    CFRelease(cf_data);
+    CGDataProviderRelease(cg_data_provider);
+    CGColorSpaceRelease(cg_color_space);
+
+    NSSize desired_size;
+        desired_size.width =  width;
+        desired_size.height = height;
+    NSImage* ns_image = [[NSImage alloc] initWithCGImage:cg_img size:desired_size];
+    CGImageRelease(cg_img);
+    return ns_image;
 }
 
 

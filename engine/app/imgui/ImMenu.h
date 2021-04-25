@@ -28,6 +28,9 @@
 // THE SOFTWARE.
 //
 //####################################################################################
+#ifndef IM_MENU_H
+#define IM_MENU_H
+
 #include <string>
 
 // If compiling for Apple, MacOS and menu is enabled, define flag that calls osx functions
@@ -37,11 +40,20 @@
     #endif
 #endif
 
+
 //####################################################################################
 //##    ImMenu
 //##        ImGui wrapper for OS specific menu functions
 //############################
 namespace ImMenu {
+
+    // Image Descriptor for CreateImage()
+    struct ImageDescriptor {
+        int         width;
+        int         height;
+        const void* ptr;
+        size_t      size;
+    };
 
     // Using Mac Menus?
     bool UsingMacMenus();
@@ -70,4 +82,10 @@ namespace ImMenu {
     bool osxMenuItem(const char* label, const char* shortcut, bool* p_selected, bool enabled);
     void osxSeparator();
 
+    // MacOS Builder Functions
+    void* osxCreateImage(const ImageDescriptor* image_desc, const int width, const int height);
+
+
 }
+
+#endif  // IM_MENU_H
