@@ -97,18 +97,18 @@ namespace ImMenu {
     }
 
 	// Replacement for ImGui::MenuItem()
-    bool MenuItem(const char* label, const char* shortcut, bool selected, bool enabled) {
+    bool MenuItem(const char* label, const char* shortcut, bool selected, bool enabled, DrImage* image) {
 		#if defined(IMMENU_MAC_MENU)
-        	return osxMenuItem(label, shortcut, selected, enabled);
+        	return osxMenuItem(label, shortcut, selected, enabled, image);
 		#else
         	return ImGui::MenuItem(label, shortcut, selected, enabled);
 		#endif
     }
 
 	// Replacement for ImGui::MenuItem()
-    bool MenuItem(const char* label, const char* shortcut, bool* p_selected, bool enabled) {
+    bool MenuItem(const char* label, const char* shortcut, bool* p_selected, bool enabled, DrImage* image) {
 		#if defined(IMMENU_MAC_MENU)
-			return osxMenuItem(label, shortcut, p_selected, enabled);
+			return osxMenuItem(label, shortcut, p_selected, enabled, image);
 		#else
 			return ImGui::MenuItem(label, shortcut, p_selected, enabled);
 		#endif

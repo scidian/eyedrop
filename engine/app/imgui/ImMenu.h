@@ -40,6 +40,9 @@
     #endif
 #endif
 
+// Forward Declarations
+class DrImage;
+
 
 //####################################################################################
 //##    ImMenu
@@ -67,8 +70,8 @@ namespace ImMenu {
     void EndMainMenuBar();
     bool BeginMenu(const char* label, bool enabled = true);
     void EndMenu();
-    bool MenuItem(const char* label, const char* shortcut, bool selected = false, bool enabled = true);
-    bool MenuItem(const char* label, const char* shortcut, bool* p_selected, bool enabled = true);
+    bool MenuItem(const char* label, const char* shortcut, bool selected = false, bool enabled = true, DrImage* image = nullptr);
+    bool MenuItem(const char* label, const char* shortcut, bool* p_selected, bool enabled = true, DrImage* image = nullptr);
     void Separator();
 
 	// MacOS Menu Functions
@@ -78,8 +81,8 @@ namespace ImMenu {
     void osxEndMainMenuBar();
     bool osxBeginMenu(const char* label, bool enabled);
     void osxEndMenu();
-    bool osxMenuItem(const char* label, const char* shortcut, bool selected, bool enabled);
-    bool osxMenuItem(const char* label, const char* shortcut, bool* p_selected, bool enabled);
+    bool osxMenuItem(const char* label, const char* shortcut, bool selected, bool enabled, DrImage* image = nullptr);
+    bool osxMenuItem(const char* label, const char* shortcut, bool* p_selected, bool enabled, DrImage* image = nullptr);
     void osxSeparator();
 
     // MacOS Builder Functions

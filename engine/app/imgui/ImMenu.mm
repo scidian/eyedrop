@@ -32,11 +32,8 @@
 #include <vector>
 #import <Foundation/Foundation.h>
 #import <Cocoa/Cocoa.h>
+#include "engine/app/image/Image.h"
 #include "ImMenu.h"
-
-// !!!!! #TEMP: Includes
-#include "assets/embed/icons/drop_icon128_2.h"
-#include "engine/app/image/Bitmap.h"
 
 // Free Function
 #if __has_feature(objc_arc)
@@ -193,7 +190,7 @@ void osxEndMenu() {
 //####################################################################################
 //##    Menu Items
 //####################################################################################
-bool osxMenuItem(const char* label, const char* shortcut, bool selected, bool enabled) {
+bool osxMenuItem(const char* label, const char* shortcut, bool selected, bool enabled, DrImage* image) {
     // Label as NSString
     NSString* title = [NSString stringWithUTF8String:label];
 
@@ -202,28 +199,25 @@ bool osxMenuItem(const char* label, const char* shortcut, bool selected, bool en
 
     // Build if in building pass
     if (s_build_menu) {
+        // Create new menu item
         NSMenuItem* menu_item = [[NSMenuItem alloc] init];
             menu_item.title = title;
             menu_item.action = @selector(OnClick:);
             menu_item.target = s_menu_handler;
         [menu_item setTag:s_current_tag_id];
-
-        // !!!!! #TEMP: Experimental set menu icon
-        // Sets application icon
-        
-        DrBitmap icon = DrBitmap(drop_icon128_2, sizeof(drop_icon128_2));
-        ImageDescriptor icon_desc { };
-            icon_desc.width =   icon.width;
-            icon_desc.height =  icon.height;
-            icon_desc.ptr =    &icon.data[0];
-            icon_desc.size =    icon.data.size();
-        NSImage* nsimage = (NSImage*)osxCreateImage(&icon_desc, 32, 32);
-        [ menu_item setImage:nsimage ];
-
-
-
         ++s_current_tag_id;
         if (shortcut) menu_item.keyEquivalent = [NSString stringWithUTF8String:shortcut];
+
+        // Set menu item icon
+        if (image != nullptr) {
+            ImageDescriptor icon_desc { };
+                icon_desc.width =   image->bitmap().width;
+                icon_desc.height =  image->bitmap().height;
+                icon_desc.ptr =    &image->bitmap().data[0];
+                icon_desc.size =    image->bitmap().data.size();
+            NSImage* nsimage = (NSImage*)osxCreateImage(&icon_desc, 24, 24);
+            [ menu_item setImage:nsimage ];
+        }
 
         // Add Item to Menu
         [menu_bar_item.submenu addItem:menu_item];
@@ -250,8 +244,8 @@ bool osxMenuItem(const char* label, const char* shortcut, bool selected, bool en
     return false;
 }
 
-bool osxMenuItem(const char* label, const char* shortcut, bool* p_selected, bool enabled) {
-    if (osxMenuItem(label, shortcut, p_selected ? *p_selected : false, enabled)) {
+bool osxMenuItem(const char* label, const char* shortcut, bool* p_selected, bool enabled, DrImage* image) {
+    if (osxMenuItem(label, shortcut, p_selected ? *p_selected : false, enabled, image)) {
         if (p_selected) *p_selected = !(*p_selected);
         return true;
     }
