@@ -215,7 +215,7 @@ bool osxMenuItem(const char* label, const char* shortcut, bool selected, bool en
                 icon_desc.height =  image->bitmap().height;
                 icon_desc.ptr =    &image->bitmap().data[0];
                 icon_desc.size =    image->bitmap().data.size();
-            NSImage* nsimage = (NSImage*)osxCreateImage(&icon_desc, 24, 24);
+            NSImage* nsimage = (NSImage*)osxCreateImage(&icon_desc, menu_bar_item.submenu.size.height, menu_bar_item.submenu.size.height);
             [ menu_item setImage:nsimage ];
         }
 
