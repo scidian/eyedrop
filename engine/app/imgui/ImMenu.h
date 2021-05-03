@@ -66,7 +66,7 @@ namespace ImMenu {
     void MenuShutDown();
 
     // ImGui / Native Menu Wrappers
-    bool BeginMainMenuBar();
+    bool BeginMainMenuBar(bool first_call = false);
     void EndMainMenuBar();
     bool BeginMenu(const char* label, bool enabled = true);
     void EndMenu();
@@ -77,7 +77,7 @@ namespace ImMenu {
 	// MacOS Menu Functions
     void osxMenuInitialize(const char* app_name);
     void osxMenuShutDown();
-    bool osxBeginMainMenuBar();
+    bool osxBeginMainMenuBar(bool first_call);
     void osxEndMainMenuBar();
     bool osxBeginMenu(const char* label, bool enabled);
     void osxEndMenu();

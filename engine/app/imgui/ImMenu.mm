@@ -28,12 +28,15 @@
 // THE SOFTWARE.
 //
 //####################################################################################
-// Includes
-#include <vector>
+// Imports
 #import <Foundation/Foundation.h>
 #import <Cocoa/Cocoa.h>
+
+// Includes
+#include <vector>
 #include "engine/app/image/Image.h"
 #include "ImMenu.h"
+
 
 // Free Function
 #if __has_feature(objc_arc)
@@ -70,7 +73,7 @@ namespace ImMenu {
     
 
 //####################################################################################
-//##    Static Variables
+//##    Local Static Variables
 //####################################################################################
 // Menu Variables
 static NSMenu*                  s_menu_bar;
@@ -83,6 +86,8 @@ static NSInteger                s_current_tag_id = 1;
 
 // Flags
 static bool                     s_build_menu = false;
+static bool                     s_need_clear = false;
+
 
 //####################################################################################
 //##    Init
@@ -124,19 +129,20 @@ void osxMenuShutDown() {
 //##    Begin / End Menu Bar
 //####################################################################################
 // Call before adding menu's to Main Menu Bar
-bool osxBeginMainMenuBar() {
+bool osxBeginMainMenuBar(bool first_call) {
+    // Clear menus if flag was set, preserve the first menu ("AppName")
+    if (first_call && s_need_clear) {
+        while (s_menu_bar.itemArray.count > 1) {
+            [s_menu_bar removeItemAtIndex:1];
+        }
+        s_need_clear = false;
+    }
     return true;
 }
 
 void osxEndMainMenuBar() {
-    // Clear menus if flag was set, preserve the first menu ("AppName")
-    // if (s_clear_menus) {
-    //     while (s_menu_bar.itemArray.count > 1) {
-    //         [s_menu_bar removeItemAtIndex:1];
-    //     }
-    //     s_clear_menus = false;
-    // }
 }
+
 
 //####################################################################################
 //##    Begin / End Menu
@@ -221,11 +227,19 @@ bool osxMenuItem(const char* label, const char* shortcut, bool selected, bool en
 
         // Add Item to Menu
         [menu_bar_item.submenu addItem:menu_item];
-    }
+    } 
     
-    // Set 'enable' and 'selected' properties
+    // Check for title change, set 'enable' and 'selected' properties
     NSMenuItem* menu_item = [menu_bar_item.submenu itemAtIndex:s_item_index];
     if (menu_item) {
+        // Check if title has changed and menus need to be rebuilt
+        if (s_build_menu == false) {
+            if (![title isEqualToString:menu_item.title]) {
+                s_need_clear = true;
+            }
+        } 
+
+        // Update 'enable' and 'selected' properties
         menu_item.enabled = enabled;
         menu_item.state = selected ? NSControlStateValueOn : NSControlStateValueOff;
     }

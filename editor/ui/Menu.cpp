@@ -18,13 +18,14 @@
 void MainMenuUI(bool* widgets) {
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
-    if (ImMenu::BeginMainMenuBar()) {
+    if (ImMenu::BeginMainMenuBar(true)) {
         if (ImMenu::BeginMenu("File")) {
             bool clicked_new  { false };
             bool clicked_open { false };
             bool clicked_save { false };
             
-            if (ImMenu::MenuItem("New",  "n", &clicked_new)) { }
+            static std::string new_text = "New";
+            if (ImMenu::MenuItem(new_text.c_str(),  "n", &clicked_new)) { new_text = "Old"; }
             // With Icon:
             /*
             static DrBitmap icon = DrBitmap(drop_icon128_3, sizeof(drop_icon128_3));

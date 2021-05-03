@@ -280,7 +280,7 @@ void DrApp::frame(void) {
 
         // Debug Sokol
         #if defined(DROP_DEBUG)
-            if (ImMenu::BeginMainMenuBar()) {
+            if (ImMenu::BeginMainMenuBar(false)) {
                 if (ImMenu::BeginMenu("sokol-gfx")) {
                     ImMenu::MenuItem("Capabilities",   0, &m_sg_imgui.caps.open);
                     ImMenu::MenuItem("Buffers",        0, &m_sg_imgui.buffers.open);

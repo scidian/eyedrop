@@ -61,9 +61,9 @@ namespace ImMenu {
     }
 
 	// Replacement for ImGui::BeginMainMenuBar()
-    bool BeginMainMenuBar() {
+    bool BeginMainMenuBar(bool first_call) {
 		#if defined(IMMENU_MAC_MENU)
-        	return osxBeginMainMenuBar();
+        	return osxBeginMainMenuBar(first_call);
 		#else
         	return ImGui::BeginMainMenuBar();
 		#endif
