@@ -17,6 +17,7 @@
 void DockspaceUI(bool* widgets, int& menu_height) {
     // Create main background window for DockSpace
     ImGuiViewport* viewport = ImGui::GetMainViewport();
+    if (viewport == nullptr) return;
     ImVec2 window_pos =  ImVec2(viewport->Pos.x,  viewport->Pos.y  + EDITOR_TOOLBAR_SIZE);
     ImVec2 window_size = ImVec2(viewport->Size.x, viewport->Size.y - EDITOR_TOOLBAR_SIZE);
     ImGui::SetNextWindowPos(window_pos);
