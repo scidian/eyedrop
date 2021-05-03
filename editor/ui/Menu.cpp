@@ -24,8 +24,7 @@ void MainMenuUI(bool* widgets) {
             bool clicked_open { false };
             bool clicked_save { false };
             
-            static std::string new_text = "New";
-            if (ImMenu::MenuItem(new_text.c_str(),  "n", &clicked_new)) { new_text = "Old"; }
+            if (ImMenu::MenuItem("New",  "n", &clicked_new)) { }
             // With Icon:
             /*
             static DrBitmap icon = DrBitmap(drop_icon128_3, sizeof(drop_icon128_3));

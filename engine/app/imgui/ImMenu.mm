@@ -37,6 +37,8 @@
 #include "engine/app/image/Image.h"
 #include "ImMenu.h"
 
+// Constants
+#define MENU_TAG_START          1                                                   // Starting value of unique menu tags
 
 // Free Function
 #if __has_feature(objc_arc)
@@ -76,13 +78,12 @@ namespace ImMenu {
 //##    Local Static Variables
 //####################################################################################
 // Menu Variables
-static NSMenu*                  s_menu_bar;
-static NSInteger                s_menu_index = 0;
+static std::vector<NSMenu*>     s_menu_stack = { };
 static NSInteger                s_item_index = 0;
 
 // Click Handler
 static MenuItemHandler*         s_menu_handler;
-static NSInteger                s_current_tag_id = 1;
+static NSInteger                s_current_tag_id = MENU_TAG_START;
 
 // Flags
 static bool                     s_build_menu = false;
@@ -114,28 +115,29 @@ void osxMenuInitialize(const char* app_name) {
     
     // Init Menu
     NSApp.mainMenu = menu_bar;                                                      // Apply menu bar to our Application
-    s_menu_bar = menu_bar;                                                          // Save reference to menu bar
+    s_menu_stack.push_back(menu_bar);                                               // Save reference to menu bar
     s_menu_handler = [[MenuItemHandler alloc] init];                                // Initialize click handler
 }
 
 // Called when App is closing to clean up menu
 void osxMenuShutDown() {
     _IMMENU_OBJC_RELEASE(s_menu_handler);
-    _IMMENU_OBJC_RELEASE(s_menu_bar);
+    _IMMENU_OBJC_RELEASE(s_menu_stack.front());
 }
 
 
 //####################################################################################
 //##    Begin / End Menu Bar
 //####################################################################################
-// Call before adding menu's to Main Menu Bar
+// Call before adding menus to Main Menu Bar
 bool osxBeginMainMenuBar(bool first_call) {
     // Clear menus if flag was set, preserve the first menu ("AppName")
     if (first_call && s_need_clear) {
-        while (s_menu_bar.itemArray.count > 1) {
-            [s_menu_bar removeItemAtIndex:1];
+        while (s_menu_stack.front().itemArray.count > 1) {
+            [s_menu_stack.front() removeItemAtIndex:1];
         }
-        s_need_clear = false;
+        s_current_tag_id = MENU_TAG_START;                                          // Reset unique tag ids
+        s_need_clear = false;                                                       // Mark menu as being cleared
     }
     return true;
 }
@@ -152,7 +154,7 @@ bool osxBeginMenu(const char* label, bool enabled) {
     NSString* title = [NSString stringWithUTF8String:label];
 
     // Check if menu exists
-    s_menu_index = [s_menu_bar indexOfItemWithTitle:title];
+    NSInteger s_menu_index = [s_menu_stack.back() indexOfItemWithTitle:title];
     
     // Does exist, do not build
     if (s_menu_index != -1) {
@@ -171,14 +173,17 @@ bool osxBeginMenu(const char* label, bool enabled) {
         [menu_item setSubmenu:new_menu];
 
         // Add item to menu bar
-        s_menu_index = [s_menu_bar numberOfItems];
-        [s_menu_bar insertItem:menu_item atIndex:s_menu_index];
+        s_menu_index = [s_menu_stack.back() numberOfItems];
+        [s_menu_stack.back() insertItem:menu_item atIndex:s_menu_index];
     }
 
     // Update 'enabled' property
-    NSMenuItem* menu_bar_item = [s_menu_bar itemAtIndex:s_menu_index];
+    NSMenuItem* menu_bar_item = [s_menu_stack.back() itemAtIndex:s_menu_index];
     if (menu_bar_item) {    
         menu_bar_item.enabled = enabled;
+
+        // Push new menu onto stack
+        s_menu_stack.push_back(menu_bar_item.submenu);
     }
                                 
     // Reset item index
@@ -189,7 +194,13 @@ bool osxBeginMenu(const char* label, bool enabled) {
 }
 
 void osxEndMenu() {
-    s_build_menu = false;
+    s_menu_stack.pop_back();                                                        // Go back to previous menu
+    s_item_index = [s_menu_stack.back() numberOfItems] - 1;                         // Reset next item index to count of previous menu
+    
+    // If back to Main Menu Bar, mark menus built for now
+    if (s_menu_stack.size() == 1) {
+        s_build_menu = false;                                                       
+    }
 }
 
 
@@ -199,9 +210,6 @@ void osxEndMenu() {
 bool osxMenuItem(const char* label, const char* shortcut, bool selected, bool enabled, DrImage* image) {
     // Label as NSString
     NSString* title = [NSString stringWithUTF8String:label];
-
-    // Get current Main Menu Item
-    NSMenuItem* menu_bar_item = [s_menu_bar itemAtIndex:s_menu_index];
 
     // Build if in building pass
     if (s_build_menu) {
@@ -221,16 +229,16 @@ bool osxMenuItem(const char* label, const char* shortcut, bool selected, bool en
                 icon_desc.height =  image->bitmap().height;
                 icon_desc.ptr =    &image->bitmap().data[0];
                 icon_desc.size =    image->bitmap().data.size();
-            NSImage* nsimage = (NSImage*)osxCreateImage(&icon_desc, menu_bar_item.submenu.size.height, menu_bar_item.submenu.size.height);
+            NSImage* nsimage = (NSImage*)osxCreateImage(&icon_desc, s_menu_stack.back().size.height, s_menu_stack.back().size.height);
             [ menu_item setImage:nsimage ];
         }
 
         // Add Item to Menu
-        [menu_bar_item.submenu addItem:menu_item];
+        [s_menu_stack.back() addItem:menu_item];
     } 
     
     // Check for title change, set 'enable' and 'selected' properties
-    NSMenuItem* menu_item = [menu_bar_item.submenu itemAtIndex:s_item_index];
+    NSMenuItem* menu_item = [s_menu_stack.back() itemAtIndex:s_item_index];
     if (menu_item) {
         // Check if title has changed and menus need to be rebuilt
         if (s_build_menu == false) {
@@ -269,8 +277,7 @@ bool osxMenuItem(const char* label, const char* shortcut, bool* p_selected, bool
 void osxSeparator() {
     if (s_build_menu) {
         NSMenuItem* seperator_item = [NSMenuItem separatorItem];
-        NSMenuItem* menu_bar_item = [s_menu_bar itemAtIndex:s_menu_index];
-        [menu_bar_item.submenu addItem:seperator_item];
+        [s_menu_stack.back() addItem:seperator_item];
     }
     s_item_index++;
 }
