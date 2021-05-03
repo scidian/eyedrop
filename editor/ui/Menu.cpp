@@ -12,16 +12,10 @@
 #include "Menu.h"
 
 
-#include "assets/embed/icons/drop_icon128_3.h"
-
 //####################################################################################
 //##    Main Menu
 //####################################################################################
 void MainMenuUI(bool* widgets) {
-
-    static DrBitmap icon = DrBitmap(drop_icon128_3, sizeof(drop_icon128_3));
-    static DrImage img("drop_icon_test", icon);
-
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
     if (ImMenu::BeginMainMenuBar()) {
@@ -30,9 +24,13 @@ void MainMenuUI(bool* widgets) {
             bool clicked_open { false };
             bool clicked_save { false };
             
-            //if (ImMenu::MenuItem("New",  "n", &clicked_new)) { }
+            if (ImMenu::MenuItem("New",  "n", &clicked_new)) { }
+            // With Icon:
+            /*
+            static DrBitmap icon = DrBitmap(drop_icon128_3, sizeof(drop_icon128_3));
+            static DrImage img("drop_icon_test", icon);
             if (ImMenu::MenuItem("New",  "n", &clicked_new, true, &img)) { }
-
+            */
 
             if (ImMenu::MenuItem("Open", "o", &clicked_open)) { }
             if (ImMenu::MenuItem("Save", "s", &clicked_save)) { }
