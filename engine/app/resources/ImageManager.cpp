@@ -34,8 +34,10 @@ void DrImageManager::initializeSgImageDesc(const int& width, const int& height, 
     image_desc.width =        width;
     image_desc.height =       height;
     image_desc.pixel_format = SG_PIXELFORMAT_RGBA8;
-    image_desc.wrap_u =       SG_WRAP_CLAMP_TO_EDGE;        // also available: SG_WRAP_MIRRORED_REPEAT
-    image_desc.wrap_v =       SG_WRAP_CLAMP_TO_EDGE;        // also available: SG_WRAP_MIRRORED_REPEAT
+    image_desc.wrap_u =       SG_WRAP_CLAMP_TO_EDGE;
+    image_desc.wrap_v =       SG_WRAP_CLAMP_TO_EDGE;
+    //  Also available: SG_WRAP_MIRRORED_REPEAT
+    //      #NOTE: Webgl 1.0 does not support repeat for textures that are not a power of two in size 
     image_desc.min_filter =   SG_FILTER_LINEAR;
     image_desc.mag_filter =   SG_FILTER_LINEAR;
 }
