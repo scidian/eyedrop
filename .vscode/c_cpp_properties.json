@@ -9,8 +9,7 @@
             ],
             "defines": [],
             "macFrameworkPath": [
-                "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks",
-                "/System/Library/Frameworks"
+                "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks"
             ],
             "intelliSenseMode": "macos-clang-x64",
             "compileCommands": "${workspaceFolder}/build/compile_commands.json",
