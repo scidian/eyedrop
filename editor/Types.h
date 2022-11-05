@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Sat Mar 06 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #ifndef DR_EDITOR_TYPES_H
 #define DR_EDITOR_TYPES_H
 
@@ -55,7 +56,7 @@ enum Editor_Widgets {
     // View
     EDITOR_WIDGET_SCENE_VIEW,
     EDITOR_WIDGET_GAME_VIEW,
-        
+
     // ImGui
     EDITOR_WIDGET_DEMO,
     EDITOR_WIDGET_STYLE,

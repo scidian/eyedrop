@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #include "../core/Math.h"
 #include "../core/Strings.h"
 #include "Color.h"
@@ -55,7 +56,7 @@ DrColor::DrColor(unsigned int ui) {
 DrColor::DrColor(std::string hex_string) {
     // Remove hash if it has it
     if (hex_string.at(0) == '#') hex_string = hex_string.substr(1, hex_string.length() - 1);
-    
+
     // Set initial values
     std::string sr, sg, sb, sa;
     r = 0; g = 0; b = 0; a = 255;
@@ -120,9 +121,9 @@ void DrColor::setAlphaF(double alpha)   { a = Clamp(static_cast<unsigned char>(a
 
 void DrColor::setRgbF(double red, double green, double blue, double alpha) {
     r = Clamp(static_cast<unsigned char>(red * 255.0),      0_uc, 255_uc);
-    g = Clamp(static_cast<unsigned char>(green * 255.0),    0_uc, 255_uc); 
-    b = Clamp(static_cast<unsigned char>(blue * 255.0),     0_uc, 255_uc); 
-    a = Clamp(static_cast<unsigned char>(alpha * 255.0),    0_uc, 255_uc); 
+    g = Clamp(static_cast<unsigned char>(green * 255.0),    0_uc, 255_uc);
+    b = Clamp(static_cast<unsigned char>(blue * 255.0),     0_uc, 255_uc);
+    a = Clamp(static_cast<unsigned char>(alpha * 255.0),    0_uc, 255_uc);
 }
 
 //####################################################################################
@@ -264,13 +265,13 @@ DrHsv DrColor::getHsv() {
 			hsv.hue = 2.0 + (bd - rd) / delta;                      /* color is between cyan and yellow */
 		else /* max == b */
 			hsv.hue = 4.0 + (rd - gd) / delta;                      /* color is between magenta and cyan */
-		
+
 		hsv.hue *= 60.0;                                            /* convert hue to degrees */
 
 		/* make sure hue is not negative */
 		if (hsv.hue < 0.0) hsv.hue += 360.0;
 	}
-	
+
 	return hsv;
 }
 

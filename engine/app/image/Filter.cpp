@@ -1,11 +1,12 @@
-﻿//
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+﻿/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #include "3rd_party/stb/stb_image_write.h"
 #include "../core/Math.h"
 #include "../geometry/Point.h"
@@ -21,7 +22,7 @@
 //####################################################################################
 DrBitmap DrFilter::applySinglePixelFilter(Image_Filter_Type filter, const DrBitmap& from_bitmap, int value) {
     DrBitmap image = from_bitmap;
-    
+
     int table[256];
     for ( int i = 0; i < 256; ++i ) {
         switch (filter) {
@@ -181,7 +182,7 @@ DrBitmap DrFilter::floodFill(DrBitmap& bitmap, int at_x, int at_y, DrColor fill_
         // Go through each point and find new points to fill
         processed_some = false;
         for (int p = 0; p < points.size(); ++p) {
-            DrPoint point = points[p];            
+            DrPoint point = points[p];
             if (processed.getPixel(point.x, point.y) == FLOOD_WAS_PROCESSED) continue;
             bitmap.setPixel(point.x, point.y, fill_color);
             flood.setPixel(point.x, point.y, fill_color);

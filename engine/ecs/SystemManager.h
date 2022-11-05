@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Wed Mar 10 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #ifndef DR_ECS_SYSTEM_MANAGER_H
 #define DR_ECS_SYSTEM_MANAGER_H
 
@@ -23,7 +24,7 @@ class DrSystemManager
 private:
 	std::unordered_map<HashID, std::shared_ptr<DrSystem>> 	m_systems 		{ };	// Current Systems in System Manager
 	std::unordered_map<HashID, Archetype>     				m_archetypes 	{ };	// Archetypes of Systems
-	
+
 
 	// #################### INTERNAL FUNCTIONS ####################
 public:
@@ -32,7 +33,7 @@ public:
 	std::shared_ptr<T> registerSystem() {
 		HashID hash = typeid(T).hash_code();
 		assert(m_systems.find(hash) == m_systems.end() && "Registering system more than once!");
-		
+
 		// Otherwise, add system to manager
 		auto system = std::make_shared<T>();
 		m_systems.insert({hash, system});
@@ -54,7 +55,7 @@ public:
 			system->m_entities.erase(entity);
 		}
 	}
-	
+
 	// Check all Systems for Entity
 	//		If Entity has necessay components of System (shares Archetype), make sure that Entity is included in that System
 	//		Otherwise remove the Entity from that System

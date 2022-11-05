@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Wed Mar 10 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #ifndef DR_ECS_COORDINATOR_H
 #define DR_ECS_COORDINATOR_H
 
@@ -103,7 +104,7 @@ public:
 	// Returns void* reference to Component of Entity from a Component ID (don't need to know Type)
 	void* getData(ComponentID component_id, EntityID entity) {
 		IComponentArray* component_array = m_component_manager->getComponentArray(component_id);
-		void* component_instance = component_array->getDataPointer(entity); 
+		void* component_instance = component_array->getDataPointer(entity);
 		return component_instance;
 	}
 

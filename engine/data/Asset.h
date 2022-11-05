@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Mar 22 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #ifndef GA_ASSET_H
 #define GA_ASSET_H
 
@@ -25,7 +26,7 @@ public:
 private:
     // Local Variables
     int                 m_variable              { 0 };                              // Description
-        
+
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################
 public:

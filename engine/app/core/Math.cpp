@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #include "engine/app/geometry/Point.h"
 #include "engine/app/geometry/PointF.h"
 #include "engine/app/image/Color.h"
@@ -146,8 +147,8 @@ DrPointF RotatePointAroundOrigin(DrPointF point, DrPointF origin, double angle, 
 
 
 //####################################################################################
-//##    Velocity Magnitude, coode from: 
-//##            Flat Red Ball (MIT) 
+//##    Velocity Magnitude, coode from:
+//##            Flat Red Ball (MIT)
 //##                Github:     https://github.com/vchelaru/FlatRedBall
 //##                Website:    https://flatredball.com/documentation/tutorials/math/math-calculus/
 //####################################################################################

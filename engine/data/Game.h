@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Fri Mar 05 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #ifndef DR_GAME_H
 #define DR_GAME_H
 
@@ -23,7 +24,7 @@ class DrGame
 public:
     // Constructor / Destructor
     DrGame(int game_key_start = KEY_START) : m_game_keys(game_key_start) { }
-    ~DrGame() { } 
+    ~DrGame() { }
 
 
     // #################### VARIABLES ####################
@@ -44,7 +45,7 @@ public:
     // #################### INTERNAL FUNCTIONS ####################
 public:
 
-    
+
 };
 
 #endif // DR_GAME_H

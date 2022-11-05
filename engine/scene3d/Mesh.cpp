@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #include "engine/app/core/Math.h"
 #include "engine/app/geometry/Matrix.h"
 #include "engine/app/geometry/Vec2.h"
@@ -342,7 +343,7 @@ void DrMesh::triangle(float x1, float y1, float tx1, float ty1,
 void DrMesh::extrude(float x1, float y1, float tx1, float ty1,
                      float x2, float y2, float tx2, float ty2, int steps) {
     float depth = c_extrude_depth * image_size;
-    
+
     float step = (depth * 2.0f) / static_cast<float>(steps);
     float front = depth;
     float back =  depth - step;

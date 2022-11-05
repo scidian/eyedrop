@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Fri Mar 05 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #include "engine/app/core/Math.h"
 #include "ThemeSelector.h"
 
@@ -31,7 +32,7 @@ ImVec4 adjust_color(ImVec4 start, float adjust, float alpha) {
 // Shows Selector Widget
 void ThemeSelectorUI(bool& open, ImGuiWindowFlags flags, bool force) {
     if ((open == false) && (force == false)) return;
-    
+
     ImGui::Begin("Style Selector", &open, flags);
     ImGui::ColorEdit3("base",   (float*) &base, ImGuiColorEditFlags_PickerHueWheel);
     ImGui::ColorEdit3("bg",     (float*) &bg,   ImGuiColorEditFlags_PickerHueWheel);
@@ -39,7 +40,7 @@ void ThemeSelectorUI(bool& open, ImGuiWindowFlags flags, bool force) {
     ImGui::SliderFloat("high",  &high_val, -0.5, 0.5);
     ImGui::SliderFloat("mid",   &mid_val,  -0.5, 0.5);
     ImGui::SliderFloat("low",   &low_val,  -0.5, 0.5);
-    
+
     ImGuiStyle &style = ImGui::GetStyle();
     style.Colors[ImGuiCol_Text]                 = adjust_color(text,  0.0f,     1.00f);
     style.Colors[ImGuiCol_TextDisabled]         = adjust_color(text, -0.3f,     0.80f);

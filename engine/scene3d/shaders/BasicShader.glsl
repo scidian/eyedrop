@@ -1,11 +1,13 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
+
 //####################################################################################
 //##    Basic Shader
 //####################################################################################
@@ -89,7 +91,7 @@ void main() {
     // ********** End 'u_premultiplied' checks, if we're using premultiplied alphas, add alpha back to rgb now
     if (u_premultiplied == 1.0) rgb_out *= alpha_out;
 
-    
+
     // ***** Shade Away
     // Calculate angle between camera vector and vertex normal for triangle shading
     float shade_away = 1.0;
@@ -107,7 +109,7 @@ void main() {
         vec3  d = fwidth(vert_bary);
         vec3  a3 = smoothstep(vec3(0.0), d * width, vert_bary);
         float wire = min(min(a3.x, a3.y), a3.z);
-        
+
         vec3 rgb_pre_out = rgb_out;
         rgb_out = rgb_out * (1.0 - wire);
 
@@ -118,7 +120,7 @@ void main() {
             alpha_out = alpha_out * 0.8;
         }
     }
-    
+
 
     // ***** Set Final Color
     frag_color = vec4(rgb_out, alpha_out);

@@ -1,11 +1,13 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Thu Mar 04 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
+
 //####################################################################################
 //                                                      App Hierarchy                   --------- "Dr" prefix (Drop)
 //                                           _________________|_________________
@@ -19,9 +21,9 @@
 //                      Component Structs*-------|---------ECS Component Structs*           |
 //                                               |                                          |---- Reflection / Meta Data
 //                                   Properties (Member Variables)                      ____|
-//  
 //
-//  #NOTE: *Component structs / classes MUST be aggregate (std::is_standard_layout) for reflection system. 
+//
+//  #NOTE: *Component structs / classes MUST be aggregate (std::is_standard_layout) for reflection system.
 //          Identifier offsetof() is only guaranteed to work with standard layout classes...
 //####################################################################################
 #ifndef DR_PROJECT_H
@@ -48,7 +50,7 @@ enum Orientation {
 //##    DrProject
 //##        Class to hold data for one Project
 //############################
-class DrProject 
+class DrProject
 {
 public:
     // Constructor / Destructor
@@ -57,7 +59,7 @@ public:
 
 
     // #################### VARIABLES ####################
-private:    
+private:
     // Project Variables
     DrKeys          m_project_keys          { };                                    // Key generator for Project Assets
 
@@ -73,7 +75,7 @@ private:
 
     // Project Items
     std::unordered_map<int, std::shared_ptr<GaAsset>>       m_assets        { };    // Holds Project things (Scenes, Images, Sounds, etc)
-    
+
 
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################
 public:
@@ -82,7 +84,7 @@ public:
 
     // #################### INTERNAL FUNCTIONS ####################
 public:
-    
+
 
 };
 

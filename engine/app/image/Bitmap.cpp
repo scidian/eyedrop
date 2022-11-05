@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #include "3rd_party/stb/stb_image.h"
 #include "3rd_party/stb/stb_image_resize.h"
 #include "3rd_party/stb/stb_image_write.h"
@@ -21,20 +22,20 @@
 //####################################################################################
 //##    Constructors
 //####################################################################################
-DrBitmap::DrBitmap(Bitmap_Format desired_format) {  
-    data.clear(); 
+DrBitmap::DrBitmap(Bitmap_Format desired_format) {
+    data.clear();
     format = desired_format;
     switch (format) {
         case DROP_BITMAP_FORMAT_GRAYSCALE:   channels = 1;   break;
         case DROP_BITMAP_FORMAT_ARGB:        channels = 4;   break;
     }
 }
-DrBitmap::~DrBitmap() { 
-    data.clear(); 
+DrBitmap::~DrBitmap() {
+    data.clear();
 }
 
-DrBitmap::DrBitmap(const DrBitmap& bitmap, Bitmap_Format desired_format) : 
-    DrBitmap(bitmap.width, bitmap.height, desired_format) 
+DrBitmap::DrBitmap(const DrBitmap& bitmap, Bitmap_Format desired_format) :
+    DrBitmap(bitmap.width, bitmap.height, desired_format)
 {
     if (bitmap.format == format && data.size() > 0) {
         channels =  bitmap.channels;
@@ -52,8 +53,8 @@ DrBitmap::DrBitmap(const DrBitmap& bitmap, Bitmap_Format desired_format) :
 }
 
 // Create empty bitmap
-DrBitmap::DrBitmap(int width_, int height_, Bitmap_Format desired_format) : 
-    DrBitmap(desired_format) 
+DrBitmap::DrBitmap(int width_, int height_, Bitmap_Format desired_format) :
+    DrBitmap(desired_format)
 {
     width =     width_;
     height =    height_;
@@ -80,7 +81,7 @@ void DrBitmap::Blit(const DrBitmap& source, DrRect& src_rect, DrBitmap& dest, Dr
     int srcx2 = Min(src_rect.right(),   source.rect().right());
     int srcy1 = Max(src_rect.top(),     0);
     int srcy2 = Min(src_rect.bottom(),  source.rect().bottom());
-    
+
     int at_y = dst_point.y;
     for (int y = srcy1; y <= srcy2; ++y) {
         int at_x = dst_point.x;
@@ -167,14 +168,14 @@ DrColor DrBitmap::getPixel(int x, int y) const {
 void DrBitmap::setPixel(int x, int y, DrColor color) {
     size_t index = (y * this->width * channels) + (x * channels);
     switch (format) {
-        case DROP_BITMAP_FORMAT_GRAYSCALE:   
+        case DROP_BITMAP_FORMAT_GRAYSCALE:
             data[index]   = (color.redF() * 0.2126) + (color.greenF() * 0.7152) + (color.blueF() * 0.0722);
             break;
-        case DROP_BITMAP_FORMAT_ARGB:        
+        case DROP_BITMAP_FORMAT_ARGB:
             data[index]   = color.blue();
             data[index+1] = color.green();
             data[index+2] = color.red();
-            data[index+3] = color.alpha();       
+            data[index+3] = color.alpha();
             break;
     }
 }
@@ -211,7 +212,7 @@ void DrBitmap::loadFromFile(std::string filename, Bitmap_Format desired_format) 
 
     // Error Check
     if (ptr == nullptr || width == 0 || height == 0) {
-        width = 0; height = 0; 
+        width = 0; height = 0;
         return;
     }
 
@@ -239,7 +240,7 @@ void DrBitmap::loadFromMemory(const unsigned char* from_data, const int& number_
         // Error Check
         if (ptr == nullptr || width == 0 || height == 0) {
             if (ptr != nullptr) stbi_image_free(ptr);
-            width = 0; height = 0; 
+            width = 0; height = 0;
             return;
         }
 

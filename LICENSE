@@ -1,53 +1,51 @@
+MIT License
+
+Copyright (c) 2021 Stephens Nunnally (@stevinz)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
 //####################################################################################
 //##
-//##                                        #
-//##                                       #│#
-//##                                     *#░│▒#*
-//##                                   ,*#░░│▒▒#*,
-//##                                  *#░░░░│▒▒▒▒#*
-//##                                ,*░░░░░░│▒▒▒▒▒▒▒*,
-//##                               #░░░░░░░░│▒▒▒▒▒▒▒▒▒#
-//##                              #░░░░░░░░░│▒▒▒▒▒▒▒▒▒▒#
-//##                              #░░░░░░░░░│▒▒▒▒▒░▒▒▒▒#
-//##                              #░░░░░░░░░│▒▒▒▒░▒▒▒▒#
-//##                               *#░░░░░░░│▒▒▒▒▒▒▒#*
-//##                                 '**#░░░│▒▒▒#**'
-//##                                    '******'
+//##                                      #
+//##                                     #│#
+//##                                   *#░│▒#*
+//##                                 ,*#░░│▒▒#*,
+//##                                *#░░░░│▒▒▒▒#*
+//##                              ,*░░░░░░│▒▒▒▒▒▒▒*,
+//##                             #░░░░░░░░│▒▒▒▒▒▒▒▒▒#
+//##                            #░░░░░░░/‾‾‾\▒▒▒▒▒▒▒▒#
+//##                            #░░░░░░|  o  |▒▒░▒▒▒▒#
+//##                            #░░░░░░░\___/▒▒░▒▒▒▒#
+//##                             *#░░░░░░░│▒▒▒▒▒▒▒#*
+//##                               '**#░░░│▒▒▒#**'
+//##                                  '******'
 //##
-//##       ,gggggggggggg,    ,ggggggggggg,     _,gggggg,_      ,ggggggggggg,
-//##      dP"""88""""""Y8b, dP"""88""""""Y8, ,d8P""d8P"Y8b,   dP"""88""""""Y8,
-//##      Yb,  88       `8b,Yb,  88      `8b,d8'   Y8   "8b,dPYb,  88      `8b
-//##       `"  88        `8b `"  88      ,8Pd8'    `Ybaaad88P' `"  88      ,8P
-//##           88         Y8     88aaaad8P" 8P       `""""Y8       88aaaad8P"
-//##           88         d8     88""""Yb,  8b            d8       88"""""
-//##           88        ,8P     88     "8b Y8,          ,8P       88
-//##           88       ,8P'     88      `8i`Y8,        ,8P'       88
-//##           88______,dP'      88       Yb,`Y8b,,__,,d8P'        88
-//##          888888888P"        88        Y8  `"Y8888P"'          88
-//##
-//##
-//##                                 Drop Creator
-//##            A Drag and Drop Video Game / Application Creation Engine
+//##                               Eyedrop Engine
 //##
 //##                                      by
 //##                              Stephens Nunnally
+//##                                a.k.a stevinz
 //##
-//##                       (C) Scidian Software, 2018-2021
-//##                            All Rights Reserved
-//##                               www.scidian.com 
-//##
-//##                            Development Started:
-//##                           2018-11-27 - version 1
-//##                           2021-02-07 - version 2
-//##
-//##    Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-//##                         Proprietary and Confidential
-//##       Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
 //####################################################################################
 
-
 ## System Libs
-    - Any-lite              (Boost)     C++11   https://github.com/martinmoene/any-lite       
+    - Any-lite              (Boost)     C++11   https://github.com/martinmoene/any-lite
     - Dear ImGui            (MIT):      Flex    https://github.com/ocornut/imgui
     - Fontstash             (ZLIB):     C99     https://github.com/memononen/fontstash
     - Handmade-Math         (CC0)       C99     https://github.com/StrangeZak/Handmade-Math
@@ -57,7 +55,7 @@
 
 ## Algorithm Libs
     - Delaunator            (MIT):      C++11   https://github.com/soerendd/delaunator-cpp
-    - Mesh Optimizer        (MIT):      C++11   https://github.com/zeux/meshoptimizer 
+    - Mesh Optimizer        (MIT):      C++11   https://github.com/zeux/meshoptimizer
     - Poly Partition        (MIT):      C++11   https://github.com/ivanfratric/polypartition
     - Ramer-Douglas-Peucker (CC0):      C++11   https://gist.github.com/TimSC/0813573d77734bcb6f2cd2cf6cc7aa51
 
@@ -68,14 +66,13 @@
 ## Assets
     - Font: Aileron         (CC0)       https://github.com/Nicholaiii/Aileron (source: http://dotcolon.net)
 
-
 //####################################################################################
 //##    Not Currently Using
 //############################
 ## Libs
     - Bullet Physics        (ZLIB)      C++03   https://github.com/bulletphysics/bullet3
     - Cereal                (BSD)       C++11   https://github.com/USCiLab/cereal
-    - Chipmunk Physics      (MIT)       C99     https://github.com/slembcke/Chipmunk2D          
+    - Chipmunk Physics      (MIT)       C99     https://github.com/slembcke/Chipmunk2D
     - Duktape               (MIT)       C++03   https://github.com/svaarala/duktape
     - IconFontCppHeaders    (ZLIB):     Flex    https://github.com/juliettef/IconFontCppHeaders
     - ImGuizmo              (MIT)       C++03   https://github.com/CedricGuillemet/ImGuizmo

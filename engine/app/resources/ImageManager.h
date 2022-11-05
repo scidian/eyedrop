@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Fri Mar 26 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #ifndef DR_APP_IMAGE_MANAGER_H
 #define DR_APP_IMAGE_MANAGER_H
 
@@ -71,7 +72,7 @@ struct ImageLoadData {
         padding(border_padding),
         callback(callback_func),
         outline(perform_outline),
-        was_dropped(drag_drop) 
+        was_dropped(drag_drop)
     { }
     std::shared_ptr<DrImage>&       image;                                          // DrImage pointer to load new DrImage into after loading
     std::string                     image_file;                                     // File name and path on disk
@@ -111,7 +112,7 @@ private:
     uint8_t                         m_load_image_buffer[MAX_FILE_SIZE];             // Buffer to use to load images
     std::deque<ImageLoadData>       m_load_image_stack      { };                    // Stack of images to fetch
     bool                            m_loading_image         { false };              // True when waiting for fetch to complete
-    
+
 public:
     // #################### FUNCTIONS ####################
     // Static Helpers

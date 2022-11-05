@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Wed Mar 10 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #ifndef DR_ECS_EVENT_H
 #define DR_ECS_EVENT_H
 
@@ -57,8 +58,8 @@ class DrEvent
 private:
 	EventId 									m_type	{ };
 	std::unordered_map<EventId, nonstd::any> 	m_data	{ };
-	
-	
+
+
 	// #################### INTERNAL FUNCTIONS ####################
 public:
 	DrEvent() = delete;

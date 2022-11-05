@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Fri Mar 26 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #include "3rd_party/stb/stb_rect_pack.h"
 #include "engine/app/core/Math.h"
 #include "engine/app/geometry/Point.h"
@@ -20,7 +21,7 @@
 //####################################################################################
 //##    Constructor / Destructor
 //####################################################################################
-DrImageManager::DrImageManager(int atlas_key_start, int image_key_start) : 
+DrImageManager::DrImageManager(int atlas_key_start, int image_key_start) :
     m_atlas_keys(atlas_key_start),
     m_image_keys(image_key_start)
 { }
@@ -37,7 +38,7 @@ void DrImageManager::initializeSgImageDesc(const int& width, const int& height, 
     image_desc.wrap_u =       SG_WRAP_CLAMP_TO_EDGE;
     image_desc.wrap_v =       SG_WRAP_CLAMP_TO_EDGE;
     //  Also available: SG_WRAP_MIRRORED_REPEAT
-    //      #NOTE: Webgl 1.0 does not support repeat for textures that are not a power of two in size 
+    //      #NOTE: Webgl 1.0 does not support repeat for textures that are not a power of two in size
     image_desc.min_filter =   SG_FILTER_LINEAR;
     image_desc.mag_filter =   SG_FILTER_LINEAR;
 }
@@ -46,8 +47,8 @@ void DrImageManager::setStbRect(stbrp_rect& rect, std::shared_ptr<DrImage>& imag
     rect.id =   image->key();
     rect.w =    image->bitmap().width  + (image->padding()*2);
     rect.h =    image->bitmap().height + (image->padding()*2);
-    rect.x =    0;      
-    rect.y =    0;      
+    rect.x =    0;
+    rect.y =    0;
     rect.was_packed = 0;
 }
 
@@ -75,7 +76,7 @@ void DrImageManager::fetchImage(ImageLoadData image_data) {
 }
 
 // Loads image immediately
-void DrImageManager::loadImage(ImageLoadData image_data) {    
+void DrImageManager::loadImage(ImageLoadData image_data) {
     // Load from file, check image dimensions aren't too large! Max width and height are MAX_IMAGE_SIZE!
     DrBitmap bmp(image_data.image_file);
     if (bmp.width > MAX_IMAGE_SIZE || bmp.height > MAX_IMAGE_SIZE) return;
@@ -89,7 +90,7 @@ void DrImageManager::loadImage(ImageLoadData image_data) {
 void DrImageManager::processFetchStack() {
     if (m_loading_image || m_load_image_stack.size() < 1) return;
     m_loading_image = true;
-    
+
     bool already_handled_fetch = false;
     #if defined(DROP_TARGET_HTML5)
         if (m_load_image_stack[0].was_dropped == true) {
@@ -105,7 +106,7 @@ void DrImageManager::processFetchStack() {
                     if (bmp.width > MAX_IMAGE_SIZE || bmp.height > MAX_IMAGE_SIZE) {
                         bmp = DrBitmap(0, 0);
                     }
-                    
+
                     // Could check for errors...
                     if (response->error_code == SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL     /* '1' */) { }
 
@@ -116,7 +117,7 @@ void DrImageManager::processFetchStack() {
             already_handled_fetch = true;
         }
     #endif
-    
+
     if (already_handled_fetch == false) {
         sfetch_request_t sokol_fetch_image { };
             sokol_fetch_image.path = m_load_image_stack[0].image_file.c_str();
@@ -125,7 +126,7 @@ void DrImageManager::processFetchStack() {
             sokol_fetch_image.callback = +[](const sfetch_response_t* response) {
                 // Load Data from response
                 DrBitmap bmp((unsigned char*)response->buffer_ptr, (int)response->fetched_size);
-                
+
                 // Image dimensions too large! Max width and height are MAX_IMAGE_SIZE!"
                 if (bmp.width > MAX_IMAGE_SIZE || bmp.height > MAX_IMAGE_SIZE) {
                     bmp = DrBitmap(0, 0);
@@ -154,8 +155,8 @@ std::shared_ptr<DrAtlas>& DrImageManager::addAtlas(Atlas_Type atlas_type, int at
         atlas->width = atlas_size;
         atlas->height = atlas_size;
         atlas->key = atlasKeys().getNextKey();
-        atlas->gpu = sg_alloc_image().id;                                           // Alloc an image on the gpu  
-        
+        atlas->gpu = sg_alloc_image().id;                                           // Alloc an image on the gpu
+
     // Update image on gpu with new empty bitmap data
     DrBitmap bitmap(atlas->width, atlas->height, DROP_BITMAP_FORMAT_ARGB);
     sg_image_desc image_desc { };
@@ -171,7 +172,7 @@ std::shared_ptr<DrAtlas>& DrImageManager::addAtlas(Atlas_Type atlas_type, int at
     } else {
         m_atlas_multi[atlas->key] = atlas;
         return m_atlas_multi[atlas->key];
-    }    
+    }
 }
 
 
@@ -195,7 +196,7 @@ void DrImageManager::findAtlasForImage(ImageLoadData& image_data) {
             // Make sure atlas type matches
             if (atlas->type == image_data.atlas_type) {
                 // Attempt to add to atlas, if successful we're done
-                if (addImageToAtlas(image_data, atlas)) return;                         
+                if (addImageToAtlas(image_data, atlas)) return;
             }
         }
 
@@ -214,10 +215,10 @@ bool DrImageManager::packAtlas(std::shared_ptr<DrAtlas>& atlas, std::vector<stbr
     // If multi image atlas, pack rects
     if (atlas->type != ATLAS_TYPE_SINGLE) {
         std::vector<stbrp_node> nodes(atlas->maxDimension() * 2);
-        stbrp_context rect_pack { }; 
+        stbrp_context rect_pack { };
         stbrp_init_target(&rect_pack, atlas->width, atlas->height, &nodes[0], nodes.size());
         stbrp_pack_rects(&rect_pack, &rects[0], rects.size());
-        
+
         // Test that all rects were packed
         bool packed = true;
         for (int i = 0; i < rects.size(); ++i) {
@@ -233,7 +234,7 @@ bool DrImageManager::packAtlas(std::shared_ptr<DrAtlas>& atlas, std::vector<stbr
 bool DrImageManager::addImageToAtlas(ImageLoadData& image_data, std::shared_ptr<DrAtlas>& atlas) {
     // Add image to list of atlas image keys, if checks don't pass below this will be removed
     atlas->packed_image_keys.push_back(image_data.image->key());
-    
+
     // Fill rects with image data
     std::vector<stbrp_rect> rects(atlas->packed_image_keys.size());
     for (int i = 0; i < rects.size(); ++i) {
@@ -270,7 +271,7 @@ bool DrImageManager::addImageToAtlas(ImageLoadData& image_data, std::shared_ptr<
             } else {
                 atlas->packed_image_keys.pop_back();
                 return false;
-            }            
+            }
         }
     }
 
@@ -305,7 +306,7 @@ bool DrImageManager::addImageToAtlas(ImageLoadData& image_data, std::shared_ptr<
 
         // Update uv texture coordinates
         float x0 = static_cast<float>(left) / static_cast<float>(bitmap.width);
-        float y0 = static_cast<float>(top)  / static_cast<float>(bitmap.height);        
+        float y0 = static_cast<float>(top)  / static_cast<float>(bitmap.height);
         float x1 = static_cast<float>(right)  / static_cast<float>(bitmap.width);
         float y1 = static_cast<float>(bottom) / static_cast<float>(bitmap.height);
         img->setUv0(x0, y0);
@@ -348,7 +349,7 @@ void DrImageManager::createImage(DrBitmap& bmp) {
 
         // Save copy of pointer to Image Manager
         m_images[new_image_key] = image_data.image;
-    
+
         // Pack Image onto an Atlas, store Atlas gpu id on Image
         findAtlasForImage(image_data);
 

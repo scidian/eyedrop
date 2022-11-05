@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Sat Mar 06 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #ifndef DR_EDITOR_H
 #define DR_EDITOR_H
 
@@ -34,7 +35,7 @@ enum Editor_Images {
 //##    DrEditor
 //##        Drop Creator Game Editor built on top of Drop App Engine
 //############################
-class DrEditor : public DrApp 
+class DrEditor : public DrApp
 {
 public:
     DrEditor(std::string title = "Drop Creator", DrColor bg_color = DROP_COLOR_BLACK, int width = 800, int height = 600);
@@ -49,7 +50,7 @@ public:
 
     // !!!!! #TEMP: Variables, used for demo
     std::shared_ptr<DrMesh>     m_mesh              { std::make_shared<DrMesh>() };
-    std::shared_ptr<DrImage>    m_image             { nullptr };  
+    std::shared_ptr<DrImage>    m_image             { nullptr };
     int                         m_mesh_quality      { 5 };
 
     // Image Variables

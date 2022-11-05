@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #include "3rd_party/polyline_simplification.h"
 #include "engine/app/core/Math.h"
 #include "engine/app/core/Strings.h"
@@ -67,7 +68,7 @@ void DrImage::setSimpleBox() {
 //##        1.000 = Low poly
 //##       10.000 = Really low poly
 //##
-//####################################################################################        
+//####################################################################################
 void DrImage::outlinePoints(float lod) {
     m_poly_list.clear();
     m_hole_list.clear();
@@ -108,7 +109,7 @@ void DrImage::outlinePoints(float lod) {
         // Optimize point list
         if (one_poly.size() > (c_neighbors * 2)) {
             one_poly = DrMesh::smoothPoints(one_poly, c_neighbors, 20.0, 1.0);
-            one_poly = PolylineSimplification::ramerDouglasPeucker(one_poly, lod);  
+            one_poly = PolylineSimplification::ramerDouglasPeucker(one_poly, lod);
             //one_poly = DrMesh::insertPoints(one_poly);
         }
 
@@ -135,7 +136,7 @@ void DrImage::outlinePoints(float lod) {
 
         // Breaks holes into seperate images for each Hole
         std::vector<DrBitmap> hole_images;
-        std::vector<DrRect>   hole_rects;        
+        std::vector<DrRect>   hole_rects;
         DrFilter::findObjectsInBitmap(holes, hole_images, hole_rects, c_alpha_tolerance, false);
 
         // Go through each image (Hole) create list for it

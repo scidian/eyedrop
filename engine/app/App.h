@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #ifndef DR_APP_H
 #define DR_APP_H
 
@@ -72,7 +73,7 @@ typedef std::map<std::string, std::shared_ptr<DrProject>>   ProjectMap;         
 //##    DrApp
 //##        Base class of a Drop Application
 //############################
-class DrApp 
+class DrApp
 {
 public:
     // Constructor / Destructor
@@ -89,14 +90,14 @@ private:
     // Modules
     DrImageManager*         m_image_manager         { nullptr };                    // Image loading / atlas creation
     DrRenderContext*        m_context               { nullptr };                    // Rendering context for this App (currently built on Sokol_Gfx)
-    
+
     // ----- User Data -----
     GameMap                 m_game                  { };                            // Collection of open Game instances
     ProjectMap              m_projects              { };                            // Collection of open Projects
     // ---------------------
 
     // App Variables
-    std::string             m_app_name              { "" };                         // Name of Application   
+    std::string             m_app_name              { "" };                         // Name of Application
     std::string             m_app_directory         { "" };                         // Root OS directory of application
     DrColor                 m_bg_color              { DROP_COLOR_BLACK };           // Background color of main App
     int                     m_width                 { 800 };                        // Window width
@@ -118,7 +119,7 @@ protected:
     uint64_t                m_time_start        { 0 };                              // Sokol_time start time since App started running
     double                  m_frames_per_second { 0.0 };                            // Stores current calculated frames per second
 
-    
+
     // #################### FUNCTIONS TO BE EXPOSED TO API ####################
 public:
     virtual void    onCreate(void) { }
@@ -126,7 +127,7 @@ public:
     virtual void    onUpdateGUI(void) { }
     virtual void    onEvent(const sapp_event* event) { }
     virtual void    onDestroy(void) { }
-    
+
 
     // #################### INTERNAL FUNCTIONS ####################
 public:
@@ -144,7 +145,7 @@ public:
     // Singletons
     DrImageManager*     imageManager()                                  { return m_image_manager; }
     DrRenderContext*    renderContext()                                 { return m_context; }
-    
+
     // Local Variable Getters
     std::string         appName()                                       { return m_app_name; }
     std::string         appDirectory()                                  { return m_app_directory; }

@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Mar 08 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #include "App.h"
 #include "RenderContext.h"
 
@@ -73,14 +74,14 @@ DrRenderContext::DrRenderContext(DrColor initial_color) {
     pass_action.colors[0].action = SG_ACTION_CLEAR;
     pass_action.colors[0].value = { red, green, blue, alpha };
 
-    // ***** Allocate an image handle, 
+    // ***** Allocate an image handle,
     //  But don't actually initialize the image yet, this happens later when the asynchronous file load has finished.
-    //  Any draw calls containing such an "incomplete" image handle will be silently dropped.        
+    //  Any draw calls containing such an "incomplete" image handle will be silently dropped.
     bindings.fs_images[SLOT_tex] = sg_alloc_image();
     //  When ready to load an image into allocated image, call:
-    /*  
+    /*
         uint32_t image_id = bindings.fs_images[SLOT_tex].id;
-        sg_init_image(sg_image(image_id), &sokol_image);     
+        sg_init_image(sg_image(image_id), &sokol_image);
     */
     //  To check if an id has been loaded into already and needs to be uninitialized, do:
     /*
@@ -94,8 +95,8 @@ DrRenderContext::DrRenderContext(DrColor initial_color) {
         // pos                  normals                uvs          barycentric (wireframe)
         { -1.0f, -1.0f, -1.0f,  1.0f, 1.0f, 1.0f,      0,   0,      1.0f, 1.0f, 1.0f },
         {  1.0f, -1.0f, -1.0f,  1.0f, 1.0f, 1.0f,      1,   0,      1.0f, 1.0f, 1.0f },
-        {  1.0f,  1.0f, -1.0f,  1.0f, 1.0f, 1.0f,      1,   1,      1.0f, 1.0f, 1.0f },      
-        { -1.0f,  1.0f, -1.0f,  1.0f, 1.0f, 1.0f,      0,   1,      1.0f, 1.0f, 1.0f },      
+        {  1.0f,  1.0f, -1.0f,  1.0f, 1.0f, 1.0f,      1,   1,      1.0f, 1.0f, 1.0f },
+        { -1.0f,  1.0f, -1.0f,  1.0f, 1.0f, 1.0f,      0,   1,      1.0f, 1.0f, 1.0f },
     };
     sg_buffer_desc sokol_buffer_vertex { };
         sokol_buffer_vertex.data = SG_RANGE(vertices);
@@ -107,7 +108,7 @@ DrRenderContext::DrRenderContext(DrColor initial_color) {
         sokol_buffer_index.type = SG_BUFFERTYPE_INDEXBUFFER;
         sokol_buffer_index.data = SG_RANGE(indices);
         sokol_buffer_index.label = "Indices-Temp";
-    
+
     // Empty, dynamic instance-data vertex buffer (goes into vertex buffer bind slot 1)
     sg_buffer_desc sokol_buffer_instance_uv { };
         sokol_buffer_instance_uv.size = INSTANCES * sizeof(hmm_vec4);
@@ -131,7 +132,7 @@ DrRenderContext::DrRenderContext(DrColor initial_color) {
 
         sokol_pipleine.layout.buffers[1].stride = 64; //(sizeof(hmm_mat4));
         sokol_pipleine.layout.buffers[1].step_func = SG_VERTEXSTEP_PER_INSTANCE;
-        
+
         sokol_pipleine.layout.buffers[2].stride = 16; //(sizeof(hmm_vec4));
         sokol_pipleine.layout.buffers[2].step_func = SG_VERTEXSTEP_PER_INSTANCE;
 
@@ -162,7 +163,7 @@ DrRenderContext::DrRenderContext(DrColor initial_color) {
         sokol_pipleine.layout.attrs[ATTR_vs_norm].offset =          12;
         sokol_pipleine.layout.attrs[ATTR_vs_texcoord0].offset =     24;
         sokol_pipleine.layout.attrs[ATTR_vs_bary].offset =          32;
-        
+
         sokol_pipleine.layout.attrs[ATTR_vs_instance_mat0].offset = 0;
         sokol_pipleine.layout.attrs[ATTR_vs_instance_mat1].offset = 16;
         sokol_pipleine.layout.attrs[ATTR_vs_instance_mat2].offset = 32;
@@ -177,11 +178,11 @@ DrRenderContext::DrRenderContext(DrColor initial_color) {
         sokol_pipleine.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
         //sokol_pipleine.index_type =   SG_INDEXTYPE_NONE;
         sokol_pipleine.index_type =     SG_INDEXTYPE_UINT16;
-        //sokol_pipleine.cull_mode =    SG_CULLMODE_NONE; 
+        //sokol_pipleine.cull_mode =    SG_CULLMODE_NONE;
         sokol_pipleine.cull_mode =      SG_CULLMODE_FRONT;
         sokol_pipleine.depth.compare =  SG_COMPAREFUNC_LESS_EQUAL;
         sokol_pipleine.depth.write_enabled = true;
-                
+
     pipeline = sg_make_pipeline(&sokol_pipleine);
 
 }

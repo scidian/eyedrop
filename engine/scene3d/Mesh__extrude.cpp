@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #include <algorithm>
 #include <limits>
 #include <list>
@@ -66,9 +67,9 @@ void DrMesh::optimizeMesh() {
     // Remap Table
     DrMesh result;
     size_t total_indices = vertexCount();
-    std::vector<unsigned int> remap(total_indices);        
+    std::vector<unsigned int> remap(total_indices);
     size_t total_vertices = meshopt_generateVertexRemap(&remap[0], NULL, total_indices, &vertices[0], total_indices, sizeof(Vertex));
-	    
+
     // 1. Indexing
     result.indices.resize(total_indices);
 	meshopt_remapIndexBuffer(&result.indices[0], NULL, total_indices, &remap[0]);
@@ -130,13 +131,13 @@ void DrMesh::smoothMesh() {
         for(auto point : same_points) {
             for(size_t j = 0; j < indexCount(); j += 3) {
                 if        (indices[j+0] == point) {
-                    neighbors.push_back(indices[j+1]);   
+                    neighbors.push_back(indices[j+1]);
                     neighbors.push_back(indices[j+2]);
                 } else if (indices[j+1] == point) {
-                    neighbors.push_back(indices[j+0]);   
+                    neighbors.push_back(indices[j+0]);
                     neighbors.push_back(indices[j+2]);
                 } else if (indices[j+2] == point) {
-                    neighbors.push_back(indices[j+0]);   
+                    neighbors.push_back(indices[j+0]);
                     neighbors.push_back(indices[j+1]);
                 }
             }
@@ -148,7 +149,7 @@ void DrMesh::smoothMesh() {
         Vertex v = vertices[one_vertex];
         Vertex o = vertices[one_vertex];
         v.px *= weight;
-        v.py *= weight;           
+        v.py *= weight;
         v.pz *= weight;
         v.nx *= weight;
         v.ny *= weight;
@@ -183,10 +184,10 @@ void DrMesh::smoothMesh() {
         v.nx = normal.x;
         v.ny = normal.y;
         v.nz = normal.z;
-                
+
         // Set all same points to new averaged point
         for(auto point : same_points) {
-            DrMesh::set(v, smoothed[point]);            
+            DrMesh::set(v, smoothed[point]);
         }
     }
 
@@ -380,7 +381,7 @@ void DrMesh::triangulateFace(const std::vector<DrPointF>& outline_points, const 
     // ***** Copy DrPointFs into TPPLPoly
     if (outline_points.size() < 3) return;
     std::list<TPPLPoly> testpolys, result;
-    TPPLPoly poly; 
+    TPPLPoly poly;
     poly.Init(outline_points.size());
     for (int i = 0; i < static_cast<int>(outline_points.size()); i++) {
         poly[i].x = outline_points[i].x;
@@ -396,7 +397,7 @@ void DrMesh::triangulateFace(const std::vector<DrPointF>& outline_points, const 
         if (winding == DROP_WINDING_COUNTERCLOCKWISE) {
             std::reverse(hole.begin(), hole.end());
         }
-        TPPLPoly poly; 
+        TPPLPoly poly;
         poly.Init(hole.size());
         poly.SetHole(true);
         for (int i = 0; i < static_cast<int>(hole.size()); i++) {
@@ -409,7 +410,7 @@ void DrMesh::triangulateFace(const std::vector<DrPointF>& outline_points, const 
             hole_count++;
         }
     }
-    
+
     TPPLPartition pp;
     std::list<TPPLPoly> outpolys;
 
@@ -424,9 +425,9 @@ void DrMesh::triangulateFace(const std::vector<DrPointF>& outline_points, const 
     switch (type) {
         case TRIANGULATION_EAR_CLIPPING:        pp.Triangulate_EC(&outpolys, &result);                  break;
         case TRIANGULATION_TRIANGULATE_OPT:     pp.Triangulate_OPT(&(*outpolys.begin()), &result);      break;
-        case TRIANGULATION_MONOTONE:            pp.Triangulate_MONO(&outpolys, &result);                break; 
+        case TRIANGULATION_MONOTONE:            pp.Triangulate_MONO(&outpolys, &result);                break;
         case TRIANGULATION_DELAUNAY:
-            result.push_back( poly );                       
+            result.push_back( poly );
             //pp.ConvexPartition_OPT(&(*outpolys.begin()), &result);
             //pp.ConvexPartition_HM(&(*outpolys.begin()), &result);
             break;
@@ -477,7 +478,7 @@ void DrMesh::triangulateFace(const std::vector<DrPointF>& outline_points, const 
 
         // Add some uniform points, 4 points looks great and keeps triangles low
         if (wireframe) {
-            
+
             int x_add = 8;
             int y_add = 8;
             while (width  % x_add != 0) x_add--;

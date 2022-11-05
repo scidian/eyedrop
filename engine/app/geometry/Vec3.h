@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #ifndef DR_VEC3_H
 #define DR_VEC3_H
 
@@ -78,7 +79,7 @@ public:
     DrVec3          operator/   (const float d_) const;
     DrVec3          operator/   (const DrVec3& v_) const;
 
-    // Overload Operators - Multiplication    
+    // Overload Operators - Multiplication
     DrVec3&         operator*=  (const DrVec3& d_);
     DrVec3&         operator*=  (const float d_);
     DrVec3          operator*   (const DrVec3& v_) const;
@@ -95,7 +96,7 @@ public:
     DrVec3          normalized() const;
     float           normalize();
     float           norm() const;
-    float           distance    (const DrVec3& v_) const;   
+    float           distance    (const DrVec3& v_) const;
 
     // Accessors
     const float& operator[]     (int i) const;

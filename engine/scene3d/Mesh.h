@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #ifndef ENGINE_MESH_H
 #define ENGINE_MESH_H
 
@@ -71,7 +72,7 @@ union Triangle {
 //##        Stores a list of triangles for rendering
 //############################
 class DrMesh
-{    
+{
 public:
     std::vector<unsigned int>   indices;
     std::vector<Vertex>         vertices;
@@ -79,7 +80,7 @@ public:
     bool                        wireframe = false;
     float                       image_size = 0.0f;
 
-public:    
+public:
     // Constructor
     DrMesh();
 
@@ -108,7 +109,7 @@ public:
                             const DrBitmap& image, bool wireframe, Triangulation type, double alpha_tolerance);
 
     // Assignment
-    static  void set(Vertex &from_vertex, Vertex &to_vertex);    
+    static  void set(Vertex &from_vertex, Vertex &to_vertex);
 
     // Building Functions
     void    add(const DrVec3& vertex, const DrVec3& normal, const DrVec2& text_coord, Triangle_Point point_number);

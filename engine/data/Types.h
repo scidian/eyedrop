@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Thu Mar 04 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #ifndef DR_ENGINE_DATA_TYPES_H
 #define DR_ENGINE_DATA_TYPES_H
 
@@ -47,7 +48,7 @@ enum Property_Type {
     PROPERTY_TYPE_SCALEF            = 21,   // vector<double>   Decimal pair x and y, has smaller increment step        sizeof 2 - x, y
     PROPERTY_TYPE_POSITIVE_SCALEF   = 22,   // vector<double>   Decimal pair x and y, both numbers are >= 0.0           sizeof 2 - x, y
     PROPERTY_TYPE_SIZEF             = 23,   // vector<double>   Decimal pair w and h                                    sizeof 2 - w, h
-    PROPERTY_TYPE_POSITIVE_SIZEF    = 24,   // vector<double>   Decimal pair w and h, both numbers are >= 0.0           sizeof 2 - w, h   
+    PROPERTY_TYPE_POSITIVE_SIZEF    = 24,   // vector<double>   Decimal pair w and h, both numbers are >= 0.0           sizeof 2 - w, h
 
     PROPERTY_TYPE_STRING            = 25,   // string           Uses LineEdit
     PROPERTY_TYPE_TEXTBOX           = 26,   // string           Uses TextEdit for multi-line text input
@@ -60,7 +61,7 @@ enum Property_Type {
     PROPERTY_TYPE_COLOR             = 31,   // unsigned int     For colors (compatible with DrColor.rgba())
     PROPERTY_TYPE_IMAGE             = 32,   // int              Index of a particular DrAnimation Asset within the Project
 
-    // Future: 
+    // Future:
     PROPERTY_TYPE_COLLISION         = 33,   // ?????            Maybe vector<points> (for Collision Shapes)
     PROPERTY_TYPE_ICON              = 34,   // ?????            Maybe string
 };
@@ -72,7 +73,7 @@ enum Property_Type {
 //##        - All Entities inherit DrEntity which contain DrComponents, which are displayed in the Inspector
 //##
 //############################
-enum Asset_Type {    
+enum Asset_Type {
     // Misc Types
     ASSET_TYPE_NOT_FOUND            = 0,    // For passing a value in functions that represents No Type Selected / Found, !!!!! #NOTE: Keep as zero
 

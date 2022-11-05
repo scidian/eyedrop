@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #include "engine/app/core/Math.h"
 #include "engine/app/core/Random.h"
 #include "engine/app/core/Reflect.h"
@@ -70,7 +71,7 @@ void setMeshTexture(std::shared_ptr<DrImage>& image) {
 //####################################################################################
 //##    On Create
 //####################################################################################
-void DrEditor::onCreate() { 
+void DrEditor::onCreate() {
 
     // // #################### TESTING ####################
     // // ECS Construction
@@ -93,7 +94,7 @@ void DrEditor::onCreate() {
     //         // Get Test
     //         HashID component_hash_id = ecs()->getComponentHashID(id);
     //         void*  component = ecs()->getData(id, entity);
-    //         std::cout << "YES" << std::endl; 
+    //         std::cout << "YES" << std::endl;
     //         std::cout << "  Component Name: " << ClassData(ecs()->getComponentHashID(id)).name << std::endl;
     //         std::cout << "    First Variable: " << MemberData(ecs()->getComponentHashID(id), 0).name << std::endl;
 
@@ -129,7 +130,7 @@ void DrEditor::onCreate() {
     // std::cout << "Prop Name:   " << MemberData<Transform2D>(0).name << std::endl;
     // std::cout << "Prop Title:  " << MemberData<Transform2D>(0).title << std::endl;
     // std::cout << "Prop Offset: " << MemberData(et, 0).offset << std::endl;
-    
+
     // std::cout << "Prop Name:   " << MemberData<Transform2D>("rotation").name << std::endl;
     // std::cout << "Prop Title:  " << MemberData<Transform2D>(1).title << std::endl;
     // std::cout << "Prop Offset: " << MemberData(et, "rotation").offset << std::endl;
@@ -147,7 +148,7 @@ void DrEditor::onCreate() {
     // // Test GetProperty by Index
     // std::vector<double> rotation = ClassMember<std::vector<double>>(&et, MemberData(et, 1));
     // std::cout << "Rotation X: " << rotation[0] << ", Rotation Y: " << rotation[1] << ", Rotation Z: " << rotation[2] << std::endl;
-    
+
     // // Test GetProperty by Name
     // std::vector<double> position = ClassMember<std::vector<double>>(&et, MemberData(et, "position"));
     // std::cout << "Position X: " << position[0] << ", Position Y: " << position[1] << ", Position Z: " << position[2] << std::endl;
@@ -163,7 +164,7 @@ void DrEditor::onCreate() {
     // std::cout << "Transform2D instance - Position X: " << et.position[0] << ", Position Y: " << et.position[1] << ", Position Z: " << et.position[2] << std::endl;
 
     // #############################################
-    
+
     // Load Images
     for (int i = 0; i < EDITOR_IMAGE_TOTAL; ++i) gui_images.push_back(nullptr);
     imageManager()->fetchImage({gui_images[EDITOR_IMAGE_WORLD_GRAPH],   (appDirectory() + "assets/toolbar_icons/world_graph.png"),      ATLAS_TYPE_ENGINE, ATLAS_PADDING});
@@ -181,7 +182,7 @@ void DrEditor::onCreate() {
 //####################################################################################
 //##    Render Update
 //####################################################################################
-void DrEditor::onUpdateScene() { 
+void DrEditor::onUpdateScene() {
 
     // Compute model-view-projection matrix for vertex shader
     hmm_mat4 proj = HMM_Perspective(52.5f, (float)sapp_width()/(float)sapp_height(), 5.f, 20000.0f);
@@ -191,7 +192,7 @@ void DrEditor::onUpdateScene() {
 
     hmm_mat4 rxm = HMM_Rotate(m_add_rotation.x, HMM_Vec3(1.0f, 0.0f, 0.0f));
     hmm_mat4 rym = HMM_Rotate(m_add_rotation.y, HMM_Vec3(0.0f, 1.0f, 0.0f));
-    hmm_mat4 rotate = HMM_MultiplyMat4(rxm, rym); 
+    hmm_mat4 rotate = HMM_MultiplyMat4(rxm, rym);
     for (auto& m : m_model) {
         m = HMM_MultiplyMat4(rotate, m);
     }
@@ -202,13 +203,13 @@ void DrEditor::onUpdateScene() {
     // Uniforms for vertex shader
     vs_params_t vs_params { };
         vs_params.vp =  view_proj;
-            
+
     // Uniforms for fragment shader
     fs_params_t fs_params { };
         fs_params.u_eye = eye;
         fs_params.u_premultiplied = 1.0f;
         fs_params.u_wireframe = (m_mesh->wireframe) ? 1.0f : 0.0f;
-        
+
     // Check if user requested new model quality, if so recalculate
     if ((m_mesh_quality != m_before_keys) && (m_image != nullptr)) {
         calculateMesh(true);
@@ -241,7 +242,7 @@ void DrEditor::onUpdateScene() {
 //####################################################################################
 //##    Gui Update
 //####################################################################################
-void DrEditor::onUpdateGUI() { 
+void DrEditor::onUpdateGUI() {
     // Keep track of open windows / widgets
     static bool widgets[EDITOR_WIDGET_TOTAL_NUMBER];
     if (isFirstFrame()) {
@@ -250,10 +251,10 @@ void DrEditor::onUpdateGUI() {
         widgets[EDITOR_WIDGET_STYLE] = false;
         widgets[EDITOR_WIDGET_DEMO] =  false;
     }
-    
+
     // Menu
     MainMenuUI(widgets);
-    
+
     // Handle Dockspace
     int menu_height = 0;
     DockspaceUI(widgets, menu_height);
@@ -264,7 +265,7 @@ void DrEditor::onUpdateGUI() {
 
     // ##### Widget Windows
     ImGuiWindowFlags child_flags = 0; //ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
-    
+
     // if (widgets[EDITOR_WIDGET_STATUS]) {
     //     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(100, 100));
     //     ImGui::Begin("Status Bar", &widgets[EDITOR_WIDGET_STATUS], child_flags);
@@ -272,7 +273,7 @@ void DrEditor::onUpdateGUI() {
     //     ImGui::End();
     //     ImGui::PopStyleVar();
     // }
-    
+
     if (widgets[EDITOR_WIDGET_ASSETS]) {
         ImGui::Begin("Assets", &widgets[EDITOR_WIDGET_ASSETS], child_flags);
             ImGui::Text("Asset 1");
@@ -281,7 +282,7 @@ void DrEditor::onUpdateGUI() {
             ImGui::Text("Asset 4");
         ImGui::End();
     }
-    
+
     if (widgets[EDITOR_WIDGET_INSPECTOR]) {
         ImGui::Begin("Property Inspector", &widgets[EDITOR_WIDGET_INSPECTOR], child_flags);
             static ImVec4 base  = ImVec4(0.000f, 0.750f, 0.720f, 1.0f);
@@ -312,7 +313,7 @@ void DrEditor::onUpdateGUI() {
     // Style Selector
     if (widgets[EDITOR_WIDGET_STYLE]) {
         ImGui::ShowStyleEditor();
-    }   
+    }
 
     // Theme selector
     if (widgets[EDITOR_WIDGET_THEME] || isFirstFrame()) {
@@ -329,7 +330,7 @@ void DrEditor::onUpdateGUI() {
 void DrEditor::onEvent(const sapp_event* event) {
     if ((event->type == SAPP_EVENTTYPE_KEY_DOWN) && !event->key_repeat) {
         switch (event->key_code) {
-            case SAPP_KEYCODE_1: 
+            case SAPP_KEYCODE_1:
             case SAPP_KEYCODE_2:
             case SAPP_KEYCODE_3:
             case SAPP_KEYCODE_4:
@@ -351,7 +352,7 @@ void DrEditor::onEvent(const sapp_event* event) {
                 break;
             default: ;
         }
-                
+
     } else if (event->type == SAPP_EVENTTYPE_MOUSE_SCROLL) {
         m_zoom -= (event->scroll_y * 0.1f);
         m_zoom = Clamp(m_zoom, 0.5f, 25.0f);
@@ -366,7 +367,7 @@ void DrEditor::onEvent(const sapp_event* event) {
             m_mouse_down.set(event->touches[0].pos_y, event->touches[0].pos_x);
             m_is_mouse_down = true;
         }
-        
+
     } else if (event->type == SAPP_EVENTTYPE_MOUSE_UP) {
         if (event->mouse_button == SAPP_MOUSEBUTTON_LEFT) {
             m_is_mouse_down = false;
@@ -392,7 +393,7 @@ void DrEditor::onEvent(const sapp_event* event) {
             } else if (m_mouse_down.x > x_movement) {
                 m_add_rotation.x = 360 - (m_rotate_speed * (m_mouse_down.x - x_movement));
             }
-            
+
             if (m_mouse_down.y > y_movement) {
                 m_add_rotation.y = 360 - (m_rotate_speed * (m_mouse_down.y - y_movement));
             } else if (m_mouse_down.y < y_movement) {
@@ -439,7 +440,7 @@ void DrEditor::calculateMesh(bool reset_position) {
     // ***** Initialize Mesh
     if (m_image->outlineRequested()) m_image->outlinePoints(level_of_detail);
     m_mesh = std::make_shared<DrMesh>();
-    
+
 
     // !!!!! #TEMP: Size off of atlas
     //m_mesh->image_size = m_image->bitmap().maxDimension();
@@ -447,19 +448,19 @@ void DrEditor::calculateMesh(bool reset_position) {
     m_mesh->image_size = Max(atlas->width, atlas->height);
     // !!!!! END TEMP
     m_mesh->wireframe = m_wireframe;
-    
+
 
     // ***** Create Mesh
     //m_mesh->initializeExtrudedImage(m_image.get(), m_mesh_quality);
     //m_mesh->initializeTextureQuad();
     m_mesh->initializeTextureCube();
     //m_mesh->initializeTextureCone();
-            
+
 
     // ***** Optimize and smooth mesh
     m_mesh->optimizeMesh();
     // ----- Experimental, doesnt work great -----
-    //m_mesh->smoothMesh();                               
+    //m_mesh->smoothMesh();
 
 
     // ***** Copy vertex data and set into state buffer
@@ -502,8 +503,8 @@ void DrEditor::calculateMesh(bool reset_position) {
 //##    Reset Model Positions
 //####################################################################################
 void DrEditor::resetPositions() {
-    
-    float spacing_x = -1.f * (7.f * INSTANCE_X); 
+
+    float spacing_x = -1.f * (7.f * INSTANCE_X);
     float spacing_y = -1.f * (7.f * INSTANCE_Y);
     float step_x = (abs(spacing_x) * 2.f) / INSTANCE_X;
     float step_y = (abs(spacing_y) * 2.f) / INSTANCE_Y;

@@ -1,25 +1,27 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Tue Mar 02 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
+
 #include "engine/app/App.h"
 
 
 //####################################################################################
 //##    Player (engine runtime only)
 //####################################################################################
-class DrPlayer : public DrApp 
+class DrPlayer : public DrApp
 {
 public:
     using DrApp::DrApp;                                                             // Inherits base constructor, requires C++ 11
 
-    virtual void onUpdateGUI() override { 
+    virtual void onUpdateGUI() override {
 
-        #if defined(DROP_IMGUI)  
+        #if defined(DROP_IMGUI)
             // Demo Window
             //ImGui::ShowDemoWindow();
         #endif
@@ -31,7 +33,7 @@ public:
     }
 
     virtual void onEvent(const sapp_event* event) override {
-       
+
     }
 };
 

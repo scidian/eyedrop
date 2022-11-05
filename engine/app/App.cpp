@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #include "engine/app/core/Math.h"
 #include "engine/app/core/Reflect.h"
 #include "engine/app/core/Strings.h"
@@ -29,17 +30,17 @@
 //##    Global Variables Definitions
 //####################################################################################
 DrApp*              g_app_pointer   { nullptr };                                    // App singleton            Declared in App.h       Assigned in App:App()
-DrApp*              App()           { return g_app_pointer; }                       // Returns App singleton 
+DrApp*              App()           { return g_app_pointer; }                       // Returns App singleton
 
 
 //####################################################################################
 //##    Callbacks
 //####################################################################################
 // C callback wrappers for using member methods as callbacks functions
-std::function<void()>                                   initCallback;     
-std::function<void()>                                   frameCallback;     
-std::function<void(const sapp_event* event)>            eventCallback;      
-std::function<void()>                                   cleanupCallback;    
+std::function<void()>                                   initCallback;
+std::function<void()>                                   frameCallback;
+std::function<void(const sapp_event* event)>            eventCallback;
+std::function<void()>                                   cleanupCallback;
 extern "C" void initWrapper()                           { initCallback(); }
 extern "C" void frameWrapper()                          { frameCallback(); }
 extern "C" void eventWrapper(const sapp_event* event)   { eventCallback(event); }
@@ -47,7 +48,7 @@ extern "C" void cleanupWrapper()                        { cleanupCallback(); }
 
 
 //####################################################################################
-//##    Constructor / Destructor 
+//##    Constructor / Destructor
 //####################################################################################
 DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
     // Assign global pointer to the current App
@@ -63,7 +64,7 @@ DrApp::DrApp(std::string title, DrColor bg_color, int width, int height) {
     eventCallback =     std::bind(&DrApp::event,    this, std::placeholders::_1);
     cleanupCallback =   std::bind(&DrApp::cleanup,  this);
     m_sokol_app.window_title =          title.c_str();
-    m_sokol_app.init_cb =               initWrapper;    
+    m_sokol_app.init_cb =               initWrapper;
     m_sokol_app.frame_cb =              frameWrapper;
     m_sokol_app.event_cb =              eventWrapper;
     m_sokol_app.cleanup_cb =            cleanupWrapper;
@@ -88,13 +89,13 @@ DrApp::~DrApp() {
 //##    Application Functions
 //####################################################################################
 // Sets application name, updates title bar
-void DrApp::setAppName(std::string name) { 
-    m_app_name = name; 
+void DrApp::setAppName(std::string name) {
+    m_app_name = name;
     sapp_set_window_title(m_app_name.c_str());
 }
 
 // Sets application icon
-void DrApp::setAppIcon(const DrBitmap& icon) { 
+void DrApp::setAppIcon(const DrBitmap& icon) {
     sapp_icon_desc icon_desc { };
         icon_desc.images[0].width =         icon.width;
         icon_desc.images[0].height =        icon.height;
@@ -110,15 +111,15 @@ void DrApp::setAppIcon(const DrBitmap& icon) {
 void DrApp::init(void) {
     // #################### Mac Menu Bar ####################
     ImMenu::MenuInitialize(m_app_name.c_str());
-        
+
     // #################### Sokol App ####################
     setAppName(m_app_name);                                                         // Set initial Window Title
     setAppIcon(DrBitmap(drop_icon128, sizeof(drop_icon128)));                       // Set window Icon
     m_dpi_scale = sapp_dpi_scale();
-    
+
     // #################### Sokol Gfx ####################
     sg_desc sokol_gfx { };
-        sokol_gfx.context = sapp_sgcontext();                                       // Call sokol_glue function to auto obtain values from sokol_app      
+        sokol_gfx.context = sapp_sgcontext();                                       // Call sokol_glue function to auto obtain values from sokol_app
     sg_setup(&sokol_gfx);
     m_sg_features = sg_query_features();
     m_sg_limits = sg_query_limits();
@@ -139,7 +140,7 @@ void DrApp::init(void) {
         sokol_fetch.max_requests = 128;
         sokol_fetch.num_channels = 4;
         sokol_fetch.num_lanes =    2;
-    sfetch_setup(&sokol_fetch); 
+    sfetch_setup(&sokol_fetch);
 
     // #################### Sokol Debug ####################
     #if defined(DROP_DEBUG)
@@ -161,9 +162,9 @@ void DrApp::init(void) {
         }
     #endif
 
-    // #################### Fontstash  ####################     
+    // #################### Fontstash  ####################
     // Ensure atlas size is pow-2 (all gpu textures should be, especially webgl)
-    const int atlas_size = RoundPowerOf2(256.0f * m_dpi_scale);           
+    const int atlas_size = RoundPowerOf2(256.0f * m_dpi_scale);
     m_fontstash =   sfons_create(atlas_size, atlas_size, FONS_ZERO_TOPLEFT);
     m_font_normal = fonsAddFontMem(m_fontstash, "sans", aileron, sizeof(aileron), false);
 
@@ -196,10 +197,10 @@ void DrApp::init(void) {
             style.WindowTitleAlign =    ImVec2(0.5f, 0.5f);
             style.WindowMenuButtonPosition = ImGuiDir_None; // (default: ImGuiDir_Left)
 
-        // Configure ImGui, enable docking 
+        // Configure ImGui, enable docking
         auto &imgui_io = ImGui::GetIO();
             imgui_io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-        
+
         // Attach default embedded font
         ImFontConfig fontCfg { };
             fontCfg.FontDataOwnedByAtlas = false;
@@ -207,12 +208,12 @@ void DrApp::init(void) {
             fontCfg.OversampleV = 2;
             fontCfg.RasterizerMultiply = 1.5f;
         imgui_io.Fonts->AddFontFromMemoryTTF(aileron, sizeof(aileron), 16.0f, &fontCfg);
-           
+
         // If including font icons, merge in icons from Font Awesome
         /*
             static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
-            ImFontConfig icons_config { }; 
-                icons_config.MergeMode = true; 
+            ImFontConfig icons_config { };
+                icons_config.MergeMode = true;
                 icons_config.PixelSnapH = true;
             imgui_io.Fonts->AddFontFromFileTTF((m_app_directory + FONT_ICON_FILE_NAME_FAR).c_str(), 16.0f, &icons_config, icons_ranges);
             imgui_io.Fonts->AddFontFromFileTTF((m_app_directory + FONT_ICON_FILE_NAME_FAS).c_str(), 16.0f, &icons_config, icons_ranges);
@@ -229,13 +230,13 @@ void DrApp::init(void) {
         imgui_io.Fonts->TexID = (ImTextureID)(uintptr_t) sg_make_image(&image_desc).id;
     #endif
 
-  
+
     //####################################################################################
     //##    App Singletons
     //####################################################################################
     m_image_manager = new DrImageManager();                                             // Image Manager: Helps with image loading / fetching, atlas creation
     m_context = new DrRenderContext(m_bg_color);                                        // Render Context: Handles initial pipeline / bindings
-    
+
 
     // #################### Virtual onCreate() ####################
     this->onCreate();
@@ -255,7 +256,7 @@ void DrApp::frame(void) {
 
     // #################### Begin Renderer ####################
     sg_begin_default_pass(&m_context->pass_action, sapp_width(), sapp_height());
-    
+
     // ********** Render Here, Scene 2D, Scene 3D, Etc...
     // Ex:
     //sg_apply_pipeline(m_state.pip);
@@ -263,10 +264,10 @@ void DrApp::frame(void) {
     //sg_apply_uniforms(SG_SHADERSTAGE_VS, SLOT_vs_params, SG_RANGE(vs_params));
     //sg_apply_uniforms(SG_SHADERSTAGE_FS, SLOT_fs_params, SG_RANGE(fs_params));
     //sg_draw(0, mesh->indices.size(), 1);
-    
+
     // #################### Virtual onUpdate() - User Rendering ####################
     this->onUpdateScene();
-    
+
     // #################### ImGui Rendering ####################
     #if defined(DROP_IMGUI)
         // Start ImGui Frame
@@ -295,7 +296,7 @@ void DrApp::frame(void) {
             }
             sg_imgui_draw(&m_sg_imgui);
         #endif
-        
+
         // Render ImGui
         if (m_first_frame == false) {
             simgui_render();
@@ -305,7 +306,7 @@ void DrApp::frame(void) {
     #endif
 
     // #################### Fontstash Text Rendering ####################
-    fonsClearState(m_fontstash);    
+    fonsClearState(m_fontstash);
     sgl_defaults();
     sgl_matrix_mode_projection();
     sgl_ortho(0.0f, sapp_widthf(), sapp_heightf(), 0.0f, -1.0f, +1.0f);

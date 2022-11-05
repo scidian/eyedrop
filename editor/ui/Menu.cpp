@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Sat Mar 06 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #include "editor/Editor.h"
 #include "engine/app/image/Image.h"
 #include "engine/app/imgui/ImMenu.h"
@@ -23,7 +24,7 @@ void MainMenuUI(bool* widgets) {
             bool clicked_new  { false };
             bool clicked_open { false };
             bool clicked_save { false };
-            
+
             if (ImMenu::MenuItem("New",  "n", &clicked_new)) { }
             // With Icon:
             /*

@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #include "../core/Math.h"
 #include "Vec3.h"
 
@@ -31,7 +32,7 @@ DrVec3 DrVec3::triangleNormal(const DrVec3& point_1, const DrVec3& point_2, cons
     //                                   glm::vec3(point_3.x, point_3.y, point_3.z));
 
     // Cross product of two lines on plane
-    DrVec3 n = (point_1 - point_2) % (point_2 - point_3); 
+    DrVec3 n = (point_1 - point_2) % (point_2 - point_3);
     n.normalize();
 
     return DrVec3(n.x, n.y, n.z);
@@ -187,14 +188,14 @@ DrVec3   operator*   (const hmm_mat4& matrix, const DrVec3& vec) {
 //####################################################################################
 // Cross product
 DrVec3 DrVec3::cross(const DrVec3& v_) const {
-    return DrVec3(y*v_.z - z*v_.y, 
-                  z*v_.x - x*v_.z, 
+    return DrVec3(y*v_.z - z*v_.y,
+                  z*v_.x - x*v_.z,
                   x*v_.y - y*v_.x);
 }
 // Cross product
 DrVec3 DrVec3::operator%(const DrVec3& rhs) const {
-    return DrVec3(y*rhs.z - z*rhs.y, 
-                  z*rhs.x - x*rhs.z, 
+    return DrVec3(y*rhs.z - z*rhs.y,
+                  z*rhs.x - x*rhs.z,
                   x*rhs.y - y*rhs.x);
 }
 
@@ -230,9 +231,9 @@ float DrVec3::norm() const {
 }
 
 float DrVec3::distance(const DrVec3& v_) const {
-    float d = sqrt(pow(v_.x - x, 2) +  
-                   pow(v_.y - y, 2) +  
-                   pow(v_.z - z, 2)); 
+    float d = sqrt(pow(v_.x - x, 2) +
+                   pow(v_.y - y, 2) +
+                   pow(v_.z - z, 2));
     return d;
 }
 

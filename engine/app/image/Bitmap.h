@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #ifndef DR_BITMAP_H
 #define DR_BITMAP_H
 
@@ -49,7 +50,7 @@ public:
     DrBitmap(const DrBitmap& bitmap, Bitmap_Format desired_format = DROP_BITMAP_FORMAT_ARGB);
     DrBitmap(int width_, int height_, Bitmap_Format desired_format = DROP_BITMAP_FORMAT_ARGB);
     DrBitmap(std::string filename, Bitmap_Format desired_format = DROP_BITMAP_FORMAT_ARGB);
-    DrBitmap(const unsigned char* from_data, const int& number_of_bytes, 
+    DrBitmap(const unsigned char* from_data, const int& number_of_bytes,
              bool compressed = true, int width_ = 0, int height_ = 0);
 
     // Info

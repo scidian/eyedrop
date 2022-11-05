@@ -1,11 +1,12 @@
+/** /////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2021 Scidian Software - All Rights Reserved
+// @description Eyedrop
+// @about       C++ game engine built on Sokol
+// @author      Stephens Nunnally <@stevinz>
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// @source      https://github.com/stevinz/eyedrop
 //
-// Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-// Proprietary and Confidential
-// Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
-//
-//
+///////////////////////////////////////////////////////////////////////////////////*/
 #ifndef DR_RECTF_H
 #define DR_RECTF_H
 
@@ -34,10 +35,10 @@ public:
     DrRectF(const DrPointF& top_left, const DrPointF& bottom_right);
     DrRectF(const DrRect& r);
     DrRectF(const DrRectF& r);
-    
+
     // Conversion
     DrRect          toRect();
-    
+
     // Helper Functions
     bool            contains(const DrPoint);
     bool            contains(const DrPointF);
@@ -47,7 +48,7 @@ public:
     double          right();
     double          top();
     double          bottom();
-    
+
     DrPointF        topLeft();
     DrPointF        topRight();
     DrPointF        bottomLeft();
