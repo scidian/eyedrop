@@ -1,9 +1,9 @@
 #
-#  Copyright (C) 2021 Scidian Software - All Rights Reserved
-#
-#  Unauthorized Copying of this File, via Any Medium is Strictly Prohibited
-#  Proprietary and Confidential
-#  Written by Stephens Nunnally <stevinz@gmail.com> - Mon Feb 22 2021
+# @description Eyedrop
+# @about       C++ game engine built on Sokol
+# @author      Stephens Nunnally <@stevinz>
+# @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
+# @source      https://github.com/stevinz/eyedrop
 #
 #
 cmake_minimum_required(VERSION 3.10)
@@ -20,8 +20,8 @@ cmake_minimum_required(VERSION 3.10)
 #       "linux"     Linux                           defines DROP_TARGET_LINUX
 #
 #   APP_TYPE
-#       "editor"    Drop Editor                     defines DROP_IMGUI
-#       "player"    Drop Runtime                    ...does not have ImGui enabled unless DEBUG_MODE is set to "true"
+#       "editor"    Eyedrop Editor                  defines DROP_IMGUI
+#       "player"    Eyedrop Runtime                 ...does not have ImGui enabled unless DEBUG_MODE is set to "true"
 #
 #   DEBUG_MODE
 #       "true"                                      defines SOKOL_TRACE_HOOKS, DROP_DEBUG, DROP_IMGUI (turns on ImGui and Sokol Gfx debug menu by default)
