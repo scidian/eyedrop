@@ -33,12 +33,12 @@ enum Editor_Images {
 
 //####################################################################################
 //##    DrEditor
-//##        Drop Creator Game Editor built on top of Drop App Engine
+//##        EyedropGame Editor built on top of Eyedrop App Engine
 //############################
 class DrEditor : public DrApp
 {
 public:
-    DrEditor(std::string title = "Drop Creator", DrColor bg_color = DROP_COLOR_BLACK, int width = 800, int height = 600);
+    DrEditor(std::string title = "Eyedrop", DrColor bg_color = DROP_COLOR_BLACK, int width = 800, int height = 600);
     virtual ~DrEditor();
 
 

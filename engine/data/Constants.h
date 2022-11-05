@@ -15,7 +15,7 @@
 #include <cstdint>
 
 // Global Constants
-#define DROP_VERSION             2000                               // Drop Creator version number, important for file loading / saving
+#define DROP_VERSION             2000                               // Eyedrop version number, important for file loading / saving
 
 #define KEY_NONE                    0                               // Value that represents no item selected
 #define KEY_START                   1                               // Starting value for key generators

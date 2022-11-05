@@ -3,14 +3,14 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Drop Creator</title>
+    <title>Eyedrop</title>
     <style>
       /* Canvas MUST NOT have any border or padding, or mouse coords will be wrong */
-      #canvas { 
+      #canvas {
         display: block;
         margin: 10px;
-        border: 0px none; 
-        background-color: black; 
+        border: 0px none;
+        background-color: black;
       }
 
       #wrapper {
@@ -24,23 +24,23 @@
         justify-content: center;
       }
 
-      #about { 
+      #about {
         display: block;
         margin: auto;
-        border: 0px none; 
+        border: 0px none;
         width:  660px;
         text-align: center;
         justify-content: center;
-        background-color: transparent; 
+        background-color: transparent;
       }
     </style>
   </head>
   <body>
-    
+
     <div class="emscripten" id="wrapper">
       <canvas width=640 height=480 class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
     </div>
-            
+
     <div class="emscripten" id="about">
       <br>
       <b>Drop Test</b><br>
@@ -63,7 +63,7 @@
                   const newWidth = canvasWrapper.clientWidth;
                   const newHeight = canvasWrapper.clientHeight;
                   if ((width != newWidth - border_width) || (height != newHeight - border_width)) {
-                    width  = newWidth - border_width; 
+                    width  = newWidth - border_width;
                     height = newHeight - border_width;
                     canvas.width = width;
                     canvas.height = height;
@@ -79,8 +79,8 @@
             })()
         };
     </script>
-        
+
     {{{ SCRIPT }}}
-    
+
   </body>
 </html>

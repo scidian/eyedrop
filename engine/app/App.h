@@ -77,7 +77,7 @@ class DrApp
 {
 public:
     // Constructor / Destructor
-    DrApp(std::string title = "Drop Creator", DrColor bg_color = DROP_COLOR_BLACK, int width = 800, int height = 600);
+    DrApp(std::string title = "Eyedrop", DrColor bg_color = DROP_COLOR_BLACK, int width = 800, int height = 600);
     ~DrApp();
 
     // #################### VARIABLES ####################

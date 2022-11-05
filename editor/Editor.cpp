@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
     InitializeReflection();
 
     // Create app and run
-    DrEditor* editor = new DrEditor("Drop Creator", DrColor(28, 30, 29), 1750, 1000);
+    DrEditor* editor = new DrEditor("Eyedrop", DrColor(28, 30, 29), 1750, 1000);
     editor->run();
 
 }
