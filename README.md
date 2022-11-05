@@ -1,5 +1,7 @@
 # Eyedrop
 
-Starter project for a game engine in C++ using Sokol and ImGui
+Starter project for a game engine in C++ using Sokol and ImGui. Build with cmake.
 
-<b>NOT IN ACTIVE DEVELOPMENT</b>
+<br />
+<b>***** NOT IN ACTIVE DEVELOPMENT ***** </b></center>
+<br />

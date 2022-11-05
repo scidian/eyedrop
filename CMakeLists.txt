@@ -14,9 +14,9 @@ cmake_minimum_required(VERSION 3.10)
 #       "auto"      Attempt Auto-Detect
 #       "osx"       Apple MacOS                     defines DROP_TARGET_OSX, DROP_TARGET_APPLE, DROP_MAC_MENU
 #       "ios"       Apple iOS                       defines DROP_TARGET_IOS, DROP_TARGET_APPLE
-#       "web"       Emscripten                      defines DROP_TARGET_HTML5   
+#       "web"       Emscripten                      defines DROP_TARGET_HTML5
 #       "android"   Google Android                  defines DROP_TARGET_GOOGLE
-#       "windows"   Microsoft Windows               defines DROP_TARGET_WINDOWS 
+#       "windows"   Microsoft Windows               defines DROP_TARGET_WINDOWS
 #       "linux"     Linux                           defines DROP_TARGET_LINUX
 #
 #   APP_TYPE
@@ -25,20 +25,20 @@ cmake_minimum_required(VERSION 3.10)
 #
 #   DEBUG_MODE
 #       "true"                                      defines SOKOL_TRACE_HOOKS, DROP_DEBUG, DROP_IMGUI (turns on ImGui and Sokol Gfx debug menu by default)
-#       "false"                                     
+#       "false"
 ####################################################################################
 #################### Build Options
 ####################################################################################
 
 ##### Standard editor build:
-set(EXPORT_TARGET   "osx")
+set(EXPORT_TARGET   "auto")
 set(APP_TYPE        "editor")
 set(DEBUG_MODE      "true")
 
 ##### For testing no-gui html5 build:
 # set(EXPORT_TARGET   "web")
 # set(APP_TYPE        "player")
-# set(DEBUG_MODE      "false")  
+# set(DEBUG_MODE      "false")
 
 ####################################################################################
 ####################################################################################
@@ -61,7 +61,7 @@ set(DEBUG_MODE      "true")
 #       SOKOL_GLCORE33                              ##### OpenGL Core 3.3 Backend   - MacOS, Windows, Linux, Switch, Playstation
 #       SOKOL_GLES2                                 ##### OpenGLES 2.0 Backend      - Android, WebAssembly
 #       SOKOL_GLES3                                 ##### OpenGLES 3.0 Backend      - Android, WebAssembly
-#       SOKOL_D3D11                                 ##### DirectX 11 Backend        - Windows, XBox    
+#       SOKOL_D3D11                                 ##### DirectX 11 Backend        - Windows, XBox
 #       SOKOL_METAL                                 ##### Metal Backend             - MacOS, iOS, tvOS
 #
 #   ImGui
@@ -81,18 +81,18 @@ if      (APP_TYPE MATCHES "player")
     file(GLOB_RECURSE MAIN_DIRECTORY_FILES
         "player/*.c**"
     )
-    if (EXPORT_TARGET MATCHES "web") 
+    if (EXPORT_TARGET MATCHES "web")
         project(player)                             ##### Project Name for Engine Runtime Only for web
     else()
         project(Player)                             ##### Project Name for Engine Runtime Only for all others
     endif()
-elseif  (APP_TYPE MATCHES "editor")  
+elseif  (APP_TYPE MATCHES "editor")
     add_compile_definitions(SOKOL_NO_ENTRY)         ##### Stops sokol_app from hijacking main()
     add_compile_definitions(DROP_IMGUI)             ##### Signal we want ImGui available to application
     file(GLOB_RECURSE MAIN_DIRECTORY_FILES
         "editor/*.c**"
     )
-    if (EXPORT_TARGET MATCHES "web") 
+    if (EXPORT_TARGET MATCHES "web")
         project(drop)                               ##### Project Name for Editor for web
     else()
         project(Drop)                               ##### Project Name for Editor for all others
@@ -103,14 +103,14 @@ endif()
 #################### Target Definitions
 ####################################################################################
 ##### DEBUG??
-if     (DEBUG_MODE MATCHES "true") 
+if     (DEBUG_MODE MATCHES "true")
     add_compile_definitions(SOKOL_TRACE_HOOKS)      ##### Needed for Sokol Debug Viewer
     add_compile_definitions(DROP_DEBUG)             ##### Signal we want Sokol Debug Viewer capability
     add_compile_definitions(DROP_IMGUI)             ##### Signal we want ImGui available to application
 endif()
 
 ##### TARGET??
-if     (EXPORT_TARGET MATCHES "auto") 
+if     (EXPORT_TARGET MATCHES "auto")
     if     (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         set(EXPORT_TARGET "osx")
     elseif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
@@ -126,22 +126,22 @@ if     (EXPORT_TARGET MATCHES "osx")
     add_compile_definitions(SOKOL_GLCORE33)         ##### OpenGL Core 3.3 Backend   - MacOS, Windows, Linux, Switch, Playstation
     #add_compile_definitions(SOKOL_METAL)           ##### Metal Backend             - MacOS, iOS, tvOS
 elseif (EXPORT_TARGET MATCHES "ios")
-    add_compile_definitions(DROP_TARGET_APPLE)    
+    add_compile_definitions(DROP_TARGET_APPLE)
     add_compile_definitions(DROP_TARGET_IOS)
     add_compile_definitions(SOKOL_GLCORE33)         ##### OpenGL Core 3.3 Backend   - MacOS, Windows, Linux, Switch, Playstation
     #add_compile_definitions(SOKOL_METAL)           ##### Metal Backend             - MacOS, iOS, tvOS
-elseif (EXPORT_TARGET MATCHES "web") 
+elseif (EXPORT_TARGET MATCHES "web")
     add_compile_definitions(DROP_TARGET_HTML5)
     add_compile_definitions(SOKOL_GLES2)            ##### OpenGLES 2.0 Backend      - Android, WebAssembly
     #add_compile_definitions(SOKOL_GLES3)           ##### OpenGLES 3.0 Backend      - Android, WebAssembly
     #add_compile_definitions(SOKOL_WGPU)            ##### WebGL Backend             - Next Gen WebAssembly
-elseif (EXPORT_TARGET MATCHES "android") 
+elseif (EXPORT_TARGET MATCHES "android")
     add_compile_definitions(DROP_TARGET_GOOGLE)
     add_compile_definitions(SOKOL_GLES3)            ##### OpenGLES 3.0 Backend      - Android, WebAssembly
-elseif (EXPORT_TARGET MATCHES "windows") 
+elseif (EXPORT_TARGET MATCHES "windows")
     add_compile_definitions(DROP_TARGET_WINDOWS)
-    add_compile_definitions(SOKOL_D3D11)            ##### DirectX 11 Backend        - Windows, XBox   
-elseif (EXPORT_TARGET MATCHES "linux") 
+    add_compile_definitions(SOKOL_D3D11)            ##### DirectX 11 Backend        - Windows, XBox
+elseif (EXPORT_TARGET MATCHES "linux")
     add_compile_definitions(DROP_TARGET_LINUX)
     add_compile_definitions(SOKOL_GLCORE33)         ##### OpenGL Core 3.3 Backend   - MacOS, Windows, Linux, Switch, Playstation
 endif()
@@ -160,7 +160,7 @@ if     (EXPORT_TARGET MATCHES "osx")
 else()
     file(GLOB_RECURSE ENGINE_CODE_FILES     "engine/*.c**")
 endif()
-file(GLOB SOURCE_CODE_FILES                 
+file(GLOB SOURCE_CODE_FILES
     ${MAIN_DIRECTORY_FILES}
     ${3RD_PARTY_CODE_FILES}
     ${ENGINE_CODE_FILES}
@@ -207,7 +207,7 @@ add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E 
 # - Android:                OpenSLES (link with OpenSLES)
 ####################################################################################
 if (EXPORT_TARGET MATCHES "osx")
-    #    
+    #
     # -O#                   Optimze file size in order: -O0, -O1, -O2, -O3, 0s (size), -0fast (speed)
     # -s                    Strip debug info from binary, saves ~1mb
     # -fno-exceptions       Turns off "try {} catch {}" blocks, and std::except(), saves ~500kb
@@ -258,7 +258,7 @@ elseif (EXPORT_TARGET MATCHES "web")
     set(CMAKE_C_LINK_FLAGS "")                      # Clear MacOS linker flags
     set(CMAKE_CXX_LINK_FLAGS "")                    # Clear MacOS linker flags
     set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -std=c99   -Oz -fno-exceptions")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Oz -fno-exceptions --shell-file ../shell_full.html") # -Werror -Wno-error=unused-command-line-argument") 
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Oz -fno-exceptions --shell-file ../shell_full.html") # -Werror -Wno-error=unused-command-line-argument")
     set(CMAKE_C_COMPILER "emcc")
     set(CMAKE_CXX_COMPILER "emcc")
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
@@ -278,7 +278,7 @@ elseif (EXPORT_TARGET MATCHES "web")
     #
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-fno-exceptions -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s TOTAL_MEMORY=134217728 -s WASM=1 -std=c++11 --bind")# -s ASSERTIONS=1")
 
-####################################################################################    
+####################################################################################
 elseif (EXPORT_TARGET MATCHES "android")
 
 
