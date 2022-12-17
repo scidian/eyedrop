@@ -1,12 +1,12 @@
 //####################################################################################
 //
 // Description:     ImMenu, ImGui to MacOS Main Menu Bar Wrapper
-// Author:          Stephens Nunnally and Scidian Software
+// Author:          Stephens Nunnally and Scidian Studios
 // License:         Distributed under the MIT License
 // Source(s):       https://github.com/stevinz/immenu
 // Original Idea:   https://github.com/JamesBoer/ImFrame
 //
-// Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// Copyright (c) 2021 Stephens Nunnally and Scidian Studios
 // Copyright (c) 2021 James Boer
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy

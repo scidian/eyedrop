@@ -2,8 +2,8 @@
 # @description Eyedrop
 # @about       C++ game engine built on Sokol
 # @author      Stephens Nunnally <@stevinz>
-# @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
-# @source      https://github.com/stevinz/eyedrop
+# @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Studios
+# @source      https://github.com/scidian/eyedrop
 #
 #
 cmake_minimum_required(VERSION 3.10)

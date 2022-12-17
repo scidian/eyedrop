@@ -1,12 +1,12 @@
 //####################################################################################
 //
 // Description:     ImMenu, ImGui to MacOS Main Menu Bar Wrapper
-// Author:          Stephens Nunnally and Scidian Software
+// Author:          Stephens Nunnally and Scidian Studios
 // License:         Distributed under the MIT License
 // Source(s):       https://github.com/stevinz/immenu
 // Original Idea:   https://github.com/JamesBoer/ImFrame
 //
-// Copyright (c) 2021 Stephens Nunnally and Scidian Software
+// Copyright (c) 2021 Stephens Nunnally and Scidian Studios
 // Copyright (c) 2021 James Boer
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -72,7 +72,7 @@ namespace ImMenu {
 //##        ImGui wrapper for OS specific functions
 //####################################################################################
 namespace ImMenu {
-    
+
 
 //####################################################################################
 //##    Local Static Variables
@@ -112,7 +112,7 @@ void osxMenuInitialize(const char* app_name) {
             [app_menu addItem:quit_menu_item];
         app_menu_item.submenu = app_menu;
     [menu_bar addItem:app_menu_item];
-    
+
     // Init Menu
     NSApp.mainMenu = menu_bar;                                                      // Apply menu bar to our Application
     s_menu_stack.push_back(menu_bar);                                               // Save reference to menu bar
@@ -155,7 +155,7 @@ bool osxBeginMenu(const char* label, bool enabled) {
 
     // Check if menu exists
     NSInteger s_menu_index = [s_menu_stack.back() indexOfItemWithTitle:title];
-    
+
     // Does exist, do not build
     if (s_menu_index != -1) {
         s_build_menu = false;
@@ -179,13 +179,13 @@ bool osxBeginMenu(const char* label, bool enabled) {
 
     // Update 'enabled' property
     NSMenuItem* menu_bar_item = [s_menu_stack.back() itemAtIndex:s_menu_index];
-    if (menu_bar_item) {    
+    if (menu_bar_item) {
         menu_bar_item.enabled = enabled;
 
         // Push new menu onto stack
         s_menu_stack.push_back(menu_bar_item.submenu);
     }
-                                
+
     // Reset item index
     s_item_index = 0;
 
@@ -196,10 +196,10 @@ bool osxBeginMenu(const char* label, bool enabled) {
 void osxEndMenu() {
     s_menu_stack.pop_back();                                                        // Go back to previous menu
     s_item_index = [s_menu_stack.back() numberOfItems] - 1;                         // Reset next item index to count of previous menu
-    
+
     // If back to Main Menu Bar, mark menus built for now
     if (s_menu_stack.size() == 1) {
-        s_build_menu = false;                                                       
+        s_build_menu = false;
     }
 }
 
@@ -235,8 +235,8 @@ bool osxMenuItem(const char* label, const char* shortcut, bool selected, bool en
 
         // Add Item to Menu
         [s_menu_stack.back() addItem:menu_item];
-    } 
-    
+    }
+
     // Check for title change, set 'enable' and 'selected' properties
     NSMenuItem* menu_item = [s_menu_stack.back() itemAtIndex:s_item_index];
     if (menu_item) {
@@ -245,13 +245,13 @@ bool osxMenuItem(const char* label, const char* shortcut, bool selected, bool en
             if (![title isEqualToString:menu_item.title]) {
                 s_need_clear = true;
             }
-        } 
+        }
 
         // Update 'enable' and 'selected' properties
         menu_item.enabled = enabled;
         menu_item.state = selected ? NSControlStateValueOn : NSControlStateValueOff;
     }
-    
+
     // If enabled, see if it was clicked
     if (enabled) {
         // Compare handler tag to current item tag to see if has been clicked

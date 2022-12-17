@@ -3,8 +3,8 @@
 // @description Eyedrop
 // @about       C++ game engine built on Sokol
 // @author      Stephens Nunnally <@stevinz>
-// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Software
-// @source      https://github.com/stevinz/eyedrop
+// @license     MIT - Copyright (c) 2021 Stephens Nunnally and Scidian Studios
+// @source      https://github.com/scidian/eyedrop
 //
 ///////////////////////////////////////////////////////////////////////////////////*/
 #include "3rd_party/stb/stb_image_write.h"
@@ -351,7 +351,7 @@ bool DrFilter::findObjectsInBitmap(const DrBitmap& bitmap, std::vector<DrBitmap>
 //####################################################################################
 //##    Returns a clockwise list of points representing an alpha outline of an image.
 //##    This algorithm works by moving around the image in a clockwise manner trying to stay
-//##    on the largest angle between two points. Idea and code written by Scidian Software.
+//##    on the largest angle between two points. Idea and code written by Scidian Studios.
 //##        !!!!! #NOTE: Image passed in should be black and white,
 //##                     probably from DrImageing::BlackAndWhiteFromAlpha()
 //####################################################################################
