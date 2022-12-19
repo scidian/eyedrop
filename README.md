@@ -1,3 +1,7 @@
+<div align="center">
+<img src="./assets/icon/eye256.png" alt="Drop Creator"/>
+</div>
+
 # Eyedrop
 
 Starter project for a game engine in C++ using Sokol and ImGui. Build with cmake.
